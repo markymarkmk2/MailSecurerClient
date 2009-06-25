@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 22.06.2009 12:22:06 by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="mailwsapplication.hibernate.DiskArchive" table="disk_archive" schema="public">
+        <id name="id" type="int">
+            <column name="id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="mandant" class="mailwsapplication.hibernate.Mandant" fetch="select">
+            <column name="mid" />
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name" />
+        </property>
+        <property name="flags" type="java.lang.Integer">
+            <column name="flags" />
+        </property>
+        <set name="diskSpaces" inverse="true">
+            <key>
+                <column name="da_id" not-null="true" />
+            </key>
+            <one-to-many class="mailwsapplication.hibernate.DiskSpace" />
+        </set>
+        <set name="imapFetchers" inverse="true">
+            <key>
+                <column name="da_id" not-null="true" />
+            </key>
+            <one-to-many class="mailwsapplication.hibernate.ImapFetcher" />
+        </set>
+        <set name="milters" inverse="true">
+            <key>
+                <column name="da_id" />
+            </key>
+            <one-to-many class="mailwsapplication.hibernate.Milter" />
+        </set>
+        <set name="proxies" inverse="true">
+            <key>
+                <column name="da_id" />
+            </key>
+            <one-to-many class="mailwsapplication.hibernate.Proxy" />
+        </set>
+        <set name="hotfolders" inverse="true">
+            <key>
+                <column name="da_id" not-null="true" />
+            </key>
+            <one-to-many class="mailwsapplication.hibernate.Hotfolder" />
+        </set>
+    </class>
+</hibernate-mapping>

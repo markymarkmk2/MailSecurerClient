@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+    <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+    <property name="hibernate.connection.url">jdbc:postgresql://localhost/datavault</property>
+    <property name="hibernate.connection.username">postgres</property>
+    <property name="hibernate.connection.password">12345</property>
+    <mapping resource="mailwsapplication/hibernate/Role.hbm.xml"/>
+    <mapping resource="mailwsapplication/hibernate/Mail.hbm.xml"/>
+    <mapping resource="mailwsapplication/hibernate/DiskSpace.hbm.xml"/>
+    <mapping resource="mailwsapplication/hibernate/MailRecipientLink.hbm.xml"/>
+    <mapping resource="mailwsapplication/hibernate/MailRecipient.hbm.xml"/>
+    <mapping resource="mailwsapplication/hibernate/HotfolderExclude.hbm.xml"/>
+    <mapping resource="mailwsapplication/hibernate/ImapFetcher.hbm.xml"/>
+    <mapping resource="mailwsapplication/hibernate/Milter.hbm.xml"/>
+    <mapping resource="mailwsapplication/hibernate/MailHeader.hbm.xml"/>
+    <mapping resource="mailwsapplication/hibernate/DiskArchive.hbm.xml"/>
+    <mapping resource="mailwsapplication/hibernate/MailHeaderVariable.hbm.xml"/>
+    <mapping resource="mailwsapplication/hibernate/Mandant.hbm.xml"/>
+    <mapping resource="mailwsapplication/hibernate/Proxy.hbm.xml"/>
+    <mapping resource="mailwsapplication/hibernate/AccountConnector.hbm.xml"/>
+    <mapping resource="mailwsapplication/hibernate/Hotfolder.hbm.xml"/>
+  </session-factory>
+</hibernate-configuration>
