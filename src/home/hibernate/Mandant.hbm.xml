@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated 22.06.2009 12:22:06 by Hibernate Tools 3.2.1.GA -->
+<!-- Generated 25.06.2009 14:21:36 by Hibernate Tools 3.2.1.GA -->
 <hibernate-mapping>
-    <class name="mailwsapplication.hibernate.Mandant" table="mandant" schema="public">
+    <class name="dimm.home.hibernate.Mandant" table="mandant" schema="public">
         <id name="id" type="int">
             <column name="id" />
             <generator class="assigned" />
@@ -18,49 +18,43 @@
             <key>
                 <column name="mid" not-null="true" />
             </key>
-            <one-to-many class="mailwsapplication.hibernate.Hotfolder" />
+            <one-to-many class="dimm.home.hibernate.Hotfolder" />
         </set>
         <set name="imapFetchers" inverse="true">
             <key>
                 <column name="mid" not-null="true" />
             </key>
-            <one-to-many class="mailwsapplication.hibernate.ImapFetcher" />
+            <one-to-many class="dimm.home.hibernate.ImapFetcher" />
         </set>
         <set name="roles" inverse="true">
             <key>
                 <column name="mid" />
             </key>
-            <one-to-many class="mailwsapplication.hibernate.Role" />
+            <one-to-many class="dimm.home.hibernate.Role" />
         </set>
         <set name="milters" inverse="true">
             <key>
                 <column name="mid" />
             </key>
-            <one-to-many class="mailwsapplication.hibernate.Milter" />
+            <one-to-many class="dimm.home.hibernate.Milter" />
         </set>
         <set name="proxies" inverse="true">
             <key>
                 <column name="mid" />
             </key>
-            <one-to-many class="mailwsapplication.hibernate.Proxy" />
+            <one-to-many class="dimm.home.hibernate.Proxy" />
         </set>
         <set name="diskArchives" inverse="true">
             <key>
                 <column name="mid" />
             </key>
-            <one-to-many class="mailwsapplication.hibernate.DiskArchive" />
-        </set>
-        <set name="mails" inverse="true">
-            <key>
-                <column name="mid" />
-            </key>
-            <one-to-many class="mailwsapplication.hibernate.Mail" />
+            <one-to-many class="dimm.home.hibernate.DiskArchive" />
         </set>
         <set name="accountConnectors" inverse="true">
             <key>
                 <column name="mid" />
             </key>
-            <one-to-many class="mailwsapplication.hibernate.AccountConnector" />
+            <one-to-many class="dimm.home.hibernate.AccountConnector" />
         </set>
     </class>
 </hibernate-mapping>

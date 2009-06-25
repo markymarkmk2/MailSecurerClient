@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated 22.06.2009 12:22:06 by Hibernate Tools 3.2.1.GA -->
+<!-- Generated 25.06.2009 14:21:36 by Hibernate Tools 3.2.1.GA -->
 <hibernate-mapping>
-    <class name="mailwsapplication.hibernate.MailRecipient" table="mail_recipient" schema="public">
+    <class name="dimm.home.hibernate.MailRecipient" table="mail_recipient" schema="public">
         <id name="id" type="int">
             <column name="id" />
             <generator class="assigned" />
@@ -15,7 +15,7 @@
             <key>
                 <column name="mr_id" />
             </key>
-            <one-to-many class="mailwsapplication.hibernate.MailRecipientLink" />
+            <one-to-many class="dimm.home.hibernate.MailRecipientLink" />
         </set>
     </class>
 </hibernate-mapping>

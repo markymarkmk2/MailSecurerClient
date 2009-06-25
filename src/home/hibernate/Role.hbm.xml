@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated 22.06.2009 12:22:06 by Hibernate Tools 3.2.1.GA -->
+<!-- Generated 25.06.2009 14:21:36 by Hibernate Tools 3.2.1.GA -->
 <hibernate-mapping>
-    <class name="mailwsapplication.hibernate.Role" table="role" schema="public">
+    <class name="dimm.home.hibernate.Role" table="role" schema="public">
         <id name="id" type="int">
             <column name="id" />
             <generator class="assigned" />
         </id>
-        <many-to-one name="mandant" class="mailwsapplication.hibernate.Mandant" fetch="select">
+        <many-to-one name="mandant" class="dimm.home.hibernate.Mandant" fetch="select">
             <column name="mid" />
         </many-to-one>
         <property name="name" type="string">
