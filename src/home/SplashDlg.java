@@ -50,7 +50,6 @@ public class SplashDlg extends javax.swing.JDialog implements ActionListener
         
         this.setLocation(x/2 - 220, y/2 - 220);
         
-        //LB_LOAD.setText("SonicRemote loading...");
         LB_VERSION.setText("V " + Main.version_str);
         //this.CB_CHECK_NEWS.setSelected(check_news);
     }

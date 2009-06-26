@@ -121,32 +121,21 @@ public class Main
             }
         }
 
-
-        // FIRST SET OUT L&F
-        ui = new UI_Pirates();
-        ui = new UI_Bluesea();
-
-        ui.set_ui(false);
-
-
-        Main mm = new Main();
-        UserMain.init_text_interface(null);
-
-        final SplashDlg splash = new SplashDlg(null, false);
-
-        if (Main.get_long_prop(Preferences.CHECK_NEWS) > 0)
-        {
-            splash.set_check_news(true);
-        }
-
-        splash.setVisible(true);
-        final long start = System.currentTimeMillis() / 1000;
+        ui = null;
 
         for (int i = 0; i < args.length; i++)
         {
             if (args[i].compareTo("-l") == 0)
             {
                 scan_local = true;
+            }
+            if (args[i].compareTo("-blue") == 0)
+            {
+                ui = new UI_Bluesea();
+            }
+            if (args[i].compareTo("-black") == 0)
+            {
+                ui = new UI_Pirates();
             }
             if (args[i].compareTo("-b") == 0)
             {
@@ -177,7 +166,28 @@ public class Main
         }
 
 
-        /* Ping p = new Ping("www.sonicsense.de");
+        // FIRST SET OUT L&F
+        if (ui == null)
+            ui = new UI_Bluesea();
+
+        ui.set_ui(false);
+
+
+        Main mm = new Main();
+        UserMain.init_text_interface(null);
+
+        final SplashDlg splash = new SplashDlg(null, false);
+
+        if (Main.get_long_prop(Preferences.CHECK_NEWS) > 0)
+        {
+            splash.set_check_news(true);
+        }
+
+        splash.setVisible(true);
+        final long start = System.currentTimeMillis() / 1000;
+
+
+        /* Ping p = new Ping("www.gruppemedia.de");
         if (p.ping() < 0)
         {
         UserMain.errm_ok(UserMain.Txt("Kein_Internet_nur_lokale_Boxen_sichtbar"));

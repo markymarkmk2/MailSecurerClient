@@ -14,21 +14,16 @@ import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 
-// ©1998 Sebastian Wallroth
+// ï¿½1998 Sebastian Wallroth
 
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.RescaleOp;
-import java.util.HashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.Timer;
-import org.jdesktop.swingx.JXLabel;
 
 public class Radar extends JComponent implements ActionListener
 {

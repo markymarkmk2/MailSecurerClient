@@ -85,7 +85,7 @@
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="" key="SonicBox" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+          <ResourceString bundle="dimm/home/SR_Properties.properties" key="Box" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>

@@ -1,13 +1,16 @@
 /*
  * GlossErrDialog.java
  *
- * Created on 25. März 2008, 00:09
+ * Created on 25. Mï¿½rz 2008, 00:09
  */
 package dimm.home.Rendering;
 
 import dimm.home.Main;
 import dimm.home.UserMain;
+import java.awt.Color;
 import javax.swing.ImageIcon;
+import org.jdesktop.fuse.InjectedResource;
+import org.jdesktop.fuse.ResourceInjector;
 
 /**
  *
@@ -20,7 +23,14 @@ public class GlossErrDialog extends javax.swing.JDialog
     public static final int MODE_INFO = 3;
     public static final int MODE_BUSY = 4;
     public static final int MODE_BUSY_ABORTABLE = 5;
-    
+
+  
+    @InjectedResource
+    private Color radarFG = new Color( 205, 175, 95 );
+    @InjectedResource
+    private Color radarPing = new Color(245, 10, 5);
+
+
     private boolean okay = false;
     private boolean aborted = false;
     Radar radar;
@@ -29,9 +39,18 @@ public class GlossErrDialog extends javax.swing.JDialog
     public GlossErrDialog(java.awt.Frame parent)
     {
         super(parent, true);
+
+        try
+        {
+            ResourceInjector.get().inject(this);
+        }
+        catch (Exception e)
+        {
+            e = null;
+        }
         initComponents();
 
-        radar = new Radar();
+        radar = new Radar(radarFG, radarPing);
         set_defaults();
     }
     public GlossErrDialog(java.awt.Dialog parent)
@@ -56,6 +75,8 @@ public class GlossErrDialog extends javax.swing.JDialog
     {
         radar.stop();
     }
+
+ 
     
     private void set_defaults()
     {
@@ -69,6 +90,7 @@ public class GlossErrDialog extends javax.swing.JDialog
     }
     public void set_mode(int m)
     {
+        aborted = false;
         PN_ICON.remove(LBX_ICON);
         switch(m)
         {

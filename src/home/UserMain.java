@@ -12,6 +12,7 @@ import dimm.home.Rendering.GlossPanel;
 import dimm.home.Rendering.NavigationHeader;
 import dimm.home.Rendering.SpringGlassPane;
 import dimm.home.Rendering.TitlePanel;
+import dimm.home.ServerConnect.SQLCall;
 import java.awt.BorderLayout;
 
 import java.awt.Color;
@@ -110,16 +111,30 @@ public class UserMain extends javax.swing.JFrame
     private VKeyboard vkb;
     boolean use_mallorca_proxy;
 
+    private static SQLCall sqc;
+
 
     public static String get_version_str()
     {
         return Main.version_str;
     }
     private String l_code = "DE";
+    private long firmen_id = 1;
 
     public void call_navigation_click()
     {
-        throw new UnsupportedOperationException("Not yet implemented");
+        UserMain.errm_ok("Jeht noch nicht");
+    }
+
+    public int getUserLevel()
+    {
+        return userLevel;
+    }
+
+    public long get_firmen_id()
+    {
+        // ACTIVE MANDANT
+        return firmen_id;
     }
 
     public void restart_gui()
@@ -197,7 +212,7 @@ public class UserMain extends javax.swing.JFrame
             Locale.setDefault(l);
         }
         
-        WANT_DB_CHANGE_TXT = getString("Wollen_Sie_die_geänderten_Daten_speichern?");        
+        WANT_DB_CHANGE_TXT = getString("Wollen_Sie_die_geï¿½nderten_Daten_speichern?");        
     }
     public void show_vkeyboard( UserMain frame, JComponent comp, boolean b)
     {
@@ -229,8 +244,7 @@ public class UserMain extends javax.swing.JFrame
         
     /** Creates new form UserMain */
     public UserMain( boolean _is_udp, String _fixed_ip, boolean with_beta, boolean _no_updater) 
-    {
-        
+    {        
         haloPicture = null;        
         self = this;       
         is_udp = _is_udp;
@@ -249,30 +263,14 @@ public class UserMain extends javax.swing.JFrame
         
         initComponents();
 
-        //auto_size = getSize();
-        
-        if (this.is_touchscreen())
-        {
-            jLayeredPane1.setPreferredSize(new java.awt.Dimension(APPL_X_SIZE, APPL_Y_SIZE));
-            PN_MAIN.setMinimumSize(new java.awt.Dimension(APPL_X_SIZE, APPL_Y_SIZE));
-            PN_MAIN.setPreferredSize(new java.awt.Dimension(APPL_X_SIZE, APPL_Y_SIZE));
-            PN_USERMAIN.setBounds(0, 0, APPL_X_SIZE, APPL_Y_SIZE);
-            PN_GLASS.setPreferredSize(new java.awt.Dimension(APPL_X_SIZE, APPL_Y_SIZE));
-            pack();
-        }
-           
+        sqc = new SQLCall();
+
+                  
         vkb = new VKeyboard();
-                
         
-
-
         this.setTitle("JMailClient");
         setIconImage( iconPicture );
-        
-                
-        
-//        init_text_interface( l_code );
-        
+                                       
         // GLASSPANE INIT
         setupGlassPane();
         
@@ -283,46 +281,12 @@ public class UserMain extends javax.swing.JFrame
         
         userLevel = (int)Main.get_long_prop( Preferences.DEFAULT_USER, (long)UL_DUMMY );
         
-
-        /*
-        navPanel = new NavigationHeader(this);        
+        restart_gui();      
         
-        
-        titlePanel = new TitlePanel(this);
-        
-        pn_verwaltung = new PanelVerwaltung( this );
-        pn_startup = new PanelStartup(this);
-        
-        PN_TITLE.add(titlePanel, BorderLayout.NORTH);
-        PN_HEADER.add(navPanel, BorderLayout.NORTH);
-        titlePanel.installListeners();
-        
-        
-        navPanel.add_button(getString("Suchen"), PBC_SEARCH, pn_startup);
-        navPanel.add_button(getString("Verwaltung"), PBC_ADMIN, pn_verwaltung);
-        navPanel.enable_button(PBC_ADMIN, true);
-        navPanel.add_trail_button(getString("Anmelden"), PBC_LOGIN, null);
-        
-//        Dimension auto_size = pn_player.getSize();
-        
-        
-        navPanel.setSize(auto_size);
-        pn_startup.setSize(auto_size);
-        pn_verwaltung.setSize(auto_size);
-        
-        PN_MAIN.add(navPanel.get_panel_switcher(), BorderLayout.CENTER);
-*/
-        restart_gui();
-        
-        
-/*        if (!no_updater)
-        {
-                 //UserMain _main, String _app_name, String _server_path, boolean automatic, boolean _force_upd, boolean _with_gui )
-            updateworker = new SRUpdateWorker( this, "sonicremote", Main.SERVER_UPDATEWORKER_PATH + "SR", true, true, true, with_beta );
-        }
- * */
-        
-       // show_busy("Na nu sei mal nich so ungeduldig...");
+    }
+    public static SQLCall get_sqc()
+    {
+        return sqc;
     }
 
     @Override
@@ -332,8 +296,6 @@ public class UserMain extends javax.swing.JFrame
         APPL_Y_SIZE = height;
         super.setSize(width, height);
     }
-
-
 
     @Override
     public void setVisible( boolean b )
@@ -354,6 +316,7 @@ public class UserMain extends javax.swing.JFrame
         switch( code)
         {
             case PBC_LOGOFF: handle_logoff(); return;
+            case PBC_LOGIN: handle_login(); return;
             case PBC_ADMIN: switch_to_admin(); return;
             case PBC_SEARCH: switch_to_search(); return;
         }            
@@ -426,6 +389,11 @@ public class UserMain extends javax.swing.JFrame
     {
         long ts = Main.get_long_prop( Preferences.TOUCHSCREEN, 0L );           
         return ts > 0 ? true : false;
+    }
+
+    private void handle_login()
+    {
+        errm_ok("Iss auch noch nich fertig!!");
     }
 
 

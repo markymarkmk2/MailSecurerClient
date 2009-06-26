@@ -68,8 +68,8 @@ public class GlossTable extends JTable
         setDefaultRenderer(Integer.class, new OpaqueTextCellRenderer(false));
         setDefaultRenderer(Long.class, new OpaqueTextCellRenderer(false));
         setDefaultRenderer(Boolean.class, new BoolButtonCellRenderer(
-                "dimm/home/images/web_check.png", 
-                "dimm/home/images/ok_empty.png"));
+                "/dimm/home/images/web_check.png",
+                "/dimm/home/images/ok_empty.png"));
    
         getTableHeader().setDefaultRenderer(new HeaderCellRenderer());
         setOpaque(false);

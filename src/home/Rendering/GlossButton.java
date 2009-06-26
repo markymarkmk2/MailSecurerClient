@@ -101,26 +101,31 @@ public class GlossButton extends JXButton implements MouseListener
         super.setText(text);
     }
 
+    @Override
     public void mouseClicked(MouseEvent e)
     {
     }
 
+    @Override
     public void mousePressed(MouseEvent e)
     {
         pressed = true;
         this.repaint();
     }
 
+    @Override
     public void mouseReleased(MouseEvent e)
     {
         pressed = false;
         this.repaint();
     }
 
+    @Override
     public void mouseEntered(MouseEvent e)
     {
     }
 
+    @Override
     public void mouseExited(MouseEvent e)
     {
     }
@@ -252,10 +257,12 @@ public class GlossButton extends JXButton implements MouseListener
             oldValue = ghostValue;
         }
 
+        @Override
         public void repeat()
         {
         }
 
+        @Override
         public void timingEvent(float fraction)
         {
             ghostValue = oldValue + fraction * (forward ? 1.0f : -1.0f);
@@ -272,10 +279,12 @@ public class GlossButton extends JXButton implements MouseListener
             repaint();
         }
 
+        @Override
         public void begin()
         {
         }
 
+        @Override
         public void end()
         {
         }

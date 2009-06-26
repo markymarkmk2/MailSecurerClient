@@ -60,7 +60,7 @@
               <Image iconType="3" name="/dimm/home/images/tr_lupe.png"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Nach_Mail_st&#xf6;bern" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Nach_Mail_stoebern" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
             </Property>
             <Property name="borderPainted" type="boolean" value="false"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>

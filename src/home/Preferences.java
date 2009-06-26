@@ -178,7 +178,7 @@ public class Preferences
         try
         {
             FileOutputStream ostr = new FileOutputStream( prop_file );
-            props.store( ostr, "SonicBox Properties, please do not edit" );        
+            props.store( ostr, "JMailClient Properties, please do not edit" );
             ostr.close();
             return true;
         }        

@@ -1,15 +1,17 @@
 /*
  * PanelTasks.java
  *
- * Created on 13. März 2008, 09:39
+ * Created on 13. Mï¿½rz 2008, 09:39
  */
 package dimm.home;
 
+import dimm.home.Models.HotfolderOverview;
 import dimm.home.Rendering.BackgroundTitle;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
 import dimm.home.Rendering.TimingTargetAdapter;
 import dimm.home.Utilities.CmdExecutor;
+import dimm.home.Utilities.SwingWorker;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -92,16 +94,9 @@ public class PanelVerwaltung extends SwitchSpringPanel
 
         PN_BUTTONS = new javax.swing.JPanel();
         BT_NETWORK = new GhostButton();
-        BT_LOG = new GhostButton();
         BT_FILETRANSFER = new GhostButton();
-        BT_UPDATE = new GhostButton();
         BT_AUDIOPARAM = new GhostButton();
-        BT_REBOOT = new GhostButton();
-        BT_TERMINAL = new GhostButton();
         BT_LOWLEVELPARAMS = new GhostButton();
-        BT_STATIONID = new GhostButton();
-        BT_CALTS = new GhostButton();
-        BT_SETTINGS = new GhostButton();
         PN_HEADER = new javax.swing.JPanel();
 
         setOpaque(false);
@@ -127,26 +122,9 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_NETWORK, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, -1, 50));
 
-        BT_LOG.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        BT_LOG.setForeground(new java.awt.Color(201, 201, 201));
-        BT_LOG.setText("null");
-        BT_LOG.setBorderPainted(false);
-        BT_LOG.setContentAreaFilled(false);
-        BT_LOG.setFocusPainted(false);
-        BT_LOG.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        BT_LOG.setMaximumSize(new java.awt.Dimension(133, 35));
-        BT_LOG.setMinimumSize(new java.awt.Dimension(133, 35));
-        BT_LOG.setPreferredSize(new java.awt.Dimension(133, 35));
-        BT_LOG.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_LOGActionPerformed(evt);
-            }
-        });
-        PN_BUTTONS.add(BT_LOG, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 355, -1, 50));
-
-        BT_FILETRANSFER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_FILETRANSFER.setFont(new java.awt.Font("Arial", 0, 14));
         BT_FILETRANSFER.setForeground(new java.awt.Color(201, 201, 201));
-        BT_FILETRANSFER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
+        BT_FILETRANSFER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/turntable_33x48.png"))); // NOI18N
         BT_FILETRANSFER.setText(UserMain.Txt("Dateitransfer")); // NOI18N
         BT_FILETRANSFER.setBorderPainted(false);
         BT_FILETRANSFER.setContentAreaFilled(false);
@@ -157,25 +135,12 @@ public class PanelVerwaltung extends SwitchSpringPanel
                 BT_FILETRANSFERActionPerformed(evt);
             }
         });
-        PN_BUTTONS.add(BT_FILETRANSFER, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 355, -1, 50));
+        PN_BUTTONS.add(BT_FILETRANSFER, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 350, -1, 50));
 
-        BT_UPDATE.setFont(new java.awt.Font("Arial", 0, 14));
-        BT_UPDATE.setForeground(new java.awt.Color(201, 201, 201));
-        BT_UPDATE.setText("null");
-        BT_UPDATE.setBorderPainted(false);
-        BT_UPDATE.setContentAreaFilled(false);
-        BT_UPDATE.setFocusPainted(false);
-        BT_UPDATE.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        BT_UPDATE.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_UPDATEActionPerformed(evt);
-            }
-        });
-        PN_BUTTONS.add(BT_UPDATE, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 355, -1, 50));
-
-        BT_AUDIOPARAM.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_AUDIOPARAM.setFont(new java.awt.Font("Arial", 0, 14));
         BT_AUDIOPARAM.setForeground(new java.awt.Color(201, 201, 201));
-        BT_AUDIOPARAM.setText("null");
+        BT_AUDIOPARAM.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_schedule.png"))); // NOI18N
+        BT_AUDIOPARAM.setText(UserMain.Txt("IMAP")); // NOI18N
         BT_AUDIOPARAM.setBorderPainted(false);
         BT_AUDIOPARAM.setContentAreaFilled(false);
         BT_AUDIOPARAM.setFocusPainted(false);
@@ -187,37 +152,10 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_AUDIOPARAM, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 130, -1, 50));
 
-        BT_REBOOT.setFont(new java.awt.Font("Arial", 0, 14));
-        BT_REBOOT.setForeground(new java.awt.Color(201, 201, 201));
-        BT_REBOOT.setText("null");
-        BT_REBOOT.setBorderPainted(false);
-        BT_REBOOT.setContentAreaFilled(false);
-        BT_REBOOT.setFocusPainted(false);
-        BT_REBOOT.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        BT_REBOOT.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_REBOOTActionPerformed(evt);
-            }
-        });
-        PN_BUTTONS.add(BT_REBOOT, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 355, 110, 50));
-
-        BT_TERMINAL.setFont(new java.awt.Font("Arial", 0, 14));
-        BT_TERMINAL.setForeground(new java.awt.Color(201, 201, 201));
-        BT_TERMINAL.setText("null");
-        BT_TERMINAL.setBorderPainted(false);
-        BT_TERMINAL.setContentAreaFilled(false);
-        BT_TERMINAL.setFocusPainted(false);
-        BT_TERMINAL.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        BT_TERMINAL.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_TERMINALActionPerformed(evt);
-            }
-        });
-        PN_BUTTONS.add(BT_TERMINAL, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 355, -1, 50));
-
         BT_LOWLEVELPARAMS.setFont(new java.awt.Font("Arial", 0, 14));
         BT_LOWLEVELPARAMS.setForeground(new java.awt.Color(201, 201, 201));
-        BT_LOWLEVELPARAMS.setText("null");
+        BT_LOWLEVELPARAMS.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
+        BT_LOWLEVELPARAMS.setText(UserMain.Txt("Preferences")); // NOI18N
         BT_LOWLEVELPARAMS.setBorderPainted(false);
         BT_LOWLEVELPARAMS.setContentAreaFilled(false);
         BT_LOWLEVELPARAMS.setFocusPainted(false);
@@ -228,48 +166,6 @@ public class PanelVerwaltung extends SwitchSpringPanel
             }
         });
         PN_BUTTONS.add(BT_LOWLEVELPARAMS, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 130, -1, 50));
-
-        BT_STATIONID.setFont(new java.awt.Font("Arial", 0, 14));
-        BT_STATIONID.setForeground(new java.awt.Color(201, 201, 201));
-        BT_STATIONID.setText("null");
-        BT_STATIONID.setBorderPainted(false);
-        BT_STATIONID.setContentAreaFilled(false);
-        BT_STATIONID.setFocusPainted(false);
-        BT_STATIONID.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        BT_STATIONID.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_STATIONIDActionPerformed(evt);
-            }
-        });
-        PN_BUTTONS.add(BT_STATIONID, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 130, -1, 50));
-
-        BT_CALTS.setFont(new java.awt.Font("Arial", 0, 14));
-        BT_CALTS.setForeground(new java.awt.Color(201, 201, 201));
-        BT_CALTS.setText("null");
-        BT_CALTS.setBorderPainted(false);
-        BT_CALTS.setContentAreaFilled(false);
-        BT_CALTS.setFocusPainted(false);
-        BT_CALTS.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        BT_CALTS.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_CALTSActionPerformed(evt);
-            }
-        });
-        PN_BUTTONS.add(BT_CALTS, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 130, -1, 50));
-
-        BT_SETTINGS.setBackground(new java.awt.Color(201, 201, 201));
-        BT_SETTINGS.setFont(new java.awt.Font("Arial", 0, 14));
-        BT_SETTINGS.setForeground(new java.awt.Color(201, 201, 201));
-        BT_SETTINGS.setText("null");
-        BT_SETTINGS.setBorderPainted(false);
-        BT_SETTINGS.setContentAreaFilled(false);
-        BT_SETTINGS.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        BT_SETTINGS.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_SETTINGSActionPerformed(evt);
-            }
-        });
-        PN_BUTTONS.add(BT_SETTINGS, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 180, 140, 50));
 
         PN_HEADER.setOpaque(false);
         PN_HEADER.setLayout(new javax.swing.BoxLayout(PN_HEADER, javax.swing.BoxLayout.LINE_AXIS));
@@ -299,117 +195,91 @@ public class PanelVerwaltung extends SwitchSpringPanel
         // TODO add your handling code here:
         if (check_selected())
         {
+            TimingTargetAdapter tt = make_spring_button_dlg( new HotfolderOverview(main, true),  get_dlg_pos(),  UserMain.getString("Hotfolder") );
+            spring_button_action(evt.getSource(), tt);
         }        
 }//GEN-LAST:event_BT_NETWORKActionPerformed
 
-    private void BT_LOGActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_LOGActionPerformed
-    {//GEN-HEADEREND:event_BT_LOGActionPerformed
-        // TODO add your handling code here:
-        if (check_selected())
-        {
-            TimingTargetAdapter tt = make_spring_button_dlg( new LogPanel(main),  get_dlg_pos(), UserMain.getString("Log-Dateien") );
-
-            spring_button_action(evt.getSource(), tt);
-        }
-}//GEN-LAST:event_BT_LOGActionPerformed
-
+    
     private void BT_FILETRANSFERActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_FILETRANSFERActionPerformed
     {//GEN-HEADEREND:event_BT_FILETRANSFERActionPerformed
         // TODO add your handling code here:
         if (check_selected())
         {
-        }
+            UserMain.self.show_busy("Kuckst Du hier, machst Du stop wenn Du willst", true);
+
+            SwingWorker sw = new SwingWorker()
+            {
+
+                @Override
+                public Object construct()
+                {
+                    boolean aborted = false;
+                   try
+                    {
+                       int i = 50;
+                       while (i-- > 0)
+                       {
+                            Thread.sleep(100);
+                            if (UserMain.self.is_busy_aborted())
+                            {
+                                aborted = true;
+                                UserMain.self.show_busy("Wiedergesehen...");
+                                break;
+                            }
+                       }
+                    }
+                    catch (InterruptedException interruptedException)
+                    {
+                    }
+                   if (aborted)
+                   {
+                       try
+                       {
+                           Thread.sleep(1000);
+                       }
+                       catch (InterruptedException interruptedException)
+                       {
+                       }
+                   }
+
+
+                    UserMain.self.hide_busy();
+                    return null;
+
+                }
+            };
+
+            sw.start();
+         }
         
 
 }//GEN-LAST:event_BT_FILETRANSFERActionPerformed
-
-    private void BT_UPDATEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_UPDATEActionPerformed
-    {//GEN-HEADEREND:event_BT_UPDATEActionPerformed
-        // TODO add your handling code here:
-        if (check_selected())
-        {
-            TimingTargetAdapter tt = make_spring_button_dlg( new UpdatePanel(main),  get_dlg_pos(), UserMain.getString("Software-Update") );
-
-            spring_button_action(evt.getSource(), tt);
-        }
-        
-}//GEN-LAST:event_BT_UPDATEActionPerformed
 
     private void BT_AUDIOPARAMActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_AUDIOPARAMActionPerformed
     {//GEN-HEADEREND:event_BT_AUDIOPARAMActionPerformed
         // TODO add your handling code here:
         if (check_selected())
         {
+            UserMain.self.info_ok("Juchhuuuu!!!");
         }        
 }//GEN-LAST:event_BT_AUDIOPARAMActionPerformed
-
-    private void BT_REBOOTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_REBOOTActionPerformed
-    {//GEN-HEADEREND:event_BT_REBOOTActionPerformed
-        // TODO add your handling code here:
-        if (check_selected())
-        {
-/*            if (main.info_ok_cancel(UserMain.getString("Wollen_Sie_wirklich_die_Box_neu_booten?") ))
-                main.get_comm().send_cmd("REBOOT" );
-  */      }
- 
-        
-}//GEN-LAST:event_BT_REBOOTActionPerformed
-
-    private void BT_TERMINALActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_TERMINALActionPerformed
-    {//GEN-HEADEREND:event_BT_TERMINALActionPerformed
-        // TODO add your handling code here:
-        if (check_selected())
-        {
-        }        
-}//GEN-LAST:event_BT_TERMINALActionPerformed
 
     private void BT_LOWLEVELPARAMSActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_LOWLEVELPARAMSActionPerformed
     {//GEN-HEADEREND:event_BT_LOWLEVELPARAMSActionPerformed
         // TODO add your handling code here:
         if (check_selected())
         {
+            UserMain.self.errm_ok_cancel("Scheissseeee!!!");
         }
         
 }//GEN-LAST:event_BT_LOWLEVELPARAMSActionPerformed
 
-    private void BT_STATIONIDActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_STATIONIDActionPerformed
-    {//GEN-HEADEREND:event_BT_STATIONIDActionPerformed
-        // TODO add your handling code here:
-        if (check_selected())
-        {
-        }        
-}//GEN-LAST:event_BT_STATIONIDActionPerformed
-
-    private void BT_CALTSActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_CALTSActionPerformed
-    {//GEN-HEADEREND:event_BT_CALTSActionPerformed
-        // TODO add your handling code here:
-        String[] cmd = {"/opt/SonicRemote/eGalax/TouchKit/TKCal/TKCal", "/dev/tkpanel0"};
-        
-        CmdExecutor exe = new CmdExecutor( cmd );
-        exe.exec();
-                
-        
-}//GEN-LAST:event_BT_CALTSActionPerformed
-
-    private void BT_SETTINGSActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_SETTINGSActionPerformed
-    {//GEN-HEADEREND:event_BT_SETTINGSActionPerformed
-        if (check_selected())
-        {
-        }
-    }//GEN-LAST:event_BT_SETTINGSActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_AUDIOPARAM;
-    private javax.swing.JButton BT_CALTS;
     private javax.swing.JButton BT_FILETRANSFER;
-    private javax.swing.JButton BT_LOG;
     private javax.swing.JButton BT_LOWLEVELPARAMS;
     private javax.swing.JButton BT_NETWORK;
-    private javax.swing.JButton BT_REBOOT;
-    private javax.swing.JButton BT_SETTINGS;
-    private javax.swing.JButton BT_STATIONID;
-    private javax.swing.JButton BT_TERMINAL;
-    private javax.swing.JButton BT_UPDATE;
     private javax.swing.JPanel PN_BUTTONS;
     private javax.swing.JPanel PN_HEADER;
     // End of variables declaration//GEN-END:variables
@@ -425,4 +295,17 @@ public class PanelVerwaltung extends SwitchSpringPanel
     {
         
     }
+
+    /*
+     * 
+     Copying 175 files to J:\Develop\Java\JMailArchiv\Client\build\classes
+Copied 32 empty directories to 14 empty directories under J:\Develop\Java\JMailArchiv\Client\build\classes
+compile:
+Created dir: J:\Develop\Java\JMailArchiv\Client\dist
+Building jar: J:\Develop\Java\JMailArchiv\Client\dist\JMailClient.jar
+jnlp:
+jar:
+BUILD SUCCESSFUL (total time: 2 seconds)
+*
+     * */
 }

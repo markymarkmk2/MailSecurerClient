@@ -183,10 +183,10 @@ public class NavigationHeader extends JComponent
         this.eventHandler = new PathButtonHandler();
         this.button_list = new ArrayList<PathButton>();
         
-        // SONICSENSE-BUTTON
-        ImageIcon ic_sonicsense = new ImageIcon( title );
+        // APPL-BUTTON
+        ImageIcon ic_vendor = new ImageIcon( title );
         PathButton bt_web = new PathButton("                                      ", -42, null);
-        bt_web.setIcon(ic_sonicsense);
+        bt_web.setIcon(ic_vendor);
         bt_web.setToolTipText(UserMain.get_version_str());
         ic_panel.add( bt_web, new AbsoluteConstraints(0, 0, main.getWidth() - xw, 30));
         bt_web.addActionListener( new ActionListener()

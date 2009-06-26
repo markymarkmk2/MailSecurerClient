@@ -5,6 +5,7 @@
 
 package dimm.home.Rendering;
 
+import dimm.home.Models.OverviewModel;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -12,12 +13,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.SwingWorker;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
-class OverviewModel extends DefaultTableModel
-{
-}
 
 /**
  *

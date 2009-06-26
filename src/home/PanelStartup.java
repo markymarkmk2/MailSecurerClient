@@ -1,17 +1,58 @@
 /*
  * PanelTasks.java
  *
- * Created on 13. März 2008, 09:39
+ * Created on 13. Mï¿½rz 2008, 09:39
  */
 package dimm.home;
 
 import dimm.home.Rendering.BackgroundTitle;
+import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
 import java.awt.Dimension;
 import java.awt.Point;
 import org.jdesktop.fuse.ResourceInjector;
 
+
+
+class HTMLDlg extends GenericGlossyDlg
+{
+
+    UserMain main;
+    HTMLDlg( UserMain parent)
+    {
+        super( parent, true, new HTMLViewPanel( "" ));
+        main = parent;
+        if (parent.isVisible())
+            this.setLocation(parent.getLocationOnScreen().x + 30, parent.getLocationOnScreen().y + 30);
+        else
+            this.setLocationRelativeTo(null);
+
+        this.setSize( 700, 600);
+        ((HTMLViewPanel)pg_painter).set_cancel_text( null );
+
+    }
+
+
+
+   // String file;
+    public void show_dlg( String uri)
+    {
+  //      file = _file;
+        try
+        {
+            this.setLocation(main.getLocationOnScreen().x + 30, main.getLocationOnScreen().y + 30);
+            this.setSize( 700, 600);
+            ((HTMLViewPanel)pg_painter).show_browser( uri);
+        }
+        catch (Exception exc)
+        {
+            System.err.println("Error while reading HTML file: " + exc.getMessage() );
+        }
+    }
+
+
+}
 
 
 /**
@@ -69,7 +110,8 @@ public class PanelStartup extends SwitchSpringPanel
             return new Point( this.getLocationOnScreen().x + 20, this.getLocationOnScreen().y + 20 );
     }
     
-    
+
+
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -91,7 +133,7 @@ public class PanelStartup extends SwitchSpringPanel
         BT_NETWORK.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_NETWORK.setForeground(new java.awt.Color(201, 201, 201));
         BT_NETWORK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_lupe.png"))); // NOI18N
-        BT_NETWORK.setText(UserMain.Txt("Nach_Mail_stöbern")); // NOI18N
+        BT_NETWORK.setText(UserMain.Txt("Nach_Mail_stoebern")); // NOI18N
         BT_NETWORK.setBorderPainted(false);
         BT_NETWORK.setContentAreaFilled(false);
         BT_NETWORK.setFocusPainted(false);
@@ -134,6 +176,11 @@ public class PanelStartup extends SwitchSpringPanel
         // TODO add your handling code here:
         if (check_selected())
         {
+            HTMLDlg dlg = new HTMLDlg(main);
+
+               dlg.show_dlg("http://www.google.de");
+            
+     
         }        
 }//GEN-LAST:event_BT_NETWORKActionPerformed
 

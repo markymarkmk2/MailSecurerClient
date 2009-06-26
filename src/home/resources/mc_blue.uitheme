@@ -1,5 +1,5 @@
 ################################################################################
-# Name:    SonicSense
+# Name:    MailClient
 # Author:  MW, stolen from <romain.guy@sun.com>
 # Date:    24.03.2008
 ################################################################################
@@ -157,6 +157,9 @@ GlossButton.pathShadowDirection={Common.shadowDirection}
 GlossButton.pathShadowDistance=1
 GlossButton.path_y_offset=4
 
+
+GlossErrDialog.radarFG=30,130,220
+GlossErrDialog.radarPing=30,190,255
 
 ################################################################################
 # USERMAIN 
