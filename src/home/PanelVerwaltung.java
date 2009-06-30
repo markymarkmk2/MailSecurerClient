@@ -5,19 +5,14 @@
  */
 package dimm.home;
 
-import dimm.home.Models.HotfolderOverview;
+import dimm.home.Panels.HotfolderOverview;
 import dimm.home.Rendering.BackgroundTitle;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
 import dimm.home.Rendering.TimingTargetAdapter;
-import dimm.home.Utilities.CmdExecutor;
 import dimm.home.Utilities.SwingWorker;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.image.BufferedImage;
-import javax.swing.ImageIcon;
-import org.jdesktop.fuse.InjectedResource;
 import org.jdesktop.fuse.ResourceInjector;
 
 
@@ -261,7 +256,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         // TODO add your handling code here:
         if (check_selected())
         {
-            UserMain.self.info_ok("Juchhuuuu!!!");
+            UserMain.info_ok("Juchhuuuu!!!");
         }        
 }//GEN-LAST:event_BT_AUDIOPARAMActionPerformed
 
@@ -270,7 +265,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         // TODO add your handling code here:
         if (check_selected())
         {
-            UserMain.self.errm_ok_cancel("Scheissseeee!!!");
+            UserMain.errm_ok_cancel("Scheissseeee!!!");
         }
         
 }//GEN-LAST:event_BT_LOWLEVELPARAMSActionPerformed

@@ -1,7 +1,7 @@
 /*
  * LS_Kurven_Dialog.java
  *
- * Created on 24. März 2009, 21:42
+ * Created on 24. Maerz 2009, 21:42
  */
 
 package dimm.home.Rendering;

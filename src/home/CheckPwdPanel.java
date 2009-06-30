@@ -126,7 +126,7 @@ public class CheckPwdPanel extends GlossDialogPanel
 
         if (pwd.compareTo(pwd1) != 0)
         {
-            UserMain.errm_ok(UserMain.getString("Die_Passworte_stimmen_nicht_überein,_bitte_noch_einmal_versuchen"));
+            UserMain.errm_ok(UserMain.getString("Die_Passworte_stimmen_nicht_ueberein,_bitte_noch_einmal_versuchen"));
             return;
         }
         

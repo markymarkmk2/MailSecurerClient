@@ -87,7 +87,7 @@ public class UserMain extends javax.swing.JFrame
     public static Color ggradientBottom = Color.gray;
     public static UserMain self;
     
-    private int userLevel;
+    private int userLevel = UL_SYSADMIN;
     boolean is_udp;
     String fixed_ip;
     boolean no_updater;
@@ -264,6 +264,7 @@ public class UserMain extends javax.swing.JFrame
         initComponents();
 
         sqc = new SQLCall();
+        sqc.init();
 
                   
         vkb = new VKeyboard();
@@ -276,10 +277,12 @@ public class UserMain extends javax.swing.JFrame
         
 
 
-        x_pos = (int)Main.get_long_prop( Preferences.X_POS, x_pos );                        
-        y_pos = (int)Main.get_long_prop( Preferences.Y_POS, y_pos );                        
+        x_pos = (int)Main.get_long_prop( Preferences.X_POS, x_pos, 20);
+        y_pos = (int)Main.get_long_prop( Preferences.Y_POS, y_pos, 40 );
+
+
         
-        userLevel = (int)Main.get_long_prop( Preferences.DEFAULT_USER, (long)UL_DUMMY );
+        userLevel = (int)Main.get_long_prop( Preferences.DEFAULT_USER, (long)UL_SYSADMIN );
         
         restart_gui();      
         

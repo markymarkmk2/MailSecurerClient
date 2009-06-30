@@ -8,54 +8,103 @@ package dimm.home.ServerConnect;
 import dimm.home.hibernate.DiskArchive;
 import dimm.home.hibernate.Hotfolder;
 import dimm.home.hibernate.Mandant;
-import dimm.home.httpd.MWWebServiceService;
-import java.beans.XMLDecoder;
-import java.beans.XMLEncoder;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.List;
 import java.util.Set;
+import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
+import com.thoughtworks.xstream.XStream;
+import dimm.home.httpd.*;
+
 
 /**
  *
  * @author mw
  */
 
-
 public class SQLCall
 {
     MWWebServiceService service;
     dimm.home.httpd.MWWebService port;
     String name;
+    String server_url = "http://192.168.1.145:8050/1234";
     
     public SQLCall()
     {
         System.setProperty("javax.net.ssl.trustStore", "jxws.ts");
         System.setProperty("javax.net.ssl.trustStorePassword", "123456");
+    }
 
-        service = new MWWebServiceService();
-        port = service.getMWWebServicePort();
+    public boolean init()
+    {
+        try
+        {
+            // GET LOCAL WDSL FILE
+            URL wdsl_url = getClass().getResource("/dimm/home/WSDLServices/MWWebServiceService.wsdl");
+
+            // CREATE SERVICE AND PORT
+            service = new MWWebServiceService(wdsl_url, new QName("http://Httpd.home.dimm/", "MWWebServiceService"));
+            port = service.getMWWebServicePort();
+
+            // SET NEW ENDPOINTADRESS
+            BindingProvider bp= (BindingProvider)port;
+            bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, server_url );
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            // TODO
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean delete( Object o )
     {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            XMLEncoder enc = new XMLEncoder(bos);
-            enc.writeObject(o);
-            enc.close();
+        String xml = encode( o );
 
             //todo: errcode text 
         try
         {
-            String ret = port.delete(bos.toString("UTF-8"));
+            String ret = port.delete(xml);
 
             int idx = ret.indexOf(':');
             int retcode = Integer.parseInt(ret.substring(0, idx));
             if (retcode == 0)
                 return true;
         }
-        catch (UnsupportedEncodingException unsupportedEncodingException)
+        catch (Exception unsupportedEncodingException)
+        {
+        }
+        return false;
+
+    }
+    
+    private String encode( Object o )
+    {
+        XStream xstream = new XStream();
+        String xml = xstream.toXML(o);
+        return xml;
+    }
+
+    public boolean save( Object o )
+    {
+        
+        String xml = encode( o );
+
+
+            //todo: errcode text
+        try
+        {
+            String ret = port.update(xml);
+
+            int idx = ret.indexOf(':');
+            int retcode = Integer.parseInt(ret.substring(0, idx));
+            if (retcode == 0)
+                return true;
+        }
+        catch (Exception unsupportedEncodingException)
         {
         }
         return false;
@@ -64,7 +113,7 @@ public class SQLCall
 
     public boolean call_qry(String qry, SQLResult<?> result)
     {
-        ByteArrayInputStream bis = null;
+        String xml = null;
 
         result.setQry(qry);
         
@@ -74,17 +123,19 @@ public class SQLCall
         try
         {
             ret = port.getQuery(qry);
+
             int idx = ret.indexOf(':');
             int retcode = Integer.parseInt(ret.substring(0, idx));
             result.setErrCode(retcode);
             if (retcode == 0)
-                bis = new ByteArrayInputStream(ret.substring(idx + 2).getBytes("UTF-8"));
+                xml = ret.substring(idx + 2);
             else
                 result.setErrText(ret.substring(idx + 2));
 
         }
         catch (Exception ex)
         {
+            ex.printStackTrace();
             result.setEx(ex);
             return false;
         }
@@ -96,14 +147,15 @@ public class SQLCall
         {
             if (result.getErrCode() == 0)
             {
-                XMLDecoder dec = new XMLDecoder(bis);
-                List l = (List) dec.readObject();
+                XStream xstream = new XStream();
+                List l = (List)xstream.fromXML(xml);
 
                 result.setResultList(l);
             }
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             result.setEx(e);
             return false;
         }
@@ -153,28 +205,28 @@ public class SQLCall
             return txt;
 
         txt = txt.replaceAll("&amp;", "&");
-        txt = txt.replaceAll("&auml;", "ä");
-        txt = txt.replaceAll("&ouml;", "ö");
-        txt = txt.replaceAll("&uuml;", "ü");
-        txt = txt.replaceAll("&Auml;", "Ä");
-        txt = txt.replaceAll("&Ouml;", "Ö");
-        txt = txt.replaceAll("&Uuml;", "Ü");
+        txt = txt.replaceAll("&auml;", "Ã¤");
+        txt = txt.replaceAll("&ouml;", "Ã¶");
+        txt = txt.replaceAll("&uuml;", "Ã¼");
+        txt = txt.replaceAll("&Auml;", "Ã„");
+        txt = txt.replaceAll("&Ouml;", "Ã–");
+        txt = txt.replaceAll("&Uuml;", "Ãœ");
         txt = txt.replaceAll("&quot;", "\"");
         txt = txt.replaceAll("&lt;", "<");
         txt = txt.replaceAll("&gt;", ">");
-        txt = txt.replaceAll("&ccedil;", "ç");
-        txt = txt.replaceAll("&eacute;", "é");
-        txt = txt.replaceAll("&egrave;", "è");
-        txt = txt.replaceAll("&aacute;", "á");
-        txt = txt.replaceAll("&agrave;", "à");
-        txt = txt.replaceAll("&ugrave;", "ù");
-        txt = txt.replaceAll("&Egrave;", "È");
-        txt = txt.replaceAll("&Agrave;", "À");
-        txt = txt.replaceAll("&acute;", "´");
-        txt = txt.replaceAll("&szlig;", "ß");
-        txt = txt.replaceAll("&euml;", "ë");
-        txt = txt.replaceAll("&atilde;", "ã" );
-        txt = txt.replaceAll("&aring;", "å" );
+        txt = txt.replaceAll("&ccedil;", "c");
+        txt = txt.replaceAll("&eacute;", "Ã©");
+        txt = txt.replaceAll("&egrave;", "Ã¨");
+        txt = txt.replaceAll("&aacute;", "Ã¡");
+        txt = txt.replaceAll("&agrave;", "Ã ");
+        txt = txt.replaceAll("&ugrave;", "Ã¹");
+        txt = txt.replaceAll("&Egrave;", "Ãˆ");
+        txt = txt.replaceAll("&Agrave;", "Ã€");
+        txt = txt.replaceAll("&acute;", "Ã¡");
+        txt = txt.replaceAll("&szlig;", "ÃŸ");
+        txt = txt.replaceAll("&euml;", "e");
+        txt = txt.replaceAll("&atilde;", "a" );
+        txt = txt.replaceAll("&aring;", "a" );
 
 
         return txt;

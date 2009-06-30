@@ -1,7 +1,7 @@
 /*
  * TitlePanel.java
  *
- * Created on 11. März 2008, 18:00
+ * Created on 11. Maerz 2008, 18:00
  *
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.

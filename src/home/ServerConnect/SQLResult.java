@@ -214,7 +214,7 @@ public class SQLResult<T> extends ArrayList<T>
         return 0;
     }
     
-    public boolean getBoolean( int index, String  col_name )
+    public boolean getBooleanValue( int index, String  col_name )
     {
         String ret = getRawString( index, col_name );
         if (ret == null || ret.length() == 0)

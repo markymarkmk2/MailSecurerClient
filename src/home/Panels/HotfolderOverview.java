@@ -1,10 +1,12 @@
 /*
  * NewJDialog.java
  *
- * Created on 20. März 2008, 22:44
+ * Created on 20. Mï¿½rz 2008, 22:44
  */
-package dimm.home.Models;
+package dimm.home.Panels;
 
+import dimm.home.Models.OverviewModel;
+import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossPanel;
 import dimm.home.Rendering.GlossTable;
@@ -30,17 +32,18 @@ class HotfolderTableModel extends OverviewModel
     public static final String ID = "Id";
     public static final String PATH = "Path";
     public static final String EMAIL = "Usermailadress";
-    
+
+
     public HotfolderTableModel(UserMain _main, HotfolderOverview dlg)
     {
         super( _main, dlg );
-        
-        String[] _col_names = {ID,UserMain.getString(PATH), UserMain.getString(EMAIL), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
+
+        String[] _col_names = {ID,UserMain.getString(PATH), UserMain.getString(EMAIL), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("LÃ¶schen")};
         Class[] _col_classes = {String.class,  String.class,  String.class,  Boolean.class, JButton.class, JButton.class};
-        set_columns( _col_names, _col_classes ); 
-            
+        set_columns( _col_names, _col_classes );
+
     }
-    
+
     @Override
     public String get_qry(long mandanten_id)
     {
@@ -48,14 +51,14 @@ class HotfolderTableModel extends OverviewModel
         return qry;
     }
 
-  
+
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex)
     {
         if (sqlResult == null)
             return null;
-        
+
         switch (columnIndex)
         {
             case 0:
@@ -73,20 +76,20 @@ class HotfolderTableModel extends OverviewModel
     }
     @Override
     public int getColumnCount()
-    {   
-         
+    {
+
         // EDIT IST 2.LAST ROW!!!!
         if (UserMain.self.getUserLevel() < UserMain.UL_ADMIN)
             return col_names.length - 2;
-        
+
         // DELETE IST LAST ROW!!!!
         if (UserMain.self.getUserLevel() < UserMain.UL_MULTIADMIN)
             return col_names.length - 1;
-        
+
         return col_names.length;
     }
 
-    
+
 }
 /**
  *
@@ -95,67 +98,68 @@ class HotfolderTableModel extends OverviewModel
 public class HotfolderOverview extends SQLDialog implements PropertyChangeListener
 {
 
-    UserMain main;    
+    UserMain main;
     GlossTable table;
     GlossPanel pg_painter;
-    
-    
-        
-  
+
+    public static final int HF_DISABLED =   0x01;
+
+
+
     /** Creates new form NewJDialog */
     public HotfolderOverview(UserMain parent, boolean modal)
     {
         super(parent, modal);
         initComponents();
-        
+
         main = parent;
 
         TitlePanel titlePanel = new TitlePanel(this);
         PN_TITLE.add(titlePanel);
         titlePanel.installListeners();
-        
+
         model = new HotfolderTableModel(main, this);
         table = new GlossTable();
-        
+
         table.setModel(model);
         table.addMouseListener(this);
 
-        // REGISTER TABLE TO SCROLLPANEL 
+        // REGISTER TABLE TO SCROLLPANEL
         table.embed_to_scrollpanel( SCP_TABLE );
-        
+
         if (UserMain.self.getUserLevel() < UserMain.UL_MULTIADMIN)
             this.BT_NEW.setVisible(false);
-        
+
         pack();
-          
-        create_sql_worker();                      
+
+        create_sql_worker();
     }
-     
+
     HotfolderTableModel get_hf_model()
     {
         return (HotfolderTableModel) model;
     }
-    
+
 
     @Override
     public void set_tabel_row_height()
     {
-        packRows( table, table.getRowMargin() );               
+        packRows( table, table.getRowMargin() );
         table.repaint();
     }
-    
+
     @Override
     public void set_table_header()
     {
         TableColumnModel cm = table.getTableHeader().getColumnModel();
         cm.getColumn(0).setMinWidth(40);
-        cm.getColumn(0).setMaxWidth(40);        
+        cm.getColumn(0).setMaxWidth(40);
         cm.getColumn(1).setPreferredWidth(150);
-        
+
         model.set_table_header(cm);
     }
-    
-   
+
+
     @Override
     public void gather_sql_result()
     {
@@ -175,15 +179,15 @@ public class HotfolderOverview extends SQLDialog implements PropertyChangeListen
             model.setSqlResult(null);
 
     }
-    
-    
+
+
 
     @Override
     public void setSize(Dimension d)
     {
         pg_painter.setSize(d);
         set_tabel_row_height();
-        super.setSize(d);        
+        super.setSize(d);
     }
     @Override
     public void mouseClicked(MouseEvent e)
@@ -191,44 +195,46 @@ public class HotfolderOverview extends SQLDialog implements PropertyChangeListen
         Component c = table.getComponentAt(e.getPoint());
         int row = table.rowAtPoint(e.getPoint());
         int col = table.columnAtPoint(e.getPoint());
-        
+
         if (col == model.get_edit_column())
         {
-      /*      EditBoxUser pnl = new EditBoxUser( row, this );
+            EditHotfolder pnl = new EditHotfolder( row, this );
             GenericGlossyDlg dlg = new GenericGlossyDlg( null, true, pnl );
 
             pnl.addPropertyChangeListener("REBUILD", this);
-                        
+
             dlg.set_next_location(this);
-            dlg.setVisible(true );                */
+            dlg.setVisible(true );                
         }
+        
         if (col == model.get_del_column())
         {
+
             SQLCall sql = UserMain.get_sqc();
-            
-            // GET BSTREAMLIST FOR THIS STATIONS
+            Hotfolder hf = (Hotfolder)model.getSqlResult().getObject(row);
 
-            String path = model.getSqlResult().getString(row, "Path");
-            long id = model.getSqlResult().getLong(row, "Id");
 
-            if (UserMain.errm_ok_cancel(UserMain.getString("Wollen_Sie_wirklich_diesen_Eintrag_loeschen") + ": <" + path + "> ?"))
+            if (UserMain.errm_ok_cancel(UserMain.getString("Wollen_Sie_wirklich_diesen_Eintrag_loeschen") + ": <" + hf.getPath() + "> ?"))
             {
-                sql.sql_call( "delete from vb_user where vbu_id=" + id);
-                sql.sql_call( "delete from vbu_link where vbul_vbu_id=" + id);
-                        
+                boolean ret = sql.delete(hf);
+                if (!ret)
+                {
+                    UserMain.errm_ok( "Delete failed" );
+                }
+    
                 propertyChange( new PropertyChangeEvent(this, "REBUILD", null, null ) );
             }
         }
         //System.out.println("Row " + row + "Col " + col);
     }
 
-  
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
      * always regenerated by the Form Editor.
      */
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
@@ -334,21 +340,21 @@ public class HotfolderOverview extends SQLDialog implements PropertyChangeListen
         getContentPane().add(PN_MAIN);
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>
 
-    private void BT_NEWActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BT_NEWActionPerformed
+    private void BT_NEWActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        
-                new_hotfolder();
-         
-}//GEN-LAST:event_BT_NEWActionPerformed
 
-    private void BT_QUITActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BT_QUITActionPerformed
+                new_hotfolder();
+
+}
+
+    private void BT_QUITActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         this.setVisible(false);
-    }//GEN-LAST:event_BT_QUITActionPerformed
+    }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration - do not modify
     private javax.swing.JButton BT_NEW;
     private javax.swing.JButton BT_QUIT;
     private javax.swing.JPanel PN_BUTTONS;
@@ -356,31 +362,31 @@ public class HotfolderOverview extends SQLDialog implements PropertyChangeListen
     private javax.swing.JPanel PN_TABLE;
     private javax.swing.JPanel PN_TITLE;
     private javax.swing.JScrollPane SCP_TABLE;
-    // End of variables declaration//GEN-END:variables
+    // End of variables declaration
 
 
     public void new_hotfolder()
     {
-    /*    EditBoxUser pnl = new EditBoxUser( -1, this );
+        EditHotfolder pnl = new EditHotfolder( -1, this );
         pnl.addPropertyChangeListener("REBUILD", this);
-         
+
         GenericGlossyDlg dlg = new GenericGlossyDlg( null, true, pnl );
         if (dlg.isVisible())
             dlg.set_next_location(this);
-        else 
+        else
             dlg.setLocationRelativeTo(null);
-         
-        dlg.setVisible( true ); */
+
+        dlg.setVisible( true ); 
     }
-    
-    
+
+
     @Override
     public void propertyChange(PropertyChangeEvent evt)
     {
-        table.tableChanged(new TableModelEvent(table.getModel()) );        
+        table.tableChanged(new TableModelEvent(table.getModel()) );
         gather_sql_result();
         set_tabel_row_height();
-        
+
         this.repaint();
     }
 }

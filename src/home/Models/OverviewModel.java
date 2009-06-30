@@ -27,7 +27,7 @@ public abstract class OverviewModel extends AbstractTableModel
     protected String[] col_names = null;
     protected Class[] col_classes = null;
 
-    SQLResult sqlResult;
+    protected SQLResult sqlResult;
     
 
     public OverviewModel(UserMain _main, SQLDialog dlg)

@@ -503,10 +503,10 @@ public class VKeyboard extends JXPanel
     
     void create_full_buttons()
     {
-        register_button( new VKButton(0,1, "^", "°") );
+        register_button( new VKButton(0,1, "^", "Â°") );
         register_button( new VKButton(1,1, "1", "!") );
         register_button( new VKButton(2,1, "2", "\""));
-        register_button( new VKButton(3,1, "3", "§") );
+        register_button( new VKButton(3,1, "3", "Â§") );
         register_button( new VKButton(4,1, "4", "$") );
         register_button( new VKButton(5,1, "5", "%") );
         register_button( new VKButton(6,1, "6", "&") );
@@ -514,8 +514,8 @@ public class VKeyboard extends JXPanel
         register_button( new VKButton(8,1, "8", "(") );
         register_button( new VKButton(9,1, "9", ")") );
         register_button( new VKButton(10,1, "0", "=") );
-        register_button( new VKButton(11,1, "ß", "?") );
-        register_button( new VKButton(12,1, "´", "`") );
+        register_button( new VKButton(11,1, "ÃŸ", "?") );
+        register_button( new VKButton(12,1, "Â´", "`") );
         register_button( new VKButton(13,1, "BACKSPACE", ""), 80 );
         
         
@@ -530,7 +530,7 @@ public class VKeyboard extends JXPanel
         register_button( new VKButton(8,2, "i", "I") );
         register_button( new VKButton(9,2, "o", "O") );
         register_button( new VKButton(10,2, "p", "P") );
-        register_button( new VKButton(11,2, "ü", "Ü") );
+        register_button( new VKButton(11,2, "Ã¼", "Ãœ") );
         register_button( new VKButton(12,2, "+", "*", "", "~") );
 
         VKButton bt = new VKButton(13,2, "RETURN", "");
@@ -548,8 +548,8 @@ public class VKeyboard extends JXPanel
         register_button( new VKButton(7,3, "j", "J") );
         register_button( new VKButton(8,3, "k", "K") );
         register_button( new VKButton(9,3, "l", "L") );
-        register_button( new VKButton(10,3, "ö", "Ö") );
-        register_button( new VKButton(11,3, "ä", "Ä") );
+        register_button( new VKButton(10,3, "Ã¶", "Ã–") );
+        register_button( new VKButton(11,3, "Ã¤", "Ã„") );
         register_button( new VKButton(12,3, "#", "'") );
         
         

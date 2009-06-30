@@ -1,7 +1,7 @@
 /*
  * NewJDialog.java
  *
- * Created on 20. März 2008, 22:44
+ * Created on 20. Mrz 2008, 22:44
  */
 package dimm.home.Rendering;
 
