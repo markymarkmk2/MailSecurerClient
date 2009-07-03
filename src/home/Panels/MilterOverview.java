@@ -11,7 +11,7 @@ import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossPanel;
 import dimm.home.Rendering.GlossTable;
 import dimm.home.Rendering.TitlePanel;
-import dimm.home.Rendering.SQLDialog;
+import dimm.home.Rendering.SQLOverviewDialog;
 import dimm.home.ServerConnect.SQLCall;
 import dimm.home.UserMain;
 import java.beans.PropertyChangeEvent;
@@ -105,7 +105,7 @@ class MilterTableModel extends OverviewModel
  *
  * @author  mw
  */
-public class MilterOverview extends SQLDialog implements PropertyChangeListener
+public class MilterOverview extends SQLOverviewDialog implements PropertyChangeListener
 {
 
     UserMain main;

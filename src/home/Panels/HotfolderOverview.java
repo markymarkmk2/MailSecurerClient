@@ -11,7 +11,7 @@ import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossPanel;
 import dimm.home.Rendering.GlossTable;
 import dimm.home.Rendering.TitlePanel;
-import dimm.home.Rendering.SQLDialog;
+import dimm.home.Rendering.SQLOverviewDialog;
 import dimm.home.ServerConnect.SQLCall;
 import dimm.home.UserMain;
 import java.beans.PropertyChangeEvent;
@@ -32,16 +32,13 @@ import dimm.home.ServerConnect.StatementID;
 
 class HotfolderTableModel extends OverviewModel
 {
-    public static final String ID = "Id";
-    public static final String PATH = "Path";
-    public static final String EMAIL = "Usermailadress";
 
 
     public HotfolderTableModel(UserMain _main, HotfolderOverview dlg)
     {
         super( _main, dlg );
 
-        String[] _col_names = {ID,UserMain.getString(PATH), UserMain.getString(EMAIL), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
+        String[] _col_names = {"ID",UserMain.getString("Path"), UserMain.getString("EMail"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
         Class[] _col_classes = {String.class,  String.class,  String.class,  Boolean.class, JButton.class, JButton.class};
         set_columns( _col_names, _col_classes );
 
@@ -105,7 +102,7 @@ class HotfolderTableModel extends OverviewModel
  *
  * @author  mw
  */
-public class HotfolderOverview extends SQLDialog implements PropertyChangeListener
+public class HotfolderOverview extends SQLOverviewDialog implements PropertyChangeListener
 {
 
     UserMain main;

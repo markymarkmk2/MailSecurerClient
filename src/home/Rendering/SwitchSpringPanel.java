@@ -83,7 +83,7 @@ public abstract class SwitchSpringPanel extends SwitchPanel
         return tt;
     }
     
-    public TimingTargetAdapter make_spring_button_dlg( final SQLDialog dlg, final Point pos, final int dx, final int dy, final String title )
+    public TimingTargetAdapter make_spring_button_dlg( final SQLOverviewDialog dlg, final Point pos, final int dx, final int dy, final String title )
     {
         TimingTargetAdapter tt = new TimingTargetAdapter()
         {
@@ -114,7 +114,7 @@ public abstract class SwitchSpringPanel extends SwitchPanel
         return make_spring_button_dlg( pnl, pos, -1, -1, title );
     }
     
-    public TimingTargetAdapter make_spring_button_dlg( final SQLDialog dlg, final Point pos, final String title )
+    public TimingTargetAdapter make_spring_button_dlg( final SQLOverviewDialog dlg, final Point pos, final String title )
     {
         return make_spring_button_dlg( dlg, pos, -1, -1, title );
     }

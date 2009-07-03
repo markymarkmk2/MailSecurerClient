@@ -5,7 +5,7 @@
 
 package dimm.home.Models;
 
-import dimm.home.Rendering.SQLDialog;
+import dimm.home.Rendering.SQLOverviewDialog;
 import dimm.home.UserMain;
 import java.awt.Insets;
 import javax.swing.ImageIcon;
@@ -28,9 +28,11 @@ public abstract class OverviewModel extends AbstractTableModel
     protected Class[] col_classes = null;
 
     protected SQLResult sqlResult;
+
+    static final boolean first_col_visible = true;
     
 
-    public OverviewModel(UserMain _main, SQLDialog dlg)
+    public OverviewModel(UserMain _main, SQLOverviewDialog dlg)
     {
         main = _main;
         
@@ -40,7 +42,7 @@ public abstract class OverviewModel extends AbstractTableModel
         
     }
     
-    public JButton create_table_button(String rsrc, SQLDialog dlg)
+    public JButton create_table_button(String rsrc, SQLOverviewDialog dlg)
     {
         ImageIcon icn = new ImageIcon(this.getClass().getResource(rsrc));
         JButton bt = new JButton(icn);
@@ -129,6 +131,12 @@ public abstract class OverviewModel extends AbstractTableModel
     // SETS THE WIDTH OF THE LAST TWO ICON-COLUMNS
     public void set_table_header( TableColumnModel cm )
     {
+        if (!first_col_visible)
+        {
+            cm.getColumn( 0 ).setMinWidth(00);
+            cm.getColumn( 0 ).setMaxWidth(00);
+            cm.getColumn( 0 ).setPreferredWidth(00);
+        }
         if (getColumnCount() > get_edit_column())
         {
             cm.getColumn( get_edit_column() ).setMinWidth(60);
