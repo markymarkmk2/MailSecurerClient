@@ -8,11 +8,9 @@ package dimm.home;
 
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossErrDialog;
-import dimm.home.Rendering.GlossPanel;
 import dimm.home.Rendering.NavigationHeader;
 import dimm.home.Rendering.SpringGlassPane;
 import dimm.home.Rendering.TitlePanel;
-import dimm.home.ServerConnect.SQLCall;
 import java.awt.BorderLayout;
 
 import java.awt.Color;
@@ -28,6 +26,8 @@ import javax.swing.SwingUtilities;
 import org.jdesktop.fuse.InjectedResource;
 import org.jdesktop.fuse.ResourceInjector;
 import  sun.audio.*;    //import the sun.audio package
+
+import dimm.home.ServerConnect.SQLConnect;
 
 
 
@@ -111,7 +111,7 @@ public class UserMain extends javax.swing.JFrame
     private VKeyboard vkb;
     boolean use_mallorca_proxy;
 
-    private static SQLCall sqc;
+    private static SQLConnect sqc;
 
 
     public static String get_version_str()
@@ -130,6 +130,7 @@ public class UserMain extends javax.swing.JFrame
     {
         return userLevel;
     }
+
 
     public long get_firmen_id()
     {
@@ -212,7 +213,7 @@ public class UserMain extends javax.swing.JFrame
             Locale.setDefault(l);
         }
         
-        WANT_DB_CHANGE_TXT = getString("Wollen_Sie_die_ge�nderten_Daten_speichern?");        
+        WANT_DB_CHANGE_TXT = getString("Wollen_Sie_die_geänderten_Daten_speichern?");
     }
     public void show_vkeyboard( UserMain frame, JComponent comp, boolean b)
     {
@@ -263,8 +264,6 @@ public class UserMain extends javax.swing.JFrame
         
         initComponents();
 
-        sqc = new SQLCall();
-        sqc.init();
 
                   
         vkb = new VKeyboard();
@@ -287,7 +286,7 @@ public class UserMain extends javax.swing.JFrame
         restart_gui();      
         
     }
-    public static SQLCall get_sqc()
+    public static SQLConnect sqc()
     {
         return sqc;
     }
@@ -382,11 +381,14 @@ public class UserMain extends javax.swing.JFrame
         PN_MAIN.add(navPanel.get_panel_switcher(), BorderLayout.CENTER);
 
         switch_to_search();
-        
-        
+
+        sqc = new SQLConnect();
+        sqc.init_structs();
+
         this.repaint();
         
     }
+
 
     public boolean is_touchscreen()
     {

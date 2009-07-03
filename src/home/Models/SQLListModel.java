@@ -5,11 +5,10 @@
 
 package dimm.home.Models;
 
-import dimm.home.ServerConnect.SQLCall;
-import dimm.home.ServerConnect.SQLResult;
 import dimm.home.UserMain;
 import java.util.ArrayList;
 import javax.swing.AbstractListModel;
+import dimm.general.SQL.*;
 
 /**
  *
@@ -46,12 +45,12 @@ public class SQLListModel extends AbstractListModel
         if (search_array != null)
             return search_array.size();
                     
-        return res.size();
+        return res.getRows();
     }
     public String get_raw_list_elem( int index)
     {
          if (search_array != null)
-            return SQLCall.html_to_native( search_array.get(index) );
+            return SQLResult.html_to_native( search_array.get(index) );
 
         String ret = res.getRawString(index, txt_col_name);
 
@@ -63,7 +62,7 @@ public class SQLListModel extends AbstractListModel
         if (ret == null)
             return null;
 
-        return SQLCall.html_to_native(ret);
+        return SQLResult.html_to_native(ret);
     }
 
     @Override
@@ -114,10 +113,10 @@ public class SQLListModel extends AbstractListModel
         {
             search_array = new ArrayList<String>();
             
-            for (int i = 0; i < res.size(); i++)
+            for (int i = 0; i < res.getRows(); i++)
             {
                  String txt = res.getRawString(i, txt_col_name) ;
-                 String conv = SQLCall.html_to_native( txt.toLowerCase() );
+                 String conv = SQLResult.html_to_native( txt.toLowerCase() );
                  if (conv.indexOf(search_text ) != -1)
                      search_array.add(txt);                     
             }            

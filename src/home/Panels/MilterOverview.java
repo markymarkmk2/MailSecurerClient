@@ -30,14 +30,14 @@ import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.StatementID;
 
 
-class HotfolderTableModel extends OverviewModel
+class MilterTableModel extends OverviewModel
 {
     public static final String ID = "Id";
     public static final String PATH = "Path";
     public static final String EMAIL = "Usermailadress";
 
 
-    public HotfolderTableModel(UserMain _main, HotfolderOverview dlg)
+    public MilterTableModel(UserMain _main, MilterOverview dlg)
     {
         super( _main, dlg );
 
@@ -50,7 +50,7 @@ class HotfolderTableModel extends OverviewModel
     @Override
     public String get_qry(long mandanten_id)
     {
-        String qry = "select * from Hotfolder where mid='" + mandanten_id + "' order by path";
+        String qry = "select * from milter where mid='" + mandanten_id + "' order by id";
         return qry;
     }
 
@@ -62,17 +62,17 @@ class HotfolderTableModel extends OverviewModel
         if (sqlResult == null)
             return null;
 
-        Hotfolder hf = new Hotfolder();
-        hf = (Hotfolder)sqlResult.get(rowIndex);
+        Milter milter = new Milter();
+        milter = (Milter)sqlResult.get(rowIndex);
 
         switch (columnIndex)
         {
             case 0:
-                return hf.getId(); // ID
+                return milter.getId(); // ID
             case 1:
-                return hf.getPath(); // NAME
+                return "=";//milter.getPath(); // NAME
             case 2:
-                return hf.getUsermailadress(); // LOGINNAME
+                return "L";//milter.getUsermailadress(); // LOGINNAME
             case 3:
                 int flags = sqlResult.getInt(rowIndex, "Flags");
                 return new Boolean((flags & 0x01) == 0x01); // DISABLED
@@ -94,9 +94,9 @@ class HotfolderTableModel extends OverviewModel
 
         return col_names.length;
     }
-    public Hotfolder get_object( int index )
+    public Milter get_object( int index )
     {
-        return (Hotfolder) sqlResult.get(index);
+        return (Milter) sqlResult.get(index);
     }
 
 
@@ -105,7 +105,7 @@ class HotfolderTableModel extends OverviewModel
  *
  * @author  mw
  */
-public class HotfolderOverview extends SQLDialog implements PropertyChangeListener
+public class MilterOverview extends SQLDialog implements PropertyChangeListener
 {
 
     UserMain main;
@@ -117,7 +117,7 @@ public class HotfolderOverview extends SQLDialog implements PropertyChangeListen
 
 
     /** Creates new form NewJDialog */
-    public HotfolderOverview(UserMain parent, boolean modal)
+    public MilterOverview(UserMain parent, boolean modal)
     {
         super(parent, modal);
         initComponents();
@@ -128,7 +128,7 @@ public class HotfolderOverview extends SQLDialog implements PropertyChangeListen
         PN_TITLE.add(titlePanel);
         titlePanel.installListeners();
 
-        model = new HotfolderTableModel(main, this);
+        model = new MilterTableModel(main, this);
         table = new GlossTable();
 
         table.setModel(model);
@@ -145,9 +145,9 @@ public class HotfolderOverview extends SQLDialog implements PropertyChangeListen
         create_sql_worker();
     }
 
-    HotfolderTableModel get_object_model()
+    MilterTableModel get_object_model()
     {
-        return (HotfolderTableModel) model;
+        return (MilterTableModel) model;
     }
 
 
@@ -188,7 +188,7 @@ public class HotfolderOverview extends SQLDialog implements PropertyChangeListen
         ResultSetID rid = sql.executeQuery(sid, qry);
         SQLArrayResult resa = sql.get_sql_array_result(rid);
 
-        SQLResult<Hotfolder>  res = new SQLResult<Hotfolder>(resa, new Hotfolder().getClass());
+        SQLResult<Milter>  res = new SQLResult<Milter>(resa, new Milter().getClass());
 
         model.setSqlResult(res);
         table.tableChanged(new TableModelEvent(table.getModel()) );
@@ -218,7 +218,7 @@ public class HotfolderOverview extends SQLDialog implements PropertyChangeListen
 
         if (col == model.get_edit_column())
         {
-            EditHotfolder pnl = new EditHotfolder( row, this );
+            EditMilter pnl = new EditMilter( row, this );
             GenericGlossyDlg dlg = new GenericGlossyDlg( null, true, pnl );
 
             pnl.addPropertyChangeListener("REBUILD", this);
@@ -308,7 +308,7 @@ public class HotfolderOverview extends SQLDialog implements PropertyChangeListen
         PN_BUTTONS.setOpaque(false);
 
         BT_NEW.setForeground(new java.awt.Color(204, 204, 204));
-        BT_NEW.setText(UserMain.Txt("Neuen_Hotfolder_hinzufuegen")); // NOI18N
+        BT_NEW.setText(UserMain.Txt("Neuen_Milter_hinzufuegen")); // NOI18N
         BT_NEW.setActionCommand("        ");
         BT_NEW.setBorder(null);
         BT_NEW.setContentAreaFilled(false);
@@ -365,7 +365,7 @@ public class HotfolderOverview extends SQLDialog implements PropertyChangeListen
     private void BT_NEWActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
 
-                new_hotfolder();
+                new_Milter();
 
 }
 
@@ -385,9 +385,9 @@ public class HotfolderOverview extends SQLDialog implements PropertyChangeListen
     // End of variables declaration
 
 
-    public void new_hotfolder()
+    public void new_Milter()
     {
-        EditHotfolder pnl = new EditHotfolder( -1, this );
+        EditMilter pnl = new EditMilter( -1, this );
         pnl.addPropertyChangeListener("REBUILD", this);
 
         GenericGlossyDlg dlg = new GenericGlossyDlg( null, true, pnl );

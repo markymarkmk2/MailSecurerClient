@@ -6,13 +6,13 @@
 package dimm.home.Models;
 
 import dimm.home.Rendering.SQLDialog;
-import dimm.home.ServerConnect.SQLResult;
 import dimm.home.UserMain;
 import java.awt.Insets;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
+import dimm.general.SQL.*;
 
 /**
  *
@@ -77,7 +77,7 @@ public abstract class OverviewModel extends AbstractTableModel
     public int getRowCount()
     {
         if (sqlResult != null)
-            return sqlResult.size();
+            return sqlResult.getRows();
         
         return 0;
     }
@@ -123,7 +123,7 @@ public abstract class OverviewModel extends AbstractTableModel
     public boolean is_new(int row)
     {
         // THESE ARE THE CONDITIONS FOR THE DECISION "NEW RECORD"
-        return (getSqlResult() == null || getSqlResult().size() <= row || row == -1);
+        return (getSqlResult() == null || getSqlResult().getRows() <= row || row == -1);
     }
     
     // SETS THE WIDTH OF THE LAST TWO ICON-COLUMNS

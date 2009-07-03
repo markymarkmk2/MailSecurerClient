@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 import javax.swing.JButton;
 import dimm.general.SQL.*;
 import dimm.general.hibernate.DiskArchive;
-import dimm.general.hibernate.Hotfolder;
+import dimm.general.hibernate.Milter;
 import dimm.home.Models.DiskArchiveComboModel;
 import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.StatementID;
@@ -23,27 +23,28 @@ import dimm.home.Utilities.Validator;
 
 
 
+
 /**
  
  @author  Administrator
  */
-public class EditHotfolder extends GlossDialogPanel
+public class EditMilter extends GlossDialogPanel
 {
     int row;
-    HotfolderOverview vbox_overview;
-    HotfolderTableModel model;
-    Hotfolder object;
+    MilterOverview object_overview;
+    MilterTableModel model;
+    Milter object;
     DiskArchiveComboModel dacm;
     String object_name;
     
     
     /** Creates new form EditChannelPanel */
-    public EditHotfolder(int _row, HotfolderOverview _overview)
+    public EditMilter(int _row, MilterOverview _overview)
     {
         initComponents();     
         
-        vbox_overview = _overview;
-        model = vbox_overview.get_object_model();
+        object_overview = _overview;
+        model = object_overview.get_object_model();
         CB_VAULT.removeAllItems();
         CB_MAILACCOUNT.removeAllItems();
 
@@ -59,19 +60,19 @@ public class EditHotfolder extends GlossDialogPanel
             object = model.get_object(row);
 
 
-            TXT_PATH.setText(object.getPath());
+/*            TXT_PATH.setText(object.getPath());
             CB_MAILACCOUNT.addItem( object.getUsermailadress() );
             BT_DISABLED.setSelected( object_is_disabled() );
-
+*/
             int da_id = model.getSqlResult().getInt( row, "da_id");
             dacm.set_act_id(da_id);
             
         }
         else
         {
-            object = new Hotfolder();
+            object = new Milter();
         }
-
+        
         object_name = object.getClass().getSimpleName();
 
         CB_VAULT.setModel(dacm);
@@ -318,7 +319,7 @@ public class EditHotfolder extends GlossDialogPanel
         }
         catch (NumberFormatException numberFormatException)
         {
-            Logger.getLogger("").log(Level.SEVERE, "Invalid flag for " + object_name + " " + numberFormatException );
+            Logger.getLogger("").log(Level.SEVERE, "Invalid flag for " + object_name+ " " + numberFormatException );
         }
 
         return flags;
@@ -342,16 +343,16 @@ public class EditHotfolder extends GlossDialogPanel
 
         flags = get_object_flags();
 
-        return ((flags & HotfolderOverview.HF_DISABLED) == HotfolderOverview.HF_DISABLED);
+        return ((flags & MilterOverview.HF_DISABLED) == MilterOverview.HF_DISABLED);
     }
     void set_object_disabled( boolean f)
     {
         int flags = get_object_flags();
 
         if (f)
-            set_object_flag( HotfolderOverview.HF_DISABLED );
+            set_object_flag( MilterOverview.HF_DISABLED );
         else
-            clr_object_flag( HotfolderOverview.HF_DISABLED );
+            clr_object_flag( MilterOverview.HF_DISABLED );
     }
 
     
@@ -360,7 +361,7 @@ public class EditHotfolder extends GlossDialogPanel
         if (model.is_new(row))
             return true;
 
-        String path = object.getPath();
+        String path = model.getSqlResult().getString( row, "path");
         if (path != null && TXT_PATH.getText().compareTo(path ) != 0)
             return true;   
         
@@ -435,9 +436,10 @@ public class EditHotfolder extends GlossDialogPanel
         boolean de = BT_DISABLED.isSelected();
 //        int da_id = dacm.get_act_id();
 
-        object.setPath(path);
+/*        object.setPath(path);
         object.setUsermailadress(email);
         set_object_disabled( de );
+ * */
         object.setDiskArchive( dacm.get_selected_da());
 
         SQLCall sql = UserMain.sqc().get_sqc();
@@ -445,10 +447,7 @@ public class EditHotfolder extends GlossDialogPanel
         StatementID sta = sql.createStatement(cid);
 
         boolean okay = sql.Update( sta, object );
-        /*
-        String cmd = "update hotfolder set path='" + name + "', usermailadress='" + email + "', da_id='" + da_id + "',flags='" + object.getFlags() + "' where id='" + object.getId() + "'";
-        int rows = sql.executeUpdate(sta, cmd );
-        */
+
         sql.close(sta);
         sql.close(cid);
         
@@ -467,10 +466,11 @@ public class EditHotfolder extends GlossDialogPanel
         String email = get_email_cb_txt();
         boolean de = BT_DISABLED.isSelected();
 
-        object.setPath(path);
+/*        object.setPath(path);
 
         object.setUsermailadress(email);
         set_object_disabled( de );
+ * */
         object.setDiskArchive( dacm.get_selected_da());
         object.setMandant(UserMain.sqc().get_act_mandant());
 
@@ -480,9 +480,6 @@ public class EditHotfolder extends GlossDialogPanel
 
         boolean okay = sql.Insert( sta, object );
         
-/*        String cmd = "insert into hotfolder (path=,usermailadress,email, flags) values ('" +  name + "','" + email + "','" + da_id + "','" + object.getFlags() + "'";
-        boolean okay = sql.execute(sta, cmd );
-*/
         sql.close(sta);
         sql.close(cid);
 

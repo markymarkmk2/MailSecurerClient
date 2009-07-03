@@ -6,11 +6,11 @@
 package dimm.home;
 
 import dimm.home.Panels.HotfolderOverview;
+import dimm.home.Panels.MilterOverview;
 import dimm.home.Rendering.BackgroundTitle;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
 import dimm.home.Rendering.TimingTargetAdapter;
-import dimm.home.Utilities.SwingWorker;
 import java.awt.Dimension;
 import java.awt.Point;
 import org.jdesktop.fuse.ResourceInjector;
@@ -201,6 +201,9 @@ public class PanelVerwaltung extends SwitchSpringPanel
         // TODO add your handling code here:
         if (check_selected())
         {
+            TimingTargetAdapter tt = make_spring_button_dlg( new MilterOverview(main, true),  get_dlg_pos(),  UserMain.getString("Milter") );
+            spring_button_action(evt.getSource(), tt);
+            /*
             UserMain.self.show_busy("Kuckst Du hier, machst Du stop wenn Du willst", true);
 
             SwingWorker sw = new SwingWorker()
@@ -247,7 +250,8 @@ public class PanelVerwaltung extends SwitchSpringPanel
 
             sw.start();
          }
-        
+             * */
+        }
 
 }//GEN-LAST:event_BT_FILETRANSFERActionPerformed
 
