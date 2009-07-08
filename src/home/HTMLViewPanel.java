@@ -180,7 +180,7 @@ public class HTMLViewPanel extends GlossDialogPanel {
             }
         });
 
-        BT_ABORT.setText("null");
+        BT_ABORT.setText(UserMain.Txt("Abbruch")); // NOI18N
         BT_ABORT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_ABORTActionPerformed(evt);

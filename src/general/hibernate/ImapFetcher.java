@@ -1,5 +1,5 @@
 package dimm.general.hibernate;
-// Generated 07.07.2009 13:49:31 by Hibernate Tools 3.2.1.GA
+// Generated 08.07.2009 13:28:14 by Hibernate Tools 3.2.1.GA
 
 
 
@@ -17,6 +17,7 @@ public class ImapFetcher  implements java.io.Serializable {
      private String username;
      private String password;
      private String flags;
+     private String type;
 
     public ImapFetcher() {
     }
@@ -28,7 +29,7 @@ public class ImapFetcher  implements java.io.Serializable {
         this.mandant = mandant;
         this.server = server;
     }
-    public ImapFetcher(int id, DiskArchive diskArchive, Mandant mandant, String server, Integer port, String username, String password, String flags) {
+    public ImapFetcher(int id, DiskArchive diskArchive, Mandant mandant, String server, Integer port, String username, String password, String flags, String type) {
        this.id = id;
        this.diskArchive = diskArchive;
        this.mandant = mandant;
@@ -37,6 +38,7 @@ public class ImapFetcher  implements java.io.Serializable {
        this.username = username;
        this.password = password;
        this.flags = flags;
+       this.type = type;
     }
    
     public int getId() {
@@ -94,6 +96,13 @@ public class ImapFetcher  implements java.io.Serializable {
     
     public void setFlags(String flags) {
         this.flags = flags;
+    }
+    public String getType() {
+        return this.type;
+    }
+    
+    public void setType(String type) {
+        this.type = type;
     }
 
 

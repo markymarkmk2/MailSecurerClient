@@ -134,6 +134,12 @@ LobbyPanel.shadowColor={Common.shadowColor}
 LobbyPanel.shadowDirection={Common.shadowDirection}
 LobbyPanel.shadowDistance=3
 
+################################################################################
+# GHOSTBUTTON
+################################################################################
+
+GhostButton.pathFont=Arial-PLAIN-41
+GhostButton.subFont=Arial-PLAIN-9
 
 
 ################################################################################
@@ -158,6 +164,9 @@ GlossButton.pathShadowDistance=1
 GlossButton.path_y_offset=4
 
 
+GlossErrDialog.radarFG=30,130,220
+GlossErrDialog.radarPing=30,190,255
+
 ################################################################################
 # USERMAIN 
 ################################################################################
@@ -166,8 +175,10 @@ UserMain.iconPicture=/dimm/home/resources/img_black/logo_mini.png
 UserMain.gradientTop=0,0,0
 UserMain.gradientBottom=128,128,128
 
+
 PanelVerwaltung.panel=/dimm/home/resources/img_black/panel.png
 PanelVerwaltung.panel_alpha=0.95
+
 
 ################################################################################
 # BACKGROUND TITLE

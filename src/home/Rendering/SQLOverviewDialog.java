@@ -6,6 +6,9 @@
 package dimm.home.Rendering;
 
 import dimm.home.Models.OverviewModel;
+import dimm.home.ServerConnect.ConnectionID;
+import dimm.home.ServerConnect.SQLCall;
+import dimm.home.ServerConnect.StatementID;
 import dimm.home.UserMain;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -155,10 +158,77 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
             
         }
     }           
-    
+
+    protected abstract GlossDialogPanel get_edit_panel( int row);
       
     
-    abstract public void mouseClicked(MouseEvent e);
+
+    public void mouseClicked(MouseEvent e)
+    {
+        Component c = table.getComponentAt(e.getPoint());
+        int row = table.rowAtPoint(e.getPoint());
+        int col = table.columnAtPoint(e.getPoint());
+
+        if (col == model.get_edit_column())
+        {
+            GlossDialogPanel pnl = get_edit_panel( row );
+            GenericGlossyDlg dlg = new GenericGlossyDlg( null, true, pnl );
+
+            pnl.addPropertyChangeListener("REBUILD", this);
+
+            dlg.set_next_location(this);
+            dlg.setVisible(true );
+        }
+
+        if (col == model.get_del_column())
+        {
+
+            String path = model.getSqlResult().getString( row, "path") ;
+
+
+            if (UserMain.errm_ok_cancel(UserMain.getString("Wollen_Sie_wirklich_diesen_Eintrag_loeschen") + ": <" + path + "> ?"))
+            {
+                Object object = model.getSqlResult().get(row);
+
+                SQLCall sql = UserMain.sqc().get_sqc();
+                ConnectionID cid = sql.open();
+                StatementID sta = sql.createStatement(cid);
+
+                boolean okay = sql.Delete( sta, object );
+
+                sql.close(sta);
+                sql.close(cid);
+
+                if (!okay)
+                {
+                    String object_name = object.getClass().getSimpleName();
+                    UserMain.errm_ok(this, UserMain.Txt("Cannot_delete") + " " + object_name + " " + sql.get_last_err());
+                }
+
+
+                propertyChange( new PropertyChangeEvent(this, "REBUILD", null, null ) );
+            }
+        }
+        //System.out.println("Row " + row + "Col " + col);
+    }
+
+    public void new_edit_dlg()
+    {
+
+        GlossDialogPanel pnl = get_edit_panel( -1 );
+        pnl.addPropertyChangeListener("REBUILD", this);
+
+        GenericGlossyDlg dlg = new GenericGlossyDlg( null, true, pnl );
+        if (dlg.isVisible())
+            dlg.set_next_location(this);
+        else
+            dlg.setLocationRelativeTo(null);
+
+        dlg.setVisible( true );
+    }
+
+
+
 
     public void mousePressed(MouseEvent e)
     {

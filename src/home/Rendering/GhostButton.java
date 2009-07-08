@@ -11,6 +11,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -21,8 +22,11 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import javax.swing.JButton;
+import javax.swing.SwingUtilities;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
+import org.jdesktop.fuse.InjectedResource;
+import org.jdesktop.fuse.ResourceInjector;
 
 /**
  *
@@ -34,11 +38,32 @@ public class GhostButton extends JButton
     private BufferedImage haloPicture;
     private float ghostValue = 0.0f;
 
+    @InjectedResource
+    private Font pathFont;
+    @InjectedResource
+    private Font subFont;
+
+
+    int text_width;
+
     public GhostButton()
     {
+        ResourceInjector.get().inject(this);
+
+        setFont(pathFont);
+
         haloPicture = UserMain.ghaloPicture;
         addMouseListener(new HiglightHandler());
     }
+
+    @Override
+    public void setText(String text)
+    {
+        FontMetrics metrics = getFontMetrics(getFont());
+        text_width = SwingUtilities.computeStringWidth(metrics, text);
+        super.setText(text);
+    }
+
 
     @Override
     protected void paintComponent( Graphics g )
@@ -67,8 +92,9 @@ public class GhostButton extends JButton
                 ic_width = this.getIcon().getIconWidth();
             
             Insets insets = getInsets();
-            
-            int x = ic_width + insets.left + (getWidth() - ic_width) / 2 - halo_width / 2;
+            int x = ic_width + insets.left + text_width / 2 - halo_width / 2;
+
+//            int x = ic_width + insets.left + (getWidth() - ic_width) / 2 - halo_width / 2;
             g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                     RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
@@ -145,6 +171,28 @@ public class GhostButton extends JButton
 
             g2.setColor(Main.ui.get_nice_white());
             layout.draw(g2, x, y);
+
+
+            String sub_text = getToolTipText();
+            if (sub_text != null && sub_text.length() > 0)
+            {
+                TextLayout sub_layout = new TextLayout(sub_text,
+                                               subFont, context);
+
+                y += sub_layout.getAscent() + 6.0f;
+                shadowOffsetX = 1;
+                shadowOffsetY = 1;
+                g2.setColor(shadowColor);
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+                                                           shadowOpacity));
+                sub_layout.draw(g2, shadowOffsetX + x, shadowOffsetY + y);
+                g2.setComposite(composite);
+
+                g2.setColor(Main.ui.get_nice_white());
+                sub_layout.draw(g2, x, y);
+
+            }
+
         /*    y += layout.getDescent();
 
             String description = "asbg";

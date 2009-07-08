@@ -134,6 +134,13 @@ LobbyPanel.shadowColor={Common.shadowColor}
 LobbyPanel.shadowDirection={Common.shadowDirection}
 LobbyPanel.shadowDistance=3
 
+################################################################################
+# GHOSTBUTTON
+################################################################################
+
+GhostButton.pathFont=Arial-PLAIN-41
+GhostButton.subFont=Arial-PLAIN-9
+
 
 
 ################################################################################

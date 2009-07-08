@@ -99,14 +99,14 @@
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Pfad" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Pfad" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="TXT_PATH">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Neuer_Pfad" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Neuer_Pfad" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -117,14 +117,14 @@
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Mailkonto" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Mailkonto" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="BT_DISABLED">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Gesperrt" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Gesperrt" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
@@ -132,7 +132,7 @@
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Speicherziel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Speicherziel" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -213,7 +213,7 @@
         <Component class="javax.swing.JButton" name="BT_OK">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Okay" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Okay" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -226,7 +226,7 @@
         <Component class="javax.swing.JButton" name="BT_ABORT">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Abbruch" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Abbruch" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>

@@ -145,9 +145,9 @@ public class SQLCall
             }
             last_err_code = retcode;
         }
-        catch (NumberFormatException numberFormatException)
+        catch (Exception exc)
         {
-            last_ex = numberFormatException;
+            last_ex = exc;
         }
         return null;
     }
@@ -326,62 +326,38 @@ public class SQLCall
         return false;
     }
 
-    public static void test()
+
+
+    String  get_name_from_hibernate_class( String rec_name )
     {
-        /*     SQLCall sc = new SQLCall();
-        sc.init();
+        
+        StringBuffer sb = new StringBuffer();
 
-        ConnectionID c = sc.open("");
-        StatementID sta = sc.createStatement(c);
-
-        ResultSetID rs = sc.executeQuery(sta, "select * from mandant");
-
-        SQLArrayResult resarr = sc.get_sql_array_result(rs);
-        //        SQLResult result = new SQLResult();
-        SQLResult<Mandant> result = new SQLResult<Mandant>();
-        result.set_array( resarr );
-
-        for (int i = 0; i < resarr.getRows(); i++)
+        for (int i = 0; i < rec_name.length(); i++)
         {
-        System.out.println(resarr.getLong(i, "id") + ", " + resarr.getString(i, "name"));
-        Mandant m = (Mandant)result.get_object(i, new Mandant());
+            char ch = new Character( rec_name.charAt(i) );
 
-        System.out.println( m.getId() + ": " + m.getName() );
-
+            if (i == 0)
+            {
+                ch = Character.toLowerCase(ch);
+            }
+            else
+            {
+                if (Character.isUpperCase(ch))
+                {
+                    sb.append('_');
+                    ch = Character.toLowerCase(ch);
+                }
+            }
+            sb.append(ch);
         }
 
-        sc.close(rs);
-        sc.close(sta);
-        sc.close(c);
-         */
-        /*
-        if (sc.call_qry("from Mandant", srm))
-        {
-        for (int i = 0; i < srm.size(); i++)
-        {
-        Mandant m = srm.get(i);
-        Set<DiskArchive> ds = m.getDiskArchives();
-        Set<Hotfolder> hfs = m.getHotfolders();
 
-        if (sc.call_qry("from DiskArchive where mid=" + m.getId() , srd))
-        {
-        for (int j = 0; j < srd.size(); j++)
-        {
-        DiskArchive diskArchive = srd.get(j);
-        ds.add(diskArchive);
-        }
-        }
-        if (sc.call_qry("from Hotfolder where mid=" + m.getId() , srhf))
-        {
-        for (int j = 0; j < srd.size(); j++)
-        {
-        Hotfolder hf = srhf.get(j);
-        hfs.add(hf);
-        }
-        }
-        }
-        }
-         * */
+        return sb.toString();
+    }
+    String  get_name_from_hibernate_class( Object o )
+    {
+        return get_name_from_hibernate_class(  o.getClass().getSimpleName() );
     }
 
     public boolean Insert( StatementID sta, Object o )
@@ -390,7 +366,7 @@ public class SQLCall
 
         try
         {
-            String rec_name = o.getClass().getSimpleName().toLowerCase();
+            String rec_name = get_name_from_hibernate_class( o );
             Method getId = o.getClass().getDeclaredMethod("getId");
             Object r = getId.invoke(o);
             int id = ((Integer) r).intValue();
@@ -422,6 +398,7 @@ public class SQLCall
                 {
                     continue;
                 }
+                String field_name = get_name_from_hibernate_class( method.getName().substring(3) );
 
                 if (ret_type.compareTo("java.lang.String") == 0)
                 {
@@ -432,11 +409,16 @@ public class SQLCall
                     }
                     field_idx++;
 
+                    Object str_obj = method.invoke(o);
+                    if (str_obj == null)
+                    {
+                        throw new Exception( "Object " + rec_name + " has not value for method " + meth_name );
+                    }
                     String val = method.invoke(o).toString();
                     val = encode(val);
 
                     vals += "'" + val + "'";
-                    fields += method.getName().substring(3).toLowerCase();
+                    fields += field_name;
                 }
                 else if (ret_type.compareTo("int") == 0)
                 {
@@ -448,7 +430,7 @@ public class SQLCall
                     field_idx++;
 
                     vals += "'" + ((Integer) method.invoke(o)).intValue() + "'";
-                    fields += method.getName().substring(3).toLowerCase();
+                    fields += field_name;
                 }
                 else if (ret_type.compareTo("long") == 0)
                 {
@@ -460,7 +442,7 @@ public class SQLCall
                     field_idx++;
 
                     vals += "'" + ((Long) method.invoke(o)).longValue() + "'";
-                    fields += method.getName().substring(3).toLowerCase();
+                    fields += field_name;
                 }
                 if (ret_type.contains(".DiskArchive"))
                 {
@@ -507,9 +489,11 @@ public class SQLCall
             }
             String ins_stmt = "insert into " + rec_name + " (" + fields + ") values (" + vals + ")";
 
-            ret = execute(sta, ins_stmt);
+            int rows = executeUpdate(sta, ins_stmt);
 
-            return ret;
+            return (rows == 1) ? true : false;
+
+            
         }
         catch (Exception ex)
         {
@@ -525,7 +509,7 @@ public class SQLCall
 
         try
         {
-            String rec_name = o.getClass().getSimpleName().toLowerCase();
+            String rec_name = get_name_from_hibernate_class( o );
             Method getId = o.getClass().getDeclaredMethod("getId");
             Object r = getId.invoke(o);
             int id = ((Integer) r).intValue();
@@ -555,6 +539,7 @@ public class SQLCall
                 {
                     continue;
                 }
+                String field_name = get_name_from_hibernate_class( method.getName().substring(3) );
 
                 if (ret_type.compareTo("java.lang.String") == 0)
                 {
@@ -566,7 +551,7 @@ public class SQLCall
                     String val = method.invoke(o).toString();
                     val = encode(val);
 
-                    upd_cmd += method.getName().substring(3).toLowerCase() + "='" + val + "'";
+                    upd_cmd += field_name + "='" + val + "'";
                 }
                 else if (ret_type.compareTo("int") == 0)
                 {
@@ -576,7 +561,7 @@ public class SQLCall
                     }
                     field_idx++;
 
-                    upd_cmd += method.getName().substring(3).toLowerCase() + "='" + ((Integer) method.invoke(o)).intValue() + "'";
+                    upd_cmd += field_name + "='" + ((Integer) method.invoke(o)).intValue() + "'";
                 }
                 else if (ret_type.compareTo("long") == 0)
                 {
@@ -586,7 +571,7 @@ public class SQLCall
                     }
                     field_idx++;
 
-                    upd_cmd += method.getName().substring(3).toLowerCase() + "='" + ((Long) method.invoke(o)).longValue() + "'";
+                    upd_cmd += field_name + "='" + ((Long) method.invoke(o)).longValue() + "'";
                 }
                 if (ret_type.contains(".DiskArchive"))
                 {
@@ -632,9 +617,9 @@ public class SQLCall
                     }
                 }
             }
-            String ins_stmt = "update " + rec_name + " set " + upd_cmd + " where id='" + id + "'";
+            String upd_stmt = "update " + rec_name + " set " + upd_cmd + " where id='" + id + "'";
 
-            int rows = executeUpdate(sta, ins_stmt);
+            int rows = executeUpdate(sta, upd_stmt);
 
             return (rows == 1) ? true : false;
         }
@@ -645,4 +630,34 @@ public class SQLCall
         }
         return false;
     }
+
+    public boolean Delete( StatementID sta, Object o )
+    {
+        boolean ret = false;
+
+        try
+        {
+            String rec_name = get_name_from_hibernate_class( o );
+            Method getId = o.getClass().getDeclaredMethod("getId");
+            Object r = getId.invoke(o);
+            int id = ((Integer) r).intValue();
+            if (id == 0)
+            {
+                return false;
+            }
+
+            String del_stmt = "delete from " + rec_name + " where id='" + id + "'";
+
+            int rows = executeUpdate(sta, del_stmt);
+
+            return (rows == 1) ? true : false;
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+            last_ex = ex;
+        }
+        return false;
+    }
+
 }

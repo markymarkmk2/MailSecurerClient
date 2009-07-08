@@ -96,21 +96,21 @@ public class GlossErrDialog extends javax.swing.JDialog
         {
             case MODE_ERROR:
             {
-                setTitle(java.util.ResourceBundle.getBundle("dimm/home/SR_Properties").getString("Fehler") );
+                setTitle(UserMain.getString("Fehler") );
                 this.LBX_ICON.setIcon( new ImageIcon(this.getClass().getResource("/dimm/home/images/errmok_error.png")));                
                 PN_ICON.add(LBX_ICON);
                 break;
             }
             case MODE_WARN:
             {
-                setTitle(java.util.ResourceBundle.getBundle("dimm/home/SR_Properties").getString("Achtung") );
+                setTitle(UserMain.getString("Achtung") );
                 this.LBX_ICON.setIcon( new ImageIcon(this.getClass().getResource("/dimm/home/images/achtung_medium.png")));                
                 PN_ICON.add(LBX_ICON);
                 break;
             }
             case MODE_INFO:
             {
-                setTitle(java.util.ResourceBundle.getBundle("dimm/home/SR_Properties").getString("Hinweis") );
+                setTitle(UserMain.getString("Hinweis") );
                 this.LBX_ICON.setIcon( new ImageIcon(this.getClass().getResource("/dimm/home/images/achtung_medium.png")));                
                 PN_ICON.add(LBX_ICON);
                 break;
@@ -137,7 +137,7 @@ public class GlossErrDialog extends javax.swing.JDialog
             }
             default:
             {
-                setTitle(java.util.ResourceBundle.getBundle("dimm/home/SR_Properties").getString("Achtung") );
+                setTitle(UserMain.getString("Achtung") );
                 this.LBX_ICON.setIcon( new ImageIcon(this.getClass().getResource("/dimm/home/images/achtung_medium.png")));                
                 PN_ICON.add(LBX_ICON);
                 break;

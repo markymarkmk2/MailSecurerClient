@@ -6,7 +6,6 @@
 package dimm.home.Panels;
 
 import dimm.home.Models.OverviewModel;
-import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossPanel;
 import dimm.home.Rendering.GlossTable;
@@ -14,15 +13,13 @@ import dimm.home.Rendering.TitlePanel;
 import dimm.home.Rendering.SQLOverviewDialog;
 import dimm.home.ServerConnect.SQLCall;
 import dimm.home.UserMain;
-import java.beans.PropertyChangeEvent;
-import java.awt.Component;
-import java.awt.event.MouseEvent;
 import javax.swing.JButton;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableColumnModel;
 
 import dimm.general.SQL.*;
 import dimm.general.hibernate.*;
+import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.StatementID;
@@ -35,8 +32,8 @@ class DiskSpaceTableModel extends OverviewModel
     {
         super( _main, _dlg );
 
-        String[] _col_names = {"Id",UserMain.getString("Name"), UserMain.getString("Status"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
-        Class[] _col_classes = {String.class,  String.class,  String.class,  Boolean.class, JButton.class, JButton.class};
+        String[] _col_names = {"Id",UserMain.getString("Name"), UserMain.getString("Capacity"), UserMain.getString("Status"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
+        Class[] _col_classes = {String.class,  String.class,  String.class,  String.class,  Boolean.class, JButton.class, JButton.class};
         set_columns( _col_names, _col_classes );
 
     }
@@ -79,8 +76,10 @@ class DiskSpaceTableModel extends OverviewModel
             case 1:
                 return ds.getPath();
             case 2:
-                return get_type_str( ds.getStatus());
+                return ds.getMaxCapacity();
             case 3:
+                return get_type_str( ds.getStatus());
+            case 4:
                 int flags = sqlResult.getInt(rowIndex, "Flags");
                 return new Boolean((flags & DiskSpaceOverview.DISABLED) == DiskSpaceOverview.DISABLED); // DISABLED
             default:
@@ -196,7 +195,9 @@ public class DiskSpaceOverview extends SQLOverviewDialog
         TableColumnModel cm = table.getTableHeader().getColumnModel();
         cm.getColumn(0).setMinWidth(40);
         cm.getColumn(0).setMaxWidth(40);
-        cm.getColumn(1).setPreferredWidth(150);
+        cm.getColumn(1).setPreferredWidth(100);
+        cm.getColumn(3).setPreferredWidth(60);
+        cm.getColumn(4).setPreferredWidth(40);
 
         model.set_table_header(cm);
     }
@@ -220,7 +221,7 @@ public class DiskSpaceOverview extends SQLOverviewDialog
         ResultSetID rid = sql.executeQuery(sid, qry);
         SQLArrayResult resa = sql.get_sql_array_result(rid);
 
-        SQLResult<DiskArchive>  res = new SQLResult<DiskArchive>(resa, new DiskArchive().getClass());
+        SQLResult<DiskSpace>  res = new SQLResult<DiskSpace>(resa, new DiskSpace().getClass());
 
         model.setSqlResult(res);
         table.tableChanged(new TableModelEvent(table.getModel()) );
@@ -234,44 +235,13 @@ public class DiskSpaceOverview extends SQLOverviewDialog
 
 
 
-    @Override
-    public void mouseClicked(MouseEvent e)
-    {
-        Component c = table.getComponentAt(e.getPoint());
-        int row = table.rowAtPoint(e.getPoint());
-        int col = table.columnAtPoint(e.getPoint());
-
-        if (col == model.get_edit_column())
-        {
-            EditDiskSpace pnl = new EditDiskSpace( da, row, this );
-            GenericGlossyDlg dlg = new GenericGlossyDlg( null, true, pnl );
-
-            pnl.addPropertyChangeListener("REBUILD", this);
-
-            dlg.set_next_location(this);
-            dlg.setVisible(true );                
-        }
-        
-        if (col == model.get_del_column())
-        {
-
-            SQLCall sql = UserMain.sqc().get_sqc();
-            String path = model.getSqlResult().getString( row, "path") ;
-
-
-            if (UserMain.errm_ok_cancel(UserMain.getString("Wollen_Sie_wirklich_diesen_Eintrag_loeschen") + ": <" + path + "> ?"))
-            {
-                //boolean ret = sql.delete(hf);
-              //  if (!ret)
-                {
-                    UserMain.errm_ok( "Delete failed" );
-                }
     
-                propertyChange( new PropertyChangeEvent(this, "REBUILD", null, null ) );
-            }
-        }
-        //System.out.println("Row " + row + "Col " + col);
+
+    protected GlossDialogPanel get_edit_panel( int row )
+    {
+        return new EditDiskSpace( da, row, this );
     }
+
 
 
     /** This method is called from within the constructor to
@@ -333,7 +303,7 @@ public class DiskSpaceOverview extends SQLOverviewDialog
         PN_BUTTONS.setOpaque(false);
 
         BT_NEW.setForeground(new java.awt.Color(204, 204, 204));
-        BT_NEW.setText(UserMain.Txt("Neues_DiskArchive_hinzufuegen")); // NOI18N
+        BT_NEW.setText(UserMain.Txt("Neuen_Diskspace_hinzufuegen")); // NOI18N
         BT_NEW.setActionCommand("        ");
         BT_NEW.setBorder(null);
         BT_NEW.setContentAreaFilled(false);
@@ -390,8 +360,7 @@ public class DiskSpaceOverview extends SQLOverviewDialog
     private void BT_NEWActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
 
-                new_DiskArchive();
-
+                new_edit_dlg();
 }
 
     private void BT_QUITActionPerformed(java.awt.event.ActionEvent evt) {
@@ -410,19 +379,7 @@ public class DiskSpaceOverview extends SQLOverviewDialog
     // End of variables declaration
 
 
-    public void new_DiskArchive()
-    {
-        EditDiskSpace pnl = new EditDiskSpace( da, -1, this );
-        pnl.addPropertyChangeListener("REBUILD", this);
-
-        GenericGlossyDlg dlg = new GenericGlossyDlg( null, true, pnl );
-        if (dlg.isVisible())
-            dlg.set_next_location(this);
-        else
-            dlg.setLocationRelativeTo(null);
-
-        dlg.setVisible( true ); 
-    }
+    
 
 
 }

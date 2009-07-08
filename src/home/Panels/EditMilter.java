@@ -15,27 +15,11 @@ import dimm.general.SQL.*;
 import dimm.general.hibernate.DiskArchive;
 import dimm.general.hibernate.Milter;
 import dimm.home.Models.DiskArchiveComboModel;
+import dimm.home.Utilities.Validator;
 
 
 
-class MilterTypeEntry
-{
-    String type;
-    String name;
 
-    MilterTypeEntry( String t, String n)
-    {
-        type = t;
-        name = n;
-    }
-
-    @Override
-    public String toString()
-    {
-        return name;
-    }
-
-}
 /**
  
  @author  Administrator
@@ -91,6 +75,12 @@ public class EditMilter extends GenericEditPanel
 
             int da_id = model.getSqlResult().getInt( row, "da_id");
             dacm.set_act_id(da_id);
+
+            TXT_SERVER1.setText( object.getInServer());
+            TXT_SERVER2.setText( object.getOutServer());
+            TXT_PORT1.setText( object.getInPort().toString());
+            TXT_PORT2.setText( object.getOutPort().toString());
+
             
         }
         else
@@ -141,9 +131,8 @@ public class EditMilter extends GenericEditPanel
         PN_ACTION.setDoubleBuffered(false);
         PN_ACTION.setOpaque(false);
 
-        jLabel1.setText(UserMain.Txt("Type")); // NOI18N
+        jLabel1.setText(UserMain.getString("Typ")); // NOI18N
 
-        TXT_SERVER1.setText(UserMain.Txt("Neuer_Pfad")); // NOI18N
         TXT_SERVER1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 TXT_SERVER1MouseClicked(evt);
@@ -155,20 +144,18 @@ public class EditMilter extends GenericEditPanel
             }
         });
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/SR_Properties"); // NOI18N
-        jLabel2.setText(bundle.getString("Server")); // NOI18N
+        jLabel2.setText(UserMain.getString("Server")); // NOI18N
 
-        BT_DISABLED.setText(bundle.getString("Gesperrt")); // NOI18N
+        BT_DISABLED.setText(UserMain.getString("Gesperrt")); // NOI18N
         BT_DISABLED.setOpaque(false);
 
-        jLabel3.setText(bundle.getString("Speicherziel")); // NOI18N
+        jLabel3.setText(UserMain.getString("Speicherziel")); // NOI18N
 
         CB_VAULT.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         CB_TYPE.setEditable(true);
         CB_TYPE.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        TXT_PORT1.setText(UserMain.Txt("Neuer_Pfad")); // NOI18N
         TXT_PORT1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 TXT_PORT1MouseClicked(evt);
@@ -180,11 +167,10 @@ public class EditMilter extends GenericEditPanel
             }
         });
 
-        jLabel4.setText(bundle.getString("Server")); // NOI18N
+        jLabel4.setText(UserMain.getString("Port")); // NOI18N
 
-        jLabel5.setText(bundle.getString("Server")); // NOI18N
+        jLabel5.setText(UserMain.getString("RemoteServer")); // NOI18N
 
-        TXT_SERVER2.setText(UserMain.Txt("Neuer_Pfad")); // NOI18N
         TXT_SERVER2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 TXT_SERVER2MouseClicked(evt);
@@ -196,7 +182,6 @@ public class EditMilter extends GenericEditPanel
             }
         });
 
-        TXT_PORT2.setText(UserMain.Txt("Neuer_Pfad")); // NOI18N
         TXT_PORT2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 TXT_PORT2MouseClicked(evt);
@@ -208,7 +193,7 @@ public class EditMilter extends GenericEditPanel
             }
         });
 
-        jLabel6.setText(bundle.getString("Server")); // NOI18N
+        jLabel6.setText(UserMain.getString("Port")); // NOI18N
 
         javax.swing.GroupLayout PN_ACTIONLayout = new javax.swing.GroupLayout(PN_ACTION);
         PN_ACTION.setLayout(PN_ACTIONLayout);
@@ -241,7 +226,7 @@ public class EditMilter extends GenericEditPanel
                         .addContainerGap())
                     .addGroup(PN_ACTIONLayout.createSequentialGroup()
                         .addComponent(jLabel5)
-                        .addGap(75, 75, 75)
+                        .addGap(38, 38, 38)
                         .addComponent(TXT_SERVER2, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
                         .addGap(56, 56, 56)
                         .addComponent(jLabel6)
@@ -289,14 +274,14 @@ public class EditMilter extends GenericEditPanel
         PN_BUTTONS.setDoubleBuffered(false);
         PN_BUTTONS.setOpaque(false);
 
-        BT_OK.setText(UserMain.Txt("Okay")); // NOI18N
+        BT_OK.setText(UserMain.getString("Okay")); // NOI18N
         BT_OK.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_OKActionPerformed(evt);
             }
         });
 
-        BT_ABORT.setText(UserMain.Txt("Abbruch")); // NOI18N
+        BT_ABORT.setText(UserMain.getString("Abbruch")); // NOI18N
         BT_ABORT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_ABORTActionPerformed(evt);
@@ -500,33 +485,33 @@ public class EditMilter extends GenericEditPanel
                         
     protected boolean is_plausible()
     {
-        if (TXT_SERVER1.getText().length() == 0 || TXT_SERVER1.getText().length() > 256)
+        if (!Validator.is_valid_name( TXT_SERVER1.getText(), 255))
         {
-            UserMain.errm_ok(UserMain.getString("Der_Pfad_ist_nicht_okay"));
+            UserMain.errm_ok(UserMain.getString("Der_Server_ist_nicht_okay"));
             return false;
         }
         if (TXT_SERVER2.isVisible())
         {
-            if (TXT_SERVER2.getText().length() == 0 || TXT_SERVER2.getText().length() > 256)
-            {
-                UserMain.errm_ok(UserMain.getString("Der_Pfad_ist_nicht_okay"));
-                return false;
-            }
-        }
-        try
+        if (!Validator.is_valid_name( TXT_SERVER1.getText(), 255))
         {
-            int port = Integer.parseInt( TXT_PORT1.getText() );
-            if (TXT_SERVER2.isVisible())
-            {
-                port = Integer.parseInt( TXT_PORT2.getText() );
-            }
+            UserMain.errm_ok(UserMain.getString("Der_Server_ist_nicht_okay"));
+            return false;
         }
-        catch (Exception exc)
+        }
+        if (!Validator.is_valid_port(TXT_PORT1.getText()))
         {
             UserMain.errm_ok(UserMain.getString("Port_ist_nicht_okay"));
             return false;
         }
-
+        if (TXT_SERVER2.isVisible())
+        {
+            if (!Validator.is_valid_port(TXT_PORT2.getText()))
+            {
+                UserMain.errm_ok(UserMain.getString("Port_ist_nicht_okay"));
+                return false;
+            }
+        }
+ 
         try
         {
             DiskArchive da = dacm.get_selected_da();

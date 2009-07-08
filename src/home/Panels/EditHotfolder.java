@@ -119,13 +119,12 @@ public class EditHotfolder extends GenericEditPanel
             }
         });
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/SR_Properties"); // NOI18N
-        jLabel2.setText(bundle.getString("Mailkonto")); // NOI18N
+        jLabel2.setText(UserMain.getString("Mailkonto")); // NOI18N
 
-        BT_DISABLED.setText(bundle.getString("Gesperrt")); // NOI18N
+        BT_DISABLED.setText(UserMain.getString("Gesperrt")); // NOI18N
         BT_DISABLED.setOpaque(false);
 
-        jLabel3.setText(bundle.getString("Speicherziel")); // NOI18N
+        jLabel3.setText(UserMain.getString("Speicherziel")); // NOI18N
 
         jLabel5.setText("(eMail)");
 
@@ -354,7 +353,7 @@ public class EditHotfolder extends GenericEditPanel
                         
     protected boolean is_plausible()
     {
-        if (TXT_PATH.getText().length() == 0 || TXT_PATH.getText().length() > 256)
+        if (!Validator.is_valid_path( TXT_PATH.getText(), 255))
         {
             UserMain.errm_ok(UserMain.getString("Der_Pfad_ist_nicht_okay"));
             return false;
@@ -363,7 +362,7 @@ public class EditHotfolder extends GenericEditPanel
         {
             String email = get_email_cb_txt();
 
-            if (!Validator.is_vaild_email(email))
+            if (!Validator.is_valid_email(email))
             {
                 UserMain.errm_ok(UserMain.getString("Email_ist_nicht_okay"));
                 return false;

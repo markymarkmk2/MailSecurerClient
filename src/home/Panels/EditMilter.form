@@ -69,7 +69,7 @@
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="75" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
                           <Component id="TXT_SERVER2" pref="142" max="32767" attributes="2"/>
                           <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
                           <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
@@ -119,16 +119,11 @@
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Type" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Typ" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="TXT_SERVER1">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Neuer_Pfad" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="TXT_SERVER1MouseClicked"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TXT_SERVER1ActionPerformed"/>
@@ -137,14 +132,14 @@
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Server" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Server" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="BT_DISABLED">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Gesperrt" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Gesperrt" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
@@ -152,7 +147,7 @@
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Speicherziel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Speicherziel" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -182,11 +177,6 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="TXT_PORT1">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Neuer_Pfad" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="TXT_PORT1MouseClicked"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TXT_PORT1ActionPerformed"/>
@@ -195,34 +185,24 @@
         <Component class="javax.swing.JLabel" name="jLabel4">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Server" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Port" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel5">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Server" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="RemoteServer" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="TXT_SERVER2">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Neuer_Pfad" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="TXT_SERVER2MouseClicked"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TXT_SERVER2ActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="TXT_PORT2">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Neuer_Pfad" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="TXT_PORT2MouseClicked"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TXT_PORT2ActionPerformed"/>
@@ -231,7 +211,7 @@
         <Component class="javax.swing.JLabel" name="jLabel6">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Server" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Port" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -277,7 +257,7 @@
         <Component class="javax.swing.JButton" name="BT_OK">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Okay" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Okay" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -290,7 +270,7 @@
         <Component class="javax.swing.JButton" name="BT_ABORT">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/SR_Properties.properties" key="Abbruch" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Abbruch" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>

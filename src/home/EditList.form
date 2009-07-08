@@ -53,8 +53,8 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="&lt;Verfuegbar&gt;">
-              <ResourceString PropertyName="titleX" bundle="" key="Verfuegbar" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            <TitledBorder title="Available">
+              <ResourceString PropertyName="titleX" bundle="dimm/home/MA_Properties.properties" key="Verfuegbar" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -181,8 +181,8 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="&lt;Ausgewaehlt&gt;">
-              <ResourceString PropertyName="titleX" bundle="" key="Ausgewaehlt" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            <TitledBorder title="Selected">
+              <ResourceString PropertyName="titleX" bundle="dimm/home/MA_Properties.properties" key="Ausgewaehlt" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -233,7 +233,7 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="BT_NEW" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="420" max="32767" attributes="0"/>
+                  <EmptySpace pref="482" max="32767" attributes="0"/>
                   <Component id="BT_ABORT" linkSize="5" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="BT_OK" linkSize="5" min="-2" max="-2" attributes="0"/>
@@ -259,7 +259,7 @@
         <Component class="javax.swing.JButton" name="BT_OK">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="" key="Okay" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Okay" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -269,7 +269,7 @@
         <Component class="javax.swing.JButton" name="BT_ABORT">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="" key="Abbruch" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Abbruch" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -279,7 +279,7 @@
         <Component class="javax.swing.JButton" name="BT_NEW">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="" key="Neu..." replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Neu..." replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>

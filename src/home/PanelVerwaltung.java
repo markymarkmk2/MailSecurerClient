@@ -7,7 +7,9 @@ package dimm.home;
 
 import dimm.home.Panels.DAOverview;
 import dimm.home.Panels.HotfolderOverview;
+import dimm.home.Panels.ImapFetcherOverview;
 import dimm.home.Panels.MilterOverview;
+import dimm.home.Panels.ProxyOverview;
 import dimm.home.Rendering.BackgroundTitle;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
@@ -89,10 +91,11 @@ public class PanelVerwaltung extends SwitchSpringPanel
     private void initComponents() {
 
         PN_BUTTONS = new javax.swing.JPanel();
-        BT_DISKARCHIVES = new GhostButton();
+        BT_IMAPFETCHER = new GhostButton();
         BT_HOTFOLDER = new GhostButton();
         BT_MILTER = new GhostButton();
         BT_PROXY = new GhostButton();
+        BT_DISKARCHIVES = new GhostButton();
         PN_HEADER = new javax.swing.JPanel();
 
         setOpaque(false);
@@ -100,10 +103,78 @@ public class PanelVerwaltung extends SwitchSpringPanel
         PN_BUTTONS.setOpaque(false);
         PN_BUTTONS.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        BT_IMAPFETCHER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_IMAPFETCHER.setForeground(new java.awt.Color(201, 201, 201));
+        BT_IMAPFETCHER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_einstellungen.png"))); // NOI18N
+        BT_IMAPFETCHER.setText(UserMain.Txt("IMAP-Connect")); // NOI18N
+        BT_IMAPFETCHER.setToolTipText("IMAP / Exchange server");
+        BT_IMAPFETCHER.setBorderPainted(false);
+        BT_IMAPFETCHER.setContentAreaFilled(false);
+        BT_IMAPFETCHER.setFocusPainted(false);
+        BT_IMAPFETCHER.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        BT_IMAPFETCHER.setMaximumSize(new java.awt.Dimension(101, 26));
+        BT_IMAPFETCHER.setMinimumSize(new java.awt.Dimension(101, 26));
+        BT_IMAPFETCHER.setPreferredSize(new java.awt.Dimension(101, 26));
+        BT_IMAPFETCHER.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_IMAPFETCHERActionPerformed(evt);
+            }
+        });
+        PN_BUTTONS.add(BT_IMAPFETCHER, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 350, 170, 50));
+
+        BT_HOTFOLDER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_HOTFOLDER.setForeground(new java.awt.Color(201, 201, 201));
+        BT_HOTFOLDER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/turntable_33x48.png"))); // NOI18N
+        BT_HOTFOLDER.setText(UserMain.Txt("Hotfolder")); // NOI18N
+        BT_HOTFOLDER.setToolTipText("File to mail archive");
+        BT_HOTFOLDER.setBorderPainted(false);
+        BT_HOTFOLDER.setContentAreaFilled(false);
+        BT_HOTFOLDER.setFocusPainted(false);
+        BT_HOTFOLDER.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        BT_HOTFOLDER.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_HOTFOLDERActionPerformed(evt);
+            }
+        });
+        PN_BUTTONS.add(BT_HOTFOLDER, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 130, 190, 50));
+
+        BT_MILTER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_MILTER.setForeground(new java.awt.Color(201, 201, 201));
+        BT_MILTER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_schedule.png"))); // NOI18N
+        BT_MILTER.setText(UserMain.Txt("Milter")); // NOI18N
+        BT_MILTER.setToolTipText("Postfix / Sendmail server");
+        BT_MILTER.setBorderPainted(false);
+        BT_MILTER.setContentAreaFilled(false);
+        BT_MILTER.setFocusPainted(false);
+        BT_MILTER.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        BT_MILTER.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_MILTERActionPerformed(evt);
+            }
+        });
+        PN_BUTTONS.add(BT_MILTER, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 130, 170, 50));
+
+        BT_PROXY.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_PROXY.setForeground(new java.awt.Color(201, 201, 201));
+        BT_PROXY.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
+        BT_PROXY.setText(UserMain.Txt("Mail_Proxy")); // NOI18N
+        BT_PROXY.setToolTipText("Proxy to SMTP / POP3");
+        BT_PROXY.setBorderPainted(false);
+        BT_PROXY.setContentAreaFilled(false);
+        BT_PROXY.setFocusPainted(false);
+        BT_PROXY.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        BT_PROXY.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_PROXYActionPerformed(evt);
+            }
+        });
+        PN_BUTTONS.add(BT_PROXY, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 130, 190, 50));
+
         BT_DISKARCHIVES.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_DISKARCHIVES.setForeground(new java.awt.Color(201, 201, 201));
         BT_DISKARCHIVES.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_einstellungen.png"))); // NOI18N
         BT_DISKARCHIVES.setText(UserMain.Txt("Archive")); // NOI18N
+        BT_DISKARCHIVES.setToolTipText("Storage for archived mails");
         BT_DISKARCHIVES.setBorderPainted(false);
         BT_DISKARCHIVES.setContentAreaFilled(false);
         BT_DISKARCHIVES.setFocusPainted(false);
@@ -116,52 +187,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
                 BT_DISKARCHIVESActionPerformed(evt);
             }
         });
-        PN_BUTTONS.add(BT_DISKARCHIVES, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, -1, 50));
-
-        BT_HOTFOLDER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        BT_HOTFOLDER.setForeground(new java.awt.Color(201, 201, 201));
-        BT_HOTFOLDER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/turntable_33x48.png"))); // NOI18N
-        BT_HOTFOLDER.setText(UserMain.Txt("Hotfolder")); // NOI18N
-        BT_HOTFOLDER.setBorderPainted(false);
-        BT_HOTFOLDER.setContentAreaFilled(false);
-        BT_HOTFOLDER.setFocusPainted(false);
-        BT_HOTFOLDER.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        BT_HOTFOLDER.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_HOTFOLDERActionPerformed(evt);
-            }
-        });
-        PN_BUTTONS.add(BT_HOTFOLDER, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 130, -1, 50));
-
-        BT_MILTER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        BT_MILTER.setForeground(new java.awt.Color(201, 201, 201));
-        BT_MILTER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_schedule.png"))); // NOI18N
-        BT_MILTER.setText(UserMain.Txt("Milter")); // NOI18N
-        BT_MILTER.setBorderPainted(false);
-        BT_MILTER.setContentAreaFilled(false);
-        BT_MILTER.setFocusPainted(false);
-        BT_MILTER.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        BT_MILTER.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_MILTERActionPerformed(evt);
-            }
-        });
-        PN_BUTTONS.add(BT_MILTER, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 130, -1, 50));
-
-        BT_PROXY.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        BT_PROXY.setForeground(new java.awt.Color(201, 201, 201));
-        BT_PROXY.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
-        BT_PROXY.setText(UserMain.Txt("Mail_Proxy")); // NOI18N
-        BT_PROXY.setBorderPainted(false);
-        BT_PROXY.setContentAreaFilled(false);
-        BT_PROXY.setFocusPainted(false);
-        BT_PROXY.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        BT_PROXY.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_PROXYActionPerformed(evt);
-            }
-        });
-        PN_BUTTONS.add(BT_PROXY, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 130, -1, 50));
+        PN_BUTTONS.add(BT_DISKARCHIVES, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, 160, 50));
 
         PN_HEADER.setOpaque(false);
         PN_HEADER.setLayout(new javax.swing.BoxLayout(PN_HEADER, javax.swing.BoxLayout.LINE_AXIS));
@@ -186,15 +212,15 @@ public class PanelVerwaltung extends SwitchSpringPanel
     }// </editor-fold>//GEN-END:initComponents
    
 
-    private void BT_DISKARCHIVESActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_DISKARCHIVESActionPerformed
-    {//GEN-HEADEREND:event_BT_DISKARCHIVESActionPerformed
+    private void BT_IMAPFETCHERActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_IMAPFETCHERActionPerformed
+    {//GEN-HEADEREND:event_BT_IMAPFETCHERActionPerformed
         // TODO add your handling code here:
         if (check_selected())
         {
-            TimingTargetAdapter tt = make_spring_button_dlg( new DAOverview(main, true),  get_dlg_pos(),  UserMain.getString("Archive") );
+            TimingTargetAdapter tt = make_spring_button_dlg( new ImapFetcherOverview(main, true),  get_dlg_pos(),  UserMain.getString("IMAP-Connect") );
             spring_button_action(evt.getSource(), tt);
         }        
-}//GEN-LAST:event_BT_DISKARCHIVESActionPerformed
+}//GEN-LAST:event_BT_IMAPFETCHERActionPerformed
 
     
     private void BT_HOTFOLDERActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_HOTFOLDERActionPerformed
@@ -277,9 +303,21 @@ public class PanelVerwaltung extends SwitchSpringPanel
         
 }//GEN-LAST:event_BT_PROXYActionPerformed
 
+    private void BT_DISKARCHIVESActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_DISKARCHIVESActionPerformed
+    {//GEN-HEADEREND:event_BT_DISKARCHIVESActionPerformed
+        // TODO add your handling code here:
+       if (check_selected())
+        {
+            TimingTargetAdapter tt = make_spring_button_dlg( new DAOverview(main, true),  get_dlg_pos(),  UserMain.getString("Archive") );
+            spring_button_action(evt.getSource(), tt);
+        }
+
+    }//GEN-LAST:event_BT_DISKARCHIVESActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_DISKARCHIVES;
     private javax.swing.JButton BT_HOTFOLDER;
+    private javax.swing.JButton BT_IMAPFETCHER;
     private javax.swing.JButton BT_MILTER;
     private javax.swing.JButton BT_PROXY;
     private javax.swing.JPanel PN_BUTTONS;

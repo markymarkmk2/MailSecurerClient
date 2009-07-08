@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.swing.JButton;
 import dimm.general.hibernate.DiskArchive;
 import dimm.general.hibernate.DiskSpace;
+import dimm.home.Utilities.Validator;
 
 
 
@@ -37,6 +38,11 @@ public class EditDiskSpace extends GenericEditPanel
         model = object_overview.get_object_model();
         
         CB_STATUS.removeAllItems();
+        CB_CAP_DIM.removeAllItems();
+
+        CB_CAP_DIM.addItem("MB");
+        CB_CAP_DIM.addItem("GB");
+        CB_CAP_DIM.addItem("TB");
 
         // FILL COMBOBOX TYPE
         for (int i = 0; i < object_overview.get_ds_entry_list().length; i++)
@@ -61,18 +67,61 @@ public class EditDiskSpace extends GenericEditPanel
                     break;
                 }
             }
+            TXT_PATH.setText(object.getPath());
+            TXT_CAP.setText( get_capa_val( object.getMaxCapacity() ));
+            CB_CAP_DIM.setSelectedItem(get_capa_dim( object.getMaxCapacity() ) );
         }
         else
         {
             object = new DiskSpace();
             CB_STATUS.setSelectedIndex(0);
             object.setDiskArchive(da);
+            TXT_PATH.setText(UserMain.Txt("Neuer_Pfad") );
+            TXT_CAP.setText( "100");
+            CB_CAP_DIM.setSelectedItem("GB" );
         }
-        
-        
-
     }
-    
+
+    String get_capa_dim( String cap)
+    {
+        int idx = cap.indexOf(' ');
+        if (idx > 0)
+        {
+            return cap.substring(idx + 1);
+        }
+        return "";
+    }
+
+    String get_capa_val( String cap)
+    {
+        if (cap == null)
+            return "_";
+        if ( cap.compareTo("-") == 0)
+            return "-";
+
+        String val;
+        int idx = cap.indexOf(' ');
+        if (idx > 0)
+        {
+            val = cap.substring(0, idx);
+        }
+        else
+            val = cap;
+        try
+        {
+            long l = Long.parseLong(val);
+            return val;
+        }
+        catch (Exception exc)
+        {
+            return "invalid";
+        }
+    }
+
+    String build_capa_str( String val, String dim )
+    {
+        return val + " " + dim;
+    }
     
    
     /** This method is called from within the constructor to
@@ -116,17 +165,16 @@ public class EditDiskSpace extends GenericEditPanel
             }
         });
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/SR_Properties"); // NOI18N
-        jLabel2.setText(bundle.getString("Path")); // NOI18N
+        jLabel2.setText(UserMain.getString("Path")); // NOI18N
 
-        BT_DISABLED.setText(bundle.getString("Gesperrt")); // NOI18N
+        BT_DISABLED.setText(UserMain.getString("Gesperrt")); // NOI18N
         BT_DISABLED.setOpaque(false);
 
         CB_CAP_DIM.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "MB", "GB", "TB" }));
 
-        jLabel3.setText(bundle.getString("Max_capacity")); // NOI18N
+        jLabel3.setText(UserMain.getString("Kapazität")); // NOI18N
 
-        jLabel4.setText(bundle.getString("Status")); // NOI18N
+        jLabel4.setText(UserMain.getString("Status")); // NOI18N
 
         CB_STATUS.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -324,10 +372,6 @@ public class EditDiskSpace extends GenericEditPanel
         if (path != null && TXT_PATH.getText().compareTo(path ) != 0)
             return true;
 
-        String cap_txt = object.getMaxCapacity();
-        if (cap_txt != null && TXT_PATH.getText().compareTo(path ) != 0)
-            return true;
-
 
 
         if (BT_DISABLED.isSelected() != object_is_disabled())
@@ -337,13 +381,17 @@ public class EditDiskSpace extends GenericEditPanel
         String status = object.getStatus();
         if (dsty.type.compareTo(status) != 0)
             return true;
+
+        String cap_txt = build_capa_str( TXT_CAP.getText(), CB_CAP_DIM.getSelectedItem().toString());
+        if (object.getMaxCapacity().compareTo(cap_txt) != 0)
+            return true;
         
         return false;
     }
                         
     protected boolean is_plausible()
     {
-        if (TXT_PATH.getText().length() == 0 || TXT_PATH.getText().length() > 255)
+        if (!Validator.is_valid_path( TXT_PATH.getText(), 255))
         {
             UserMain.errm_ok(UserMain.getString("Der_Pfad_ist_nicht_okay"));
             return false;
@@ -351,6 +399,16 @@ public class EditDiskSpace extends GenericEditPanel
         if (CB_STATUS.getSelectedItem() == null)
         {
             UserMain.errm_ok(UserMain.getString("Der_DiskSpace_Status_ist_nicht_okay"));
+            return false;
+        }
+        try
+        {
+            long l = Long.parseLong(TXT_CAP.getText());
+            String d = CB_CAP_DIM.getSelectedItem().toString();
+        }
+        catch (Exception exc)
+        {
+            UserMain.errm_ok(UserMain.getString("Die_Kapazität_ist_nicht_okay"));
             return false;
         }
                 
@@ -366,6 +424,7 @@ public class EditDiskSpace extends GenericEditPanel
 
         object.setPath(path);
         object.setStatus(dsty.type);
+        object.setMaxCapacity( build_capa_str( TXT_CAP.getText(), CB_CAP_DIM.getSelectedItem().toString()) );
         set_object_disabled( de );
     }
 

@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import dimm.general.hibernate.DiskArchive;
-import dimm.home.Rendering.GenericGlossyDlg;
+import dimm.home.Utilities.Validator;
 
 
 
@@ -69,6 +69,8 @@ public class EditDA extends GenericEditPanel
         {
             object = model.get_object(row);
 
+            TXT_NAME.setText(object.getName());
+
 //            String type = object.getType();
             // HACK, WE ONLY HAVE ON TYPE
             String type = object_overview.get_da_entry_list()[0].type;
@@ -87,6 +89,7 @@ public class EditDA extends GenericEditPanel
             object = new DiskArchive();
             CB_TYPE.setSelectedIndex(0);
             object.setMandant(UserMain.sqc().get_act_mandant());
+            TXT_NAME.setText( UserMain.Txt("New_Diskarchive"));
         }
         
         object_name = object.getClass().getSimpleName();
@@ -122,9 +125,9 @@ public class EditDA extends GenericEditPanel
         PN_ACTION.setDoubleBuffered(false);
         PN_ACTION.setOpaque(false);
 
-        jLabel1.setText(UserMain.Txt("Type")); // NOI18N
+        jLabel1.setText(UserMain.getString("Type")); // NOI18N
 
-        TXT_NAME.setText(UserMain.Txt("Neuer_Pfad")); // NOI18N
+        TXT_NAME.setText(UserMain.getString("Neuer_Name")); // NOI18N
         TXT_NAME.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 TXT_NAMEMouseClicked(evt);
@@ -136,16 +139,15 @@ public class EditDA extends GenericEditPanel
             }
         });
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/SR_Properties"); // NOI18N
-        jLabel2.setText(bundle.getString("Name")); // NOI18N
+        jLabel2.setText(UserMain.getString("Name")); // NOI18N
 
-        BT_DISABLED.setText(bundle.getString("Gesperrt")); // NOI18N
+        BT_DISABLED.setText(UserMain.getString("Gesperrt")); // NOI18N
         BT_DISABLED.setOpaque(false);
 
         CB_TYPE.setEditable(true);
         CB_TYPE.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        BT_DISKSPACES.setText(UserMain.Txt("DiskSpace")); // NOI18N
+        BT_DISKSPACES.setText(UserMain.Txt("DiskSpaces")); // NOI18N
         BT_DISKSPACES.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_DISKSPACESActionPerformed(evt);
@@ -201,14 +203,14 @@ public class EditDA extends GenericEditPanel
         PN_BUTTONS.setDoubleBuffered(false);
         PN_BUTTONS.setOpaque(false);
 
-        BT_OK.setText(UserMain.Txt("Okay")); // NOI18N
+        BT_OK.setText(UserMain.getString("Okay")); // NOI18N
         BT_OK.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_OKActionPerformed(evt);
             }
         });
 
-        BT_ABORT.setText(UserMain.Txt("Abbruch")); // NOI18N
+        BT_ABORT.setText(UserMain.getString("Abbruch")); // NOI18N
         BT_ABORT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_ABORTActionPerformed(evt);
@@ -363,9 +365,9 @@ public class EditDA extends GenericEditPanel
                         
     protected boolean is_plausible()
     {
-        if (TXT_NAME.getText().length() == 0 || TXT_NAME.getText().length() > 255)
+        if (!Validator.is_valid_name( TXT_NAME.getText(), 255))
         {
-            UserMain.errm_ok(UserMain.getString("Der_Name_ist_nicht_okay"));
+            UserMain.errm_ok(UserMain.getString("Der_Pfad_ist_nicht_okay"));
             return false;
         }
                 

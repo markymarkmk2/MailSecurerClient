@@ -6,7 +6,6 @@
 package dimm.home.Panels;
 
 import dimm.home.Models.OverviewModel;
-import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossPanel;
 import dimm.home.Rendering.GlossTable;
@@ -14,9 +13,6 @@ import dimm.home.Rendering.TitlePanel;
 import dimm.home.Rendering.SQLOverviewDialog;
 import dimm.home.ServerConnect.SQLCall;
 import dimm.home.UserMain;
-import java.beans.PropertyChangeEvent;
-import java.awt.Component;
-import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JButton;
 import javax.swing.event.TableModelEvent;
@@ -24,6 +20,7 @@ import javax.swing.table.TableColumnModel;
 
 import dimm.general.SQL.*;
 import dimm.general.hibernate.*;
+import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.StatementID;
@@ -46,7 +43,7 @@ class HotfolderTableModel extends OverviewModel
     @Override
     public String get_qry(long mandanten_id)
     {
-        String qry = "select * from Hotfolder where mid='" + mandanten_id + "' order by path";
+        String qry = "select * from Hotfolder where mid='" + mandanten_id + "' order by id";
         return qry;
     }
 
@@ -188,43 +185,9 @@ public class HotfolderOverview extends SQLOverviewDialog implements PropertyChan
 
 
 
-    @Override
-    public void mouseClicked(MouseEvent e)
+    protected GlossDialogPanel get_edit_panel( int row )
     {
-        Component c = table.getComponentAt(e.getPoint());
-        int row = table.rowAtPoint(e.getPoint());
-        int col = table.columnAtPoint(e.getPoint());
-
-        if (col == model.get_edit_column())
-        {
-            EditHotfolder pnl = new EditHotfolder( row, this );
-            GenericGlossyDlg dlg = new GenericGlossyDlg( null, true, pnl );
-
-            pnl.addPropertyChangeListener("REBUILD", this);
-
-            dlg.set_next_location(this);
-            dlg.setVisible(true );                
-        }
-        
-        if (col == model.get_del_column())
-        {
-
-            SQLCall sql = UserMain.sqc().get_sqc();
-            String path = model.getSqlResult().getString( row, "path") ;
-
-
-            if (UserMain.errm_ok_cancel(UserMain.getString("Wollen_Sie_wirklich_diesen_Eintrag_loeschen") + ": <" + path + "> ?"))
-            {
-                //boolean ret = sql.delete(hf);
-              //  if (!ret)
-                {
-                    UserMain.errm_ok( "Delete failed" );
-                }
-    
-                propertyChange( new PropertyChangeEvent(this, "REBUILD", null, null ) );
-            }
-        }
-        //System.out.println("Row " + row + "Col " + col);
+        return new EditHotfolder( row, this );
     }
 
 
@@ -344,7 +307,7 @@ public class HotfolderOverview extends SQLOverviewDialog implements PropertyChan
     private void BT_NEWActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
 
-                new_hotfolder();
+                new_edit_dlg();
 
 }
 
@@ -364,18 +327,5 @@ public class HotfolderOverview extends SQLOverviewDialog implements PropertyChan
     // End of variables declaration
 
 
-    public void new_hotfolder()
-    {
-        EditHotfolder pnl = new EditHotfolder( -1, this );
-        pnl.addPropertyChangeListener("REBUILD", this);
-
-        GenericGlossyDlg dlg = new GenericGlossyDlg( null, true, pnl );
-        if (dlg.isVisible())
-            dlg.set_next_location(this);
-        else
-            dlg.setLocationRelativeTo(null);
-
-        dlg.setVisible( true ); 
-    }
-
+   
 }

@@ -28,6 +28,7 @@ import org.jdesktop.fuse.ResourceInjector;
 import  sun.audio.*;    //import the sun.audio package
 
 import dimm.home.ServerConnect.SQLConnect;
+import java.util.ResourceBundle;
 
 
 
@@ -176,21 +177,27 @@ public class UserMain extends javax.swing.JFrame
     }
     
 
+
    // static boolean translation_warned = false;
     static public String getString(String string)
     {
         try
         {
-            return java.util.ResourceBundle.getBundle("dimm/home/SR_Properties").getString(string);
+            if (bundle != null)
+                return bundle.getString(string);
         }
         catch (Exception exc)
         {
-            System.err.println("Missing translation resource: " + string);
-            // REMOVE UNDERSCORES FROM KEY
-            string = string.replace('_', ' ');
         }
+
+        System.err.println("Missing translation resource: " + string);
+
+        // REMOVE UNDERSCORES FROM KEY
+        string = string.replace('_', ' ');
         return string;
     }
+
+    static ResourceBundle bundle;
 
     static public void init_text_interface(String lcode)
     {
@@ -212,6 +219,21 @@ public class UserMain extends javax.swing.JFrame
             Locale l = new Locale("da", "DK", "");
             Locale.setDefault(l);
         }
+        bundle = null;
+       try
+        {
+            bundle = ResourceBundle.getBundle("./MA_Properties",Locale.getDefault());
+        }
+        catch (Exception exc)
+        {
+            try
+            {
+                bundle = ResourceBundle.getBundle("dimm/home/MA_Properties",Locale.getDefault());
+            }
+            catch (Exception _exc)
+            {}
+        }
+
         
         WANT_DB_CHANGE_TXT = getString("Wollen_Sie_die_geänderten_Daten_speichern?");
     }
@@ -791,24 +813,10 @@ public class UserMain extends javax.swing.JFrame
 
     
     
-    
-    public static String bundle = "dimm/home/SR_Properties";
-    
+        
     public static String Txt( String key )
     {
-        String str;
-        try
-        {
-            str = java.util.ResourceBundle.getBundle(bundle).getString( key );
-        }
-        catch ( Exception e )
-        {
-            System.err.println("Unknown Resourcekey " + key);
-            
-            return key;
-        }
-            
-        return str;
+        return getString(key);
     }
    
 

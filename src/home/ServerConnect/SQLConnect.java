@@ -15,6 +15,7 @@ import dimm.general.hibernate.Mandant;
 import dimm.general.hibernate.Milter;
 import dimm.general.hibernate.Role;
 import dimm.general.hibernate.Proxy;
+import dimm.home.UserMain;
 
 /**
  *
@@ -41,6 +42,11 @@ public class SQLConnect
     public void init_structs()
     {
         ConnectionID c = sqc.open("");
+        if (c == null)
+        {
+            UserMain.errm_ok( UserMain.Txt("Cannot_connect_to_database"));
+            return;
+        }
         StatementID sta = sqc.createStatement(c);
 
         // ALLE MANDANTEN

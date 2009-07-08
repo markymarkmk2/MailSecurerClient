@@ -6,6 +6,7 @@
 package dimm.home.Rendering;
 
 import dimm.home.Main;
+import dimm.home.UserMain;
 import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
@@ -39,7 +40,7 @@ public class OpaqueTextCellRenderer extends JXLabel implements TableCellRenderer
         if (value != null)
             setText(value.toString());
         else
-            setText(java.util.ResourceBundle.getBundle("dimm/home/SR_Properties").getString("-_invalid_-"));
+            setText(UserMain.getString("-_invalid_-"));
         
         if (isSelected)
             setForeground(Main.ui.get_appl_selected_color());

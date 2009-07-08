@@ -220,6 +220,33 @@ public class SQLResult<T> extends ArrayList<T>
     {
         this.errText = errText;
     }
+String  get_name_from_hibernate_class( String rec_name )
+    {
+
+        StringBuffer sb = new StringBuffer();
+
+        for (int i = 0; i < rec_name.length(); i++)
+        {
+            char ch = new Character( rec_name.charAt(i) );
+
+            if (i == 0)
+            {
+                ch = Character.toLowerCase(ch);
+            }
+            else
+            {
+                if (Character.isUpperCase(ch))
+                {
+                    sb.append('_');
+                    ch = Character.toLowerCase(ch);
+                }
+            }
+            sb.append(ch);
+        }
+
+
+        return sb.toString();
+    }
 
     private T get_object( int row, Object o)
     {
@@ -239,7 +266,7 @@ public class SQLResult<T> extends ArrayList<T>
 
                 }
                 String type = method.getParameterTypes()[0].getName();
-                String field_name = method.getName().substring(3).toLowerCase();
+                String field_name = get_name_from_hibernate_class( method.getName().substring(3) );
 
                 if (type.compareTo("java.lang.String") == 0)
                 {

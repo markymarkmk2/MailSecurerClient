@@ -168,7 +168,7 @@ public class Main
 
         // FIRST SET OUT L&F
         if (ui == null)
-            ui = new UI_Bluesea();
+            ui = new UI_Pirates();
 
         ui.set_ui(false);
 

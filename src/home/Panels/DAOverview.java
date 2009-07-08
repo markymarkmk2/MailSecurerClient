@@ -23,6 +23,7 @@ import javax.swing.table.TableColumnModel;
 
 import dimm.general.SQL.*;
 import dimm.general.hibernate.*;
+import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.StatementID;
@@ -225,44 +226,12 @@ public class DAOverview extends SQLOverviewDialog
 
 
 
-    @Override
-    public void mouseClicked(MouseEvent e)
+
+    protected GlossDialogPanel get_edit_panel( int row )
     {
-        Component c = table.getComponentAt(e.getPoint());
-        int row = table.rowAtPoint(e.getPoint());
-        int col = table.columnAtPoint(e.getPoint());
-
-        if (col == model.get_edit_column())
-        {
-            EditDA pnl = new EditDA( row, this );
-            GenericGlossyDlg dlg = new GenericGlossyDlg( null, true, pnl );
-
-            pnl.addPropertyChangeListener("REBUILD", this);
-
-            dlg.set_next_location(this);
-            dlg.setVisible(true );                
-        }
-        
-        if (col == model.get_del_column())
-        {
-
-            SQLCall sql = UserMain.sqc().get_sqc();
-            String path = model.getSqlResult().getString( row, "path") ;
-
-
-            if (UserMain.errm_ok_cancel(UserMain.getString("Wollen_Sie_wirklich_diesen_Eintrag_loeschen") + ": <" + path + "> ?"))
-            {
-                //boolean ret = sql.delete(hf);
-              //  if (!ret)
-                {
-                    UserMain.errm_ok( "Delete failed" );
-                }
-    
-                propertyChange( new PropertyChangeEvent(this, "REBUILD", null, null ) );
-            }
-        }
-        //System.out.println("Row " + row + "Col " + col);
+        return new EditDA( row, this );
     }
+
 
 
     /** This method is called from within the constructor to
@@ -381,7 +350,7 @@ public class DAOverview extends SQLOverviewDialog
     private void BT_NEWActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
 
-                new_DiskArchive();
+                new_edit_dlg();
 
 }
 
@@ -401,19 +370,6 @@ public class DAOverview extends SQLOverviewDialog
     // End of variables declaration
 
 
-    public void new_DiskArchive()
-    {
-        EditDA pnl = new EditDA( -1, this );
-        pnl.addPropertyChangeListener("REBUILD", this);
-
-        GenericGlossyDlg dlg = new GenericGlossyDlg( null, true, pnl );
-        if (dlg.isVisible())
-            dlg.set_next_location(this);
-        else
-            dlg.setLocationRelativeTo(null);
-
-        dlg.setVisible( true ); 
-    }
-
+    
 
 }
