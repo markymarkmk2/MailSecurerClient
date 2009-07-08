@@ -6,13 +6,18 @@
 package dimm.home.Rendering;
 
 import dimm.home.Models.OverviewModel;
+import dimm.home.UserMain;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.SwingWorker;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableCellRenderer;
 
 
@@ -20,23 +25,42 @@ import javax.swing.table.TableCellRenderer;
  *
  * @author media
  */
-public abstract class SQLOverviewDialog extends JDialog  implements MouseListener
+public abstract class SQLOverviewDialog extends JDialog  implements MouseListener,  PropertyChangeListener
 {
     protected SwingWorker sql_worker;
     
     protected OverviewModel model;
+
+    protected UserMain main;
+    protected GlossTable table;
+    protected GlossPanel pg_painter;
+
 
     public abstract void set_table_header();
         
     public abstract void gather_sql_result();
     public abstract void gather_sql_result(long station_id);
                 
-    public abstract void set_tabel_row_height();
+    public void set_tabel_row_height()
+    {
+        packRows( table, table.getRowMargin() );
+        table.repaint();
+    }
+
     
     public SQLOverviewDialog( JFrame parent, boolean modal)
     {
         super( parent, modal);
     }
+
+    @Override
+    public void setSize(Dimension d)
+    {
+        pg_painter.setSize(d);
+        set_tabel_row_height();
+        super.setSize(d);
+    }
+
     
  @Override
     public void setVisible( boolean b )
@@ -150,5 +174,16 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
 
     public void mouseExited(MouseEvent e)
     {
-    }    
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt)
+    {
+        gather_sql_result();
+        table.tableChanged(new TableModelEvent(table.getModel()) );
+        set_tabel_row_height();
+
+        this.repaint();
+    }
+
 }

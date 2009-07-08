@@ -1,5 +1,5 @@
 package dimm.general.hibernate;
-// Generated 25.06.2009 14:21:36 by Hibernate Tools 3.2.1.GA
+// Generated 07.07.2009 13:49:31 by Hibernate Tools 3.2.1.GA
 
 
 import java.util.HashSet;

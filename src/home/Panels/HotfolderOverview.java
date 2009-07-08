@@ -16,7 +16,6 @@ import dimm.home.ServerConnect.SQLCall;
 import dimm.home.UserMain;
 import java.beans.PropertyChangeEvent;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JButton;
@@ -72,7 +71,7 @@ class HotfolderTableModel extends OverviewModel
                 return hf.getUsermailadress(); // LOGINNAME
             case 3:
                 int flags = sqlResult.getInt(rowIndex, "Flags");
-                return new Boolean((flags & 0x01) == 0x01); // DISABLED
+                return new Boolean((flags & HotfolderOverview.DISABLED) == HotfolderOverview.DISABLED); // DISABLED
             default:
                 return super.getValueAt(rowIndex, columnIndex);
         }
@@ -105,11 +104,8 @@ class HotfolderTableModel extends OverviewModel
 public class HotfolderOverview extends SQLOverviewDialog implements PropertyChangeListener
 {
 
-    UserMain main;
-    GlossTable table;
-    GlossPanel pg_painter;
 
-    public static final int HF_DISABLED =   0x01;
+    public static final int DISABLED =   0x01;
 
 
 
@@ -147,13 +143,6 @@ public class HotfolderOverview extends SQLOverviewDialog implements PropertyChan
         return (HotfolderTableModel) model;
     }
 
-
-    @Override
-    public void set_tabel_row_height()
-    {
-        packRows( table, table.getRowMargin() );
-        table.repaint();
-    }
 
     @Override
     public void set_table_header()
@@ -199,13 +188,6 @@ public class HotfolderOverview extends SQLOverviewDialog implements PropertyChan
 
 
 
-    @Override
-    public void setSize(Dimension d)
-    {
-        pg_painter.setSize(d);
-        set_tabel_row_height();
-        super.setSize(d);
-    }
     @Override
     public void mouseClicked(MouseEvent e)
     {
@@ -396,14 +378,4 @@ public class HotfolderOverview extends SQLOverviewDialog implements PropertyChan
         dlg.setVisible( true ); 
     }
 
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt)
-    {
-        gather_sql_result();
-        table.tableChanged(new TableModelEvent(table.getModel()) );
-        set_tabel_row_height();
-
-        this.repaint();
-    }
 }

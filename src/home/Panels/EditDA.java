@@ -11,66 +11,86 @@ import dimm.home.UserMain;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
-import dimm.general.SQL.*;
 import dimm.general.hibernate.DiskArchive;
-import dimm.general.hibernate.Hotfolder;
-import dimm.home.Models.DiskArchiveComboModel;
-import dimm.home.Utilities.Validator;
+import dimm.home.Rendering.GenericGlossyDlg;
 
 
 
+class DATypeEntry
+{
+    String type;
+    String name;
+
+    DATypeEntry( String t, String n)
+    {
+        type = t;
+        name = n;
+    }
+
+    @Override
+    public String toString()
+    {
+        return name;
+    }
+
+}
 /**
  
  @author  Administrator
  */
-public class EditHotfolder extends GenericEditPanel
+public class EditDA extends GenericEditPanel
 {
-    HotfolderOverview vbox_overview;
-    HotfolderTableModel model;
-    Hotfolder object;
-    DiskArchiveComboModel dacm;
+    DAOverview object_overview;
+    DATableModel model;
+    DiskArchive object;    
     String object_name;
     
     
     /** Creates new form EditChannelPanel */
-    public EditHotfolder(int _row, HotfolderOverview _overview)
+    public EditDA(int _row, DAOverview _overview)
     {
         initComponents();     
         
-        vbox_overview = _overview;
-        model = vbox_overview.get_object_model();
-        CB_VAULT.removeAllItems();
-        CB_MAILACCOUNT.removeAllItems();
+        object_overview = _overview;
+        model = object_overview.get_object_model();
+        
+        CB_TYPE.removeAllItems();
 
-        SQLResult<DiskArchive> da_res = UserMain.sqc().get_da_result();
-
-        dacm = new DiskArchiveComboModel(da_res );
-
-                                
+        // FILL COMBOBOX TYPE
+        for (int i = 0; i < object_overview.get_da_entry_list().length; i++)
+        {
+            DAOverview.DATypeEntry mte = object_overview.get_da_entry_list()[i];
+            CB_TYPE.addItem( mte );
+        }
+                               
         row = _row;
         
         if (!model.is_new(row))
         {
             object = model.get_object(row);
 
-
-            TXT_PATH.setText(object.getPath());
-            CB_MAILACCOUNT.addItem( object.getUsermailadress() );
-            BT_DISABLED.setSelected( object_is_disabled() );
-
-            int da_id = model.getSqlResult().getInt( row, "da_id");
-            dacm.set_act_id(da_id);
-            
+//            String type = object.getType();
+            // HACK, WE ONLY HAVE ON TYPE
+            String type = object_overview.get_da_entry_list()[0].type;
+            for (int i = 0; i < object_overview.get_da_entry_list().length; i++)
+            {
+                DAOverview.DATypeEntry mte = object_overview.get_da_entry_list()[i];
+                if (mte.type.compareTo(type)== 0)
+                {
+                    CB_TYPE.setSelectedIndex(i);
+                    break;
+                }
+            }
         }
         else
         {
-            object = new Hotfolder();
+            object = new DiskArchive();
+            CB_TYPE.setSelectedIndex(0);
             object.setMandant(UserMain.sqc().get_act_mandant());
         }
-
+        
         object_name = object.getClass().getSimpleName();
 
-        CB_VAULT.setModel(dacm);
     }
     
     
@@ -86,14 +106,11 @@ public class EditHotfolder extends GenericEditPanel
 
         PN_ACTION = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        TXT_PATH = new javax.swing.JTextField();
+        TXT_NAME = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         BT_DISABLED = new javax.swing.JCheckBox();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        CB_VAULT = new javax.swing.JComboBox();
-        CB_MAILACCOUNT = new javax.swing.JComboBox();
-        BT_SELECT_PATH = new javax.swing.JButton();
+        CB_TYPE = new javax.swing.JComboBox();
+        BT_DISKSPACES = new javax.swing.JButton();
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
@@ -105,36 +122,35 @@ public class EditHotfolder extends GenericEditPanel
         PN_ACTION.setDoubleBuffered(false);
         PN_ACTION.setOpaque(false);
 
-        jLabel1.setText(UserMain.Txt("Pfad")); // NOI18N
+        jLabel1.setText(UserMain.Txt("Type")); // NOI18N
 
-        TXT_PATH.setText(UserMain.Txt("Neuer_Pfad")); // NOI18N
-        TXT_PATH.addMouseListener(new java.awt.event.MouseAdapter() {
+        TXT_NAME.setText(UserMain.Txt("Neuer_Pfad")); // NOI18N
+        TXT_NAME.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                TXT_PATHMouseClicked(evt);
+                TXT_NAMEMouseClicked(evt);
             }
         });
-        TXT_PATH.addActionListener(new java.awt.event.ActionListener() {
+        TXT_NAME.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TXT_PATHActionPerformed(evt);
+                TXT_NAMEActionPerformed(evt);
             }
         });
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/SR_Properties"); // NOI18N
-        jLabel2.setText(bundle.getString("Mailkonto")); // NOI18N
+        jLabel2.setText(bundle.getString("Name")); // NOI18N
 
         BT_DISABLED.setText(bundle.getString("Gesperrt")); // NOI18N
         BT_DISABLED.setOpaque(false);
 
-        jLabel3.setText(bundle.getString("Speicherziel")); // NOI18N
+        CB_TYPE.setEditable(true);
+        CB_TYPE.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jLabel5.setText("(eMail)");
-
-        CB_VAULT.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        CB_MAILACCOUNT.setEditable(true);
-        CB_MAILACCOUNT.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        BT_SELECT_PATH.setText("...");
+        BT_DISKSPACES.setText(UserMain.Txt("DiskSpace")); // NOI18N
+        BT_DISKSPACES.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_DISKSPACESActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout PN_ACTIONLayout = new javax.swing.GroupLayout(PN_ACTION);
         PN_ACTION.setLayout(PN_ACTIONLayout);
@@ -143,47 +159,37 @@ public class EditHotfolder extends GenericEditPanel
             .addGroup(PN_ACTIONLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(BT_DISABLED, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(10, 10, 10)
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(CB_MAILACCOUNT, 0, 240, Short.MAX_VALUE)
-                            .addComponent(CB_VAULT, 0, 240, Short.MAX_VALUE)))
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1))
+                        .addGap(22, 22, 22)
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(TXT_NAME, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
+                            .addComponent(CB_TYPE, 0, 254, Short.MAX_VALUE))
+                        .addGap(18, 18, 18))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_ACTIONLayout.createSequentialGroup()
-                        .addComponent(TXT_PATH, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(BT_SELECT_PATH, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .addComponent(BT_DISABLED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
+                        .addComponent(BT_DISKSPACES, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
         PN_ACTIONLayout.setVerticalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PN_ACTIONLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(TXT_PATH, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_SELECT_PATH))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                        .addComponent(BT_DISABLED)
-                        .addGap(18, 18, 18)
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel5)))
-                    .addComponent(CB_MAILACCOUNT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TXT_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(CB_VAULT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(76, Short.MAX_VALUE))
+                    .addComponent(jLabel1)
+                    .addComponent(CB_TYPE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BT_DISKSPACES)
+                    .addComponent(BT_DISABLED))
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -214,7 +220,7 @@ public class EditHotfolder extends GenericEditPanel
         PN_BUTTONSLayout.setHorizontalGroup(
             PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
-                .addContainerGap(212, Short.MAX_VALUE)
+                .addContainerGap(143, Short.MAX_VALUE)
                 .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -249,35 +255,44 @@ public class EditHotfolder extends GenericEditPanel
         abort_action();
     }//GEN-LAST:event_BT_ABORTActionPerformed
 
-    private void TXT_PATHMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_TXT_PATHMouseClicked
-    {//GEN-HEADEREND:event_TXT_PATHMouseClicked
+    private void TXT_NAMEMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_TXT_NAMEMouseClicked
+    {//GEN-HEADEREND:event_TXT_NAMEMouseClicked
         // TODO add your handling code here:
         if (UserMain.self.is_touchscreen())
         {
-            UserMain.self.show_vkeyboard( this.my_dlg, TXT_PATH, false);
+            UserMain.self.show_vkeyboard( this.my_dlg, TXT_NAME, false);
         }
-}//GEN-LAST:event_TXT_PATHMouseClicked
+}//GEN-LAST:event_TXT_NAMEMouseClicked
 
-    private void TXT_PATHActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_TXT_PATHActionPerformed
-    {//GEN-HEADEREND:event_TXT_PATHActionPerformed
+    private void TXT_NAMEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_TXT_NAMEActionPerformed
+    {//GEN-HEADEREND:event_TXT_NAMEActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_TXT_PATHActionPerformed
+}//GEN-LAST:event_TXT_NAMEActionPerformed
+
+    private void BT_DISKSPACESActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_DISKSPACESActionPerformed
+    {//GEN-HEADEREND:event_BT_DISKSPACESActionPerformed
+        // TODO add your handling code here:
+        DiskSpaceOverview dlg = new DiskSpaceOverview(UserMain.self, object, true);
+        dlg.pack();
+
+        dlg.setLocation(this.getLocationOnScreen().x + 30, this.getLocationOnScreen().y + 30);
+        dlg.setTitle(UserMain.Txt("DiskSpaces"));
+        dlg.setVisible(true);
+
+    }//GEN-LAST:event_BT_DISKSPACESActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JCheckBox BT_DISABLED;
+    private javax.swing.JButton BT_DISKSPACES;
     private javax.swing.JButton BT_OK;
-    private javax.swing.JButton BT_SELECT_PATH;
-    private javax.swing.JComboBox CB_MAILACCOUNT;
-    private javax.swing.JComboBox CB_VAULT;
+    private javax.swing.JComboBox CB_TYPE;
     private javax.swing.JPanel PN_ACTION;
     private javax.swing.JPanel PN_BUTTONS;
-    private javax.swing.JTextField TXT_PATH;
+    private javax.swing.JTextField TXT_NAME;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel5;
     // End of variables declaration//GEN-END:variables
 
     int get_object_flags()
@@ -292,7 +307,7 @@ public class EditHotfolder extends GenericEditPanel
         }
         catch (NumberFormatException numberFormatException)
         {
-            Logger.getLogger("").log(Level.SEVERE, "Invalid flag for " + object_name + " " + numberFormatException );
+            Logger.getLogger("").log(Level.SEVERE, "Invalid flag for " + object_name+ " " + numberFormatException );
         }
 
         return flags;
@@ -316,16 +331,16 @@ public class EditHotfolder extends GenericEditPanel
 
         flags = get_object_flags();
 
-        return ((flags & HotfolderOverview.DISABLED) == HotfolderOverview.DISABLED);
+        return ((flags & DAOverview.DISABLED) == DAOverview.DISABLED);
     }
     void set_object_disabled( boolean f)
     {
         int flags = get_object_flags();
 
         if (f)
-            set_object_flag( HotfolderOverview.DISABLED );
+            set_object_flag( DAOverview.DISABLED );
         else
-            clr_object_flag( HotfolderOverview.DISABLED );
+            clr_object_flag( DAOverview.DISABLED );
     }
 
     
@@ -334,86 +349,39 @@ public class EditHotfolder extends GenericEditPanel
         if (model.is_new(row))
             return true;
 
-        String path = object.getPath();
-        if (path != null && TXT_PATH.getText().compareTo(path ) != 0)
-            return true;   
-        
+        String name = object.getName();
+        if (name != null && TXT_NAME.getText().compareTo(name ) != 0)
+            return true;
+
+
         if (BT_DISABLED.isSelected() != object_is_disabled())
             return true;
 
-        long da_id = model.getSqlResult().getLong( row, "da_id");
-
-        if ( CB_VAULT.getSelectedItem() != null)
-        {
-            if (dacm.get_act_id() != da_id)
-                return true;
-        }
         
         return false;
     }
                         
     protected boolean is_plausible()
     {
-        if (TXT_PATH.getText().length() == 0 || TXT_PATH.getText().length() > 256)
+        if (TXT_NAME.getText().length() == 0 || TXT_NAME.getText().length() > 255)
         {
-            UserMain.errm_ok(UserMain.getString("Der_Pfad_ist_nicht_okay"));
-            return false;
-        }
-        try
-        {
-            String email = get_email_cb_txt();
-
-            if (!Validator.is_vaild_email(email))
-            {
-                UserMain.errm_ok(UserMain.getString("Email_ist_nicht_okay"));
-                return false;
-            }
-        }
-        catch (Exception exc)
-        {
-            UserMain.errm_ok(UserMain.getString("Email_ist_nicht_okay"));
-            return false;
-        }
-
-        try
-        {
-            DiskArchive da = dacm.get_selected_da();
-            String n = da.getName();
-        }
-        catch (Exception e)
-        {
-            UserMain.errm_ok(UserMain.getString("Speicherziel_ist_nicht_okay"));
+            UserMain.errm_ok(UserMain.getString("Der_Name_ist_nicht_okay"));
             return false;
         }
                 
         return true;
     }
 
-    
-    String get_email_cb_txt()
-    {
-        String email = null;
-        
-        if (CB_MAILACCOUNT.getEditor().getItem() != null)
-            email = CB_MAILACCOUNT.getEditor().getItem().toString();
-        else if (CB_MAILACCOUNT.getSelectedItem() != null)
-            email = CB_MAILACCOUNT.getSelectedItem().toString();
-
-        return email;
-    }
 
     protected void set_object_props()
     {
-        String path = TXT_PATH.getText();
-        String email = get_email_cb_txt();
+        String name = TXT_NAME.getText();
         boolean de = BT_DISABLED.isSelected();
 
-        object.setPath(path);
-        object.setUsermailadress(email);
+        object.setName(name);
         set_object_disabled( de );
-        object.setDiskArchive( dacm.get_selected_da());
     }
-    
+
     
         
     @Override

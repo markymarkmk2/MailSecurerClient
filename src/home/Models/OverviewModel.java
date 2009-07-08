@@ -20,7 +20,7 @@ import dimm.general.SQL.*;
  */
 public abstract class OverviewModel extends AbstractTableModel
 {
-    
+    protected SQLOverviewDialog dlg;
     protected UserMain main;
     JButton tonne_bt;
     JButton edit_bt;
@@ -32,9 +32,10 @@ public abstract class OverviewModel extends AbstractTableModel
     static final boolean first_col_visible = true;
     
 
-    public OverviewModel(UserMain _main, SQLOverviewDialog dlg)
+    public OverviewModel(UserMain _main, SQLOverviewDialog _dlg)
     {
         main = _main;
+        dlg = _dlg;
         
         tonne_bt = create_table_button( "/dimm/home/images/web_delete.png", dlg );
         edit_bt = create_table_button(  "/dimm/home/images/web_edit.png", dlg );

@@ -17,7 +17,6 @@ import dimm.home.UserMain;
 import java.beans.PropertyChangeEvent;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeListener;
 import javax.swing.JButton;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableColumnModel;
@@ -29,15 +28,15 @@ import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.StatementID;
 
 
-class MilterTableModel extends OverviewModel
+class DATableModel extends OverviewModel
 {
     
-    public MilterTableModel(UserMain _main, MilterOverview _dlg)
+    public DATableModel(UserMain _main, DAOverview _dlg)
     {
         super( _main, _dlg );
 
-        String[] _col_names = {"Id",UserMain.getString("Typ"), UserMain.getString("Server"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
-        Class[] _col_classes = {String.class,  String.class,  String.class,  Boolean.class, JButton.class, JButton.class};
+        String[] _col_names = {"Id",UserMain.getString("Name"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
+        Class[] _col_classes = {String.class,  String.class,  Boolean.class, JButton.class, JButton.class};
         set_columns( _col_names, _col_classes );
 
     }
@@ -45,17 +44,17 @@ class MilterTableModel extends OverviewModel
     @Override
     public String get_qry(long mandanten_id)
     {
-        String qry = "select * from milter where mid='" + mandanten_id + "' order by id";
+        String qry = "select * from disk_archive where mid='" + mandanten_id + "' order by id";
         return qry;
     }
 
     String get_type_str( String type)
     {
-        MilterOverview mo_dlg = (MilterOverview)dlg;
+        DAOverview mo_dlg = (DAOverview)dlg;
 
-        for (int i = 0; i < mo_dlg.get_mt_entry_list().length; i++)
+        for (int i = 0; i < mo_dlg.get_da_entry_list().length; i++)
         {
-            MilterOverview.MilterTypeEntry mte = mo_dlg.get_mt_entry_list()[i];
+            DAOverview.DATypeEntry mte = mo_dlg.get_da_entry_list()[i];
             if (mte.type.compareTo(type)== 0)
             {
                 return mte.name;
@@ -71,20 +70,18 @@ class MilterTableModel extends OverviewModel
         if (sqlResult == null)
             return null;
 
-        Milter milter = new Milter();
-        milter = (Milter)sqlResult.get(rowIndex);
+        DiskArchive da = new DiskArchive();
+        da = (DiskArchive)sqlResult.get(rowIndex);
 
         switch (columnIndex)
         {
             case 0:
-                return milter.getId(); // ID
+                return da.getId(); // ID
             case 1:
-                return get_type_str( milter.getType());
+                return da.getName();
             case 2:
-                return milter.getInServer() + ":" + milter.getInPort();
-            case 3:
                 int flags = sqlResult.getInt(rowIndex, "Flags");
-                return new Boolean((flags & MilterOverview.DISABLED) == MilterOverview.DISABLED); // DISABLED
+                return new Boolean((flags & DAOverview.DISABLED) == DAOverview.DISABLED); // DISABLED
             default:
                 return super.getValueAt(rowIndex, columnIndex);
         }
@@ -103,9 +100,9 @@ class MilterTableModel extends OverviewModel
 
         return col_names.length;
     }
-    public Milter get_object( int index )
+    public DiskArchive get_object( int index )
     {
-        return (Milter) sqlResult.get(index);
+        return (DiskArchive) sqlResult.get(index);
     }
 
 
@@ -114,17 +111,18 @@ class MilterTableModel extends OverviewModel
  *
  * @author  mw
  */
-public class MilterOverview extends SQLOverviewDialog implements PropertyChangeListener
+public class DAOverview extends SQLOverviewDialog
 {
-    
+
+
     public static final int DISABLED =   0x01;
 
-    public class MilterTypeEntry
+    public class DATypeEntry
     {
         String type;
         String name;
 
-        MilterTypeEntry( String t, String n)
+        DATypeEntry( String t, String n)
         {
             type = t;
             name = n;
@@ -137,19 +135,18 @@ public class MilterOverview extends SQLOverviewDialog implements PropertyChangeL
         }
     }
 
-    MilterTypeEntry[] mt_entry_list =
+    DATypeEntry[] da_entry_list =
     {
-        new MilterTypeEntry("sendmail","Sendmail"),
-        new MilterTypeEntry("postfix","Postfix")
+        new DATypeEntry("diskarchive","DiskArchive"),
     };
-    public MilterTypeEntry[] get_mt_entry_list()
+    public DATypeEntry[] get_da_entry_list()
     {
-        return mt_entry_list;
+        return da_entry_list;
     }
 
 
     /** Creates new form NewJDialog */
-    public MilterOverview(UserMain parent, boolean modal)
+    public DAOverview(UserMain parent, boolean modal)
     {
         super(parent, modal);
         initComponents();
@@ -160,7 +157,7 @@ public class MilterOverview extends SQLOverviewDialog implements PropertyChangeL
         PN_TITLE.add(titlePanel);
         titlePanel.installListeners();
 
-        model = new MilterTableModel(main, this);
+        model = new DATableModel(main, this);
         table = new GlossTable();
 
         table.setModel(model);
@@ -177,9 +174,9 @@ public class MilterOverview extends SQLOverviewDialog implements PropertyChangeL
         create_sql_worker();
     }
 
-    MilterTableModel get_object_model()
+    DATableModel get_object_model()
     {
-        return (MilterTableModel) model;
+        return (DATableModel) model;
     }
 
 
@@ -214,7 +211,7 @@ public class MilterOverview extends SQLOverviewDialog implements PropertyChangeL
         ResultSetID rid = sql.executeQuery(sid, qry);
         SQLArrayResult resa = sql.get_sql_array_result(rid);
 
-        SQLResult<Milter>  res = new SQLResult<Milter>(resa, new Milter().getClass());
+        SQLResult<DiskArchive>  res = new SQLResult<DiskArchive>(resa, new DiskArchive().getClass());
 
         model.setSqlResult(res);
         table.tableChanged(new TableModelEvent(table.getModel()) );
@@ -237,7 +234,7 @@ public class MilterOverview extends SQLOverviewDialog implements PropertyChangeL
 
         if (col == model.get_edit_column())
         {
-            EditMilter pnl = new EditMilter( row, this );
+            EditDA pnl = new EditDA( row, this );
             GenericGlossyDlg dlg = new GenericGlossyDlg( null, true, pnl );
 
             pnl.addPropertyChangeListener("REBUILD", this);
@@ -327,7 +324,7 @@ public class MilterOverview extends SQLOverviewDialog implements PropertyChangeL
         PN_BUTTONS.setOpaque(false);
 
         BT_NEW.setForeground(new java.awt.Color(204, 204, 204));
-        BT_NEW.setText(UserMain.Txt("Neuen_Milter_hinzufuegen")); // NOI18N
+        BT_NEW.setText(UserMain.Txt("Neues_DiskArchive_hinzufuegen")); // NOI18N
         BT_NEW.setActionCommand("        ");
         BT_NEW.setBorder(null);
         BT_NEW.setContentAreaFilled(false);
@@ -384,7 +381,7 @@ public class MilterOverview extends SQLOverviewDialog implements PropertyChangeL
     private void BT_NEWActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
 
-                new_Milter();
+                new_DiskArchive();
 
 }
 
@@ -404,9 +401,9 @@ public class MilterOverview extends SQLOverviewDialog implements PropertyChangeL
     // End of variables declaration
 
 
-    public void new_Milter()
+    public void new_DiskArchive()
     {
-        EditMilter pnl = new EditMilter( -1, this );
+        EditDA pnl = new EditDA( -1, this );
         pnl.addPropertyChangeListener("REBUILD", this);
 
         GenericGlossyDlg dlg = new GenericGlossyDlg( null, true, pnl );
@@ -419,5 +416,4 @@ public class MilterOverview extends SQLOverviewDialog implements PropertyChangeL
     }
 
 
-    
 }
