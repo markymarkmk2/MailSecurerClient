@@ -43,6 +43,7 @@ public class UserMain extends javax.swing.JFrame
     NavigationHeader navPanel ;
     PanelVerwaltung pn_verwaltung;
     PanelStartup pn_startup;
+    PanelSystem pn_system;
     
     TitlePanel titlePanel;
 
@@ -101,6 +102,7 @@ public class UserMain extends javax.swing.JFrame
     public static final int PBC_LOGOFF = 3;
     public static final int PBC_SEARCH = 4;
     public static final int PBC_ADMIN = 5;
+    public static final int PBC_SYSTEM = 6;
 //    public static final int PBC_VIRTUAL_ADMIN = 6;
     
     
@@ -343,6 +345,7 @@ public class UserMain extends javax.swing.JFrame
             case PBC_LOGIN: handle_login(); return;
             case PBC_ADMIN: switch_to_admin(); return;
             case PBC_SEARCH: switch_to_search(); return;
+            case PBC_SYSTEM: switch_to_system(); return;
         }            
     }
     
@@ -379,6 +382,7 @@ public class UserMain extends javax.swing.JFrame
         
         
         pn_verwaltung = new PanelVerwaltung( this );
+        pn_system = new PanelSystem( this );
         
         PN_TITLE.add(titlePanel, BorderLayout.NORTH);        
         PN_HEADER.add(navPanel, BorderLayout.NORTH);
@@ -387,15 +391,16 @@ public class UserMain extends javax.swing.JFrame
         
         navPanel.add_button(getString("Suchen"), PBC_SEARCH, pn_startup);
         navPanel.add_button(getString("Verwaltung"), PBC_ADMIN, pn_verwaltung);
+        navPanel.add_button(getString("System"), PBC_SYSTEM, pn_system);
         navPanel.enable_button(PBC_ADMIN, true);
         navPanel.add_button(getString("Anmelden"), PBC_LOGIN, null);
         
-//        Dimension auto_size = pn_player.getSize();
         Dimension auto_size = this.getSize();
                 
         navPanel.setSize(auto_size);
         pn_verwaltung.setSize(auto_size);
         pn_startup.setSize(auto_size);
+        pn_system.setSize(auto_size);
         PN_USERMAIN.setSize(auto_size);
         PN_GLASS.setSize(auto_size);
         PN_MAIN.setSize(auto_size);
@@ -433,6 +438,11 @@ public class UserMain extends javax.swing.JFrame
     private void switch_to_search()
     {
         navPanel.switch_to_panel( PBC_SEARCH);
+        this.repaint();
+    }
+    private void switch_to_system()
+    {
+        navPanel.switch_to_panel( PBC_SYSTEM);
         this.repaint();
     }
 

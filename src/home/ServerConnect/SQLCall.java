@@ -400,7 +400,7 @@ public class SQLCall
                 }
                 String field_name = get_name_from_hibernate_class( method.getName().substring(3) );
 
-                if (ret_type.compareTo("java.lang.String") == 0)
+                if (ret_type.compareTo("java.lang.String") == 0 || ret_type.compareTo("java.lang.Integer") == 0 || ret_type.compareTo("java.lang.Long") == 0)
                 {
                     if (field_idx > 0)
                     {
@@ -444,7 +444,7 @@ public class SQLCall
                     vals += "'" + ((Long) method.invoke(o)).longValue() + "'";
                     fields += field_name;
                 }
-                if (ret_type.contains(".DiskArchive"))
+                else if (ret_type.contains(".DiskArchive"))
                 {
                     DiskArchive da = (DiskArchive) method.invoke(o);
 
@@ -458,7 +458,7 @@ public class SQLCall
                     vals += "'" + da.getId() + "'";
                     fields += "da_id";
                 }
-                if (ret_type.contains(".DiskSpace"))
+                else if (ret_type.contains(".DiskSpace"))
                 {
                     DiskSpace ds = (DiskSpace) method.invoke(o);
 
@@ -472,7 +472,7 @@ public class SQLCall
                     vals += "'" + ds.getId() + "'";
                     fields += "ds_id";
                 }
-                if (ret_type.contains(".Mandant"))
+                else if (ret_type.contains(".Mandant"))
                 {
                     Mandant m = (Mandant) method.invoke(o);
 
@@ -485,6 +485,12 @@ public class SQLCall
 
                     vals += "'" + m.getId() + "'";
                     fields += "mid";
+                }
+                else if (!ret_type.contains(".hibernate.") && !ret_type.contains("java.util.Set") )
+                {
+                    Object unknown = method.invoke(o);
+                    if (unknown != null)
+                        throw new Exception( "Invalid return type for Method " + meth_name );
                 }
             }
             String ins_stmt = "insert into " + rec_name + " (" + fields + ") values (" + vals + ")";
@@ -541,7 +547,7 @@ public class SQLCall
                 }
                 String field_name = get_name_from_hibernate_class( method.getName().substring(3) );
 
-                if (ret_type.compareTo("java.lang.String") == 0)
+                if (ret_type.compareTo("java.lang.String") == 0 || ret_type.compareTo("java.lang.Integer") == 0 || ret_type.compareTo("java.lang.Long") == 0)
                 {
                     if (field_idx > 0)
                     {
@@ -573,7 +579,7 @@ public class SQLCall
 
                     upd_cmd += field_name + "='" + ((Long) method.invoke(o)).longValue() + "'";
                 }
-                if (ret_type.contains(".DiskArchive"))
+                else if (ret_type.contains(".DiskArchive"))
                 {
                     DiskArchive da = (DiskArchive) method.invoke(o);
 
@@ -588,7 +594,7 @@ public class SQLCall
                         upd_cmd += "da_id='" + da.getId() + "'";
                     }
                 }
-                if (ret_type.contains(".DiskSpace"))
+                else if (ret_type.contains(".DiskSpace"))
                 {
                     DiskSpace ds = (DiskSpace) method.invoke(o);
                     if (ds != null)
@@ -602,7 +608,7 @@ public class SQLCall
                         upd_cmd += "ds_id='" + ds.getId() + "'";
                     }
                 }
-                if (ret_type.contains(".Mandant"))
+                else if (ret_type.contains(".Mandant"))
                 {
                     Mandant m = (Mandant) method.invoke(o);
                     if (m != null)
@@ -615,6 +621,12 @@ public class SQLCall
 
                         upd_cmd += "mid='" + m.getId() + "'";
                     }
+                }
+                else if (!ret_type.contains(".hibernate.") && !ret_type.contains("java.util.Set") )
+                {
+                    Object unknown = method.invoke(o);
+                    if (unknown != null)
+                        throw new Exception( "Invalid return type for Method " + meth_name );
                 }
             }
             String upd_stmt = "update " + rec_name + " set " + upd_cmd + " where id='" + id + "'";

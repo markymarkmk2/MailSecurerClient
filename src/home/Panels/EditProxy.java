@@ -132,6 +132,7 @@ public class EditProxy extends GenericEditPanel
 
         jLabel1.setText(UserMain.getString("Typ")); // NOI18N
 
+        TXT_SERVER1.setText(UserMain.Txt("Neuer_Server")); // NOI18N
         TXT_SERVER1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 TXT_SERVER1MouseClicked(evt);

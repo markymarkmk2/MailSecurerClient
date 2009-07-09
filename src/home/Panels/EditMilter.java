@@ -59,27 +59,34 @@ public class EditMilter extends GenericEditPanel
         
         if (!model.is_new(row))
         {
-            object = model.get_object(row);
-
-            String type = object.getType();
-            for (int i = 0; i < object_overview.get_mt_entry_list().length; i++)
+            try
             {
-                MilterOverview.MilterTypeEntry mte = object_overview.get_mt_entry_list()[i];
-                if (mte.type.compareTo(type)== 0)
+                object = model.get_object(row);
+
+                String type = object.getType();
+                for (int i = 0; i < object_overview.get_mt_entry_list().length; i++)
                 {
-                    CB_TYPE.setSelectedIndex(i);
-                    break;
+                    MilterOverview.MilterTypeEntry mte = object_overview.get_mt_entry_list()[i];
+                    if (mte.type.compareTo(type)== 0)
+                    {
+                        CB_TYPE.setSelectedIndex(i);
+                        break;
+                    }
                 }
+
+
+                int da_id = model.getSqlResult().getInt( row, "da_id");
+                dacm.set_act_id(da_id);
+
+                TXT_SERVER1.setText( object.getInServer());
+                TXT_SERVER2.setText( object.getOutServer());
+                TXT_PORT1.setText( object.getInPort().toString());
+                TXT_PORT2.setText( object.getOutPort().toString());
             }
-
-
-            int da_id = model.getSqlResult().getInt( row, "da_id");
-            dacm.set_act_id(da_id);
-
-            TXT_SERVER1.setText( object.getInServer());
-            TXT_SERVER2.setText( object.getOutServer());
-            TXT_PORT1.setText( object.getInPort().toString());
-            TXT_PORT2.setText( object.getOutPort().toString());
+            catch (Exception exc)
+            {
+                UserMain.errm_ok(UserMain.getString("Fehler_beim_Lesen_der_Datenbankdaten"));
+            }
 
             
         }
@@ -133,6 +140,7 @@ public class EditMilter extends GenericEditPanel
 
         jLabel1.setText(UserMain.getString("Typ")); // NOI18N
 
+        TXT_SERVER1.setText(UserMain.Txt("Neuer_Server")); // NOI18N
         TXT_SERVER1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 TXT_SERVER1MouseClicked(evt);
@@ -454,6 +462,11 @@ public class EditMilter extends GenericEditPanel
         if (server != null && TXT_SERVER1.getText().compareTo(server ) != 0)
             return true;
 
+        if (object.getInPort() == null)
+            return true;
+        if (object.getOutPort() == null)
+            return true;
+        
         int port = object.getInPort();
         if (Integer.parseInt( TXT_PORT1.getText() ) != port)
             return true;
@@ -464,7 +477,7 @@ public class EditMilter extends GenericEditPanel
             if (server != null && TXT_SERVER2.getText().compareTo(server ) != 0)
                 return true;
 
-            port = object.getInPort();
+            port = object.getOutPort();
             if (Integer.parseInt( TXT_PORT2.getText() ) != port)
                 return true;
         }
@@ -522,6 +535,17 @@ public class EditMilter extends GenericEditPanel
             UserMain.errm_ok(UserMain.getString("Speicherziel_ist_nicht_okay"));
             return false;
         }
+
+        try
+        {
+            MilterOverview.MilterTypeEntry mte = (MilterOverview.MilterTypeEntry) CB_TYPE.getSelectedItem();
+            String name = mte.name;
+        }
+        catch (Exception e)
+        {
+            UserMain.errm_ok(UserMain.getString("Typ_ist_nicht_okay"));
+            return false;
+        }
                 
         return true;
     }
@@ -532,20 +556,25 @@ public class EditMilter extends GenericEditPanel
         String server1 = TXT_SERVER1.getText();
         int port1 = Integer.parseInt( TXT_PORT1.getText() );
         String server2 = object.getOutServer();
-        int port2 = object.getOutPort();
+        boolean de = BT_DISABLED.isSelected();
+        String type = "";
+        MilterOverview.MilterTypeEntry mte = (MilterOverview.MilterTypeEntry) CB_TYPE.getSelectedItem();
+        type = mte.type;
+        
         if (TXT_SERVER2.isVisible())
         {
             server2 = TXT_SERVER2.getText();
-            port2 = Integer.parseInt( TXT_PORT2.getText() );
+
+            int port2 = Integer.parseInt( TXT_PORT2.getText() );
+            object.setOutPort(new Integer(port2));
         }
-        boolean de = BT_DISABLED.isSelected();
 
         object.setInServer(server1);
         object.setOutServer(server2);
-        object.setInPort(port1);
-        object.setOutPort(port2);
+        object.setInPort(new Integer(port1));
         set_object_disabled( de );
         object.setDiskArchive( dacm.get_selected_da());
+        object.setType(type);
     }
    
 

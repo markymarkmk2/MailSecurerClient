@@ -11,10 +11,7 @@ import dimm.home.UserMain;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
-import dimm.general.SQL.*;
-import dimm.general.hibernate.DiskArchive;
-import dimm.general.hibernate.ImapFetcher;
-import dimm.home.Models.DiskArchiveComboModel;
+import dimm.general.hibernate.Mandant;
 import dimm.home.Utilities.Validator;
 
 
@@ -24,75 +21,57 @@ import dimm.home.Utilities.Validator;
  
  @author  Administrator
  */
-public class EditImapFetcher extends GenericEditPanel
+public class EditMandant extends GenericEditPanel
 {
-    ImapFetcherOverview object_overview;
-    ImapFetcherTableModel model;
-    ImapFetcher object;
-    DiskArchiveComboModel dacm;
+    MandantOverview object_overview;
+    MandantTableModel model;
+    Mandant object;
     
     
     /** Creates new form EditChannelPanel */
-    public EditImapFetcher(int _row, ImapFetcherOverview _overview)
+    public EditMandant(int _row, MandantOverview _overview)
     {
         initComponents();     
         
         object_overview = _overview;
         model = object_overview.get_object_model();
-        CB_VAULT.removeAllItems();
-        CB_TYPE.removeAllItems();
 
+        CB_LICENSE.removeAllItems();
+        
         // FILL COMBOBOX TYPE
-        for (int i = 0; i < object_overview.get_mt_entry_list().length; i++)
+        for (int i = 0; i < object_overview.get_ml_entry_list().length; i++)
         {
-            ImapFetcherOverview.ImapFetcherTypeEntry mte = object_overview.get_mt_entry_list()[i];
-            CB_TYPE.addItem( mte );
+            MandantOverview.MandantLicenseEntry mte = object_overview.get_ml_entry_list()[i];
+            CB_LICENSE.addItem( mte );
         }
 
-
-        SQLResult<DiskArchive> da_res = UserMain.sqc().get_da_result();
-
-        // COMBO-MODEL DISK ARCHIVE
-        dacm = new DiskArchiveComboModel(da_res );
                                 
-        row = _row;
-        
+        row = _row;        
         if (!model.is_new(row))
         {
             object = model.get_object(row);
 
-            String type = object.getType();
-            for (int i = 0; i < object_overview.get_mt_entry_list().length; i++)
+            String license = object.getLicense();
+            for (int i = 0; i < object_overview.get_ml_entry_list().length; i++)
             {
-                ImapFetcherOverview.ImapFetcherTypeEntry mte = object_overview.get_mt_entry_list()[i];
-                if (mte.type.compareTo(type)== 0)
+                MandantOverview.MandantLicenseEntry mte = object_overview.get_ml_entry_list()[i];
+                if (mte.type.compareTo(license)== 0)
                 {
-                    CB_TYPE.setSelectedIndex(i);
+                    CB_LICENSE.setSelectedIndex(i);
                     break;
                 }
             }
 
-
-            int da_id = model.getSqlResult().getInt( row, "da_id");
-            dacm.set_act_id(da_id);
-
-            TXT_SERVER1.setText( object.getServer());
-            TXT_PORT1.setText( object.getPort().toString());
-            TXT_USER.setText(object.getUsername());
-            TXTP_PWD.setText(object.getPassword());
-
-            
+            TXT_NAME.setText( object.getName() );
+            TXT_USER.setText(object.getLoginname());
+            TXTP_PWD.setText(object.getPassword());            
         }
         else
         {
-            object = new ImapFetcher();
-            object.setMandant(UserMain.sqc().get_act_mandant());
-
-        }
-        
-      
-
-        CB_VAULT.setModel(dacm);
+            object = new Mandant();
+            TXT_NAME.setText( "admin" );
+            TXT_USER.setText("12345");
+        }        
     }
     
     
@@ -107,19 +86,15 @@ public class EditImapFetcher extends GenericEditPanel
         java.awt.GridBagConstraints gridBagConstraints;
 
         PN_ACTION = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        TXT_SERVER1 = new javax.swing.JTextField();
+        TXT_NAME = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         BT_DISABLED = new javax.swing.JCheckBox();
-        jLabel3 = new javax.swing.JLabel();
-        CB_VAULT = new javax.swing.JComboBox();
-        CB_TYPE = new javax.swing.JComboBox();
-        TXT_PORT1 = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         TXT_USER = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         TXTP_PWD = new javax.swing.JPasswordField();
+        jLabel7 = new javax.swing.JLabel();
+        CB_LICENSE = new javax.swing.JComboBox();
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
@@ -131,46 +106,24 @@ public class EditImapFetcher extends GenericEditPanel
         PN_ACTION.setDoubleBuffered(false);
         PN_ACTION.setOpaque(false);
 
-        jLabel1.setText(UserMain.Txt("Type")); // NOI18N
-
-        TXT_SERVER1.setText(UserMain.Txt("Neuer_Server")); // NOI18N
-        TXT_SERVER1.addMouseListener(new java.awt.event.MouseAdapter() {
+        TXT_NAME.setText(UserMain.Txt("Neuer_Name")); // NOI18N
+        TXT_NAME.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                TXT_SERVER1MouseClicked(evt);
+                TXT_NAMEMouseClicked(evt);
             }
         });
-        TXT_SERVER1.addActionListener(new java.awt.event.ActionListener() {
+        TXT_NAME.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TXT_SERVER1ActionPerformed(evt);
+                TXT_NAMEActionPerformed(evt);
             }
         });
 
-        jLabel2.setText(UserMain.getString("Server")); // NOI18N
+        jLabel2.setText(UserMain.getString("Name")); // NOI18N
 
         BT_DISABLED.setText(UserMain.getString("Gesperrt")); // NOI18N
         BT_DISABLED.setOpaque(false);
 
-        jLabel3.setText(UserMain.getString("Speicherziel")); // NOI18N
-
-        CB_VAULT.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        CB_TYPE.setEditable(true);
-        CB_TYPE.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        TXT_PORT1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                TXT_PORT1MouseClicked(evt);
-            }
-        });
-        TXT_PORT1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TXT_PORT1ActionPerformed(evt);
-            }
-        });
-
-        jLabel4.setText(UserMain.getString("Port")); // NOI18N
-
-        jLabel5.setText(UserMain.getString("User")); // NOI18N
+        jLabel5.setText(UserMain.getString("Login_Name")); // NOI18N
 
         TXT_USER.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -185,6 +138,10 @@ public class EditImapFetcher extends GenericEditPanel
 
         jLabel6.setText(UserMain.getString("Password")); // NOI18N
 
+        jLabel7.setText(UserMain.getString("Lizenz")); // NOI18N
+
+        CB_LICENSE.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout PN_ACTIONLayout = new javax.swing.GroupLayout(PN_ACTION);
         PN_ACTION.setLayout(PN_ACTIONLayout);
         PN_ACTIONLayout.setHorizontalGroup(
@@ -192,69 +149,54 @@ public class EditImapFetcher extends GenericEditPanel
             .addGroup(PN_ACTIONLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(BT_DISABLED, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_ACTIONLayout.createSequentialGroup()
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, PN_ACTIONLayout.createSequentialGroup()
-                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel2))
-                                .addGap(75, 75, 75)
-                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(CB_TYPE, javax.swing.GroupLayout.Alignment.TRAILING, 0, 393, Short.MAX_VALUE)
-                                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, PN_ACTIONLayout.createSequentialGroup()
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(TXT_USER, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE))
-                                            .addComponent(TXT_SERVER1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE))
-                                        .addGap(56, 56, 56)
-                                        .addComponent(jLabel4)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(TXT_PORT1, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))))
-                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addGap(8, 8, 8))
                     .addGroup(PN_ACTIONLayout.createSequentialGroup()
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel6))
-                        .addGap(61, 61, 61)
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(TXTP_PWD)
-                            .addComponent(CB_VAULT, 0, 130, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 258, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addComponent(BT_DISABLED, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
+                            .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(102, 102, 102)
+                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(CB_LICENSE, 0, 379, Short.MAX_VALUE)
+                                    .addComponent(TXT_NAME, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE))))
+                        .addContainerGap())
+                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addContainerGap(483, Short.MAX_VALUE))
+                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addGap(75, 75, 75)
+                                .addComponent(TXT_USER, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE))
+                            .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(83, 83, 83)
+                                .addComponent(TXTP_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)))
+                        .addGap(246, 246, 246))))
         );
 
-        PN_ACTIONLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {TXTP_PWD, TXT_SERVER1, TXT_USER});
+        PN_ACTIONLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {TXTP_PWD, TXT_USER});
 
         PN_ACTIONLayout.setVerticalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PN_ACTIONLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(CB_TYPE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(4, 4, 4)
+                    .addComponent(TXT_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(TXT_SERVER1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(TXT_PORT1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
+                    .addComponent(jLabel7)
+                    .addComponent(CB_LICENSE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(TXT_USER, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
-                .addGap(8, 8, 8)
+                    .addComponent(jLabel5)
+                    .addComponent(TXT_USER, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel6)
                     .addComponent(TXTP_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(CB_VAULT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
                 .addComponent(BT_DISABLED)
                 .addContainerGap())
         );
@@ -287,7 +229,7 @@ public class EditImapFetcher extends GenericEditPanel
         PN_BUTTONSLayout.setHorizontalGroup(
             PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
-                .addContainerGap(330, Short.MAX_VALUE)
+                .addContainerGap(340, Short.MAX_VALUE)
                 .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -312,8 +254,7 @@ public class EditImapFetcher extends GenericEditPanel
 
     private void BT_OKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_OKActionPerformed
     {//GEN-HEADEREND:event_BT_OKActionPerformed
-        // TODO add your handling code here:
-        
+        // TODO add your handling code here:        
         ok_action(object);
        
     }//GEN-LAST:event_BT_OKActionPerformed
@@ -324,33 +265,28 @@ public class EditImapFetcher extends GenericEditPanel
         abort_action();
     }//GEN-LAST:event_BT_ABORTActionPerformed
 
-    private void TXT_SERVER1MouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_TXT_SERVER1MouseClicked
-    {//GEN-HEADEREND:event_TXT_SERVER1MouseClicked
+    private void TXT_NAMEMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_TXT_NAMEMouseClicked
+    {//GEN-HEADEREND:event_TXT_NAMEMouseClicked
         // TODO add your handling code here:
         if (UserMain.self.is_touchscreen())
         {
-            UserMain.self.show_vkeyboard( this.my_dlg, TXT_SERVER1, false);
+            UserMain.self.show_vkeyboard( this.my_dlg, TXT_NAME, false);
         }
-}//GEN-LAST:event_TXT_SERVER1MouseClicked
+}//GEN-LAST:event_TXT_NAMEMouseClicked
 
-    private void TXT_SERVER1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_TXT_SERVER1ActionPerformed
-    {//GEN-HEADEREND:event_TXT_SERVER1ActionPerformed
+    private void TXT_NAMEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_TXT_NAMEActionPerformed
+    {//GEN-HEADEREND:event_TXT_NAMEActionPerformed
         // TODO add your handling code here:
-}//GEN-LAST:event_TXT_SERVER1ActionPerformed
-
-    private void TXT_PORT1MouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_TXT_PORT1MouseClicked
-    {//GEN-HEADEREND:event_TXT_PORT1MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_TXT_PORT1MouseClicked
-
-    private void TXT_PORT1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_TXT_PORT1ActionPerformed
-    {//GEN-HEADEREND:event_TXT_PORT1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_TXT_PORT1ActionPerformed
+}//GEN-LAST:event_TXT_NAMEActionPerformed
 
     private void TXT_USERMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_TXT_USERMouseClicked
     {//GEN-HEADEREND:event_TXT_USERMouseClicked
         // TODO add your handling code here:
+        if (UserMain.self.is_touchscreen())
+        {
+            UserMain.self.show_vkeyboard( this.my_dlg, TXT_USER, false);
+        }
+
     }//GEN-LAST:event_TXT_USERMouseClicked
 
     private void TXT_USERActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_TXT_USERActionPerformed
@@ -363,20 +299,16 @@ public class EditImapFetcher extends GenericEditPanel
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JCheckBox BT_DISABLED;
     private javax.swing.JButton BT_OK;
-    private javax.swing.JComboBox CB_TYPE;
-    private javax.swing.JComboBox CB_VAULT;
+    private javax.swing.JComboBox CB_LICENSE;
     private javax.swing.JPanel PN_ACTION;
     private javax.swing.JPanel PN_BUTTONS;
     private javax.swing.JPasswordField TXTP_PWD;
-    private javax.swing.JTextField TXT_PORT1;
-    private javax.swing.JTextField TXT_SERVER1;
+    private javax.swing.JTextField TXT_NAME;
     private javax.swing.JTextField TXT_USER;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     // End of variables declaration//GEN-END:variables
 
     int get_object_flags()
@@ -416,16 +348,16 @@ public class EditImapFetcher extends GenericEditPanel
 
         flags = get_object_flags();
 
-        return ((flags & ImapFetcherOverview.DISABLED) == ImapFetcherOverview.DISABLED);
+        return ((flags & MandantOverview.DISABLED) == MandantOverview.DISABLED);
     }
     void set_object_disabled( boolean f)
     {
         int flags = get_object_flags();
 
         if (f)
-            set_object_flag( ImapFetcherOverview.DISABLED );
+            set_object_flag( MandantOverview.DISABLED );
         else
-            clr_object_flag( ImapFetcherOverview.DISABLED );
+            clr_object_flag( MandantOverview.DISABLED );
     }
 
     
@@ -434,15 +366,16 @@ public class EditImapFetcher extends GenericEditPanel
         if (model.is_new(row))
             return true;
 
-        String server = object.getServer();
-        if (server == null || TXT_SERVER1.getText().compareTo(server ) != 0)
+        String name = object.getName();
+        if (name != null && TXT_NAME.getText().compareTo(name ) != 0)
             return true;
 
-        int port = object.getPort();
-        if (Integer.parseInt( TXT_PORT1.getText() ) != port)
+        String login = object.getLoginname();
+        if (login != null && TXT_USER.getText().compareTo(login ) != 0)
             return true;
 
-        String user = object.getUsername();
+
+        String user = object.getLoginname();
         if (user == null || TXT_USER.getText().compareTo(user ) != 0)
             return true;
 
@@ -451,20 +384,14 @@ public class EditImapFetcher extends GenericEditPanel
             return true;
 
 
+
         if (BT_DISABLED.isSelected() != object_is_disabled())
             return true;
 
-        long da_id = model.getSqlResult().getLong( row, "da_id");
-
-        if ( CB_VAULT.getSelectedItem() != null)
-        {
-            if (dacm.get_act_id() != da_id)
-                return true;
-        }
 
 
-        ImapFetcherOverview.ImapFetcherTypeEntry mte = (ImapFetcherOverview.ImapFetcherTypeEntry)CB_TYPE.getSelectedItem();
-        if (mte.type.compareTo( object.getType()) != 0)
+        MandantOverview.MandantLicenseEntry mte = (MandantOverview.MandantLicenseEntry)CB_LICENSE.getSelectedItem();
+        if (mte.type.compareTo( object.getLicense()) != 0)
                 return true;
         
         return false;
@@ -479,9 +406,9 @@ public class EditImapFetcher extends GenericEditPanel
     protected boolean is_plausible()
     {
 
-        if (!Validator.is_valid_name( TXT_SERVER1.getText(), 255))
+        if (!Validator.is_valid_name( TXT_NAME.getText(), 255))
         {
-            UserMain.errm_ok(UserMain.getString("Der_Server_ist_nicht_okay"));
+            UserMain.errm_ok(UserMain.getString("Der_Name_ist_nicht_okay"));
             return false;
         }
         if (!Validator.is_valid_name( TXT_USER.getText(), 80))
@@ -496,31 +423,14 @@ public class EditImapFetcher extends GenericEditPanel
         }
 
 
-        if (!Validator.is_valid_port( TXT_PORT1.getText()))
-        {
-            UserMain.errm_ok(UserMain.getString("Port_ist_nicht_okay"));
-            return false;
-        }
-
         try
         {
-            DiskArchive da = dacm.get_selected_da();
-            String n = da.getName();
-        }
-        catch (Exception e)
-        {
-            UserMain.errm_ok(UserMain.getString("Speicherziel_ist_nicht_okay"));
-            return false;
-        }
-
-        try
-        {
-            ImapFetcherOverview.ImapFetcherTypeEntry mte = (ImapFetcherOverview.ImapFetcherTypeEntry)CB_TYPE.getSelectedItem();
+            MandantOverview.MandantLicenseEntry mte = (MandantOverview.MandantLicenseEntry)CB_LICENSE.getSelectedItem();
             mte.toString();
         }
         catch (Exception e)
         {
-            UserMain.errm_ok(UserMain.getString("Typ_ist_nicht_okay"));
+            UserMain.errm_ok(UserMain.getString("Lizenz_ist_nicht_okay"));
             return false;
         }
 
@@ -530,21 +440,20 @@ public class EditImapFetcher extends GenericEditPanel
 
     protected void set_object_props()
     {
-        String server1 = TXT_SERVER1.getText();
-        int port1 = Integer.parseInt( TXT_PORT1.getText() );
+        String name = TXT_NAME.getText();
+        
         String user = TXT_USER.getText();
         String pwd = get_pwd();
 
         boolean de = BT_DISABLED.isSelected();
-        ImapFetcherOverview.ImapFetcherTypeEntry mte = (ImapFetcherOverview.ImapFetcherTypeEntry)CB_TYPE.getSelectedItem();
-        String typ = mte.type;
+        MandantOverview.MandantLicenseEntry mte = (MandantOverview.MandantLicenseEntry)CB_LICENSE.getSelectedItem();
+        String lic = mte.type;
 
-        object.setServer(server1);
-        object.setPort(port1);
+        object.setName(name);
         set_object_disabled( de );
-        object.setDiskArchive( dacm.get_selected_da());
-        object.setUsername( user );
+        object.setLoginname( user );
         object.setPassword(pwd);
+        object.setLicense(lic);
     }
    
 

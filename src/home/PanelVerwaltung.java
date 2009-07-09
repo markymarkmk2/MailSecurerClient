@@ -37,7 +37,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
 
 
         PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Einstellungen" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 65, getWidth(), 60));
-        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Werkzeuge" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 285, getWidth(), 60));
+        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Connectoren" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 285, getWidth(), 60));
         
     }
 
@@ -53,7 +53,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
 
 
         PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Einstellungen" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 65, getWidth(), 60));
-        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Werkzeuge" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 285, getWidth(), 60));
+        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Connectoren" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 285, getWidth(), 60));
     }
 
 
@@ -107,7 +107,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         BT_IMAPFETCHER.setForeground(new java.awt.Color(201, 201, 201));
         BT_IMAPFETCHER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_einstellungen.png"))); // NOI18N
         BT_IMAPFETCHER.setText(UserMain.Txt("IMAP-Connect")); // NOI18N
-        BT_IMAPFETCHER.setToolTipText("IMAP / Exchange server");
+        BT_IMAPFETCHER.setToolTipText(UserMain.Txt("IMAP_/_Exchange_Server")); // NOI18N
         BT_IMAPFETCHER.setBorderPainted(false);
         BT_IMAPFETCHER.setContentAreaFilled(false);
         BT_IMAPFETCHER.setFocusPainted(false);
@@ -126,7 +126,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         BT_HOTFOLDER.setForeground(new java.awt.Color(201, 201, 201));
         BT_HOTFOLDER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/turntable_33x48.png"))); // NOI18N
         BT_HOTFOLDER.setText(UserMain.Txt("Hotfolder")); // NOI18N
-        BT_HOTFOLDER.setToolTipText("File to mail archive");
+        BT_HOTFOLDER.setToolTipText(UserMain.Txt("File_to_Mail_Archive")); // NOI18N
         BT_HOTFOLDER.setBorderPainted(false);
         BT_HOTFOLDER.setContentAreaFilled(false);
         BT_HOTFOLDER.setFocusPainted(false);
@@ -142,7 +142,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         BT_MILTER.setForeground(new java.awt.Color(201, 201, 201));
         BT_MILTER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_schedule.png"))); // NOI18N
         BT_MILTER.setText(UserMain.Txt("Milter")); // NOI18N
-        BT_MILTER.setToolTipText("Postfix / Sendmail server");
+        BT_MILTER.setToolTipText(UserMain.Txt("Postfix_/_Sendmail_Server")); // NOI18N
         BT_MILTER.setBorderPainted(false);
         BT_MILTER.setContentAreaFilled(false);
         BT_MILTER.setFocusPainted(false);
@@ -152,13 +152,13 @@ public class PanelVerwaltung extends SwitchSpringPanel
                 BT_MILTERActionPerformed(evt);
             }
         });
-        PN_BUTTONS.add(BT_MILTER, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 130, 170, 50));
+        PN_BUTTONS.add(BT_MILTER, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 350, 170, 50));
 
         BT_PROXY.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_PROXY.setForeground(new java.awt.Color(201, 201, 201));
         BT_PROXY.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
         BT_PROXY.setText(UserMain.Txt("Mail_Proxy")); // NOI18N
-        BT_PROXY.setToolTipText("Proxy to SMTP / POP3");
+        BT_PROXY.setToolTipText(UserMain.Txt("Proxy_für_ SMTP_/_POP3")); // NOI18N
         BT_PROXY.setBorderPainted(false);
         BT_PROXY.setContentAreaFilled(false);
         BT_PROXY.setFocusPainted(false);
@@ -168,13 +168,13 @@ public class PanelVerwaltung extends SwitchSpringPanel
                 BT_PROXYActionPerformed(evt);
             }
         });
-        PN_BUTTONS.add(BT_PROXY, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 130, 190, 50));
+        PN_BUTTONS.add(BT_PROXY, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 350, 190, 50));
 
         BT_DISKARCHIVES.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_DISKARCHIVES.setForeground(new java.awt.Color(201, 201, 201));
         BT_DISKARCHIVES.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_einstellungen.png"))); // NOI18N
         BT_DISKARCHIVES.setText(UserMain.Txt("Archive")); // NOI18N
-        BT_DISKARCHIVES.setToolTipText("Storage for archived mails");
+        BT_DISKARCHIVES.setToolTipText(UserMain.Txt("Storage_für_archivierte_Mails")); // NOI18N
         BT_DISKARCHIVES.setBorderPainted(false);
         BT_DISKARCHIVES.setContentAreaFilled(false);
         BT_DISKARCHIVES.setFocusPainted(false);
