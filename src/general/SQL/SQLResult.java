@@ -273,6 +273,11 @@ String  get_name_from_hibernate_class( String rec_name )
                     String val = res.getString(row, field_name);
                     method.invoke(o, val);
                 }
+                if (type.compareTo("java.lang.Integer") == 0)
+                {
+                    Integer val = new Integer( res.getInt(row, field_name) );
+                    method.invoke(o, val);
+                }
                 else if (type.compareTo("int") == 0)
                 {
                     int val = res.getInt(row, field_name);

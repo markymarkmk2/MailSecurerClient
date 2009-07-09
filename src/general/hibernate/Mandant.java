@@ -1,5 +1,5 @@
 package dimm.general.hibernate;
-// Generated 08.07.2009 13:28:14 by Hibernate Tools 3.2.1.GA
+// Generated 09.07.2009 10:42:43 by Hibernate Tools 3.2.1.GA
 
 
 import java.util.HashSet;
@@ -14,6 +14,9 @@ public class Mandant  implements java.io.Serializable {
      private int id;
      private String name;
      private String license;
+     private String password;
+     private String loginname;
+     private String flags;
      private Set<Hotfolder> hotfolders = new HashSet<Hotfolder>(0);
      private Set<ImapFetcher> imapFetchers = new HashSet<ImapFetcher>(0);
      private Set<Role> roles = new HashSet<Role>(0);
@@ -26,15 +29,21 @@ public class Mandant  implements java.io.Serializable {
     }
 
 	
-    public Mandant(int id, String name, String license) {
+    public Mandant(int id, String name, String license, String password, String loginname, String flags) {
         this.id = id;
         this.name = name;
         this.license = license;
+        this.password = password;
+        this.loginname = loginname;
+        this.flags = flags;
     }
-    public Mandant(int id, String name, String license, Set<Hotfolder> hotfolders, Set<ImapFetcher> imapFetchers, Set<Role> roles, Set<Milter> milters, Set<Proxy> proxies, Set<DiskArchive> diskArchives, Set<AccountConnector> accountConnectors) {
+    public Mandant(int id, String name, String license, String password, String loginname, String flags, Set<Hotfolder> hotfolders, Set<ImapFetcher> imapFetchers, Set<Role> roles, Set<Milter> milters, Set<Proxy> proxies, Set<DiskArchive> diskArchives, Set<AccountConnector> accountConnectors) {
        this.id = id;
        this.name = name;
        this.license = license;
+       this.password = password;
+       this.loginname = loginname;
+       this.flags = flags;
        this.hotfolders = hotfolders;
        this.imapFetchers = imapFetchers;
        this.roles = roles;
@@ -64,6 +73,27 @@ public class Mandant  implements java.io.Serializable {
     
     public void setLicense(String license) {
         this.license = license;
+    }
+    public String getPassword() {
+        return this.password;
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public String getLoginname() {
+        return this.loginname;
+    }
+    
+    public void setLoginname(String loginname) {
+        this.loginname = loginname;
+    }
+    public String getFlags() {
+        return this.flags;
+    }
+    
+    public void setFlags(String flags) {
+        this.flags = flags;
     }
     public Set<Hotfolder> getHotfolders() {
         return this.hotfolders;

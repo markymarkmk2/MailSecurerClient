@@ -135,7 +135,7 @@ public class SQLArrayResult
 
         } catch (Exception exc)
         {
-            err_log("Ung�ltiger Zugriff in getAllFieldString( " + r + " ):" + exc.getMessage());
+            err_log("Ungültiger Zugriff in getAllFieldString( " + r + " ):" + exc.getMessage());
             exc.printStackTrace();
         }
         return null;
@@ -151,7 +151,7 @@ public class SQLArrayResult
 
         } catch (Exception exc)
         {
-            err_log("Ung�ltiger Zugriff in getString( " + r + ", " + c + " ):" + exc.getMessage());
+            err_log("Ungültiger Zugriff in getString( " + r + ", " + c + " ):" + exc.getMessage());
             exc.printStackTrace();
             
         }
@@ -167,11 +167,14 @@ public class SQLArrayResult
         try
         {
             String lstr =  getString( r, c );
+            if (lstr.length() == 0)
+                return 0;
+
             return Long.parseLong(lstr);
 
         } catch (Exception exc)
         {
-            err_log("Ung�ltiger Zugriff in getLong( " + r + ", " + c + " ):" + exc.getMessage());
+            err_log("Ungültiger Zugriff in getLong( " + r + ", " + c + " ):" + exc.getMessage());
             exc.printStackTrace();
         }
         return -1;
@@ -183,14 +186,18 @@ public class SQLArrayResult
     }
     public int getInt( int r, int c )
     {
+
         try
         {
             String lstr =  getString( r, c );
+            if (lstr.length() == 0)
+                return 0;
+
             return Integer.parseInt(lstr);
 
         } catch (Exception exc)
         {
-            err_log("Ung�ltiger Zugriff in getInt( " + r + ", " + c + " ):" + exc.getMessage());
+            err_log("Ungültiger Zugriff in getInt( " + r + ", " + c + " ):" + exc.getMessage());
             exc.printStackTrace();
         }
         return -1;
@@ -209,6 +216,9 @@ public class SQLArrayResult
             if (o != null)
             {
                 String lstr =  o.toString();
+                if (lstr.length() == 0)
+                    return false;
+
                 if (lstr.charAt(0) == '0')
                     return false;
                 return true;
@@ -216,7 +226,7 @@ public class SQLArrayResult
 
         } catch (Exception exc)
         {
-            err_log("Ung�ltiger Zugriff in getBooleanValue( " + r + ", " + c + " ):" + exc.getMessage());
+            err_log("Ungültiger Zugriff in getBooleanValue( " + r + ", " + c + " ):" + exc.getMessage());
             exc.printStackTrace();
         }
         return false;
@@ -249,7 +259,7 @@ public class SQLArrayResult
 
         } catch (Exception exc)
         {
-            err_log("Ung�ltige Feldnummer " + c + " in getFieldName: " + exc.getMessage());
+            err_log("Ungültige Feldnummer " + c + " in getFieldName: " + exc.getMessage());
             exc.printStackTrace();
         }
         return null;
@@ -262,7 +272,7 @@ public class SQLArrayResult
 
         } catch (Exception exc)
         {
-            err_log("Ung�ltiger Zugriff in getFieldType:" + exc.getMessage());
+            err_log("Ungültiger Zugriff in getFieldType:" + exc.getMessage());
             exc.printStackTrace();
             
         }
@@ -294,7 +304,7 @@ public class SQLArrayResult
 
         } catch (Exception exc)
         {
-            err_log("Ung�ltiger Zugriff in getIndexedString( " + c + ", " + ic + ", " + idx + " ):" + exc.getMessage());
+            err_log("Ungültiger Zugriff in getIndexedString( " + c + ", " + ic + ", " + idx + " ):" + exc.getMessage());
         }
         return null;
     }
@@ -308,7 +318,7 @@ public class SQLArrayResult
 
         } catch (Exception exc)
         {
-            err_log("Ung�ltiger Zugriff in getIndexedLong( " + c + ", " + ic + ", " + idx + " ):" + exc.getMessage());
+            err_log("Ungültiger Zugriff in getIndexedLong( " + c + ", " + ic + ", " + idx + " ):" + exc.getMessage());
         }
         return -1;
     }                    
@@ -320,7 +330,7 @@ public class SQLArrayResult
         
         if (getCols() != linked_res.getCols())
         {
-            err_log("Ung�ltiges append, columncount nicht gleich");
+            err_log("Ungültiges append, columncount nicht gleich");
             return this;
         }
         
