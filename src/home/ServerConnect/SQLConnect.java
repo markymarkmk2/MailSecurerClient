@@ -58,11 +58,14 @@ public class SQLConnect
         mandant_res = new SQLResult<Mandant>(resarr, new Mandant().getClass());
 
         // SELECT ACTUAL MANDANT
+        long m_id = -1;
         Mandant m = get_act_mandant();
+        if ( m != null)
+            m_id = m.getId();
 
 
         // HOTFOLDERS
-        rs = sqc.executeQuery(sta, "select * from hotfolder where mid=" + m.getId());
+        rs = sqc.executeQuery(sta, "select * from hotfolder where mid=" + m_id);
 
         resarr = sqc.get_sql_array_result(rs);
         sqc.close(rs);
@@ -70,7 +73,7 @@ public class SQLConnect
         hf_res = new SQLResult<Hotfolder>(resarr, new Hotfolder().getClass());
 
         // DISKARCHIVE
-        rs = sqc.executeQuery(sta, "select * from disk_archive where mid=" + m.getId());
+        rs = sqc.executeQuery(sta, "select * from disk_archive where mid=" + m_id);
 
         resarr = sqc.get_sql_array_result(rs);
         sqc.close(rs);
@@ -78,7 +81,7 @@ public class SQLConnect
         da_res = new SQLResult<DiskArchive>(resarr, new DiskArchive().getClass());
 
         // IMAPFETCHER
-        rs = sqc.executeQuery(sta, "select * from imap_fetcher where mid=" + m.getId());
+        rs = sqc.executeQuery(sta, "select * from imap_fetcher where mid=" + m_id);
 
         resarr = sqc.get_sql_array_result(rs);
         sqc.close(rs);
@@ -86,7 +89,7 @@ public class SQLConnect
         if_res = new SQLResult<ImapFetcher>(resarr, new ImapFetcher().getClass());
 
         // MILTER
-        rs = sqc.executeQuery(sta, "select * from milter where mid=" + m.getId());
+        rs = sqc.executeQuery(sta, "select * from milter where mid=" +m_id);
 
         resarr = sqc.get_sql_array_result(rs);
         sqc.close(rs);
@@ -94,7 +97,7 @@ public class SQLConnect
         milter_res = new SQLResult<Milter>(resarr, new Milter().getClass());
 
         // PROXY
-        rs = sqc.executeQuery(sta, "select * from proxy where mid=" + m.getId());
+        rs = sqc.executeQuery(sta, "select * from proxy where mid=" + m_id);
 
         resarr = sqc.get_sql_array_result(rs);
         sqc.close(rs);
@@ -102,7 +105,7 @@ public class SQLConnect
         proxy_res = new SQLResult<Proxy>(resarr, new Proxy().getClass());
 
         // ROLE
-        rs = sqc.executeQuery(sta, "select * from role where mid=" + m.getId());
+        rs = sqc.executeQuery(sta, "select * from role where mid=" + m_id);
 
         resarr = sqc.get_sql_array_result(rs);
         sqc.close(rs);
@@ -110,7 +113,7 @@ public class SQLConnect
         role_res = new SQLResult<Role>(resarr, new Role().getClass());
 
         // ACCOUNT-CONNECTOR
-        rs = sqc.executeQuery(sta, "select * from account_connector where mid=" + m.getId());
+        rs = sqc.executeQuery(sta, "select * from account_connector where mid=" + m_id);
 
         resarr = sqc.get_sql_array_result(rs);
         sqc.close(rs);
@@ -158,6 +161,8 @@ public class SQLConnect
             if (mandant.getId() ==1)
                 return mandant;
         }
+        if (mandant_res.size() == 0)
+            return null;
         Mandant m = mandant_res.get(0);
         return m;
     }

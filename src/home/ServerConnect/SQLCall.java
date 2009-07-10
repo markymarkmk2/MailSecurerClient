@@ -429,7 +429,7 @@ public class SQLCall
                     }
                     field_idx++;
 
-                    vals += "'" + ((Integer) method.invoke(o)).intValue() + "'";
+                    vals += " " + ((Integer) method.invoke(o)).intValue() + " ";
                     fields += field_name;
                 }
                 else if (ret_type.compareTo("long") == 0)
@@ -441,7 +441,7 @@ public class SQLCall
                     }
                     field_idx++;
 
-                    vals += "'" + ((Long) method.invoke(o)).longValue() + "'";
+                    vals += " " + ((Long) method.invoke(o)).longValue() + " ";
                     fields += field_name;
                 }
                 else if (ret_type.contains(".DiskArchive"))
