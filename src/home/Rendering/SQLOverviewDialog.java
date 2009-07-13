@@ -37,6 +37,7 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
     protected UserMain main;
     protected GlossTable table;
     protected GlossPanel pg_painter;
+    protected String name_field;
 
 
     public abstract void set_table_header();
@@ -51,9 +52,10 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
     }
 
     
-    public SQLOverviewDialog( JFrame parent, boolean modal)
+    public SQLOverviewDialog( JFrame parent, String _name_field, boolean modal)
     {
         super( parent, modal);
+        name_field = _name_field;
     }
 
     @Override
@@ -183,11 +185,28 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
         if (col == model.get_del_column())
         {
 
-            String path = model.getSqlResult().getString( row, "path") ;
+            String name = null;
+            if (name_field != null)
+                name = model.getSqlResult().getString( row, name_field) ;
 
-
-            if (UserMain.errm_ok_cancel(UserMain.getString("Wollen_Sie_wirklich_diesen_Eintrag_loeschen") + ": <" + path + "> ?"))
+            String txt = UserMain.getString("Wollen_Sie_wirklich_diesen_Eintrag_loeschen");
+            if (name != null)
             {
+                txt += ": <" + name + ">";
+            }
+            
+            if (UserMain.errm_ok_cancel( txt + "?" ))
+            {
+                boolean okay = del_object( row );
+
+                propertyChange( new PropertyChangeEvent(this, "REBUILD", null, null ) );
+            }
+        }
+        //System.out.println("Row " + row + "Col " + col);
+    }
+
+    protected boolean del_object( int row )
+    {
                 Object object = model.getSqlResult().get(row);
 
                 SQLCall sql = UserMain.sqc().get_sqc();
@@ -205,14 +224,10 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
                     UserMain.errm_ok(this, UserMain.Txt("Cannot_delete") + " " + object_name + " " + sql.get_last_err());
                 }
 
-
-                propertyChange( new PropertyChangeEvent(this, "REBUILD", null, null ) );
-            }
-        }
-        //System.out.println("Row " + row + "Col " + col);
+                return okay;
     }
 
-    public void new_edit_dlg()
+     public void new_edit_dlg()
     {
 
         GlossDialogPanel pnl = get_edit_panel( -1 );

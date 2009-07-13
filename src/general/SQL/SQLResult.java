@@ -38,6 +38,9 @@ public class SQLResult<T> extends ArrayList<T>
 
     void init_member_list( Class cl)
     {
+        if (res == null)
+            return;
+
         for (int i = 0; i < res.getRows(); i++)
         {
             try
@@ -344,6 +347,9 @@ String  get_name_from_hibernate_class( String rec_name )
     }
     public int getRows()
     {
+        if (res == null)
+            return 0;
+
         return res.getRows();
     }
     public String getRawString(int row, String col )

@@ -39,6 +39,11 @@ import java.util.ResourceBundle;
  */
 public class UserMain extends javax.swing.JFrame
 {
+
+    static String get_default_lang()
+    {
+        return "DE";
+    }
     // PANELS
     NavigationHeader navPanel ;
     PanelVerwaltung pn_verwaltung;
@@ -392,7 +397,7 @@ public class UserMain extends javax.swing.JFrame
         navPanel.add_button(getString("Suchen"), PBC_SEARCH, pn_startup);
         navPanel.add_button(getString("Verwaltung"), PBC_ADMIN, pn_verwaltung);
         navPanel.add_button(getString("System"), PBC_SYSTEM, pn_system);
-        navPanel.enable_button(PBC_ADMIN, true);
+        navPanel.enable_button(PBC_ADMIN, false);
         navPanel.add_button(getString("Anmelden"), PBC_LOGIN, null);
         
         Dimension auto_size = this.getSize();
@@ -425,7 +430,33 @@ public class UserMain extends javax.swing.JFrame
 
     private void handle_login()
     {
-        errm_ok("Iss auch noch nich fertig!!");
+        
+        LoginPanel pnl = new LoginPanel(this);
+        GenericGlossyDlg dlg = new GenericGlossyDlg(this, true, pnl);
+        dlg.pack();
+
+        dlg.setLocation(this.getLocationOnScreen().x + 200, this.getLocationOnScreen().y + 50);
+        dlg.setTitle(getString("Login"));
+        dlg.setVisible(true);
+
+
+        if (this.getUserLevel() != UL_DUMMY)
+        {
+            navPanel.enable_button(PBC_ADMIN, true);
+
+            navPanel.remove_button(PBC_LOGIN);
+
+            navPanel.add_trail_button(getString("Abmelden"), PBC_LOGOFF, null);
+
+
+            if (this.getUserLevel() == UL_SYSADMIN)
+            {
+            }
+            else
+            {
+                navPanel.update_active_panel();
+            }
+        }
     }
 
 
@@ -828,6 +859,12 @@ public class UserMain extends javax.swing.JFrame
     {
         return getString(key);
     }
+
+    void setUserLevel( int ul )
+    {
+        userLevel = ul;
+    }
+
    
 
 

@@ -42,7 +42,7 @@ class MilterTableModel extends OverviewModel
     @Override
     public String get_qry(long mandanten_id)
     {
-        String qry = "select * from milter where mid='" + mandanten_id + "' order by id";
+        String qry = "select * from milter where mid=" + mandanten_id + " order by id";
         return qry;
     }
 
@@ -148,7 +148,7 @@ public class MilterOverview extends SQLOverviewDialog implements PropertyChangeL
     /** Creates new form NewJDialog */
     public MilterOverview(UserMain parent, boolean modal)
     {
-        super(parent, modal);
+        super(parent, "in_server", modal);
         initComponents();
 
         main = parent;

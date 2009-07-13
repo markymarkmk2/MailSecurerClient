@@ -248,7 +248,7 @@ public class EditDA extends GenericEditPanel
     private void BT_OKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_OKActionPerformed
     {//GEN-HEADEREND:event_BT_OKActionPerformed
         // TODO add your handling code here:
-        ok_action(object);
+        ok_action(object);        
     }//GEN-LAST:event_BT_OKActionPerformed
 
     private void BT_ABORTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_ABORTActionPerformed
@@ -274,13 +274,34 @@ public class EditDA extends GenericEditPanel
     private void BT_DISKSPACESActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_DISKSPACESActionPerformed
     {//GEN-HEADEREND:event_BT_DISKSPACESActionPerformed
         // TODO add your handling code here:
+        boolean _is_new = is_new();
+        
+        // IF WE WANT TO INSERT DISKSPACE IN A NEW OBJECT , WE HAVE TO SAVE FIRST
+        if (_is_new)
+        {
+            // IN CASE OF ERROR -> LEAVE, MESSAGE WAS ALREADY SHOWN
+            if (!save_action(object) || model.getRowCount() <= 0)
+                return;
+
+            // NOW THE LAST OBJECT IN OVERVIEWLIST IS OUR NEW OBJECT, OBJECTS ARE ORDERED BY ID
+            int size = model.getRowCount();
+            DiskArchive new_object = model.get_object(size - 1);
+            if (new_object.getName().compareTo(object.getName()) != 0)
+            {
+                return;
+            }
+
+            // SET INTERNAL VARS
+            object = new_object;
+            row = size - 1;            
+        }
+
         DiskSpaceOverview dlg = new DiskSpaceOverview(UserMain.self, object, true);
         dlg.pack();
 
         dlg.setLocation(this.getLocationOnScreen().x + 30, this.getLocationOnScreen().y + 30);
         dlg.setTitle(UserMain.Txt("DiskSpaces"));
         dlg.setVisible(true);
-
     }//GEN-LAST:event_BT_DISKSPACESActionPerformed
     
     
@@ -383,6 +404,20 @@ public class EditDA extends GenericEditPanel
         object.setName(name);
         set_object_disabled( de );
     }
+
+    @Override
+    protected boolean save_action( Object object )
+    {
+        boolean ok = super.save_action(object);
+
+        // IF SOMETHING HAS BEEN SAVED, WE REBUILD OUR GLOBAL DA-LIST
+        if (ok)
+        {
+            UserMain.sqc().rebuild_da_array(UserMain.sqc().get_act_mandant().getId());
+        }
+        return ok;
+    }
+
 
     
         

@@ -76,10 +76,19 @@ public abstract class GenericEditPanel extends GlossDialogPanel
 
     protected void ok_action(Object object)
     {
+        boolean ok = save_action( object );
+        
+        if (ok)
+            this.setVisible(false);
+
+    }
+
+    protected boolean save_action(Object object)
+    {
         boolean ok = true;
 
         if (!is_plausible())
-            return;
+            return false;
 
         if (is_new())
         {
@@ -97,8 +106,7 @@ public abstract class GenericEditPanel extends GlossDialogPanel
                 }
             }
         }
-        if (ok)
-            this.setVisible(false);
+        return ok;
 
     }
 

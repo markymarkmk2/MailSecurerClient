@@ -545,6 +545,7 @@ public class EditImapFetcher extends GenericEditPanel
         object.setDiskArchive( dacm.get_selected_da());
         object.setUsername( user );
         object.setPassword(pwd);
+        object.setType(typ);
     }
    
 

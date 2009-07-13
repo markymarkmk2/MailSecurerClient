@@ -153,7 +153,7 @@ public class MandantOverview extends SQLOverviewDialog implements PropertyChange
     /** Creates new form NewJDialog */
     public MandantOverview(UserMain parent, boolean modal)
     {
-        super(parent, modal);
+        super(parent, "name", modal);
         initComponents();
 
         main = parent;

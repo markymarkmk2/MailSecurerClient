@@ -9,7 +9,8 @@ import dimm.general.SQL.*;
 import dimm.general.hibernate.DiskArchive;
 import dimm.general.hibernate.DiskSpace;
 import dimm.general.hibernate.Mandant;
-import dimm.home.httpd.*;
+import dimm.home.httpd.MWWebServiceService;
+import dimm.home.httpd.MWWebService;
 import com.thoughtworks.xstream.XStream;
 
 import java.net.URL;
@@ -205,6 +206,9 @@ public class SQLCall
 
     public SQLArrayResult get_sql_array_result( ResultSetID r )
     {
+        if (r == null)
+            return null;
+        
         init_stat("");
         try
         {
@@ -400,7 +404,7 @@ public class SQLCall
                 }
                 String field_name = get_name_from_hibernate_class( method.getName().substring(3) );
 
-                if (ret_type.compareTo("java.lang.String") == 0 || ret_type.compareTo("java.lang.Integer") == 0 || ret_type.compareTo("java.lang.Long") == 0)
+                if (ret_type.compareTo("java.lang.String") == 0)
                 {
                     if (field_idx > 0)
                     {
@@ -418,6 +422,26 @@ public class SQLCall
                     val = encode(val);
 
                     vals += "'" + val + "'";
+                    fields += field_name;
+                }
+                else if (ret_type.compareTo("java.lang.Integer") == 0 || ret_type.compareTo("java.lang.Long") == 0)
+                {
+                    if (field_idx > 0)
+                    {
+                        vals += ",";
+                        fields += ",";
+                    }
+                    field_idx++;
+
+                    Object str_obj = method.invoke(o);
+                    if (str_obj == null)
+                    {
+                        throw new Exception( "Object " + rec_name + " has not value for method " + meth_name );
+                    }
+                    String val = method.invoke(o).toString();
+                    val = encode(val);
+
+                    vals +=  val;
                     fields += field_name;
                 }
                 else if (ret_type.compareTo("int") == 0)
@@ -455,7 +479,7 @@ public class SQLCall
                     }
                     field_idx++;
 
-                    vals += "'" + da.getId() + "'";
+                    vals += da.getId();
                     fields += "da_id";
                 }
                 else if (ret_type.contains(".DiskSpace"))
@@ -469,7 +493,7 @@ public class SQLCall
                     }
                     field_idx++;
 
-                    vals += "'" + ds.getId() + "'";
+                    vals += ds.getId();
                     fields += "ds_id";
                 }
                 else if (ret_type.contains(".Mandant"))
@@ -483,7 +507,7 @@ public class SQLCall
                     }
                     field_idx++;
 
-                    vals += "'" + m.getId() + "'";
+                    vals += m.getId();
                     fields += "mid";
                 }
                 else if (!ret_type.contains(".hibernate.") && !ret_type.contains("java.util.Set") )
@@ -547,7 +571,7 @@ public class SQLCall
                 }
                 String field_name = get_name_from_hibernate_class( method.getName().substring(3) );
 
-                if (ret_type.compareTo("java.lang.String") == 0 || ret_type.compareTo("java.lang.Integer") == 0 || ret_type.compareTo("java.lang.Long") == 0)
+                if (ret_type.compareTo("java.lang.String") == 0)
                 {
                     if (field_idx > 0)
                     {
@@ -559,6 +583,18 @@ public class SQLCall
 
                     upd_cmd += field_name + "='" + val + "'";
                 }
+                else if (ret_type.compareTo("java.lang.Integer") == 0 || ret_type.compareTo("java.lang.Long") == 0)
+                {
+                    if (field_idx > 0)
+                    {
+                        upd_cmd += ",";
+                    }
+                    field_idx++;
+                    String val = method.invoke(o).toString();
+                    val = encode(val);
+
+                    upd_cmd += field_name + "=" + val;
+                }
                 else if (ret_type.compareTo("int") == 0)
                 {
                     if (field_idx > 0)
@@ -567,7 +603,7 @@ public class SQLCall
                     }
                     field_idx++;
 
-                    upd_cmd += field_name + "='" + ((Integer) method.invoke(o)).intValue() + "'";
+                    upd_cmd += field_name + "=" + ((Integer) method.invoke(o)).intValue() + "";
                 }
                 else if (ret_type.compareTo("long") == 0)
                 {
@@ -577,7 +613,7 @@ public class SQLCall
                     }
                     field_idx++;
 
-                    upd_cmd += field_name + "='" + ((Long) method.invoke(o)).longValue() + "'";
+                    upd_cmd += field_name + "=" + ((Long) method.invoke(o)).longValue() + "";
                 }
                 else if (ret_type.contains(".DiskArchive"))
                 {
@@ -591,7 +627,7 @@ public class SQLCall
                         }
                         field_idx++;
 
-                        upd_cmd += "da_id='" + da.getId() + "'";
+                        upd_cmd += "da_id=" + da.getId();
                     }
                 }
                 else if (ret_type.contains(".DiskSpace"))
@@ -605,7 +641,7 @@ public class SQLCall
                         }
                         field_idx++;
 
-                        upd_cmd += "ds_id='" + ds.getId() + "'";
+                        upd_cmd += "ds_id=" + ds.getId();
                     }
                 }
                 else if (ret_type.contains(".Mandant"))
@@ -619,7 +655,7 @@ public class SQLCall
                         }
                         field_idx++;
 
-                        upd_cmd += "mid='" + m.getId() + "'";
+                        upd_cmd += "mid=" + m.getId();
                     }
                 }
                 else if (!ret_type.contains(".hibernate.") && !ret_type.contains("java.util.Set") )
@@ -629,7 +665,7 @@ public class SQLCall
                         throw new Exception( "Invalid return type for Method " + meth_name );
                 }
             }
-            String upd_stmt = "update " + rec_name + " set " + upd_cmd + " where id='" + id + "'";
+            String upd_stmt = "update " + rec_name + " set " + upd_cmd + " where id=" + id;
 
             int rows = executeUpdate(sta, upd_stmt);
 
@@ -658,7 +694,7 @@ public class SQLCall
                 return false;
             }
 
-            String del_stmt = "delete from " + rec_name + " where id='" + id + "'";
+            String del_stmt = "delete from " + rec_name + " where id=" + id;
 
             int rows = executeUpdate(sta, del_stmt);
 
@@ -671,5 +707,40 @@ public class SQLCall
         }
         return false;
     }
+    public int GetFirstSqlFieldInt( ConnectionID connection_id, String qry, int field )
+    {
+        String ret = GetFirstSqlField( connection_id, qry, field );
+
+        return Integer.parseInt(ret);
+    }
+
+    public String GetFirstSqlField( ConnectionID connection_id, String qry, int field )
+    {
+
+        init_stat(qry);
+
+        try
+        {
+            String ret = port.getSQLFirstRowField( connection_id.getId(), qry, field );
+
+            calc_stat(ret);
+
+            int idx = ret.indexOf(':');
+            int retcode = Integer.parseInt(ret.substring(0, idx));
+            if (retcode == 0)
+            {
+                return ret.substring(idx + 2);
+            }
+            last_err_code = retcode;
+        }
+        catch (Exception ex)
+        {
+            last_ex = ex;
+            ex.printStackTrace();
+        }
+
+         return null;
+    }
+
 
 }

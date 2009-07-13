@@ -41,7 +41,7 @@ class DiskSpaceTableModel extends OverviewModel
     @Override
     public String get_qry(long da_id)
     {
-        String qry = "select * from disk_space where da_id='" + da_id + "' order by id";
+        String qry = "select * from disk_space where da_id=" + da_id + " order by id";
         return qry;
     }
 
@@ -154,7 +154,7 @@ public class DiskSpaceOverview extends SQLOverviewDialog
     /** Creates new form NewJDialog */
     public DiskSpaceOverview(UserMain parent, DiskArchive _da, boolean modal)
     {
-        super(parent, modal);
+        super(parent, "path", modal);
         da = _da;
 
         initComponents();

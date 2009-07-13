@@ -42,7 +42,7 @@ class ImapFetcherTableModel extends OverviewModel
     @Override
     public String get_qry(long mandanten_id)
     {
-        String qry = "select * from imap_fetcher where mid='" + mandanten_id + "' order by id";
+        String qry = "select * from imap_fetcher where mid=" + mandanten_id + " order by id";
         return qry;
     }
 
@@ -148,7 +148,7 @@ public class ImapFetcherOverview extends SQLOverviewDialog implements PropertyCh
     /** Creates new form NewJDialog */
     public ImapFetcherOverview(UserMain parent, boolean modal)
     {
-        super(parent, modal);
+        super(parent, "server", modal);
         initComponents();
 
         main = parent;

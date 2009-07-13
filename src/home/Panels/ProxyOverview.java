@@ -42,7 +42,7 @@ class ProxyTableModel extends OverviewModel
     @Override
     public String get_qry(long mandanten_id)
     {
-        String qry = "select * from proxy where mid='" + mandanten_id + "' order by id";
+        String qry = "select * from proxy where mid=" + mandanten_id + " order by id";
         return qry;
     }
 
@@ -150,7 +150,7 @@ public class ProxyOverview extends SQLOverviewDialog implements PropertyChangeLi
     /** Creates new form NewJDialog */
     public ProxyOverview(UserMain parent, boolean modal)
     {
-        super(parent, modal);
+        super(parent, "local_server", modal);
         initComponents();
 
         main = parent;

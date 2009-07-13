@@ -6,7 +6,6 @@
 package dimm.home.Panels;
 
 import dimm.home.Models.OverviewModel;
-import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossPanel;
 import dimm.home.Rendering.GlossTable;
@@ -14,9 +13,6 @@ import dimm.home.Rendering.TitlePanel;
 import dimm.home.Rendering.SQLOverviewDialog;
 import dimm.home.ServerConnect.SQLCall;
 import dimm.home.UserMain;
-import java.beans.PropertyChangeEvent;
-import java.awt.Component;
-import java.awt.event.MouseEvent;
 import javax.swing.JButton;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableColumnModel;
@@ -45,7 +41,7 @@ class DATableModel extends OverviewModel
     @Override
     public String get_qry(long mandanten_id)
     {
-        String qry = "select * from disk_archive where mid='" + mandanten_id + "' order by id";
+        String qry = "select * from disk_archive where mid=" + mandanten_id + " order by id";
         return qry;
     }
 
@@ -149,7 +145,7 @@ public class DAOverview extends SQLOverviewDialog
     /** Creates new form NewJDialog */
     public DAOverview(UserMain parent, boolean modal)
     {
-        super(parent, modal);
+        super(parent, "name", modal);
         initComponents();
 
         main = parent;
@@ -358,6 +354,89 @@ public class DAOverview extends SQLOverviewDialog
         // TODO add your handling code here:
         this.setVisible(false);
     }
+
+    boolean check_del_constaints(int row)
+    {
+        ConnectionID cid = null;
+        boolean ret = true;
+        DiskArchive da = (DiskArchive)model.getSqlResult().get(row);
+        int id = da.getId();
+
+        SQLCall sql = UserMain.sqc().get_sqc();
+
+        try
+        {
+            cid = sql.open();
+
+            String name = sql.GetFirstSqlField( cid, "select path from disk_space where da_id=" + id, 0);
+            if (name != null)
+            {
+                UserMain.errm_ok(UserMain.Txt("Dieses_Diskarchiv_verwaltet noch DiskSpace: " + name));
+                ret = false;
+            }
+            name = sql.GetFirstSqlField( cid, "select path from hotfolder where da_id=" + id, 0);
+            if (name != null)
+            {
+                UserMain.errm_ok(UserMain.Txt("Dieses_Diskarchiv_wird_noch_von_einem_Hotfolder_verwendet: " + name));
+                ret = false;
+            }
+
+            name = sql.GetFirstSqlField( cid, "select server from imap_fetcher where da_id=" + id, 0);
+            if (name != null)
+            {
+                UserMain.errm_ok(UserMain.Txt("Dieses_Diskarchiv_wird_noch_von_einem_IMAP-Connect_verwendet: " + name));
+                ret = false;
+            }
+
+            name = sql.GetFirstSqlField( cid, "select local_server from proxy where da_id=" + id, 0);
+            if (name != null)
+            {
+                UserMain.errm_ok(UserMain.Txt("Dieses_Diskarchiv_wird_noch_von_einem_Proxy-Connect_verwendet: " + name));
+                ret = false;
+            }
+
+            name = sql.GetFirstSqlField( cid, "select in_server from milter where da_id=" + id, 0);
+            if (name != null)
+            {
+                UserMain.errm_ok(UserMain.Txt("Dieses_Diskarchiv_wird_noch_von_einem_SMTP-Connect_verwendet: " + name));
+                ret = false;
+            }
+        }
+        catch (Exception e)
+        {
+            ret = false;
+        }
+        finally
+        {
+            sql.close(cid);
+        }
+
+       return ret;
+
+    }
+    @Override
+    protected boolean del_object( int row )
+    {
+        if (!check_del_constaints(row))
+            return false;
+
+        boolean ok = super.del_object(row);
+
+        // IF SOMETHING HAS BEEN DELETED, WE REBUILD OUR GLOBAL DA-LIST
+        if (ok)
+        {
+            UserMain.sqc().rebuild_da_array(UserMain.sqc().get_act_mandant().getId());
+        }
+        return ok;
+
+    }
+
+
+
+    
+
+
+
 
     // Variables declaration - do not modify
     private javax.swing.JButton BT_NEW;

@@ -43,7 +43,7 @@ class HotfolderTableModel extends OverviewModel
     @Override
     public String get_qry(long mandanten_id)
     {
-        String qry = "select * from Hotfolder where mid='" + mandanten_id + "' order by id";
+        String qry = "select * from Hotfolder where mid=" + mandanten_id + " order by id";
         return qry;
     }
 
@@ -109,7 +109,7 @@ public class HotfolderOverview extends SQLOverviewDialog implements PropertyChan
     /** Creates new form NewJDialog */
     public HotfolderOverview(UserMain parent, boolean modal)
     {
-        super(parent, modal);
+        super(parent, "path", modal);
         initComponents();
 
         main = parent;

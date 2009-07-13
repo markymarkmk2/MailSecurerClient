@@ -549,21 +549,20 @@ public class EditProxy extends GenericEditPanel
         String server1 = TXT_SERVER1.getText();
         int port1 = Integer.parseInt( TXT_PORT1.getText() );
         String server2 = object.getRemoteServer();
-        int port2 = object.getRemotePort();
+        ProxyOverview.ProxyTypeEntry mte = (ProxyOverview.ProxyTypeEntry)CB_TYPE.getSelectedItem();
+        String typ = mte.type;
+        boolean de = BT_DISABLED.isSelected();
+        
         if (TXT_SERVER2.isVisible())
         {
             server2 = TXT_SERVER2.getText();
-            port2 = Integer.parseInt( TXT_PORT2.getText() );
+            int port2 = Integer.parseInt( TXT_PORT2.getText() );
+            object.setRemotePort(port2);
         }
-        boolean de = BT_DISABLED.isSelected();
-
-        ProxyOverview.ProxyTypeEntry mte = (ProxyOverview.ProxyTypeEntry)CB_TYPE.getSelectedItem();
-        String typ = mte.type;
 
         object.setLocalServer(server1);
         object.setRemoteServer(server2);
         object.setLocalPort(port1);
-        object.setRemotePort(port2);
         set_object_disabled( de );
         object.setDiskArchive( dacm.get_selected_da());
         object.setType(typ);
