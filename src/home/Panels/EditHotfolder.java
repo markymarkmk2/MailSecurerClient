@@ -12,8 +12,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import dimm.general.SQL.*;
-import dimm.general.hibernate.DiskArchive;
-import dimm.general.hibernate.Hotfolder;
+import home.shared.hibernate.DiskArchive;
+import home.shared.hibernate.Hotfolder;
 import dimm.home.Models.DiskArchiveComboModel;
 import dimm.home.Utilities.Validator;
 

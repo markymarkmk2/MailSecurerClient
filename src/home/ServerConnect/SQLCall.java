@@ -5,14 +5,14 @@
 package dimm.home.ServerConnect;
 
 import java.lang.reflect.Method;
-import dimm.general.SQL.*;
-import dimm.general.hibernate.DiskArchive;
-import dimm.general.hibernate.DiskSpace;
-import dimm.general.hibernate.Mandant;
+import home.shared.hibernate.DiskArchive;
+import home.shared.hibernate.DiskSpace;
+import home.shared.hibernate.Mandant;
 import dimm.home.httpd.MWWebServiceService;
 import dimm.home.httpd.MWWebService;
 import com.thoughtworks.xstream.XStream;
 
+import home.shared.SQL.SQLArrayResult;
 import java.net.URL;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;

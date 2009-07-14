@@ -11,8 +11,8 @@ import dimm.home.UserMain;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
-import dimm.general.hibernate.DiskArchive;
-import dimm.general.hibernate.DiskSpace;
+import home.shared.hibernate.DiskArchive;
+import home.shared.hibernate.DiskSpace;
 import dimm.home.Utilities.Validator;
 
 

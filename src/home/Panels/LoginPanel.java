@@ -4,13 +4,17 @@
  * Created on 22. Mai 2008, 15:05
  */
 
-package dimm.home;
+package dimm.home.Panels;
 
-import dimm.general.SQL.SQLArrayResult;
+import dimm.home.CheckPwdPanel;
+import dimm.home.Main;
+import dimm.home.Preferences;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.SQLConnect;
+import dimm.home.UserMain;
+import home.shared.SQL.SQLArrayResult;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
 
@@ -31,7 +35,7 @@ public class LoginPanel extends GlossDialogPanel
         initComponents();
         CB_USER.removeAllItems();
         CB_USER.addItem(UserMain.getString("Verwaltung") );
-        CB_USER.addItem(UserMain.getString("Verwaltung_alle Mandanten") );
+        CB_USER.addItem(UserMain.getString("Verwaltung_alle_Mandanten") );
         if (Main.enable_admin)
             CB_USER.addItem(UserMain.getString("System") );
         main = _main;
@@ -101,7 +105,7 @@ public class LoginPanel extends GlossDialogPanel
             return ret;
         }
 
-        // ADMIN
+/*        // ADMIN
         if (user_type.compareTo(UserMain.getString("System"))== 0 )
         {
             int id = -1;
@@ -112,9 +116,9 @@ public class LoginPanel extends GlossDialogPanel
 
             return ret;
         }
-        
+        */
         // MULTI ADMIN
-        if (user_type.compareTo(UserMain.getString("Verwaltung_alle_mandanten"))== 0)
+        if (user_type.compareTo(UserMain.getString("System"))== 0 || user_type.compareTo(UserMain.getString("Verwaltung_alle_Mandanten"))== 0)
         {    
             String user = this.TXT_USER.getText();
 
@@ -236,7 +240,7 @@ public class LoginPanel extends GlossDialogPanel
 
         jLabel3.setText(UserMain.Txt("Sprache")); // NOI18N
 
-        LB_USER.setText("UserID");
+        LB_USER.setText(UserMain.getString("Loginname")); // NOI18N
 
         TXT_USER.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -259,14 +263,12 @@ public class LoginPanel extends GlossDialogPanel
                             .addComponent(LB_USER))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(TXT_USER, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+                            .addComponent(TXT_USER, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(CB_LANG, 0, 110, Short.MAX_VALUE)
+                                .addComponent(CB_LANG, 0, 103, Short.MAX_VALUE)
                                 .addGap(88, 88, 88))
-                            .addComponent(PF_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(CB_USER, 0, 198, Short.MAX_VALUE))))
+                            .addComponent(PF_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
+                            .addComponent(CB_USER, 0, 191, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(BT_CHANGE_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)

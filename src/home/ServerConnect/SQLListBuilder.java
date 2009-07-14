@@ -10,7 +10,9 @@
 package dimm.home.ServerConnect;
 
 
+import dimm.general.SQL.SQLResult;
 import dimm.home.UserMain;
+import home.shared.SQL.SQLArrayResult;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,7 +23,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import dimm.general.SQL.*;
 
 /**
  *

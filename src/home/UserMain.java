@@ -6,6 +6,7 @@
 
 package dimm.home;
 
+import dimm.home.Panels.LoginPanel;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossErrDialog;
 import dimm.home.Rendering.NavigationHeader;
@@ -40,7 +41,7 @@ import java.util.ResourceBundle;
 public class UserMain extends javax.swing.JFrame
 {
 
-    static String get_default_lang()
+    public static String get_default_lang()
     {
         return "DE";
     }
@@ -94,7 +95,7 @@ public class UserMain extends javax.swing.JFrame
     public static Color ggradientBottom = Color.gray;
     public static UserMain self;
     
-    private int userLevel = UL_SYSADMIN;
+    private int userLevel = UL_DUMMY;
     boolean is_udp;
     String fixed_ip;
     boolean no_updater;
@@ -398,6 +399,8 @@ public class UserMain extends javax.swing.JFrame
         navPanel.add_button(getString("Verwaltung"), PBC_ADMIN, pn_verwaltung);
         navPanel.add_button(getString("System"), PBC_SYSTEM, pn_system);
         navPanel.enable_button(PBC_ADMIN, false);
+        navPanel.enable_button(PBC_SYSTEM, false);
+        navPanel.enable_button(PBC_SEARCH, false);
         navPanel.add_button(getString("Anmelden"), PBC_LOGIN, null);
         
         Dimension auto_size = this.getSize();
@@ -439,23 +442,31 @@ public class UserMain extends javax.swing.JFrame
         dlg.setTitle(getString("Login"));
         dlg.setVisible(true);
 
+        update_panels();
+    }
 
+    void update_panels()
+    {
         if (this.getUserLevel() != UL_DUMMY)
         {
-            navPanel.enable_button(PBC_ADMIN, true);
-
+            if (this.getUserLevel() == UL_MULTIADMIN || this.getUserLevel() == UL_SYSADMIN)
+            {
+                navPanel.enable_button(PBC_ADMIN, false);
+                navPanel.enable_button(PBC_SYSTEM, true);
+                navPanel.enable_button(PBC_SEARCH, false );
+            }
+            else
+            {
+                navPanel.enable_button(PBC_ADMIN, true);
+                navPanel.enable_button(PBC_SYSTEM, false);
+                navPanel.enable_button(PBC_SEARCH, true );
+            }
             navPanel.remove_button(PBC_LOGIN);
 
             navPanel.add_trail_button(getString("Abmelden"), PBC_LOGOFF, null);
 
 
-            if (this.getUserLevel() == UL_SYSADMIN)
-            {
-            }
-            else
-            {
-                navPanel.update_active_panel();
-            }
+            navPanel.update_active_panel();
         }
     }
 
@@ -490,14 +501,8 @@ public class UserMain extends javax.swing.JFrame
    
     private void handle_logoff()
     {
-        navPanel.remove_button(PBC_LOGOFF);
-        navPanel.enable_button(PBC_ADMIN, false);
-        navPanel.add_trail_button(getString("Anmelden"), PBC_LOGIN, null);
-        
-        
-        
-        navPanel.update_active_panel();        
-
+        userLevel = UL_DUMMY;
+        restart_gui();
     }        
 
 
@@ -860,9 +865,26 @@ public class UserMain extends javax.swing.JFrame
         return getString(key);
     }
 
-    void setUserLevel( int ul )
+    public void setUserLevel( int ul )
     {
         userLevel = ul;
+    }
+
+    boolean set_mandant_id( int force_mandant )
+    {
+        return sqc.set_mandant_id(force_mandant);
+    }
+
+    boolean force_mandant_id( int parseInt )
+    {
+        sqc.init_structs();
+        boolean ret = set_mandant_id(parseInt);
+        if (ret)
+        {
+            setUserLevel( UL_ADMIN );
+            update_panels();
+        }
+        return ret;
     }
 
    

@@ -6,10 +6,9 @@
 package dimm.home.Models;
 
 import dimm.general.SQL.SQLResult;
-import dimm.general.hibernate.DiskArchive;
 import javax.swing.ComboBoxModel;
 import javax.swing.event.ListDataListener;
-
+import home.shared.hibernate.DiskArchive;
 /**
  *
  * @author mw

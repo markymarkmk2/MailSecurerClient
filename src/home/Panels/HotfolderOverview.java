@@ -19,11 +19,12 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableColumnModel;
 
 import dimm.general.SQL.*;
-import dimm.general.hibernate.*;
+import home.shared.hibernate.*;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.StatementID;
+import home.shared.SQL.SQLArrayResult;
 
 
 class HotfolderTableModel extends OverviewModel

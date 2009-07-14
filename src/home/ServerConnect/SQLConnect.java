@@ -5,17 +5,19 @@
 
 package dimm.home.ServerConnect;
 
-import dimm.general.SQL.SQLArrayResult;
 import dimm.general.SQL.SQLResult;
-import dimm.general.hibernate.AccountConnector;
-import dimm.general.hibernate.DiskArchive;
-import dimm.general.hibernate.Hotfolder;
-import dimm.general.hibernate.ImapFetcher;
-import dimm.general.hibernate.Mandant;
-import dimm.general.hibernate.Milter;
-import dimm.general.hibernate.Role;
-import dimm.general.hibernate.Proxy;
 import dimm.home.UserMain;
+import home.shared.SQL.SQLArrayResult;
+import home.shared.hibernate.AccountConnector;
+import home.shared.hibernate.DiskArchive;
+import home.shared.hibernate.Hotfolder;
+import home.shared.hibernate.ImapFetcher;
+import home.shared.hibernate.Mandant;
+import home.shared.hibernate.Milter;
+import home.shared.hibernate.Proxy;
+import home.shared.hibernate.Role;
+
+
 
 /**
  *
@@ -307,7 +309,7 @@ public class SQLConnect
         return account_res;
     }
 
-    public void set_mandant_id( int _mandant_id )
+    public boolean set_mandant_id( int _mandant_id )
     {
         for (int i = 0; i < mandant_res.size(); i++)
         {
@@ -316,10 +318,11 @@ public class SQLConnect
             {
                 mandant_id = _mandant_id;
                 init_structs();
-                return;
+                return true;
             }
         }
         mandant_id = -1;
+        return false;
     }
 
 

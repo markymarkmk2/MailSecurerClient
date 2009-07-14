@@ -28,13 +28,13 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="TXT_USER" alignment="1" pref="198" max="32767" attributes="1"/>
+                          <Component id="TXT_USER" alignment="1" pref="191" max="32767" attributes="1"/>
                           <Group type="102" attributes="0">
-                              <Component id="CB_LANG" pref="110" max="32767" attributes="0"/>
+                              <Component id="CB_LANG" pref="103" max="32767" attributes="0"/>
                               <EmptySpace min="-2" pref="88" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="PF_PWD" pref="198" max="32767" attributes="1"/>
-                          <Component id="CB_USER" alignment="0" pref="198" max="32767" attributes="1"/>
+                          <Component id="PF_PWD" pref="191" max="32767" attributes="1"/>
+                          <Component id="CB_USER" alignment="0" pref="191" max="32767" attributes="1"/>
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
@@ -183,7 +183,9 @@
     </Component>
     <Component class="javax.swing.JLabel" name="LB_USER">
       <Properties>
-        <Property name="text" type="java.lang.String" value="UserID"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="dimm/home/MA_Properties.properties" key="Loginname" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="TXT_USER">

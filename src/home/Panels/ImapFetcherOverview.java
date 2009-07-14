@@ -5,6 +5,7 @@
  */
 package dimm.home.Panels;
 
+import dimm.general.SQL.SQLResult;
 import dimm.home.Models.OverviewModel;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossPanel;
@@ -18,12 +19,12 @@ import javax.swing.JButton;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableColumnModel;
 
-import dimm.general.SQL.*;
-import dimm.general.hibernate.*;
+import home.shared.hibernate.*;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.StatementID;
+import home.shared.SQL.SQLArrayResult;
 
 
 class ImapFetcherTableModel extends OverviewModel

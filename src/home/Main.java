@@ -122,6 +122,7 @@ public class Main
         }
 
         ui = null;
+        String force_mandant = null;
 
         for (int i = 0; i < args.length; i++)
         {
@@ -156,6 +157,10 @@ public class Main
             if (args[i].compareTo("-set-version") == 0)
             {
                 version_str = args[i + 1];
+            }
+            if (args[i].compareTo("-mandant") == 0)
+            {
+                force_mandant = args[i + 1];
             }
 
 
@@ -206,6 +211,19 @@ public class Main
         }
 
         mn.setLocation(mn.x_pos, mn.y_pos);
+        if (force_mandant != null)
+        {
+            try
+            {
+                if (!mn.force_mandant_id(Integer.parseInt(force_mandant)))
+                    throw new Exception( "Shitty ID!");
+            }
+            catch (Exception exc)
+            {
+                UserMain.errm_ok("Kann Mandanten ID nicht setzen: " + exc.getMessage());
+        //                SQLListBuilder.set_offline(true);
+            }
+        }
 
 //            mn.get_update_worker().check_updates();
         splash.set_text("Initializing...");

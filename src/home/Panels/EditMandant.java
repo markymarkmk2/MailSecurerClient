@@ -11,7 +11,7 @@ import dimm.home.UserMain;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
-import dimm.general.hibernate.Mandant;
+import home.shared.hibernate.Mandant;
 import dimm.home.Utilities.Validator;
 
 
