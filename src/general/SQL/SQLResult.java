@@ -5,6 +5,7 @@
 
 package dimm.general.SQL;
 
+import home.shared.SQL.SQLArrayResult;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
