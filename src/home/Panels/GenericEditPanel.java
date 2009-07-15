@@ -92,6 +92,12 @@ public abstract class GenericEditPanel extends GlossDialogPanel
 
         if (is_new())
         {
+            if (UserMain.self.getUserLevel() < UserMain.UL_ADMIN)
+            {
+                UserMain.errm_ok( my_dlg, UserMain.Txt("Sie_duerfen_keine_Änderungen_vornehmen"));
+                return false;
+            }
+
             ok = insert_db(object);
             this.firePropertyChange("REBUILD", null, null);
         }
@@ -99,6 +105,11 @@ public abstract class GenericEditPanel extends GlossDialogPanel
         {
             if (check_changed())
             {
+                if (UserMain.self.getUserLevel() < UserMain.UL_ADMIN)
+                {
+                    UserMain.errm_ok( my_dlg, UserMain.Txt("Sie_duerfen_keine_Änderungen_vornehmen"));
+                    return false;
+                }
                 if (UserMain.info_ok_cancel(UserMain.WANT_DB_CHANGE_TXT, this.getLocationOnScreen()))
                 {
                     ok = update_db(object);

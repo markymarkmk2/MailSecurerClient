@@ -27,7 +27,7 @@ public class SQLCall
     MWWebServiceService service;
     MWWebService port;
     String name;
-    String server_url = "http://192.168.1.145:8050/1234";
+    String server_url = "http://localhost:8050/1234";
     long last_duration_ms;
     long last_start;
     long last_end;

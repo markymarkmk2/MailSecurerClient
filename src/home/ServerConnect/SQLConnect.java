@@ -28,6 +28,18 @@ public class SQLConnect
 
     SQLCall sqc;
 
+    SQLResult<Mandant>  mandant_res;
+    SQLResult<Hotfolder>  hf_res;
+    SQLResult<DiskArchive>  da_res;
+    SQLResult<ImapFetcher>  if_res;
+    SQLResult<Milter>  milter_res;
+    SQLResult<Proxy>  proxy_res;
+    SQLResult<Role>  role_res;
+    SQLResult<AccountConnector>  account_res;
+    int mandant_id = -1;
+
+
+
     public SQLConnect()
     {
         sqc = new SQLCall();
@@ -228,7 +240,7 @@ public class SQLConnect
          ResultSetID rs = sc.executeQuery(sta, "select * from mandant");
 
         SQLArrayResult resarr = sc.get_sql_array_result(rs);
-//        SQLResult result = new SQLResult();
+
         mandant_res = new SQLResult<Mandant>(resarr, new Mandant().getClass());
 
         for (int i = 0; i < resarr.getRows(); i++)
@@ -265,16 +277,6 @@ public class SQLConnect
         }
         return -1;
     }
-
-    SQLResult<Mandant>  mandant_res;
-    SQLResult<Hotfolder>  hf_res;
-    SQLResult<DiskArchive>  da_res;
-    SQLResult<ImapFetcher>  if_res;
-    SQLResult<Milter>  milter_res;
-    SQLResult<Proxy>  proxy_res;
-    SQLResult<Role>  role_res;
-    SQLResult<AccountConnector>  account_res;
-    int mandant_id = -1;
 
     public SQLResult<Mandant> get_mandant_result()
     {

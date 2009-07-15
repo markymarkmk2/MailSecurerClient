@@ -92,12 +92,9 @@ class MandantTableModel extends OverviewModel
     {
 
         // EDIT IST 2.LAST ROW!!!!
-        if (UserMain.self.getUserLevel() < UserMain.UL_ADMIN)
+        if (UserMain.self.getUserLevel() < UserMain.UL_SYSADMIN)
             return col_names.length - 2;
 
-        // DELETE IST LAST ROW!!!!
-        if (UserMain.self.getUserLevel() < UserMain.UL_MULTIADMIN)
-            return col_names.length - 1;
 
         return col_names.length;
     }
@@ -172,7 +169,7 @@ public class MandantOverview extends SQLOverviewDialog implements PropertyChange
         // REGISTER TABLE TO SCROLLPANEL
         table.embed_to_scrollpanel( SCP_TABLE );
 
-        if (UserMain.self.getUserLevel() < UserMain.UL_MULTIADMIN)
+        if (UserMain.self.getUserLevel() < UserMain.UL_SYSADMIN)
             this.BT_NEW.setVisible(false);
 
         pack();

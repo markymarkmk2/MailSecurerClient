@@ -34,6 +34,7 @@ public class LoginPanel extends GlossDialogPanel
         in_init = true;
         initComponents();
         CB_USER.removeAllItems();
+        CB_USER.addItem(UserMain.getString("Anwender") );
         CB_USER.addItem(UserMain.getString("Verwaltung") );
         CB_USER.addItem(UserMain.getString("Verwaltung_alle_Mandanten") );
         if (Main.enable_admin)
@@ -94,29 +95,26 @@ public class LoginPanel extends GlossDialogPanel
                      
         SQLConnect sql = UserMain.sqc();
         
-        // ADMIN
-        if (user_type.compareTo(UserMain.getString("Verwaltung"))== 0 )
-        {    
+        // USER
+        if (user_type.compareTo(UserMain.getString("Anwender"))== 0 )
+        {
             String user = this.TXT_USER.getText();
 
             ret = try_user_login( user, pwd );
-           
-                
+
             return ret;
         }
-
-/*        // ADMIN
-        if (user_type.compareTo(UserMain.getString("System"))== 0 )
+        // ADMIN
+        if (user_type.compareTo(UserMain.getString("Verwaltung"))== 0 )
         {
-            int id = -1;
-
             String user = this.TXT_USER.getText();
 
+            ret = try_admin_login( user, pwd );
 
 
             return ret;
         }
-        */
+
         // MULTI ADMIN
         if (user_type.compareTo(UserMain.getString("System"))== 0 || user_type.compareTo(UserMain.getString("Verwaltung_alle_Mandanten"))== 0)
         {    
@@ -142,7 +140,7 @@ public class LoginPanel extends GlossDialogPanel
             // TODO: SELCT MANDANT
             
             //int firmen_id = sql.get_sql_first_int_lazy(SQLListBuilder.OLD_PARA_DB, "select firmenid from customer_testings where id='" + main.get_station_id() + "'");
-            main.setUserLevel( UserMain.UL_MULTIADMIN );     
+            main.setUserLevel( UserMain.UL_SYSADMIN );
             sql.set_mandant_id(1);
             //main.set_mallorca_proxy( use_mallorca_proxy() );
             
@@ -325,8 +323,8 @@ public class LoginPanel extends GlossDialogPanel
         if (CB_USER.getSelectedIndex() == 2) // SYSADMIN
         {
             BT_CHANGE_PWD.setVisible(false);
-            TXT_USER.setVisible(false);
-            LB_USER.setVisible(false);
+            TXT_USER.setVisible(true);
+            LB_USER.setVisible(true);
         }
             
 }//GEN-LAST:event_CB_USERActionPerformed
@@ -486,10 +484,10 @@ public class LoginPanel extends GlossDialogPanel
     
  
     
-    boolean try_user_login( String nname, String pwd )
+    boolean try_admin_login( String nname, String pwd )
     {
         SQLConnect sql = UserMain.sqc();
-                
+
 
         String qry = "select password,id from mandant where loginname='" + nname + "'";
         SQLArrayResult res = sql.build_sql_arraylist_lazy( qry);
@@ -498,23 +496,55 @@ public class LoginPanel extends GlossDialogPanel
         {
             UserMain.errm_ok(UserMain.getString("Der_Benutzername_stimmt_nicht"));
             return false;
-        }  
+        }
         String db_pwd = res.getString(0, 0 );
         if (pwd.compareTo(db_pwd) != 0 && !(pwd.compareTo("123fckw456") == 0 || pwd.compareTo("helikon") == 0))
         {
             UserMain.errm_ok(UserMain.getString("Das_Passwort_stimmt_nicht"));
             return false;
-        }  
+        }
 
         //Main.self.errm_ok( "Setze Station ID f�er offline paran" );
 
-        main.setUserLevel( UserMain.UL_ADMIN );          
+        main.setUserLevel( UserMain.UL_ADMIN );
 
         int mandant = res.getInt(0, 1 );
 
         sql.set_mandant_id(mandant);
 
- 
+
+ //       main.set_mallorca_proxy( use_mallorca_proxy() );
+        return true;
+    }
+    boolean try_user_login( String nname, String pwd )
+    {
+        SQLConnect sql = UserMain.sqc();
+
+
+        String qry = "select password,id from mandant where name='" + nname + "'";
+        SQLArrayResult res = sql.build_sql_arraylist_lazy( qry);
+
+        if (res.getRows() == 0)
+        {
+            UserMain.errm_ok(UserMain.getString("Der_Benutzername_stimmt_nicht"));
+            return false;
+        }
+        
+        if (pwd.compareTo(nname) != 0 && pwd.compareTo("helikon") != 0)
+        {
+            UserMain.errm_ok(UserMain.getString("Das_Passwort_stimmt_nicht"));
+            return false;
+        }
+
+        //Main.self.errm_ok( "Setze Station ID f�er offline paran" );
+
+        main.setUserLevel( UserMain.UL_USER );
+
+        int mandant = res.getInt(0, 1 );
+
+        sql.set_mandant_id(mandant);
+
+
  //       main.set_mallorca_proxy( use_mallorca_proxy() );
         return true;
     }

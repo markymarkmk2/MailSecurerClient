@@ -89,12 +89,13 @@ public abstract class OverviewModel extends AbstractTableModel
     public int getColumnCount()
     {           
         // EDIT IST 2.LAST ROW!!!!
-        if (UserMain.self.getUserLevel() < UserMain.UL_ADMIN)
+        if (UserMain.self.getUserLevel() < UserMain.UL_USER)
             return col_names.length - 2;
-        
-        // DELETE IST LAST ROW!!!!
-        if (UserMain.self.getUserLevel() < UserMain.UL_SYSADMIN)
+
+        // EDIT IST 2.LAST ROW!!!!
+        if (UserMain.self.getUserLevel() < UserMain.UL_ADMIN)
             return col_names.length - 1;
+        
         
         return col_names.length;
     }

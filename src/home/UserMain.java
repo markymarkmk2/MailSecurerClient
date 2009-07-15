@@ -59,8 +59,8 @@ public class UserMain extends javax.swing.JFrame
     // GLOBAL DEFINES
 
     public static final int UL_DUMMY = 1;
-    public static final int UL_ADMIN = 2;
-    public static final int UL_MULTIADMIN = 3;
+    public static final int UL_USER = 2;
+    public static final int UL_ADMIN = 3;
     public static final int UL_SYSADMIN = 5;
 
  /*   public static final Color nice_white = new Color( 199,199,199);
@@ -449,7 +449,7 @@ public class UserMain extends javax.swing.JFrame
     {
         if (this.getUserLevel() != UL_DUMMY)
         {
-            if (this.getUserLevel() == UL_MULTIADMIN || this.getUserLevel() == UL_SYSADMIN)
+            if (this.getUserLevel() == UL_SYSADMIN)
             {
                 navPanel.enable_button(PBC_ADMIN, false);
                 navPanel.enable_button(PBC_SYSTEM, true);

@@ -89,20 +89,6 @@ class ProxyTableModel extends OverviewModel
                 return super.getValueAt(rowIndex, columnIndex);
         }
     }
-    @Override
-    public int getColumnCount()
-    {
-
-        // EDIT IST 2.LAST ROW!!!!
-        if (UserMain.self.getUserLevel() < UserMain.UL_ADMIN)
-            return col_names.length - 2;
-
-        // DELETE IST LAST ROW!!!!
-        if (UserMain.self.getUserLevel() < UserMain.UL_MULTIADMIN)
-            return col_names.length - 1;
-
-        return col_names.length;
-    }
     public Proxy get_object( int index )
     {
         return (Proxy) sqlResult.get(index);
@@ -169,7 +155,7 @@ public class ProxyOverview extends SQLOverviewDialog implements PropertyChangeLi
         // REGISTER TABLE TO SCROLLPANEL
         table.embed_to_scrollpanel( SCP_TABLE );
 
-        if (UserMain.self.getUserLevel() < UserMain.UL_MULTIADMIN)
+        if (UserMain.self.getUserLevel() < UserMain.UL_ADMIN)
             this.BT_NEW.setVisible(false);
 
         pack();

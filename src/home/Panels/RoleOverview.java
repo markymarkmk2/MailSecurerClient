@@ -5,7 +5,6 @@
  */
 package dimm.home.Panels;
 
-import dimm.general.SQL.SQLResult;
 import dimm.home.Models.OverviewModel;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossPanel;
@@ -19,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableColumnModel;
 
+import dimm.general.SQL.*;
 import home.shared.hibernate.*;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.ConnectionID;
@@ -27,14 +27,15 @@ import dimm.home.ServerConnect.StatementID;
 import home.shared.SQL.SQLArrayResult;
 
 
-class ImapFetcherTableModel extends OverviewModel
+class RoleTableModel extends OverviewModel
 {
-    
-    public ImapFetcherTableModel(UserMain _main, ImapFetcherOverview _dlg)
-    {
-        super( _main, _dlg );
 
-        String[] _col_names = {"Id",UserMain.getString("Typ"), UserMain.getString("Server"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
+
+    public RoleTableModel(UserMain _main, RoleOverview dlg)
+    {
+        super( _main, dlg );
+
+        String[] _col_names = {"ID",UserMain.getString("Name"), UserMain.getString("Filter"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
         Class[] _col_classes = {String.class,  String.class,  String.class,  Boolean.class, JButton.class, JButton.class};
         set_columns( _col_names, _col_classes );
 
@@ -43,24 +44,10 @@ class ImapFetcherTableModel extends OverviewModel
     @Override
     public String get_qry(long mandanten_id)
     {
-        String qry = "select * from imap_fetcher where mid=" + mandanten_id + " order by id";
+        String qry = "select * from role where mid=" + mandanten_id + " order by id";
         return qry;
     }
 
-    String get_type_str( String type)
-    {
-        ImapFetcherOverview mo_dlg = (ImapFetcherOverview)dlg;
-
-        for (int i = 0; i < mo_dlg.get_mt_entry_list().length; i++)
-        {
-            ImapFetcherOverview.ImapFetcherTypeEntry mte = mo_dlg.get_mt_entry_list()[i];
-            if (mte.type.compareTo(type)== 0)
-            {
-                return mte.name;
-            }
-        }
-        return "unknown";
-    }
 
 
     @Override
@@ -69,27 +56,30 @@ class ImapFetcherTableModel extends OverviewModel
         if (sqlResult == null)
             return null;
 
-        ImapFetcher imapfetcher = new ImapFetcher();
-        imapfetcher = (ImapFetcher)sqlResult.get(rowIndex);
+        Role role = new Role();
+        role = (Role)sqlResult.get(rowIndex);
 
         switch (columnIndex)
         {
             case 0:
-                return imapfetcher.getId(); // ID
+                return role.getId(); // ID
             case 1:
-                return get_type_str( imapfetcher.getType());
+                return role.getName(); // NAME
             case 2:
-                return imapfetcher.getServer() + ":" + imapfetcher.getPort();
+            {
+                RoleOverview rdlg = (RoleOverview)dlg;
+                return rdlg.get_account_match_descr( role.getAccountmatch() ); // ACCOUNTFILTER
+            }
             case 3:
                 int flags = sqlResult.getInt(rowIndex, "Flags");
-                return new Boolean((flags & ImapFetcherOverview.DISABLED) == ImapFetcherOverview.DISABLED); // DISABLED
+                return new Boolean((flags & RoleOverview.DISABLED) == RoleOverview.DISABLED); // DISABLED
             default:
                 return super.getValueAt(rowIndex, columnIndex);
         }
     }
-    public ImapFetcher get_object( int index )
+    public Role get_object( int index )
     {
-        return (ImapFetcher) sqlResult.get(index);
+        return (Role) sqlResult.get(index);
     }
 
 
@@ -98,44 +88,18 @@ class ImapFetcherTableModel extends OverviewModel
  *
  * @author  mw
  */
-public class ImapFetcherOverview extends SQLOverviewDialog implements PropertyChangeListener
+public class RoleOverview extends SQLOverviewDialog implements PropertyChangeListener
 {
-    
+
+
     public static final int DISABLED =   0x01;
 
-    public class ImapFetcherTypeEntry
-    {
-        String type;
-        String name;
-
-        ImapFetcherTypeEntry( String t, String n)
-        {
-            type = t;
-            name = n;
-        }
-
-        @Override
-        public String toString()
-        {
-            return name;
-        }
-    }
-
-    ImapFetcherTypeEntry[] mt_entry_list =
-    {
-        new ImapFetcherTypeEntry("imap","IMAP"),
-        new ImapFetcherTypeEntry("exchange","Exchange Envelope")
-    };
-    public ImapFetcherTypeEntry[] get_mt_entry_list()
-    {
-        return mt_entry_list;
-    }
 
 
     /** Creates new form NewJDialog */
-    public ImapFetcherOverview(UserMain parent, boolean modal)
+    public RoleOverview(UserMain parent, boolean modal)
     {
-        super(parent, "server", modal);
+        super(parent, "path", modal);
         initComponents();
 
         main = parent;
@@ -144,7 +108,7 @@ public class ImapFetcherOverview extends SQLOverviewDialog implements PropertyCh
         PN_TITLE.add(titlePanel);
         titlePanel.installListeners();
 
-        model = new ImapFetcherTableModel(main, this);
+        model = new RoleTableModel(main, this);
         table = new GlossTable();
 
         table.setModel(model);
@@ -161,11 +125,16 @@ public class ImapFetcherOverview extends SQLOverviewDialog implements PropertyCh
         create_sql_worker();
     }
 
-    ImapFetcherTableModel get_object_model()
+    RoleTableModel get_object_model()
     {
-        return (ImapFetcherTableModel) model;
+        return (RoleTableModel) model;
     }
 
+    // DECODE DB-STRING TO HUMAN READABLE 
+    String get_account_match_descr( String acm )
+    {
+        return acm;
+    }
 
 
     @Override
@@ -198,7 +167,7 @@ public class ImapFetcherOverview extends SQLOverviewDialog implements PropertyCh
         ResultSetID rid = sql.executeQuery(sid, qry);
         SQLArrayResult resa = sql.get_sql_array_result(rid);
 
-        SQLResult<ImapFetcher>  res = new SQLResult<ImapFetcher>(resa, new ImapFetcher().getClass());
+        SQLResult<Role>  res = new SQLResult<Role>(resa, new Role().getClass());
 
         model.setSqlResult(res);
         table.tableChanged(new TableModelEvent(table.getModel()) );
@@ -214,7 +183,7 @@ public class ImapFetcherOverview extends SQLOverviewDialog implements PropertyCh
 
     protected GlossDialogPanel get_edit_panel( int row )
     {
-        return new EditImapFetcher( row, this );
+        return new EditRole( row, this );
     }
 
 
@@ -277,7 +246,7 @@ public class ImapFetcherOverview extends SQLOverviewDialog implements PropertyCh
         PN_BUTTONS.setOpaque(false);
 
         BT_NEW.setForeground(new java.awt.Color(204, 204, 204));
-        BT_NEW.setText(UserMain.Txt("Neuen_ImapFetcher_hinzufuegen")); // NOI18N
+        BT_NEW.setText(UserMain.Txt("Neuen_Role_hinzufuegen")); // NOI18N
         BT_NEW.setActionCommand("        ");
         BT_NEW.setBorder(null);
         BT_NEW.setContentAreaFilled(false);
@@ -355,7 +324,4 @@ public class ImapFetcherOverview extends SQLOverviewDialog implements PropertyCh
 
 
    
-
-
-    
 }

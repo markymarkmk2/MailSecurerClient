@@ -10,6 +10,7 @@ import dimm.home.Panels.HotfolderOverview;
 import dimm.home.Panels.ImapFetcherOverview;
 import dimm.home.Panels.MilterOverview;
 import dimm.home.Panels.ProxyOverview;
+import dimm.home.Panels.RoleOverview;
 import dimm.home.Rendering.BackgroundTitle;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
@@ -92,10 +93,11 @@ public class PanelVerwaltung extends SwitchSpringPanel
 
         PN_BUTTONS = new javax.swing.JPanel();
         BT_IMAPFETCHER = new GhostButton();
-        BT_HOTFOLDER = new GhostButton();
+        BT_ROLE = new GhostButton();
         BT_MILTER = new GhostButton();
         BT_PROXY = new GhostButton();
         BT_DISKARCHIVES = new GhostButton();
+        BT_HOTFOLDER = new GhostButton();
         PN_HEADER = new javax.swing.JPanel();
 
         setOpaque(false);
@@ -103,7 +105,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         PN_BUTTONS.setOpaque(false);
         PN_BUTTONS.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        BT_IMAPFETCHER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_IMAPFETCHER.setFont(new java.awt.Font("Arial", 0, 14));
         BT_IMAPFETCHER.setForeground(new java.awt.Color(201, 201, 201));
         BT_IMAPFETCHER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_einstellungen.png"))); // NOI18N
         BT_IMAPFETCHER.setText(UserMain.Txt("IMAP-Connect")); // NOI18N
@@ -122,23 +124,23 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_IMAPFETCHER, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 350, 170, 50));
 
-        BT_HOTFOLDER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        BT_HOTFOLDER.setForeground(new java.awt.Color(201, 201, 201));
-        BT_HOTFOLDER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/turntable_33x48.png"))); // NOI18N
-        BT_HOTFOLDER.setText(UserMain.Txt("Hotfolder")); // NOI18N
-        BT_HOTFOLDER.setToolTipText(UserMain.Txt("File_to_Mail_Archive")); // NOI18N
-        BT_HOTFOLDER.setBorderPainted(false);
-        BT_HOTFOLDER.setContentAreaFilled(false);
-        BT_HOTFOLDER.setFocusPainted(false);
-        BT_HOTFOLDER.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        BT_HOTFOLDER.addActionListener(new java.awt.event.ActionListener() {
+        BT_ROLE.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_ROLE.setForeground(new java.awt.Color(201, 201, 201));
+        BT_ROLE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
+        BT_ROLE.setText(UserMain.Txt("Roles")); // NOI18N
+        BT_ROLE.setToolTipText(UserMain.Txt("File_to_Mail_Archive")); // NOI18N
+        BT_ROLE.setBorderPainted(false);
+        BT_ROLE.setContentAreaFilled(false);
+        BT_ROLE.setFocusPainted(false);
+        BT_ROLE.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        BT_ROLE.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_HOTFOLDERActionPerformed(evt);
+                BT_ROLEActionPerformed(evt);
             }
         });
-        PN_BUTTONS.add(BT_HOTFOLDER, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 130, 190, 50));
+        PN_BUTTONS.add(BT_ROLE, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 130, 190, 50));
 
-        BT_MILTER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_MILTER.setFont(new java.awt.Font("Arial", 0, 14));
         BT_MILTER.setForeground(new java.awt.Color(201, 201, 201));
         BT_MILTER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_schedule.png"))); // NOI18N
         BT_MILTER.setText(UserMain.Txt("Milter")); // NOI18N
@@ -189,6 +191,22 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_DISKARCHIVES, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, 160, 50));
 
+        BT_HOTFOLDER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_HOTFOLDER.setForeground(new java.awt.Color(201, 201, 201));
+        BT_HOTFOLDER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/turntable_33x48.png"))); // NOI18N
+        BT_HOTFOLDER.setText(UserMain.Txt("Hotfolder")); // NOI18N
+        BT_HOTFOLDER.setToolTipText(UserMain.Txt("File_to_Mail_Archive")); // NOI18N
+        BT_HOTFOLDER.setBorderPainted(false);
+        BT_HOTFOLDER.setContentAreaFilled(false);
+        BT_HOTFOLDER.setFocusPainted(false);
+        BT_HOTFOLDER.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        BT_HOTFOLDER.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_HOTFOLDERActionPerformed(evt);
+            }
+        });
+        PN_BUTTONS.add(BT_HOTFOLDER, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 130, 190, 50));
+
         PN_HEADER.setOpaque(false);
         PN_HEADER.setLayout(new javax.swing.BoxLayout(PN_HEADER, javax.swing.BoxLayout.LINE_AXIS));
 
@@ -223,12 +241,12 @@ public class PanelVerwaltung extends SwitchSpringPanel
 }//GEN-LAST:event_BT_IMAPFETCHERActionPerformed
 
     
-    private void BT_HOTFOLDERActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_HOTFOLDERActionPerformed
-    {//GEN-HEADEREND:event_BT_HOTFOLDERActionPerformed
+    private void BT_ROLEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_ROLEActionPerformed
+    {//GEN-HEADEREND:event_BT_ROLEActionPerformed
         // TODO add your handling code here:
         if (check_selected())
         {
-            TimingTargetAdapter tt = make_spring_button_dlg( new HotfolderOverview(main, true),  get_dlg_pos(),  UserMain.getString("Hotfolder") );
+            TimingTargetAdapter tt = make_spring_button_dlg( new RoleOverview(main, true),  get_dlg_pos(),  UserMain.getString("Roles") );
             spring_button_action(evt.getSource(), tt);
             /*
             UserMain.self.show_busy("Kuckst Du hier, machst Du stop wenn Du willst", true);
@@ -280,7 +298,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
              * */
         }
 
-}//GEN-LAST:event_BT_HOTFOLDERActionPerformed
+}//GEN-LAST:event_BT_ROLEActionPerformed
 
     private void BT_MILTERActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_MILTERActionPerformed
     {//GEN-HEADEREND:event_BT_MILTERActionPerformed
@@ -314,12 +332,24 @@ public class PanelVerwaltung extends SwitchSpringPanel
 
     }//GEN-LAST:event_BT_DISKARCHIVESActionPerformed
 
+    private void BT_HOTFOLDERActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_HOTFOLDERActionPerformed
+    {//GEN-HEADEREND:event_BT_HOTFOLDERActionPerformed
+        // TODO add your handling code here:
+       if (check_selected())
+        {
+            TimingTargetAdapter tt = make_spring_button_dlg( new HotfolderOverview(main, true),  get_dlg_pos(),  UserMain.getString("Hotfolder") );
+            spring_button_action(evt.getSource(), tt);
+       }
+
+    }//GEN-LAST:event_BT_HOTFOLDERActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_DISKARCHIVES;
     private javax.swing.JButton BT_HOTFOLDER;
     private javax.swing.JButton BT_IMAPFETCHER;
     private javax.swing.JButton BT_MILTER;
     private javax.swing.JButton BT_PROXY;
+    private javax.swing.JButton BT_ROLE;
     private javax.swing.JPanel PN_BUTTONS;
     private javax.swing.JPanel PN_HEADER;
     // End of variables declaration//GEN-END:variables

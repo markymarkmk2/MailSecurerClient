@@ -87,21 +87,7 @@ class MilterTableModel extends OverviewModel
                 return super.getValueAt(rowIndex, columnIndex);
         }
     }
-    @Override
-    public int getColumnCount()
-    {
-
-        // EDIT IST 2.LAST ROW!!!!
-        if (UserMain.self.getUserLevel() < UserMain.UL_ADMIN)
-            return col_names.length - 2;
-
-        // DELETE IST LAST ROW!!!!
-        if (UserMain.self.getUserLevel() < UserMain.UL_MULTIADMIN)
-            return col_names.length - 1;
-
-        return col_names.length;
-    }
-    public Milter get_object( int index )
+     public Milter get_object( int index )
     {
         return (Milter) sqlResult.get(index);
     }
@@ -167,7 +153,7 @@ public class MilterOverview extends SQLOverviewDialog implements PropertyChangeL
         // REGISTER TABLE TO SCROLLPANEL
         table.embed_to_scrollpanel( SCP_TABLE );
 
-        if (UserMain.self.getUserLevel() < UserMain.UL_MULTIADMIN)
+        if (UserMain.self.getUserLevel() < UserMain.UL_ADMIN)
             this.BT_NEW.setVisible(false);
 
         pack();
