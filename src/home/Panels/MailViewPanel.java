@@ -11,11 +11,159 @@
 
 package dimm.home.Panels;
 
+import dimm.general.SQL.SQLResult;
+import dimm.home.UserMain;
+import java.awt.Insets;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+
+
+class MailTableModel extends DefaultTableModel
+{
+    protected String[] col_names = null;
+    protected Class[] col_classes = null;
+    JButton tonne_bt;
+    JButton edit_bt;
+    MailViewPanel pnl;
+    SQLResult sqlResult;
+
+
+
+    MailTableModel(MailViewPanel _pnl, String qry)
+    {
+        super();
+
+        pnl = _pnl;
+        tonne_bt = create_table_button( "/dimm/home/images/web_delete.png", pnl );
+        edit_bt = create_table_button(  "/dimm/home/images/web_edit.png", pnl );
+
+        String[] _col_names = {"Id",UserMain.getString("Name"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
+        Class[] _col_classes = {String.class,  String.class,  Boolean.class, JButton.class, JButton.class};
+        set_columns( _col_names, _col_classes );
+
+    }
+
+    public JButton create_table_button(String rsrc, MailViewPanel pnl)
+    {
+        ImageIcon icn = new ImageIcon(this.getClass().getResource(rsrc));
+        JButton bt = new JButton(icn);
+        bt.addMouseListener(pnl);
+        bt.setBorderPainted(false);
+        bt.setOpaque(false);
+        bt.setMargin(new Insets(0, 0, 0, 0));
+        bt.setContentAreaFilled(false);
+
+        return bt;
+    }
+
+
+    public void set_columns( String[] names, Class[] classes)
+    {
+        col_names = names;
+        col_classes = classes;
+    }
+
+
+    @Override
+    public String getColumnName(int column)
+    {
+        return col_names[column];
+    }
+
+    @Override
+    public Class<?> getColumnClass(int columnIndex)
+    {
+        return col_classes[columnIndex];
+    }
+
+    @Override
+    public int getRowCount()
+    {
+
+        return 0;
+    }
+
+    @Override
+    public int getColumnCount()
+    {
+        // EDIT IST 2.LAST ROW!!!!
+        if (UserMain.self.getUserLevel() < UserMain.UL_USER)
+            return col_names.length - 2;
+
+        // EDIT IST 2.LAST ROW!!!!
+        if (UserMain.self.getUserLevel() < UserMain.UL_ADMIN)
+            return col_names.length - 1;
+
+
+        return col_names.length;
+    }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex)
+    {
+        if (sqlResult == null)
+            return null;
+
+        if (columnIndex == (col_names.length - 2))
+           return edit_bt;
+        if (columnIndex == (col_names.length - 1))
+           return tonne_bt;
+
+        return null;
+    }
+
+    public SQLResult getSqlResult()
+    {
+        return sqlResult;
+    }
+
+    public void setSqlResult(SQLResult sqlResult)
+    {
+        this.sqlResult = sqlResult;
+    }
+
+    public boolean is_new(int row)
+    {
+        // THESE ARE THE CONDITIONS FOR THE DECISION "NEW RECORD"
+        return (getSqlResult() == null || getSqlResult().getRows() <= row || row == -1);
+    }
+
+    // SETS THE WIDTH OF THE LAST TWO ICON-COLUMNS
+    public void set_table_header( TableColumnModel cm )
+    {
+        if (getColumnCount() > get_edit_column())
+        {
+            cm.getColumn( get_edit_column() ).setMinWidth(60);
+            cm.getColumn( get_edit_column() ).setMaxWidth(60);
+
+            if (getColumnCount() > get_del_column() )
+            {
+                cm.getColumn( get_del_column() ).setMinWidth(50);
+                cm.getColumn( get_del_column() ).setMaxWidth(50);
+            }
+        }
+    }
+    public int get_edit_column()
+    {
+        return col_names.length - 2;
+    }
+    public int get_del_column()
+    {
+        return col_names.length - 1;
+    }
+
+
+}
 /**
  *
  * @author mw
  */
-public class MailViewPanel extends javax.swing.JPanel {
+public class MailViewPanel extends javax.swing.JPanel implements MouseListener
+{
 
     /** Creates new form MailViewPanel */
     public MailViewPanel() {
@@ -32,8 +180,52 @@ public class MailViewPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jTextField2 = new javax.swing.JTextField();
 
-        jLabel1.setText("jLabel1");
+        jLabel1.setText(UserMain.getString("Suche")); // NOI18N
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_browse.png"))); // NOI18N
+        jButton1.setIconTextGap(0);
+        jButton1.setInheritsPopupMenu(true);
+        jButton1.setMargin(new java.awt.Insets(1, 1, 1, 1));
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
+        );
+
+        jButton2.setText(UserMain.getString("Schliessen")); // NOI18N
+
+        jButton3.setText(UserMain.getString("Export_Mail")); // NOI18N
+
+        jTextField2.setEditable(false);
+        jTextField2.setText("UserStatus");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -41,21 +233,86 @@ public class MailViewPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(569, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton1))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 445, Short.MAX_VALUE)
+                        .addComponent(jButton2)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(427, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jButton1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void mouseClicked( MouseEvent e )
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void mousePressed( MouseEvent e )
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void mouseReleased( MouseEvent e )
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void mouseEntered( MouseEvent e )
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void mouseExited( MouseEvent e )
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 }
