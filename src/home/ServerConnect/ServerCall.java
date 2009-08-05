@@ -12,6 +12,7 @@ import dimm.home.httpd.MWWebServiceService;
 import dimm.home.httpd.MWWebService;
 import com.thoughtworks.xstream.XStream;
 
+import dimm.home.Main;
 import home.shared.SQL.SQLArrayResult;
 import java.net.URL;
 import javax.xml.ws.soap.SOAPBinding;
@@ -29,7 +30,6 @@ public class ServerCall
     MWWebServiceService service;
     MWWebService port;
     String name;
-    String server_url = "http://localhost:8050/1234";
     long last_duration_ms;
     long last_start;
     long last_end;
@@ -58,6 +58,8 @@ public class ServerCall
             port = service.getMWWebServicePort();
 
             // SET NEW ENDPOINTADRESS
+            String server_url = "http://" + Main.server_ip + ":" + Main.server_port + "/1234";
+
             BindingProvider bp = (BindingProvider) port;
             bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, server_url);
 
