@@ -14,6 +14,7 @@ import com.thoughtworks.xstream.XStream;
 
 import home.shared.SQL.SQLArrayResult;
 import java.net.URL;
+import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 
@@ -58,6 +59,12 @@ public class ServerCall
             // SET NEW ENDPOINTADRESS
             BindingProvider bp = (BindingProvider) port;
             bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, server_url);
+
+
+            SOAPBinding binding = (SOAPBinding)bp.getBinding();
+             binding.setMTOMEnabled(true);
+
+
 
             return true;
         }
