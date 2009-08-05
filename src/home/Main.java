@@ -187,6 +187,14 @@ public class Main
             {
                 force_mandant = args[i + 1];
             }
+            if (args[i].compareTo("-server_ip") == 0)
+            {
+                server_ip = args[i + 1];
+            }
+            if (args[i].compareTo("-server_port") == 0)
+            {
+                server_port = args[i + 1];
+            }
 
 
             if (args[i].compareTo("-i") == 0)
