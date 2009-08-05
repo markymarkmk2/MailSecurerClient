@@ -809,8 +809,7 @@ public class ServerCall
 
         try
         {
-            String enc = new String(Base64.encodeBase64(data));
-            String ret = port.writeOutStream(id.getId(), enc);
+            String ret = port.writeOutStream(id.getId(), data);
 
             calc_stat(ret);
 
