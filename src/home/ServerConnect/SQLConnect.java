@@ -23,10 +23,8 @@ import home.shared.hibernate.Role;
  *
  * @author mw
  */
-public class SQLConnect
+public class SQLConnect extends Connect
 {
-
-    SQLCall sqc;
 
     SQLResult<Mandant>  mandant_res;
     SQLResult<Hotfolder>  hf_res;
@@ -38,17 +36,13 @@ public class SQLConnect
     SQLResult<AccountConnector>  account_res;
     int mandant_id = -1;
 
+    ConnectionID static_c = null;
+
 
 
     public SQLConnect()
     {
-        sqc = new SQLCall();
-        sqc.init();
-    }
-
-    public SQLCall get_sqc()
-    {
-        return sqc;
+        super();
     }
 
 
@@ -74,7 +68,6 @@ public class SQLConnect
         sqc.close(c);
     }
 
-    ConnectionID static_c = null;
 
     StatementID create_lazy_statement()
     {
@@ -231,7 +224,7 @@ public class SQLConnect
 
     private void sql_test()
     {
-        SQLCall sc = new SQLCall();
+        ServerCall sc = new ServerCall();
         sc.init();
 
         ConnectionID c = sc.open("");

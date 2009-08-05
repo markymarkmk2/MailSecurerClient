@@ -7,7 +7,7 @@ package dimm.home.Panels;
 
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.ConnectionID;
-import dimm.home.ServerConnect.SQLCall;
+import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StatementID;
 import dimm.home.UserMain;
 
@@ -31,7 +31,7 @@ public abstract class GenericEditPanel extends GlossDialogPanel
         String object_name = object.getClass().getSimpleName();
 
 
-        SQLCall sql = UserMain.sqc().get_sqc();
+        ServerCall sql = UserMain.sqc().get_sqc();
         ConnectionID cid = sql.open();
         StatementID sta = sql.createStatement(cid);
 
@@ -55,7 +55,7 @@ public abstract class GenericEditPanel extends GlossDialogPanel
 
         String object_name = object.getClass().getSimpleName();
 
-        SQLCall sql = UserMain.sqc().get_sqc();
+        ServerCall sql = UserMain.sqc().get_sqc();
         ConnectionID cid = sql.open();
         StatementID sta = sql.createStatement(cid);
 

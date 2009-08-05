@@ -11,7 +11,7 @@ import dimm.home.Rendering.GlossPanel;
 import dimm.home.Rendering.GlossTable;
 import dimm.home.Rendering.TitlePanel;
 import dimm.home.Rendering.SQLOverviewDialog;
-import dimm.home.ServerConnect.SQLCall;
+import dimm.home.ServerConnect.ServerCall;
 import dimm.home.UserMain;
 import java.beans.PropertyChangeListener;
 import javax.swing.JButton;
@@ -149,7 +149,7 @@ public class HotfolderOverview extends SQLOverviewDialog implements PropertyChan
     @Override
     public void gather_sql_result(long firmen_id)
     {
-        SQLCall sql = UserMain.sqc().get_sqc();
+        ServerCall sql = UserMain.sqc().get_sqc();
         ConnectionID cid = sql.open();
         StatementID sid = sql.createStatement(cid);
 

@@ -21,7 +21,7 @@ import javax.xml.ws.BindingProvider;
  *
  * @author mw
  */
-public class SQLCall
+public class ServerCall
 {
 
     MWWebServiceService service;
@@ -37,7 +37,7 @@ public class SQLCall
     int last_err_code;
     Exception last_ex;
 
-    public SQLCall()
+    public ServerCall()
     {
         System.setProperty("javax.net.ssl.trustStore", "jxws.ts");
         System.setProperty("javax.net.ssl.trustStorePassword", "123456");
@@ -121,7 +121,7 @@ public class SQLCall
             ex_str = last_ex.getMessage();
         }
 
-        return "SQLCall <" + last_cmd + "> Code:" + last_err_code + " Txt:" + last_err_txt + " EX:" + ex_str;
+        return "ServerCall <" + last_cmd + "> Code:" + last_err_code + " Txt:" + last_err_txt + " EX:" + ex_str;
 
     }
 
@@ -741,6 +741,182 @@ public class SQLCall
 
          return null;
     }
+
+    public OutStreamID open_out_stream( String file )
+    {
+        init_stat(file);
+
+        try
+        {
+            String ret = port.openOutStream( file, "");
+
+            calc_stat(ret);
+
+            int idx = ret.indexOf(':');
+            int retcode = Integer.parseInt(ret.substring(0, idx));
+
+            if (retcode == 0)
+            {
+                OutStreamID cid = new OutStreamID(ret.substring(idx + 2));
+                return cid;
+            }
+            last_err_code = retcode;
+        }
+        catch (Exception exc)
+        {
+            last_ex = exc;
+        }
+        return null;
+    }
+    public boolean close_out_stream( OutStreamID id)
+    {
+        init_stat("");
+
+        try
+        {
+            String ret = port.closeOutStream(id.getId());
+
+            calc_stat(ret);
+
+            int idx = ret.indexOf(':');
+            int retcode = Integer.parseInt(ret.substring(0, idx));
+
+            if (retcode == 0)
+            {
+                return true;
+            }
+            last_err_code = retcode;
+        }
+        catch (Exception exc)
+        {
+            last_ex = exc;
+        }
+        return false;
+    }
+    public boolean write_out_stream( OutStreamID id, byte[] data)
+    {
+        init_stat("");
+
+        try
+        {
+            String ret = port.writeOutStream(id.getId(), data);
+
+            calc_stat(ret);
+
+            int idx = ret.indexOf(':');
+            int retcode = Integer.parseInt(ret.substring(0, idx));
+
+            if (retcode == 0)
+            {
+                return true;
+            }
+            last_err_code = retcode;
+        }
+        catch (Exception exc)
+        {
+            last_ex = exc;
+        }
+        return false;
+    }
+
+    public InStreamID open_in_stream( String file )
+    {
+        init_stat(file);
+
+        try
+        {
+            String ret = port.openInStream( file, "");
+
+            calc_stat(ret);
+
+            int idx = ret.indexOf(':');
+            int retcode = Integer.parseInt(ret.substring(0, idx));
+
+            if (retcode == 0)
+            {
+                String id = ret.substring(idx + 2);
+
+                long len = 0;
+                int lidx = ret.indexOf("LEN:");
+                if (lidx != -1)
+                {
+                    len = Long.parseLong(ret.substring(lidx + 4) );
+                    id = ret.substring(idx + 2, lidx - 1);
+                }
+
+                InStreamID cid = new InStreamID(id, len);
+                return cid;
+            }
+            last_err_code = retcode;
+        }
+        catch (Exception exc)
+        {
+            last_ex = exc;
+        }
+        return null;
+    }
+    public boolean close_in_stream( InStreamID id)
+    {
+        init_stat("");
+
+        try
+        {
+            String ret = port.closeInStream(id.getId());
+
+            calc_stat(ret);
+
+            int idx = ret.indexOf(':');
+            int retcode = Integer.parseInt(ret.substring(0, idx));
+
+            if (retcode == 0)
+            {
+                return true;
+            }
+            last_err_code = retcode;
+        }
+        catch (Exception exc)
+        {
+            last_ex = exc;
+        }
+        return false;
+    }
+
+    public int read_in_stream( InStreamID id, byte[] buff)
+    {
+        init_stat("");
+
+        try
+        {
+            byte[] data = port.readInStream(id.getId(), buff.length);
+
+            String ret = new String( data, 0, 3 );
+
+            calc_stat(ret);
+
+            int idx = ret.indexOf(':');
+            int retcode = Integer.parseInt(ret.substring(0, idx));
+
+            if (retcode == 0)
+            {
+                System.arraycopy( data, 3, buff, 0, data.length - 3);
+                return data.length - 3;            
+            }
+            
+            // HANDLE EOF
+            if (retcode == 1)
+                return 0;
+
+            last_err_code = retcode;
+        }
+        catch (Exception exc)
+        {
+            last_ex = exc;
+        }
+        return -1;
+    }
+
+
+
 
 
 }
