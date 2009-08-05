@@ -35,6 +35,9 @@ public class Main
     Preferences prefs;
     public static UI_Generic ui;
 
+    public static String server_ip = "127.0.0.1";
+    public static String server_port = "8050";
+
     /** Creates a new instance of Main */
     public Main()
     {
@@ -71,6 +74,28 @@ public class Main
         int lf_idx = -1;
         for (int i = 0; i < args.length; i++)
         {
+            if (args[i].compareTo("-server_ip") == 0)
+            {
+                try
+                {
+                    server_ip = args[i + 1];
+                }
+                catch (Exception exception)
+                {
+                }
+                break;
+            }
+           if (args[i].compareTo("-server_port") == 0)
+            {
+                try
+                {
+                    server_port = args[i + 1];
+                }
+                catch (Exception exception)
+                {
+                }
+                break;
+            }
             if (args[i].compareTo("-LF") == 0)
             {
                 try
