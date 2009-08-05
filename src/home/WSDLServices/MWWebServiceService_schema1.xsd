@@ -245,7 +245,7 @@
   <xs:complexType name="WriteOutStream">
     <xs:sequence>
       <xs:element name="stream_id" type="xs:string" minOccurs="0"/>
-      <xs:element name="arg1" type="xs:string" minOccurs="0"/>
+      <xs:element name="arg1" type="xs:base64Binary" nillable="true" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
 
