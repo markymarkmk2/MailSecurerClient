@@ -66,18 +66,6 @@
   <message name="WriteOutStreamResponse">
     <part name="parameters" element="tns:WriteOutStreamResponse"/>
   </message>
-  <message name="DropOutStreamFile">
-    <part name="parameters" element="tns:DropOutStreamFile"/>
-  </message>
-  <message name="DropOutStreamFileResponse">
-    <part name="parameters" element="tns:DropOutStreamFileResponse"/>
-  </message>
-  <message name="DeleteOutStreamFile">
-    <part name="parameters" element="tns:DeleteOutStreamFile"/>
-  </message>
-  <message name="DeleteOutStreamFileResponse">
-    <part name="parameters" element="tns:DeleteOutStreamFileResponse"/>
-  </message>
   <message name="OpenInStream">
     <part name="parameters" element="tns:OpenInStream"/>
   </message>
@@ -95,18 +83,6 @@
   </message>
   <message name="ReadInStreamResponse">
     <part name="parameters" element="tns:ReadInStreamResponse"/>
-  </message>
-  <message name="DropInStream">
-    <part name="parameters" element="tns:DropInStream"/>
-  </message>
-  <message name="DropInStreamResponse">
-    <part name="parameters" element="tns:DropInStreamResponse"/>
-  </message>
-  <message name="DeleteInStreamFile">
-    <part name="parameters" element="tns:DeleteInStreamFile"/>
-  </message>
-  <message name="DeleteInStreamFileResponse">
-    <part name="parameters" element="tns:DeleteInStreamFileResponse"/>
   </message>
   <message name="close">
     <part name="parameters" element="tns:close"/>
@@ -167,14 +143,6 @@
       <input message="tns:WriteOutStream"/>
       <output message="tns:WriteOutStreamResponse"/>
     </operation>
-    <operation name="DropOutStreamFile">
-      <input message="tns:DropOutStreamFile"/>
-      <output message="tns:DropOutStreamFileResponse"/>
-    </operation>
-    <operation name="DeleteOutStreamFile">
-      <input message="tns:DeleteOutStreamFile"/>
-      <output message="tns:DeleteOutStreamFileResponse"/>
-    </operation>
     <operation name="OpenInStream">
       <input message="tns:OpenInStream"/>
       <output message="tns:OpenInStreamResponse"/>
@@ -186,14 +154,6 @@
     <operation name="ReadInStream">
       <input message="tns:ReadInStream"/>
       <output message="tns:ReadInStreamResponse"/>
-    </operation>
-    <operation name="DropInStream">
-      <input message="tns:DropInStream"/>
-      <output message="tns:DropInStreamResponse"/>
-    </operation>
-    <operation name="DeleteInStreamFile">
-      <input message="tns:DeleteInStreamFile"/>
-      <output message="tns:DeleteInStreamFileResponse"/>
     </operation>
     <operation name="close">
       <input message="tns:close"/>
@@ -300,24 +260,6 @@
         <soap:body use="literal"/>
       </output>
     </operation>
-    <operation name="DropOutStreamFile">
-      <soap:operation soapAction=""/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
-    <operation name="DeleteOutStreamFile">
-      <soap:operation soapAction=""/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
     <operation name="OpenInStream">
       <soap:operation soapAction=""/>
       <input>
@@ -337,24 +279,6 @@
       </output>
     </operation>
     <operation name="ReadInStream">
-      <soap:operation soapAction=""/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
-    <operation name="DropInStream">
-      <soap:operation soapAction=""/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
-    <operation name="DeleteInStreamFile">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="literal"/>

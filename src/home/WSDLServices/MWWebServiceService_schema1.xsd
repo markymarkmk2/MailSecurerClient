@@ -9,22 +9,6 @@
 
   <xs:element name="CloseOutStreamResponse" type="tns:CloseOutStreamResponse"/>
 
-  <xs:element name="DeleteInStreamFile" type="tns:DeleteInStreamFile"/>
-
-  <xs:element name="DeleteInStreamFileResponse" type="tns:DeleteInStreamFileResponse"/>
-
-  <xs:element name="DeleteOutStreamFile" type="tns:DeleteOutStreamFile"/>
-
-  <xs:element name="DeleteOutStreamFileResponse" type="tns:DeleteOutStreamFileResponse"/>
-
-  <xs:element name="DropInStream" type="tns:DropInStream"/>
-
-  <xs:element name="DropInStreamResponse" type="tns:DropInStreamResponse"/>
-
-  <xs:element name="DropOutStreamFile" type="tns:DropOutStreamFile"/>
-
-  <xs:element name="DropOutStreamFileResponse" type="tns:DropOutStreamFileResponse"/>
-
   <xs:element name="OpenInStream" type="tns:OpenInStream"/>
 
   <xs:element name="OpenInStreamResponse" type="tns:OpenInStreamResponse"/>
@@ -80,18 +64,6 @@
   <xs:element name="open" type="tns:open"/>
 
   <xs:element name="openResponse" type="tns:openResponse"/>
-
-  <xs:complexType name="DeleteOutStreamFile">
-    <xs:sequence>
-      <xs:element name="stream_id" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="DeleteOutStreamFileResponse">
-    <xs:sequence>
-      <xs:element name="return" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
 
   <xs:complexType name="executeQuery">
     <xs:sequence>
@@ -208,18 +180,6 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="CloseInStream">
-    <xs:sequence>
-      <xs:element name="stream_id" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="CloseInStreamResponse">
-    <xs:sequence>
-      <xs:element name="return" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
   <xs:complexType name="getSQLArrayResult">
     <xs:sequence>
       <xs:element name="resultset" type="xs:string" minOccurs="0"/>
@@ -232,13 +192,13 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="DropOutStreamFile">
+  <xs:complexType name="CloseInStream">
     <xs:sequence>
       <xs:element name="stream_id" type="xs:string" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="DropOutStreamFileResponse">
+  <xs:complexType name="CloseInStreamResponse">
     <xs:sequence>
       <xs:element name="return" type="xs:string" minOccurs="0"/>
     </xs:sequence>
@@ -282,22 +242,10 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="DeleteInStreamFile">
-    <xs:sequence>
-      <xs:element name="stream_id" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="DeleteInStreamFileResponse">
-    <xs:sequence>
-      <xs:element name="return" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
   <xs:complexType name="WriteOutStream">
     <xs:sequence>
       <xs:element name="stream_id" type="xs:string" minOccurs="0"/>
-      <xs:element name="arg1" type="xs:base64Binary" nillable="true" minOccurs="0"/>
+      <xs:element name="arg1" type="xs:string" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -314,18 +262,6 @@
   </xs:complexType>
 
   <xs:complexType name="CloseOutStreamResponse">
-    <xs:sequence>
-      <xs:element name="return" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="DropInStream">
-    <xs:sequence>
-      <xs:element name="stream_id" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="DropInStreamResponse">
     <xs:sequence>
       <xs:element name="return" type="xs:string" minOccurs="0"/>
     </xs:sequence>

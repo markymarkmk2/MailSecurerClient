@@ -17,6 +17,7 @@ import java.net.URL;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  *
@@ -806,7 +807,8 @@ public class ServerCall
 
         try
         {
-            String ret = port.writeOutStream(id.getId(), data);
+            String enc = new String(Base64.encodeBase64(data));
+            String ret = port.writeOutStream(id.getId(), enc);
 
             calc_stat(ret);
 
