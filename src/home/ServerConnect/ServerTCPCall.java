@@ -449,7 +449,14 @@ public class ServerTCPCall
         {
             sb.append( str.substring( 0, opt_index ) );  // CUT OFF CMD
         }
-        sb.append( " LEN:");
+        if (inp_len > 0)
+        {
+            sb.append( " SLEN:");
+
+            sb.append( inp_len );
+        }
+
+        sb.append( " PLEN:");
         int opt_len = 0;
 
         byte[] opt_data = null;
@@ -462,7 +469,7 @@ public class ServerTCPCall
         if (add_data != null)
             add_data_len += add_data.length;
 
-        sb.append( (opt_len  + add_data_len + inp_len) );
+        sb.append( (opt_len  + add_data_len) );
 
         // PAD FIRST BLOCK TO 32 BYTE
         while (sb.length() < TCP_LEN)
