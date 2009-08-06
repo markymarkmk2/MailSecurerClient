@@ -65,7 +65,7 @@ public class ServerCall
 
 
             SOAPBinding binding = (SOAPBinding)bp.getBinding();
-             binding.setMTOMEnabled(true);
+            binding.setMTOMEnabled(true);
 
 
 

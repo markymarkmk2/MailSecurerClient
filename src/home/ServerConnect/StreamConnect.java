@@ -18,8 +18,6 @@ import java.io.OutputStream;
  *
  * @author mw
  */
-
-
 public class StreamConnect extends Connect
 {
 
@@ -47,13 +45,14 @@ public class StreamConnect extends Connect
         {
             File src = new File("j:\\testdata.txt" );
 
-            int[] bc = {32*1024, 64*1024, 8192*1024};
+            int[] bc = {128*1024, 64*1024, 1024*1024};
             for ( int i = 0; i < bc.length; i++ )
             {
                 int bs = bc[i];
 
 
                 long start = System.currentTimeMillis();
+                long last_start = System.currentTimeMillis();
                 long size = src.length();
 
                 BufferedInputStream bis = new BufferedInputStream( new FileInputStream( src ) );
@@ -77,7 +76,8 @@ public class StreamConnect extends Connect
                     {
                         long end = System.currentTimeMillis();
                         float  ratio = (real_len *1.0f)/((end - start) *1024.0f);
-                        System.out.println(" Speed: "  + (calls *1000 )/(end - start) + " C/s, " + ratio + "MB/s");
+                        System.out.println(" Speed: "  + (10000 )/(end - last_start) + " C/s, " + ratio + "MB/s");
+                        last_start = System.currentTimeMillis();
                     }
                 }
                 os.close();
