@@ -11,7 +11,7 @@ import dimm.home.Rendering.GlossPanel;
 import dimm.home.Rendering.GlossTable;
 import dimm.home.Rendering.TitlePanel;
 import dimm.home.Rendering.SQLOverviewDialog;
-import dimm.home.ServerConnect.ServerCall;
+import dimm.home.ServerConnect.ServerWSDLCall;
 import dimm.home.UserMain;
 import java.beans.PropertyChangeListener;
 import javax.swing.JButton;
@@ -158,7 +158,7 @@ public class RoleOverview extends SQLOverviewDialog implements PropertyChangeLis
     @Override
     public void gather_sql_result(long firmen_id)
     {
-        ServerCall sql = UserMain.sqc().get_sqc();
+        ServerWSDLCall sql = UserMain.sqc().get_sqc();
         ConnectionID cid = sql.open();
         StatementID sid = sql.createStatement(cid);
 

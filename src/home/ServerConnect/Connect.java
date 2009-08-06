@@ -10,15 +10,15 @@ package dimm.home.ServerConnect;
  * @author mw
  */
 public class Connect {
-    ServerCall sqc;
+    ServerWSDLCall sqc;
 
     public Connect()
     {
-        sqc = new ServerCall();
+        sqc = new ServerWSDLCall();
         sqc.init();
     }
 
-    public ServerCall get_sqc()
+    public ServerWSDLCall get_sqc()
     {
         return sqc;
     }

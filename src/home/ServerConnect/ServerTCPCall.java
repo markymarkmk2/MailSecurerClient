@@ -8,27 +8,31 @@ import java.lang.reflect.Method;
 import home.shared.hibernate.DiskArchive;
 import home.shared.hibernate.DiskSpace;
 import home.shared.hibernate.Mandant;
-import dimm.home.httpd.MWWebServiceService;
-import dimm.home.httpd.MWWebService;
 import com.thoughtworks.xstream.XStream;
 
-import dimm.home.Main;
 import home.shared.SQL.SQLArrayResult;
-import java.net.URL;
-import javax.xml.ws.soap.SOAPBinding;
-import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import org.apache.commons.codec.binary.Base64;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 /**
  *
  * @author mw
  */
-public class ServerCall
+public class ServerTCPCall
 {
 
-    MWWebServiceService service;
-    MWWebService port;
+    public static final String MISS_ARGS = "missing args";
+    public static final String WRONG_ARGS = "wrong args";
+    public static final String UNKNOWN_CMD = "UNKNOWN_COMMAND";
+
+/*    MWWebServiceService service;
+    MWWebService port;*/
     String name;
     long last_duration_ms;
     long last_start;
@@ -39,10 +43,36 @@ public class ServerCall
     int last_err_code;
     Exception last_ex;
 
-    public ServerCall()
+
+    private static final int TCP_LEN = 32;
+    
+    public static final int SHORT_CMD_TO = 3000;
+
+    Socket keep_s;
+    boolean keep_tcp_open;
+    String last_ip;
+    private int ping;
+    boolean mallorca_proxy = false;
+    private boolean ping_connected = false;
+
+    String status;
+    String answer;
+    String server;
+    int port;
+
+    void set_status( String s )
+    {
+        status = s;
+    }
+
+    public ServerTCPCall(String _server, String _port)
     {
         System.setProperty("javax.net.ssl.trustStore", "jxws.ts");
         System.setProperty("javax.net.ssl.trustStorePassword", "123456");
+
+
+        server = _server;
+        port = Integer.parseInt(_port);
 
     }
 
@@ -50,25 +80,6 @@ public class ServerCall
     {
         try
         {
-            // GET LOCAL WDSL FILE
-            URL wdsl_url = getClass().getResource("/dimm/home/WSDLServices/MWWebServiceService.wsdl");
-
-            // CREATE SERVICE AND PORT
-            service = new MWWebServiceService(wdsl_url, new QName("http://Httpd.home.dimm/", "MWWebServiceService"));
-            port = service.getMWWebServicePort();
-
-            // SET NEW ENDPOINTADRESS
-            String server_url = "http://" + Main.server_ip + ":" + Main.server_port + "/1234";
-
-            BindingProvider bp = (BindingProvider) port;
-            bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, server_url);
-
-
-            SOAPBinding binding = (SOAPBinding)bp.getBinding();
-            binding.setMTOMEnabled(true);
-
-
-
             return true;
         }
         catch (Exception e)
@@ -79,6 +90,490 @@ public class ServerCall
             return false;
         }
     }
+
+    public String get_answer()
+    {
+        return answer;
+    }
+
+    public String get_answer_err_text()
+    {
+        if (answer.indexOf(MISS_ARGS) >= 0)
+        {
+            return "Fehlende Argumente";
+        }
+        if (answer.indexOf(WRONG_ARGS) >= 0)
+        {
+            return "Fehlerhafte Argumente";
+        }
+        if (answer.indexOf(UNKNOWN_CMD) >= 0)
+        {
+            return "Sorry, dieser Befehl wird von der Sonicbox nicht unterstützt";
+        }
+
+        return answer;
+    }
+
+    public boolean check_answer( String answer )
+    {
+        boolean ok = false;
+        if (answer == null || answer.length() == 0)
+        {
+            answer = "Kommunikation fehlgeschlagen!";
+            return false;
+        }
+
+
+        if (answer.compareTo("--failed--") == 0)
+        {
+            answer =  "Kommunikation fehlgeschlagen!";
+            return false;
+        }
+
+        if (answer.compareTo("UNKNOWN_COMMAND") == 0)
+        {
+            answer =  "Oha, dieser Befehl wird von der Box nicht unterstützt!";
+            return false;
+        }
+
+
+        if (answer.length() >= 2 && answer.substring(0, 2).compareTo("OK") == 0)
+        {
+            ok = true;
+            if (answer.length() > 3)
+                answer = answer.substring(3);
+            else
+                answer = "";
+
+            ok = true;
+        }
+        else if (answer.length() >= 3 && answer.substring(0, 3).compareTo("NOK") == 0)
+        {
+            ok = false;
+            if (answer.length() > 4)
+                answer = answer.substring(4);
+            else
+                answer = "";
+
+        }
+        return ok;
+    }
+
+    public synchronized String send( String str, OutputStream outp, int to)
+    {
+        return tcp_send( server, port, str, outp, null, to );
+    }
+
+    public synchronized String send( String str, long len, InputStream is, int to)
+    {
+        return tcp_send( server, port, str, len, is, to );
+    }
+
+    public synchronized String send( String str)
+    {
+        return tcp_send( server, port, str, null, null, -1 );
+    }
+    public synchronized String send( String str, int to)
+    {
+        return tcp_send( server, port, str, null, null, to );
+    }
+
+    public boolean send_tcp_byteblock( String str, byte[] data)
+    {
+        answer =  tcp_send( server, port, str, null, data, -1);
+        return check_answer(answer);
+
+    }
+
+/*
+    public boolean send_cmd(String string)
+    {
+        boolean ok = false;
+
+        answer = send( string, null );
+
+        return check_answer(answer);
+    }
+
+    public boolean send_cmd(String string, OutputStream outp)
+    {
+        boolean ok = false;
+
+        answer = send( string, outp );
+
+        return check_answer(answer);
+    }
+*/
+    public boolean send_fast_retry_cmd(String str)
+    {
+        answer = tcp_send( server, port, str, null, null, 3 );
+        if (check_answer(answer))
+            return true;
+        
+        return false;
+    }
+
+    String ping_answer;
+    public String get_ping_answer()
+    {
+        return ping_answer;
+    }
+    public int ping( String ip, int port, int delay_ms )
+    {
+        int ret = -1;
+        //System.out.println("Calling ping for " + ip + ":...");
+
+        Socket s;
+        boolean keep_sock_open = false;
+
+        if (keep_s == null || last_ip.compareTo( ip ) != 0)
+        {
+            s = new Socket();
+            SocketAddress saddr = new InetSocketAddress( ip, port );
+            try
+            {
+                s.setSoTimeout( delay_ms);
+                s.connect( saddr, delay_ms );
+                s.setTcpNoDelay(true);
+            }
+            catch (Exception exc)
+            {
+                System.out.println( " Fehler: " + exc.getMessage() );
+                ret = -1;
+                return ret;
+            }
+        }
+        else
+        {
+            s = keep_s;
+            keep_sock_open = true;
+        }
+
+        try
+        {
+
+            ping_answer = tcp_send( s, "GETSTATUS MD:SHORT", null, null );
+
+            ret = ping;
+            System.out.println(ret + " ms");
+
+        }
+        catch (java.net.SocketTimeoutException texc)
+        {
+            ret = -1;
+            keep_s = null;
+            keep_sock_open = false;
+            System.out.println( " Timeout");
+        }
+        catch (Exception exc)
+        {
+            System.out.println( " Error: " + exc.getMessage() );
+            keep_s = null;
+            keep_sock_open = false;
+            ret = -1;
+        }
+        finally
+        {
+            try
+            {
+                if (!keep_sock_open)
+                {
+                   s.close();
+                }
+            }
+            catch (IOException ex)
+            {
+            }
+        }
+
+        return ret;
+    }
+
+    void reopen( String ip, int port, int timeout ) throws SocketException, IOException
+    {
+            if (last_ip != null)
+            {
+                if (last_ip.compareTo( ip ) != 0)
+                {
+                    comm_close();
+                }
+            }
+
+            if (keep_s == null)
+            {
+                keep_s = new Socket();
+                keep_s.setTcpNoDelay( true );
+                keep_s.setReuseAddress( true );
+               // keep_s.setSendBufferSize( 6000 );
+               // keep_s.setReceiveBufferSize( 60000 );
+                if (timeout > 0)
+                    keep_s.setSoTimeout(timeout* 1000);
+                else
+                    keep_s.setSoTimeout(60* 1000); // DEFAULT TIMEOUT 60 SECONDS
+
+                SocketAddress saddr = new InetSocketAddress( ip, port );
+
+                if (timeout > 0)
+                    keep_s.connect( saddr, timeout*1000 );
+                else
+                    keep_s.connect( saddr);
+            }
+            else
+            {
+                if (timeout > 0)
+                    keep_s.setSoTimeout(timeout* 1000);
+                else
+                    keep_s.setSoTimeout(60* 1000); // DEFAULT TIMEOUT 60 SECONDS
+            }
+
+    }
+
+    public String tcp_send( String ip, int port, String str, OutputStream outp, byte[] add_data, int timeout)
+    {
+        try
+        {
+
+            reopen( ip, port, timeout );
+            
+            Socket s = keep_s;
+
+            String ret = tcp_send( s, str, outp, add_data);
+
+
+            // LATCH IP
+            last_ip = ip;
+
+            set_status( "" );
+
+            return ret;
+        }
+
+        //  throws SocketException, IOException, Exception
+        catch ( SocketTimeoutException texc )
+        {
+             this.comm_close();
+             return "--timeout--";
+        }
+        catch ( java.net.ConnectException cexc)
+        {
+            this.comm_close();
+            set_status("Kommunikation schlug fehl: " + cexc.getMessage());
+        }
+        catch ( Exception exc )
+        {
+             this.comm_close();
+             //exc.printStackTrace();
+             set_status("Kommunikation schlug fehl: " + exc.getMessage());
+        }
+
+        return "--failed--";
+    }
+    public String tcp_send( String ip, int port, String str, long len, InputStream inp, int timeout)
+    {
+        try
+        {
+
+            reopen( ip, port, timeout );
+
+            Socket s = keep_s;
+
+            String ret = tcp_send( s, str, len, inp, null);
+
+
+            // LATCH IP
+            last_ip = ip;
+
+            set_status( "" );
+
+            return ret;
+        }
+
+        //  throws SocketException, IOException, Exception
+        catch ( SocketTimeoutException texc )
+        {
+             this.comm_close();
+             return "--timeout--";
+        }
+        catch ( java.net.ConnectException cexc)
+        {
+            this.comm_close();
+            set_status("Kommunikation schlug fehl: " + cexc.getMessage());
+        }
+        catch ( Exception exc )
+        {
+             this.comm_close();
+             //exc.printStackTrace();
+             set_status("Kommunikation schlug fehl: " + exc.getMessage());
+        }
+
+        return "--failed--";
+    }
+
+    public void comm_close()
+    {
+        if (keep_s != null)
+        {
+            try
+            {
+                keep_s.close();
+            } catch (IOException ex)
+            {
+                ex.printStackTrace();
+            }
+        }
+        keep_s = null;
+
+        keep_tcp_open = false;
+    }
+    public String tcp_send( Socket s, String str, OutputStream outp, byte[] add_data) throws IOException, Exception
+    {
+        return tcp_send( s, str, 0, null, outp, add_data );
+    }
+    public String tcp_send( Socket s, String str, long len, InputStream is, OutputStream outp) throws IOException, Exception
+    {
+        return tcp_send( s, str, len, is, outp, null );
+    }
+
+
+    public synchronized String tcp_send( Socket s, String str, long inp_len, InputStream inp, OutputStream outp, byte[] add_data) throws IOException, Exception
+    {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("CMD:RMX_");
+
+        // DO WE HAVE OPT. DATA?
+        int opt_index = str.indexOf(" " );
+        if (opt_index == -1)
+            sb.append( str );  // NO ONLY PUT CMD
+        else
+        {
+            sb.append( str.substring( 0, opt_index ) );  // CUT OFF CMD
+        }
+        sb.append( " LEN:");
+        int opt_len = 0;
+
+        byte[] opt_data = null;
+        if (opt_index != -1 )
+        {
+            opt_data = str.substring( opt_index + 1).getBytes();
+            opt_len = opt_data.length;
+        }
+        int add_data_len = 0;
+        if (add_data != null)
+            add_data_len += add_data.length;
+
+        sb.append( (opt_len  + add_data_len + inp_len) );
+
+        // PAD FIRST BLOCK TO 32 BYTE
+        while (sb.length() < TCP_LEN)
+        {
+            sb.append( " " );
+        }
+
+        byte[] data = sb.toString().getBytes();
+        long start = System.currentTimeMillis();
+        ping_connected = false;
+
+
+        s.getOutputStream().write( data, 0, TCP_LEN );
+
+        // AND PUT OPT DATA IN NEXT BLOCK
+        if (opt_len > 0)
+        {
+            s.getOutputStream().write( opt_data );
+        }
+        if (add_data_len > 0)
+        {
+            s.getOutputStream().write( add_data );
+        }
+        if (inp_len > 0)
+        {
+            byte[] buff = new byte[64*1024];
+            long len = inp_len;
+            while( len > 0)
+            {
+                int rlen = buff.length;
+                if (len < rlen)
+                    rlen = (int)len;
+
+                int rrlen = inp.read(buff, 0, rlen);
+                s.getOutputStream().write(buff, 0, rrlen);
+
+                len -= rrlen;
+            }
+        }
+
+        s.getOutputStream().flush();
+
+
+        // READ ANSER
+        byte[] in_buff = new byte[TCP_LEN];
+
+        int rlen = s.getInputStream().read( in_buff );
+
+        ping = (int)(System.currentTimeMillis() - start);
+
+        // AT LEAST WE HAVE AN ANSWER, MACHINE IS THERE WITH VPN ACTIVE
+        ping_connected = true;
+        if (rlen <= 0)
+            throw new Exception( "Application not responding" );
+
+        //System.out.println("Ping is " + ping  + " ms <" + str + ">");
+
+        // THIS IS THE FORMAT OF IT
+        //answer.append( "OK:LEN:");
+        String local_answer = new String( in_buff, "UTF-8" );
+
+
+        int len_idx = local_answer.indexOf("LEN:");
+        if (len_idx <= 0)
+            throw new Exception( "Data error" );
+
+        // GET OK / NOK
+        String ret = local_answer.substring(0, len_idx );
+        int alen = Integer.parseInt( local_answer.substring( len_idx + 4).trim() );
+
+        // MORE DATA?
+        if (alen > 0)
+        {
+            if (outp != null)
+            {
+                write_output( s.getInputStream(), alen, outp );
+            }
+            else
+            {
+                byte[] res_data = new byte[alen];
+                rlen = s.getInputStream().read( res_data );
+                while (rlen != alen)
+                {
+                    int rrlen = s.getInputStream().read( res_data, rlen, alen - rlen );
+                    rlen +=  rrlen;
+                }
+                ret += new String( res_data, "UTF-8" );
+            }
+        }
+        return ret;
+
+    }
+    void write_output( InputStream ins, int alen, OutputStream outs ) throws IOException
+    {
+         // PUSH DATA OVER BUFFER
+        int buff_len = 8192;
+        byte[] buff = new byte[buff_len];
+
+        while (alen > 0)
+        {
+            long blen = alen;
+            if (blen > buff_len)
+                blen = buff_len;
+
+            int rlen = ins.read( buff, 0, (int)blen );
+            outs.write( buff, 0, rlen );
+            alen -= rlen;
+        }
+        outs.flush();
+    }
+
 
     public ConnectionID open()
     {
@@ -142,7 +637,7 @@ public class ServerCall
 
         try
         {
-            String ret = port.open(db);
+            String ret = send( "open " + db, SHORT_CMD_TO );
 
             calc_stat(ret);
 
@@ -169,7 +664,7 @@ public class ServerCall
 
         try
         {
-            String ret = port.createStatement(c.getId());
+            String ret = send( "createStatement " + c.getId(), SHORT_CMD_TO);
             int idx = ret.indexOf(':');
             int retcode = Integer.parseInt(ret.substring(0, idx));
 
@@ -190,19 +685,19 @@ public class ServerCall
 
     public String close( ConnectionID c )
     {
-        String st = port.close(c.getId());
+        String st =  send( "close " + c.getId(), SHORT_CMD_TO);
         return st;
     }
 
     public String close( StatementID c )
     {
-        String st = port.close(c.getId());
+        String st =  send( "close " + c.getId(), SHORT_CMD_TO);
         return st;
     }
 
     public String close( ResultSetID c )
     {
-        String st = port.close(c.getId());
+        String st =  send( "close " + c.getId(), SHORT_CMD_TO);
         return st;
     }
 
@@ -222,8 +717,7 @@ public class ServerCall
         init_stat("");
         try
         {
-
-            String ret = port.getSQLArrayResult(r.getId());
+            String ret =  send( "getSQLArrayResult " + r.getId(), SHORT_CMD_TO);
 
             calc_stat(ret);
 
@@ -258,7 +752,7 @@ public class ServerCall
         String ret = null;
         try
         {
-            ret = port.executeQuery(sta.getId(), qry);
+            ret =  send( "executeQuery " + sta.getId() + "|" + qry, SHORT_CMD_TO);
 
             calc_stat(ret);
 
@@ -288,7 +782,7 @@ public class ServerCall
         try
         {
 
-            ret = port.executeUpdate(sta.getId(), qry);
+            ret =  send( "executeUpdate " + sta.getId() + "|" + qry, SHORT_CMD_TO);
 
             calc_stat(ret);
 
@@ -318,7 +812,8 @@ public class ServerCall
         try
         {
 
-            ret = port.execute(sta.getId(), qry);
+            ret =  send( "execute " + sta.getId() + "|" + qry, SHORT_CMD_TO);
+           
 
             calc_stat(ret);
 
@@ -731,7 +1226,7 @@ public class ServerCall
 
         try
         {
-            String ret = port.getSQLFirstRowField( connection_id.getId(), qry, field );
+            String ret =  send( "getSQLFirstRowField " + connection_id.getId() + "|" + qry + "|" + field, SHORT_CMD_TO);
 
             calc_stat(ret);
 
@@ -758,7 +1253,7 @@ public class ServerCall
 
         try
         {
-            String ret = port.openOutStream( file, "");
+            String ret =  send( "openOutStream " + file , SHORT_CMD_TO);
 
             calc_stat(ret);
 
@@ -784,7 +1279,8 @@ public class ServerCall
 
         try
         {
-            String ret = port.closeOutStream(id.getId());
+            String ret =  send( "closeOutStream " + id.getId() , SHORT_CMD_TO);
+           
 
             calc_stat(ret);
 
@@ -803,13 +1299,13 @@ public class ServerCall
         }
         return false;
     }
-    public boolean write_out_stream( OutStreamID id, byte[] data)
+    public boolean write_out_stream( OutStreamID id, long len, InputStream is)
     {
         init_stat("");
 
         try
         {
-            String ret = port.writeOutStream(id.getId(), data);
+            String ret =  send( "writeOutStream " + id.getId() , len, is, SHORT_CMD_TO);
 
             calc_stat(ret);
 
@@ -835,7 +1331,7 @@ public class ServerCall
 
         try
         {
-            String ret = port.openInStream( file, "");
+            String ret =  send( "openInStream " + file , SHORT_CMD_TO);
 
             calc_stat(ret);
 
@@ -871,7 +1367,8 @@ public class ServerCall
 
         try
         {
-            String ret = port.closeInStream(id.getId());
+            String ret =  send( "closeInStream " + id.getId() , SHORT_CMD_TO);
+            
 
             calc_stat(ret);
 
@@ -891,15 +1388,14 @@ public class ServerCall
         return false;
     }
 
-    public int read_in_stream( InStreamID id, byte[] buff)
+    public String read_in_stream( InStreamID id, OutputStream os)
     {
         init_stat("");
 
         try
         {
-            byte[] data = port.readInStream(id.getId(), buff.length);
+            String ret =  send( "readInStream " + id.getId() , os, SHORT_CMD_TO);
 
-            String ret = new String( data, 0, 3 );
 
             calc_stat(ret);
 
@@ -908,21 +1404,22 @@ public class ServerCall
 
             if (retcode == 0)
             {
-                System.arraycopy( data, 3, buff, 0, data.length - 3);
-                return data.length - 3;            
+                return "0: ";
             }
             
             // HANDLE EOF
             if (retcode == 1)
-                return 0;
+                return "0: eof";
 
             last_err_code = retcode;
+
+            return ret;
         }
         catch (Exception exc)
         {
             last_ex = exc;
         }
-        return -1;
+        return "1: aborted";
     }
 
 

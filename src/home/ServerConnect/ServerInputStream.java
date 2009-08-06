@@ -20,7 +20,7 @@ public class ServerInputStream extends InputStream
     public ServerInputStream( StreamConnect _conn, String file ) throws IOException
     {
         conn = _conn;
-        ServerCall sc = conn.get_sqc();
+        ServerWSDLCall sc = conn.get_sqc();
         id = sc.open_in_stream(file);
 
         if (id == null)
@@ -33,7 +33,7 @@ public class ServerInputStream extends InputStream
     @Override
     public int read( ) throws IOException
     {
-        ServerCall sc = conn.get_sqc();
+        ServerWSDLCall sc = conn.get_sqc();
         byte data[] = new byte[1];
         data[0] = 0;
         int len = sc.read_in_stream(id, data);
@@ -54,7 +54,7 @@ public class ServerInputStream extends InputStream
         if (id == null)
             return;
         
-        ServerCall sc = conn.get_sqc();
+        ServerWSDLCall sc = conn.get_sqc();
         if (sc.close_in_stream(id)  == false)
         {
             throw new IOException( "Cannot close Serverstream " + id.getId() + ": " + sc.get_last_err_txt() + " Err: " + sc.get_last_err_code()) ;
@@ -65,7 +65,7 @@ public class ServerInputStream extends InputStream
     @Override
     public int read( byte[] b ) throws IOException
     {
-        ServerCall sc = conn.get_sqc();
+        ServerWSDLCall sc = conn.get_sqc();
         int len = sc.read_in_stream(id, b);
         if (len == -1)
         {
@@ -77,7 +77,7 @@ public class ServerInputStream extends InputStream
     @Override
     public int read( byte[] b, int off, int len ) throws IOException
     {
-        ServerCall sc = conn.get_sqc();
+        ServerWSDLCall sc = conn.get_sqc();
         byte data[] = new byte[len];
         int rlen = read( data );
         if (rlen == -1)

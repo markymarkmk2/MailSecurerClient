@@ -224,7 +224,7 @@ public class SQLConnect extends Connect
 
     private void sql_test()
     {
-        ServerCall sc = new ServerCall();
+        ServerWSDLCall sc = new ServerWSDLCall();
         sc.init();
 
         ConnectionID c = sc.open("");
