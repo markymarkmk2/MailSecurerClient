@@ -76,7 +76,10 @@ public class StreamConnect extends Connect
                     {
                         long end = System.currentTimeMillis();
                         float  ratio = (real_len *1.0f)/((end - start) *1024.0f);
-                        System.out.println(" Speed: "  + (10000 )/(end - last_start) + " C/s, " + ratio + "MB/s");
+                        long diff = end - start;
+                                if (diff == 0)
+                                    diff = 1;
+                        System.out.println(" Speed: "  + (10000 )/(diff) + " C/s, " + ratio + "MB/s");
                         last_start = System.currentTimeMillis();
                     }
                 }

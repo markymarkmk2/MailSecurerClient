@@ -7,7 +7,7 @@ package dimm.home.Rendering;
 
 import dimm.home.Models.OverviewModel;
 import dimm.home.ServerConnect.ConnectionID;
-import dimm.home.ServerConnect.ServerWSDLCall;
+import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StatementID;
 import dimm.home.UserMain;
 import java.awt.Component;
@@ -209,7 +209,7 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
     {
                 Object object = model.getSqlResult().get(row);
 
-                ServerWSDLCall sql = UserMain.sqc().get_sqc();
+                ServerCall sql = UserMain.sqc().get_sqc();
                 ConnectionID cid = sql.open();
                 StatementID sta = sql.createStatement(cid);
 

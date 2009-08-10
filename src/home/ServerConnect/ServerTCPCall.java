@@ -19,12 +19,13 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  *
  * @author mw
  */
-public class ServerTCPCall
+public class ServerTCPCall extends ServerCall
 {
 
     public static final String MISS_ARGS = "missing args";
@@ -34,17 +35,10 @@ public class ServerTCPCall
 /*    MWWebServiceService service;
     MWWebService port;*/
     String name;
-    long last_duration_ms;
-    long last_start;
-    long last_end;
-    String last_err_txt;
-    String last_return;
-    String last_cmd;
-    int last_err_code;
-    Exception last_ex;
+   
 
 
-    private static final int TCP_LEN = 32;
+    private static final int TCP_LEN = 64;
     
     public static final int SHORT_CMD_TO = 3000;
 
@@ -114,44 +108,44 @@ public class ServerTCPCall
         return answer;
     }
 
-    public boolean check_answer( String answer )
+    public boolean check_answer( String a )
     {
         boolean ok = false;
-        if (answer == null || answer.length() == 0)
+        if (a == null || a.length() == 0)
         {
             answer = "Kommunikation fehlgeschlagen!";
             return false;
         }
 
 
-        if (answer.compareTo("--failed--") == 0)
+        if (a.compareTo("--failed--") == 0)
         {
             answer =  "Kommunikation fehlgeschlagen!";
             return false;
         }
 
-        if (answer.compareTo("UNKNOWN_COMMAND") == 0)
+        if (a.compareTo("UNKNOWN_COMMAND") == 0)
         {
             answer =  "Oha, dieser Befehl wird von der Box nicht unterstützt!";
             return false;
         }
 
 
-        if (answer.length() >= 2 && answer.substring(0, 2).compareTo("OK") == 0)
+        if (a.length() >= 2 && a.substring(0, 2).compareTo("OK") == 0)
         {
             ok = true;
-            if (answer.length() > 3)
-                answer = answer.substring(3);
+            if (a.length() > 3)
+                answer = a.substring(3);
             else
                 answer = "";
 
             ok = true;
         }
-        else if (answer.length() >= 3 && answer.substring(0, 3).compareTo("NOK") == 0)
+        else if (a.length() >= 3 && a.substring(0, 3).compareTo("NOK") == 0)
         {
             ok = false;
-            if (answer.length() > 4)
-                answer = answer.substring(4);
+            if (a.length() > 4)
+                answer = a.substring(4);
             else
                 answer = "";
 
@@ -161,21 +155,31 @@ public class ServerTCPCall
 
     public synchronized String send( String str, OutputStream outp, int to)
     {
-        return tcp_send( server, port, str, outp, null, to );
+        String a =   tcp_send( server, port, str, outp, null, to );
+        if (check_answer(a))
+            return answer;
+
+        return null;
     }
 
     public synchronized String send( String str, long len, InputStream is, int to)
     {
-        return tcp_send( server, port, str, len, is, to );
+        String a =   tcp_send( server, port, str, len, is, to );
+ 
+        return a;
     }
 
     public synchronized String send( String str)
     {
-        return tcp_send( server, port, str, null, null, -1 );
+        String a =  tcp_send( server, port, str, null, null, -1 );
+ 
+        return a;
     }
     public synchronized String send( String str, int to)
     {
-        return tcp_send( server, port, str, null, null, to );
+        String a =  tcp_send( server, port, str, null, null, to );
+
+        return a;
     }
 
     public boolean send_tcp_byteblock( String str, byte[] data)
@@ -309,21 +313,21 @@ public class ServerTCPCall
                 if (timeout > 0)
                     keep_s.setSoTimeout(timeout* 1000);
                 else
-                    keep_s.setSoTimeout(60* 1000); // DEFAULT TIMEOUT 60 SECONDS
+                    keep_s.setSoTimeout(0);
 
                 SocketAddress saddr = new InetSocketAddress( ip, port );
 
                 if (timeout > 0)
                     keep_s.connect( saddr, timeout*1000 );
                 else
-                    keep_s.connect( saddr);
+                    keep_s.connect( saddr, 10*1000);
             }
             else
             {
                 if (timeout > 0)
                     keep_s.setSoTimeout(timeout* 1000);
                 else
-                    keep_s.setSoTimeout(60* 1000); // DEFAULT TIMEOUT 60 SECONDS
+                    keep_s.setSoTimeout(0);
             }
 
     }
@@ -427,11 +431,20 @@ public class ServerTCPCall
     }
     public String tcp_send( Socket s, String str, OutputStream outp, byte[] add_data) throws IOException, Exception
     {
-        return tcp_send( s, str, 0, null, outp, add_data );
+        String a = tcp_send( s, str, 0, null, outp, add_data );
+       if (check_answer(a))
+            return answer;
+
+        return null;
+
     }
     public String tcp_send( Socket s, String str, long len, InputStream is, OutputStream outp) throws IOException, Exception
     {
-        return tcp_send( s, str, len, is, outp, null );
+        String a = tcp_send( s, str, len, is, outp, null );
+       if (check_answer(a))
+            return answer;
+
+        return null;
     }
 
 
@@ -582,11 +595,13 @@ public class ServerTCPCall
     }
 
 
+    @Override
     public ConnectionID open()
     {
         return open("");
     }
 
+    @Override
     void init_stat( String cmd )
     {
         last_start = System.currentTimeMillis();
@@ -1260,7 +1275,7 @@ public class ServerTCPCall
 
         try
         {
-            String ret =  send( "openOutStream " + file , SHORT_CMD_TO);
+            String ret =  send( "OpenOutStream " + file , SHORT_CMD_TO);
 
             calc_stat(ret);
 
@@ -1280,13 +1295,14 @@ public class ServerTCPCall
         }
         return null;
     }
+    @Override
     public boolean close_out_stream( OutStreamID id)
     {
         init_stat("");
 
         try
         {
-            String ret =  send( "closeOutStream " + id.getId() , SHORT_CMD_TO);
+            String ret =  send( "CloseOutStream " + id.getId() , SHORT_CMD_TO);
            
 
             calc_stat(ret);
@@ -1306,13 +1322,14 @@ public class ServerTCPCall
         }
         return false;
     }
+    @Override
     public boolean write_out_stream( OutStreamID id, long len, InputStream is)
     {
         init_stat("");
 
         try
         {
-            String ret =  send( "writeOutStream " + id.getId() , len, is, SHORT_CMD_TO);
+            String ret =  send( "WriteOutStream " + id.getId() , len, is, SHORT_CMD_TO);
 
             calc_stat(ret);
 
@@ -1331,14 +1348,45 @@ public class ServerTCPCall
         }
         return false;
     }
+    @Override
+    public boolean write_out_stream( OutStreamID id, byte[] data)
+    {
+      init_stat("");
 
+        try
+        {
+            String sdata = new String( Base64.encodeBase64(data));
+            sdata =encode_pipe(sdata);
+
+            String ret =  send( "WriteOut " + id.getId() + "|" + sdata);
+
+            calc_stat(ret);
+
+            int idx = ret.indexOf(':');
+            int retcode = Integer.parseInt(ret.substring(0, idx));
+
+            if (retcode == 0)
+            {
+                return true;
+            }
+            last_err_code = retcode;
+            last_err_code = -1;
+        }
+        catch (Exception exc)
+        {
+            last_ex = exc;
+        }
+        return false;
+    }
+
+    @Override
     public InStreamID open_in_stream( String file )
     {
         init_stat(file);
 
         try
         {
-            String ret =  send( "openInStream " + file , SHORT_CMD_TO);
+            String ret =  send( "OpenInStream " + file , SHORT_CMD_TO);
 
             calc_stat(ret);
 
@@ -1368,13 +1416,14 @@ public class ServerTCPCall
         }
         return null;
     }
+    @Override
     public boolean close_in_stream( InStreamID id)
     {
         init_stat("");
 
         try
         {
-            String ret =  send( "closeInStream " + id.getId() , SHORT_CMD_TO);
+            String ret =  send( "CloseInStream " + id.getId() , SHORT_CMD_TO);
             
 
             calc_stat(ret);
@@ -1395,13 +1444,14 @@ public class ServerTCPCall
         return false;
     }
 
-    public String read_in_stream( InStreamID id, OutputStream os)
+    @Override
+    public boolean  read_in_stream( InStreamID id, OutputStream os)
     {
         init_stat("");
 
         try
         {
-            String ret =  send( "readInStream " + id.getId() , os, SHORT_CMD_TO);
+            String ret =  send( "ReadInStream " + id.getId() , os, SHORT_CMD_TO);
 
 
             calc_stat(ret);
@@ -1411,22 +1461,69 @@ public class ServerTCPCall
 
             if (retcode == 0)
             {
-                return "0: ";
+                return true;
             }
-            
+
             // HANDLE EOF
             if (retcode == 1)
-                return "0: eof";
+                return true;
 
             last_err_code = retcode;
 
-            return ret;
+            return false;
         }
         catch (Exception exc)
         {
             last_ex = exc;
         }
-        return "1: aborted";
+        return false;
+    }
+    @Override
+    public int  read_in_stream( InStreamID id, byte[] data)
+    {
+        int iret = -1;
+        init_stat("");
+
+        try
+        {
+            String ret =  send( "ReadIn " + id.getId() + "|" +  data.length, SHORT_CMD_TO);
+
+
+            calc_stat(ret);
+
+            int idx = ret.indexOf(':');
+            int retcode = Integer.parseInt(ret.substring(0, idx));
+
+            if (retcode == 0)
+            {
+                byte[] rdata = Base64.decodeBase64(ret.substring(3).getBytes());
+
+                if (rdata.length < data.length)
+                {
+                    System.arraycopy(rdata, 0, data, 0, rdata.length);
+                    iret = rdata.length;
+                }
+                else
+                {
+                    System.arraycopy(rdata, 0, data, 0, data.length);
+                     iret = data.length;
+                }
+                return iret;
+            }
+
+            // HANDLE EOF
+            if (retcode == 1)
+                return 0;
+
+            last_err_code = retcode;
+
+            return -1;
+        }
+        catch (Exception exc)
+        {
+            last_ex = exc;
+        }
+        return -1;
     }
 
 

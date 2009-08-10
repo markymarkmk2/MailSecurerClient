@@ -14,6 +14,8 @@ import com.thoughtworks.xstream.XStream;
 
 import dimm.home.Main;
 import home.shared.SQL.SQLArrayResult;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.namespace.QName;
@@ -24,20 +26,12 @@ import org.apache.commons.codec.binary.Base64;
  *
  * @author mw
  */
-public class ServerWSDLCall
+public class ServerWSDLCall extends ServerCall
 {
 
     MWWebServiceService service;
     MWWebService port;
     String name;
-    long last_duration_ms;
-    long last_start;
-    long last_end;
-    String last_err_txt;
-    String last_return;
-    String last_cmd;
-    int last_err_code;
-    Exception last_ex;
 
     public ServerWSDLCall()
     {
@@ -83,56 +77,6 @@ public class ServerWSDLCall
     public ConnectionID open()
     {
         return open("");
-    }
-
-    void init_stat( String cmd )
-    {
-        last_start = System.currentTimeMillis();
-        last_err_txt = "";
-        last_return = "";
-        last_cmd = cmd;
-        last_err_code = 0;
-        last_duration_ms = 0;
-        last_ex = null;
-    }
-
-    void calc_stat( String ret )
-    {
-        last_end = System.currentTimeMillis();
-        last_duration_ms = last_end - last_start;
-        last_return = ret;
-    }
-
-    public String get_last_err_txt()
-    {
-        return last_err_txt;
-    }
-
-    public int get_last_err_code()
-    {
-        return last_err_code;
-    }
-
-    public Exception get_last_ex()
-    {
-        return last_ex;
-    }
-
-    long get_last_duration()
-    {
-        return last_duration_ms;
-    }
-
-    public String get_last_err()
-    {
-        String ex_str = "";
-        if (last_ex != null)
-        {
-            ex_str = last_ex.getMessage();
-        }
-
-        return "ServerCall <" + last_cmd + "> Code:" + last_err_code + " Txt:" + last_err_txt + " EX:" + ex_str;
-
     }
 
     public ConnectionID open( String db )
@@ -338,40 +282,6 @@ public class ServerWSDLCall
         }
 
         return false;
-    }
-
-
-
-    String  get_name_from_hibernate_class( String rec_name )
-    {
-        
-        StringBuffer sb = new StringBuffer();
-
-        for (int i = 0; i < rec_name.length(); i++)
-        {
-            char ch = new Character( rec_name.charAt(i) );
-
-            if (i == 0)
-            {
-                ch = Character.toLowerCase(ch);
-            }
-            else
-            {
-                if (Character.isUpperCase(ch))
-                {
-                    sb.append('_');
-                    ch = Character.toLowerCase(ch);
-                }
-            }
-            sb.append(ch);
-        }
-
-
-        return sb.toString();
-    }
-    String  get_name_from_hibernate_class( Object o )
-    {
-        return get_name_from_hibernate_class(  o.getClass().getSimpleName() );
     }
 
     public boolean Insert( StatementID sta, Object o )
@@ -803,9 +713,10 @@ public class ServerWSDLCall
         }
         return false;
     }
-    public boolean write_out_stream( OutStreamID id, byte[] data)
+    @Override
+    public boolean write_out_stream( OutStreamID id, long len, InputStream is)
     {
-        init_stat("");
+       /* init_stat("");
 
         try
         {
@@ -825,7 +736,7 @@ public class ServerWSDLCall
         catch (Exception exc)
         {
             last_ex = exc;
-        }
+        }*/
         return false;
     }
 
@@ -891,9 +802,10 @@ public class ServerWSDLCall
         return false;
     }
 
-    public int read_in_stream( InStreamID id, byte[] buff)
+    @Override
+    public boolean  read_in_stream( InStreamID id, OutputStream os)
     {
-        init_stat("");
+      /*  init_stat("");
 
         try
         {
@@ -909,9 +821,9 @@ public class ServerWSDLCall
             if (retcode == 0)
             {
                 System.arraycopy( data, 3, buff, 0, data.length - 3);
-                return data.length - 3;            
+                return data.length - 3;
             }
-            
+
             // HANDLE EOF
             if (retcode == 1)
                 return 0;
@@ -921,8 +833,48 @@ public class ServerWSDLCall
         catch (Exception exc)
         {
             last_ex = exc;
+        }*/
+        return false;
+    }
+    @Override
+    public int read_in_stream( InStreamID id, byte[] buff)
+    {
+      /*  init_stat("");
+
+        try
+        {
+            byte[] data = port.readInStream(id.getId(), buff);
+
+            String ret = new String( data, 0, 3 );
+
+            calc_stat(ret);
+
+            int idx = ret.indexOf(':');
+            int retcode = Integer.parseInt(ret.substring(0, idx));
+
+            if (retcode == 0)
+            {
+                System.arraycopy( data, 3, buff, 0, data.length - 3);
+                return data.length - 3;
+            }
+
+            // HANDLE EOF
+            if (retcode == 1)
+                return 0;
+
+            //last_err_code = retcode;
         }
+        catch (Exception exc)
+        {
+            last_ex = exc;
+        }*/
         return -1;
+    }
+
+    @Override
+    public boolean write_out_stream( OutStreamID id, byte[] data )
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 

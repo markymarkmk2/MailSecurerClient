@@ -5,6 +5,7 @@
 
 package dimm.home.ServerConnect;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -20,7 +21,7 @@ public class ServerOutputStream extends OutputStream
     public ServerOutputStream( StreamConnect _conn, String file ) throws IOException
     {
         conn = _conn;
-        ServerWSDLCall sc = conn.get_sqc();
+        ServerCall sc = conn.get_sqc();
         id = sc.open_out_stream(file);
 
         if (id == null)
@@ -33,10 +34,12 @@ public class ServerOutputStream extends OutputStream
     @Override
     public void write( int b ) throws IOException
     {
-        ServerWSDLCall sc = conn.get_sqc();
+        ServerCall sc = conn.get_sqc();
         byte data[] = new byte[1];
         data[0] = (byte)b;
-        if (sc.write_out_stream(id, data)  == false)
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+
+        if (sc.write_out_stream(id, 1, bais)  == false)
         {
             throw new IOException( "Cannot write Serverstream " + id.getId() + ": " + sc.get_last_err_txt() + " Err: " + sc.get_last_err_code()) ;
         }
@@ -49,7 +52,7 @@ public class ServerOutputStream extends OutputStream
         if (id == null)
             return;
 
-        ServerWSDLCall sc = conn.get_sqc();
+        ServerCall sc = conn.get_sqc();
         if (sc.close_out_stream(id)  == false)
         {
             throw new IOException( "Cannot close Serverstream " + id.getId() + ": " + sc.get_last_err_txt() + " Err: " + sc.get_last_err_code()) ;
@@ -60,8 +63,11 @@ public class ServerOutputStream extends OutputStream
     @Override
     public void write( byte[] b ) throws IOException
     {
-        ServerWSDLCall sc = conn.get_sqc();
-        if (sc.write_out_stream(id, b)  == false)
+        ServerCall sc = conn.get_sqc();
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(b);
+
+        if (sc.write_out_stream(id, b.length, bais)  == false)
         {
             throw new IOException( "Cannot write Serverstream " + id.getId() + ": " + sc.get_last_err_txt() + " Err: " + sc.get_last_err_code()) ;
         }

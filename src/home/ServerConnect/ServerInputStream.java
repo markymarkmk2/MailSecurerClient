@@ -5,8 +5,10 @@
 
 package dimm.home.ServerConnect;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  *
@@ -20,7 +22,7 @@ public class ServerInputStream extends InputStream
     public ServerInputStream( StreamConnect _conn, String file ) throws IOException
     {
         conn = _conn;
-        ServerWSDLCall sc = conn.get_sqc();
+        ServerCall sc = conn.get_sqc();
         id = sc.open_in_stream(file);
 
         if (id == null)
@@ -31,9 +33,9 @@ public class ServerInputStream extends InputStream
 
 
     @Override
-    public int read( ) throws IOException
+    public int read() throws IOException
     {
-        ServerWSDLCall sc = conn.get_sqc();
+        ServerCall sc = conn.get_sqc();
         byte data[] = new byte[1];
         data[0] = 0;
         int len = sc.read_in_stream(id, data);
@@ -54,7 +56,7 @@ public class ServerInputStream extends InputStream
         if (id == null)
             return;
         
-        ServerWSDLCall sc = conn.get_sqc();
+        ServerCall sc = conn.get_sqc();
         if (sc.close_in_stream(id)  == false)
         {
             throw new IOException( "Cannot close Serverstream " + id.getId() + ": " + sc.get_last_err_txt() + " Err: " + sc.get_last_err_code()) ;
@@ -62,22 +64,21 @@ public class ServerInputStream extends InputStream
         id = null;
     }
 
-    @Override
-    public int read( byte[] b ) throws IOException
+   
+    public void read( OutputStream os ) throws IOException
     {
-        ServerWSDLCall sc = conn.get_sqc();
-        int len = sc.read_in_stream(id, b);
-        if (len == -1)
+        ServerCall sc = conn.get_sqc();
+
+        if(! sc.read_in_stream(id, os) )
         {
             throw new IOException( "Cannot read Serverstream " + id.getId() + ": " + sc.get_last_err_txt() + " Err: " + sc.get_last_err_code()) ;
-        }
-        return len;
+        }      
     }
 
     @Override
     public int read( byte[] b, int off, int len ) throws IOException
     {
-        ServerWSDLCall sc = conn.get_sqc();
+        ServerCall sc = conn.get_sqc();
         byte data[] = new byte[len];
         int rlen = read( data );
         if (rlen == -1)

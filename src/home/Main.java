@@ -11,6 +11,7 @@ package dimm.home;
 import dimm.home.Rendering.UI_Bluesea;
 import dimm.home.Rendering.UI_Generic;
 import dimm.home.Rendering.UI_Pirates;
+import dimm.home.ServerConnect.StreamConnect;
 import javax.swing.UIManager;
 
 /**
@@ -210,6 +211,7 @@ public class Main
 
         ui.set_ui(false);
 
+        StreamConnect.main(args);
 
         Main mm = new Main();
         UserMain.init_text_interface(null);
