@@ -208,7 +208,6 @@ public abstract class ServerCall {
         return sb.toString();
     }
 
-
     public abstract boolean init();
 
 }
