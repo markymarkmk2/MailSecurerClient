@@ -6,6 +6,9 @@
 
 package dimm.home;
 
+import dimm.home.SwitchPanels.PanelVerwaltung;
+import dimm.home.SwitchPanels.PanelSystem;
+import dimm.home.SwitchPanels.PanelStartup;
 import dimm.home.Panels.LoginPanel;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossErrDialog;
@@ -29,6 +32,7 @@ import org.jdesktop.fuse.ResourceInjector;
 import  sun.audio.*;    //import the sun.audio package
 
 import dimm.home.ServerConnect.SQLConnect;
+import dimm.home.SwitchPanels.PanelTools;
 import java.util.ResourceBundle;
 
 
@@ -50,6 +54,7 @@ public class UserMain extends javax.swing.JFrame
     PanelVerwaltung pn_verwaltung;
     PanelStartup pn_startup;
     PanelSystem pn_system;
+    PanelTools pn_tools;
     
     TitlePanel titlePanel;
 
@@ -108,7 +113,8 @@ public class UserMain extends javax.swing.JFrame
     public static final int PBC_LOGOFF = 3;
     public static final int PBC_SEARCH = 4;
     public static final int PBC_ADMIN = 5;
-    public static final int PBC_SYSTEM = 6;
+    public static final int PBC_TOOLS = 6;
+    public static final int PBC_SYSTEM = 7;
 //    public static final int PBC_VIRTUAL_ADMIN = 6;
     
     
@@ -349,9 +355,11 @@ public class UserMain extends javax.swing.JFrame
         {
             case PBC_LOGOFF: handle_logoff(); return;
             case PBC_LOGIN: handle_login(); return;
-            case PBC_ADMIN: switch_to_admin(); return;
-            case PBC_SEARCH: switch_to_search(); return;
-            case PBC_SYSTEM: switch_to_system(); return;
+
+            case PBC_ADMIN:
+            case PBC_TOOLS:
+            case PBC_SEARCH: 
+            case PBC_SYSTEM: switch_to_panel(code); return;
         }            
     }
     
@@ -389,6 +397,7 @@ public class UserMain extends javax.swing.JFrame
         
         pn_verwaltung = new PanelVerwaltung( this );
         pn_system = new PanelSystem( this );
+        pn_tools = new PanelTools( this );
         
         PN_TITLE.add(titlePanel, BorderLayout.NORTH);        
         PN_HEADER.add(navPanel, BorderLayout.NORTH);
@@ -397,25 +406,34 @@ public class UserMain extends javax.swing.JFrame
         
         navPanel.add_button(getString("Suchen"), PBC_SEARCH, pn_startup);
         navPanel.add_button(getString("Verwaltung"), PBC_ADMIN, pn_verwaltung);
+        navPanel.add_button(getString("Tools"), PBC_TOOLS, pn_tools);
+
         navPanel.add_button(getString("System"), PBC_SYSTEM, pn_system);
         navPanel.enable_button(PBC_ADMIN, false);
+        navPanel.enable_button(PBC_TOOLS, false);
         navPanel.enable_button(PBC_SYSTEM, false);
-        navPanel.enable_button(PBC_SEARCH, false);
+        navPanel.enable_button(PBC_SEARCH, true);
         navPanel.add_button(getString("Anmelden"), PBC_LOGIN, null);
         
         Dimension auto_size = this.getSize();
-                
         navPanel.setSize(auto_size);
-        pn_verwaltung.setSize(auto_size);
-        pn_startup.setSize(auto_size);
-        pn_system.setSize(auto_size);
+
+        for (int i = 0; i < navPanel.get_switch_panels(); i++)
+        {
+            SwitchPanel pnl = navPanel.get_switch_panel(i);
+            if (pnl != null)
+            {
+                pnl.setSize(auto_size);
+            }
+        }
+                
         PN_USERMAIN.setSize(auto_size);
         PN_GLASS.setSize(auto_size);
         PN_MAIN.setSize(auto_size);
         
         PN_MAIN.add(navPanel.get_panel_switcher(), BorderLayout.CENTER);
 
-        switch_to_search();
+        switch_to_panel(PBC_SEARCH);
 
         sqc = new SQLConnect();
         sqc.init_structs();
@@ -452,12 +470,14 @@ public class UserMain extends javax.swing.JFrame
             if (this.getUserLevel() == UL_SYSADMIN)
             {
                 navPanel.enable_button(PBC_ADMIN, false);
+                navPanel.enable_button(PBC_TOOLS, true);
                 navPanel.enable_button(PBC_SYSTEM, true);
                 navPanel.enable_button(PBC_SEARCH, false );
             }
             else
             {
                 navPanel.enable_button(PBC_ADMIN, true);
+                navPanel.enable_button(PBC_TOOLS, true);
                 navPanel.enable_button(PBC_SYSTEM, false);
                 navPanel.enable_button(PBC_SEARCH, true );
             }
@@ -472,7 +492,12 @@ public class UserMain extends javax.swing.JFrame
 
 
 
-    private void switch_to_admin()
+    private void switch_to_panel( int id)
+    {
+        navPanel.switch_to_panel( id);
+        this.repaint();
+    }
+/*    private void switch_to_admin()
     {
         navPanel.switch_to_panel( PBC_ADMIN);
         this.repaint();
@@ -487,7 +512,7 @@ public class UserMain extends javax.swing.JFrame
         navPanel.switch_to_panel( PBC_SYSTEM);
         this.repaint();
     }
-
+*/
     public int get_act_panel_id()
     {
         return navPanel.get_act_pbc_id();

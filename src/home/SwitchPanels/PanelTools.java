@@ -3,12 +3,14 @@
  *
  * Created on 13. M�rz 2008, 09:39
  */
-package dimm.home;
+package dimm.home.SwitchPanels;
 
+import dimm.home.*;
 import dimm.home.Panels.DAOverview;
 import dimm.home.Panels.HotfolderOverview;
 import dimm.home.Panels.ImapFetcherOverview;
 import dimm.home.Panels.MilterOverview;
+import dimm.home.Panels.PanelImportMailbox;
 import dimm.home.Panels.ProxyOverview;
 import dimm.home.Panels.RoleOverview;
 import dimm.home.Rendering.BackgroundTitle;
@@ -25,11 +27,11 @@ import org.jdesktop.fuse.ResourceInjector;
  *
  * @author  Administrator
  */
-public class PanelVerwaltung extends SwitchSpringPanel
+public class PanelTools extends SwitchSpringPanel
 {
 
     /** Creates new form PanelTasks */
-    public PanelVerwaltung( UserMain m )
+    public PanelTools( UserMain m )
     {
         super(m, UserMain.PBC_ADMIN);
         ResourceInjector.get().inject(this);
@@ -37,7 +39,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         initComponents();
 
 
-        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Einstellungen" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 65, getWidth(), 60));
+        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Import" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 65, getWidth(), 60));
         PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Connectoren" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 285, getWidth(), 60));
         
     }
@@ -53,7 +55,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         initComponents();
 
 
-        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Einstellungen" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 65, getWidth(), 60));
+        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Import" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 65, getWidth(), 60));
         PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Connectoren" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 285, getWidth(), 60));
     }
 
@@ -92,11 +94,11 @@ public class PanelVerwaltung extends SwitchSpringPanel
     private void initComponents() {
 
         PN_BUTTONS = new javax.swing.JPanel();
+        BT_IMPORT_MBOX = new GhostButton();
         BT_IMAPFETCHER = new GhostButton();
         BT_ROLE = new GhostButton();
         BT_MILTER = new GhostButton();
         BT_PROXY = new GhostButton();
-        BT_DISKARCHIVES = new GhostButton();
         BT_HOTFOLDER = new GhostButton();
         PN_HEADER = new javax.swing.JPanel();
 
@@ -104,6 +106,25 @@ public class PanelVerwaltung extends SwitchSpringPanel
 
         PN_BUTTONS.setOpaque(false);
         PN_BUTTONS.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        BT_IMPORT_MBOX.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_IMPORT_MBOX.setForeground(new java.awt.Color(201, 201, 201));
+        BT_IMPORT_MBOX.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_einstellungen.png"))); // NOI18N
+        BT_IMPORT_MBOX.setText(UserMain.Txt("Import")); // NOI18N
+        BT_IMPORT_MBOX.setToolTipText(UserMain.Txt("Import_Mailboxen")); // NOI18N
+        BT_IMPORT_MBOX.setBorderPainted(false);
+        BT_IMPORT_MBOX.setContentAreaFilled(false);
+        BT_IMPORT_MBOX.setFocusPainted(false);
+        BT_IMPORT_MBOX.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        BT_IMPORT_MBOX.setMaximumSize(new java.awt.Dimension(101, 26));
+        BT_IMPORT_MBOX.setMinimumSize(new java.awt.Dimension(101, 26));
+        BT_IMPORT_MBOX.setPreferredSize(new java.awt.Dimension(101, 26));
+        BT_IMPORT_MBOX.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_IMPORT_MBOXActionPerformed(evt);
+            }
+        });
+        PN_BUTTONS.add(BT_IMPORT_MBOX, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, 160, 50));
 
         BT_IMAPFETCHER.setFont(new java.awt.Font("Arial", 0, 14));
         BT_IMAPFETCHER.setForeground(new java.awt.Color(201, 201, 201));
@@ -124,7 +145,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_IMAPFETCHER, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 350, 170, 50));
 
-        BT_ROLE.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_ROLE.setFont(new java.awt.Font("Arial", 0, 14));
         BT_ROLE.setForeground(new java.awt.Color(201, 201, 201));
         BT_ROLE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
         BT_ROLE.setText(UserMain.Txt("Roles")); // NOI18N
@@ -156,7 +177,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_MILTER, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 350, 170, 50));
 
-        BT_PROXY.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_PROXY.setFont(new java.awt.Font("Arial", 0, 14));
         BT_PROXY.setForeground(new java.awt.Color(201, 201, 201));
         BT_PROXY.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
         BT_PROXY.setText(UserMain.Txt("Mail_Proxy")); // NOI18N
@@ -172,26 +193,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_PROXY, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 350, 190, 50));
 
-        BT_DISKARCHIVES.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        BT_DISKARCHIVES.setForeground(new java.awt.Color(201, 201, 201));
-        BT_DISKARCHIVES.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_einstellungen.png"))); // NOI18N
-        BT_DISKARCHIVES.setText(UserMain.Txt("Archive")); // NOI18N
-        BT_DISKARCHIVES.setToolTipText(UserMain.Txt("Storage_für_archivierte_Mails")); // NOI18N
-        BT_DISKARCHIVES.setBorderPainted(false);
-        BT_DISKARCHIVES.setContentAreaFilled(false);
-        BT_DISKARCHIVES.setFocusPainted(false);
-        BT_DISKARCHIVES.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        BT_DISKARCHIVES.setMaximumSize(new java.awt.Dimension(101, 26));
-        BT_DISKARCHIVES.setMinimumSize(new java.awt.Dimension(101, 26));
-        BT_DISKARCHIVES.setPreferredSize(new java.awt.Dimension(101, 26));
-        BT_DISKARCHIVES.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_DISKARCHIVESActionPerformed(evt);
-            }
-        });
-        PN_BUTTONS.add(BT_DISKARCHIVES, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, 160, 50));
-
-        BT_HOTFOLDER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_HOTFOLDER.setFont(new java.awt.Font("Arial", 0, 14));
         BT_HOTFOLDER.setForeground(new java.awt.Color(201, 201, 201));
         BT_HOTFOLDER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/turntable_33x48.png"))); // NOI18N
         BT_HOTFOLDER.setText(UserMain.Txt("Hotfolder")); // NOI18N
@@ -321,16 +323,16 @@ public class PanelVerwaltung extends SwitchSpringPanel
         
 }//GEN-LAST:event_BT_PROXYActionPerformed
 
-    private void BT_DISKARCHIVESActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_DISKARCHIVESActionPerformed
-    {//GEN-HEADEREND:event_BT_DISKARCHIVESActionPerformed
+    private void BT_IMPORT_MBOXActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_IMPORT_MBOXActionPerformed
+    {//GEN-HEADEREND:event_BT_IMPORT_MBOXActionPerformed
         // TODO add your handling code here:
        if (check_selected())
         {
-            TimingTargetAdapter tt = make_spring_button_dlg( new DAOverview(main, true),  get_dlg_pos(),  UserMain.getString("Archive") );
+            TimingTargetAdapter tt = make_spring_button_dlg( new PanelImportMailbox(),  get_dlg_pos(),  UserMain.getString("MailboxImport") );
             spring_button_action(evt.getSource(), tt);
         }
 
-    }//GEN-LAST:event_BT_DISKARCHIVESActionPerformed
+    }//GEN-LAST:event_BT_IMPORT_MBOXActionPerformed
 
     private void BT_HOTFOLDERActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_HOTFOLDERActionPerformed
     {//GEN-HEADEREND:event_BT_HOTFOLDERActionPerformed
@@ -344,9 +346,9 @@ public class PanelVerwaltung extends SwitchSpringPanel
     }//GEN-LAST:event_BT_HOTFOLDERActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton BT_DISKARCHIVES;
     private javax.swing.JButton BT_HOTFOLDER;
     private javax.swing.JButton BT_IMAPFETCHER;
+    private javax.swing.JButton BT_IMPORT_MBOX;
     private javax.swing.JButton BT_MILTER;
     private javax.swing.JButton BT_PROXY;
     private javax.swing.JButton BT_ROLE;

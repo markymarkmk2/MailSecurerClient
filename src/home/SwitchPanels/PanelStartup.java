@@ -3,8 +3,9 @@
  *
  * Created on 13. M�rz 2008, 09:39
  */
-package dimm.home;
+package dimm.home.SwitchPanels;
 
+import dimm.home.*;
 import dimm.home.Rendering.BackgroundTitle;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GhostButton;
@@ -130,7 +131,7 @@ public class PanelStartup extends SwitchSpringPanel
         PN_BUTTONS.setOpaque(false);
         PN_BUTTONS.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        BT_NETWORK.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_NETWORK.setFont(new java.awt.Font("Arial", 0, 14));
         BT_NETWORK.setForeground(new java.awt.Color(201, 201, 201));
         BT_NETWORK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_lupe.png"))); // NOI18N
         BT_NETWORK.setText(UserMain.Txt("Nach_Mail_stoebern")); // NOI18N

@@ -3,8 +3,9 @@
  *
  * Created on 13. M�rz 2008, 09:39
  */
-package dimm.home;
+package dimm.home.SwitchPanels;
 
+import dimm.home.*;
 import dimm.home.Panels.MandantOverview;
 import dimm.home.Rendering.BackgroundTitle;
 import dimm.home.Rendering.GhostButton;
@@ -99,7 +100,7 @@ public class PanelSystem extends SwitchSpringPanel
         PN_BUTTONS.setOpaque(false);
         PN_BUTTONS.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        BT_FREE1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_FREE1.setFont(new java.awt.Font("Arial", 0, 14));
         BT_FREE1.setForeground(new java.awt.Color(201, 201, 201));
         BT_FREE1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/turntable_33x48.png"))); // NOI18N
         BT_FREE1.setText(UserMain.Txt("???")); // NOI18N
@@ -115,7 +116,7 @@ public class PanelSystem extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_FREE1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 350, 190, 50));
 
-        BT_FREE2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_FREE2.setFont(new java.awt.Font("Arial", 0, 14));
         BT_FREE2.setForeground(new java.awt.Color(201, 201, 201));
         BT_FREE2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_schedule.png"))); // NOI18N
         BT_FREE2.setText(UserMain.Txt("???")); // NOI18N
@@ -131,7 +132,7 @@ public class PanelSystem extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_FREE2, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 350, 170, 50));
 
-        BT_FREE3.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_FREE3.setFont(new java.awt.Font("Arial", 0, 14));
         BT_FREE3.setForeground(new java.awt.Color(201, 201, 201));
         BT_FREE3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
         BT_FREE3.setText(UserMain.Txt("???")); // NOI18N
@@ -147,11 +148,11 @@ public class PanelSystem extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_FREE3, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 350, 190, 50));
 
-        BT_MANDANTEN.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_MANDANTEN.setFont(new java.awt.Font("Arial", 0, 14));
         BT_MANDANTEN.setForeground(new java.awt.Color(201, 201, 201));
         BT_MANDANTEN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_einstellungen.png"))); // NOI18N
         BT_MANDANTEN.setText(UserMain.Txt("Mandanten")); // NOI18N
-        BT_MANDANTEN.setToolTipText(UserMain.Txt("")); // NOI18N
+        BT_MANDANTEN.setToolTipText("null");
         BT_MANDANTEN.setBorderPainted(false);
         BT_MANDANTEN.setContentAreaFilled(false);
         BT_MANDANTEN.setFocusPainted(false);

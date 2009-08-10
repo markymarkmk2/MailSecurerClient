@@ -12,6 +12,7 @@ import dimm.home.Rendering.UI_Bluesea;
 import dimm.home.Rendering.UI_Generic;
 import dimm.home.Rendering.UI_Pirates;
 import dimm.home.ServerConnect.StreamConnect;
+import dimm.home.native_libs.NativeLoader;
 import javax.swing.UIManager;
 
 /**
@@ -109,6 +110,15 @@ public class Main
                 break;
             }
         }
+
+        // SUCK IN NATIVE LIBARIES
+        new NativeLoader();
+
+        if (NativeLoader.failed)
+        {
+            System.err.println("Not all native libraries could be loaded, please check our environment");
+        }
+
         if (lf_idx >= 0)
         {
             try
@@ -211,7 +221,7 @@ public class Main
 
         ui.set_ui(false);
 
-        StreamConnect.main(args);
+        //StreamConnect.main(args);
 
         Main mm = new Main();
         UserMain.init_text_interface(null);

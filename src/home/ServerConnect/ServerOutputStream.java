@@ -7,6 +7,7 @@ package dimm.home.ServerConnect;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
@@ -73,6 +74,7 @@ public class ServerOutputStream extends OutputStream
         }
     }
 
+
     @Override
     public void write( byte[] b, int off, int len ) throws IOException
     {
@@ -92,6 +94,16 @@ public class ServerOutputStream extends OutputStream
     protected void finalize() throws Throwable
     {
         close();
+    }
+
+
+    public void write( InputStream is, long len) throws IOException
+    {
+        ServerCall sc = conn.get_sqc();
+        if (sc.write_out_stream(id, len, is)  == false)
+        {
+            throw new IOException( "Cannot write Serverstream " + id.getId() + ": " + sc.get_last_err_txt() + " Err: " + sc.get_last_err_code()) ;
+        }
     }
 
 }

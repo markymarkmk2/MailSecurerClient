@@ -498,6 +498,15 @@ public class NavigationHeader extends JComponent
         g2.setColor(shadowColor);
         g2.drawLine(0, height + 1, getWidth(), height + 1);*/
     }
+
+    public SwitchPanel get_switch_panel( int i)
+    {
+        return button_list.get(i).panel;
+    }
+    public int get_switch_panels()
+    {
+        return button_list.size();
+    }
   
     private class PathButton extends JButton
     {
