@@ -10,7 +10,7 @@ import dimm.home.Panels.DAOverview;
 import dimm.home.Panels.HotfolderOverview;
 import dimm.home.Panels.ImapFetcherOverview;
 import dimm.home.Panels.MilterOverview;
-import dimm.home.Panels.PanelImportMailbox;
+import dimm.home.Panels.MailImport.PanelImportMailbox;
 import dimm.home.Panels.ProxyOverview;
 import dimm.home.Panels.RoleOverview;
 import dimm.home.Rendering.BackgroundTitle;
