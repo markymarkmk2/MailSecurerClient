@@ -42,6 +42,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
 {
 
     boolean is_in_fill_cb;
+    ProfileManager manager;
 
 
     private void set_next_state()
@@ -59,10 +60,19 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
 
                 if (RD_FIREFOX.isSelected())
                 {
+                    manager = new TBirdProfileManager();
+                }
+                if (RD_OUTLOOKXPRESS.isSelected())
+                {
+                    manager = new OlexpProfileManager();
+                }
+
+                if (manager != null)
+                {
                     try
                     {
                         is_in_fill_cb = true;
-                        TBirdProfileManager.fill_tbird_profile_combo(CB_PROFILE);
+                        manager.fill_profile_combo(CB_PROFILE);
                         CB_PROFILE.setSelectedIndex(0);
                         is_in_fill_cb = false;
                         build_tree_callback();
@@ -145,28 +155,33 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         if ( is_in_fill_cb)
             return;
 
-        if (RD_FIREFOX.isSelected())
-        {
+        if (manager == null)
+            return;
 
             String path = null;
+            NamePathEntry npe = null;
             if (CB_PROFILE.getSelectedItem() != null)
             {
-                NamePathEntry npe = (NamePathEntry)CB_PROFILE.getSelectedItem();
-                path = npe.path;
+                npe = (NamePathEntry)CB_PROFILE.getSelectedItem();
             }
-            if (path == null)
+            if (npe == null)
             {
                 path = TXT_PATH.getText();
             }
 
-            if (path == null  || !(new File(path).exists()))
+            if (npe == null && (path == null || path.length() == 0))
             {
                 set_enable_next( false );
                 return;
             }
+            
+
             try
             {
-                TBirdProfileManager.handle_build_tbird_tree(path, JT_DIR);
+                if (npe != null)
+                    manager.handle_build_tree(npe, JT_DIR);
+                else if (path != null)
+                    manager.handle_build_tree(path, JT_DIR);
             }
             catch (IOException ex)
             {
@@ -175,10 +190,6 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 return;
             }
             set_enable_next( true );
-        }
-        if (RD_OUTLOOKXPRESS.isSelected())
-            handle_build_outlook_express_tree();
-
     }
 
     private void handle_import()
@@ -189,7 +200,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
     private void handle_check()
     {
         UserMain.errm_ok("Checking...");
-        TBirdTreeModel tm = (TBirdTreeModel)JT_DIR.getModel();
+        DefaultTreeModel tm = (DefaultTreeModel)JT_DIR.getModel();
         MutableTreeNode root = (MutableTreeNode)tm.getRoot();
 
         ArrayList<TreeNode> list = new ArrayList<TreeNode>();
@@ -213,6 +224,13 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 if (mbox != null)
                     file_size += mbox.length();
             }
+            if (c instanceof OlexpFileNode)
+            {
+                OlexpFileNode tbn = (OlexpFileNode)c;
+                File mbox = tbn.node;
+                if (mbox != null)
+                    file_size += mbox.length();
+            }
         }
 
         String size_str = new SizeStr( file_size).toString();
@@ -233,6 +251,14 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
             {
                 TBirdTreeNode tbn = (TBirdTreeNode)c;
                 if (!tbn.is_selected)
+                    continue;
+
+                list.add(c);
+            }
+            if (c instanceof OlexpFileNode)
+            {
+                OlexpFileNode ofn = (OlexpFileNode)c;
+                if (!ofn.is_selected())
                     continue;
 
                 list.add(c);
@@ -326,9 +352,9 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
 
     void mySingleClick(int selRow, TreePath selPath)
     {
-        TBirdTreeNode n = (TBirdTreeNode)selPath.getLastPathComponent();
+        SwitchableNode n = (SwitchableNode)selPath.getLastPathComponent();
 
-        boolean s = !n.is_selected;
+        boolean s = !n.is_selected();
         n.set_selected( (DefaultTreeModel)JT_DIR.getModel(), s );
             
         

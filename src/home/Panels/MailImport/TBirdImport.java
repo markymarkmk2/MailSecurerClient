@@ -8,6 +8,7 @@ package dimm.home.Panels.MailImport;
 import dimm.home.Main;
 import dimm.home.UserMain;
 import dimm.home.Utilities.INIFile;
+import dimm.home.Utilities.SizeStr;
 import dimm.home.Utilities.demork.Demork;
 import dimm.home.Utilities.demork.MorkUtils;
 import dimm.home.Utilities.demork.database.MorkCell;
@@ -81,7 +82,8 @@ class TBirdFilenameFilter implements FilenameFilter
 
 
 
-class TBirdTreeNode implements MutableTreeNode
+
+class TBirdTreeNode implements MutableTreeNode, SwitchableNode
 {
     MutableTreeNode parent;
     File node;
@@ -129,10 +131,7 @@ class TBirdTreeNode implements MutableTreeNode
     {
         return node;
     }
-    boolean get_is_selected()
-    {
-        return is_selected;
-    }
+    
 
     @Override
     public int getChildCount()
@@ -263,9 +262,10 @@ class TBirdTreeNode implements MutableTreeNode
     }
 
 
-    void set_selected(DefaultTreeModel model, boolean s)
+    @Override
+    public void set_selected(DefaultTreeModel model, boolean s)
     {
-        is_selected = !is_selected;
+        is_selected = s;
         model.nodeChanged(this);
 
         check_children();
@@ -312,8 +312,15 @@ class TBirdTreeNode implements MutableTreeNode
     {
         parent =  newParent;
     }
-}
 
+    @Override
+    public boolean is_selected()
+    {
+        return is_selected;
+    }
+
+   
+}
 class TBirdTreeModel extends DefaultTreeModel
 {
     TBirdTreeModel( TreeNode n )
@@ -342,8 +349,15 @@ class TBirdTreeCellRenderer implements TreeCellRenderer
         if (value instanceof TBirdTreeNode)
         {
             TBirdTreeNode node = (TBirdTreeNode) value;
-            jcb.setText(node.get_mbox_name());
-            jcb.setSelected( node.get_is_selected());
+            String text = node.get_mbox_name();
+            File f = node.get_mailbox();
+            if (f != null)
+            {
+                String len_text = "  (" + new SizeStr( f.length() ).toString() + ")";
+                text = text + len_text;
+            }
+            jcb.setText( text);
+            jcb.setSelected( node.is_selected());
             return jcb;
 
         }
@@ -354,29 +368,11 @@ class TBirdTreeCellRenderer implements TreeCellRenderer
 }
 
 
-class NamePathEntry extends JLabel
-{
-    String path;
-    String name;
 
-    NamePathEntry( String p, String n )
-    {
-        path = p;
-        name = n;
-    }
-
-    @Override
-    public String toString()
-    {
-        return name.toString();
-    }
-
-    
-}
-class TBirdProfileManager
+class TBirdProfileManager extends ProfileManager
 {
 
-    static String build_tbird_appdata_path()
+    String build_appdata_path()
     {
         /*
          # On Linux, the path is usually ~/.thunderbird/xxxxxxxx.default/
@@ -387,14 +383,10 @@ class TBirdProfileManager
             String user_appdata_path = NativeLoader.get_HKCU_reg_value("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders", "AppData");
             if (user_appdata_path == null)
             {
-                String appdata_path = NativeLoader.get_HKCU_reg_value("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders", "AppData");
-                // TRY VIA USERNAME
-                String user = NativeLoader.get_HKCU_reg_value("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer", "Logon User Name");
-                if (user != null && appdata_path != null)
-                {
-                    user_appdata_path = appdata_path.replaceAll("%USERPROFILE%", user);
-                }
+                user_appdata_path = NativeLoader.get_HKCU_reg_value("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders", "AppData");
             }
+            user_appdata_path = NativeLoader.resolve_win_path(user_appdata_path);
+
             return user_appdata_path + "\\Thunderbird";
         }
         if (NativeLoader.is_linux())
@@ -427,11 +419,12 @@ Path=Profiles/nl1ice4b.default
 
 
 */
-    static void fill_tbird_profile_combo( JComboBox cb ) throws IOException
+    @Override
+    void fill_profile_combo( JComboBox cb ) throws IOException
     {
         cb.removeAllItems();
         
-        String tbird_appdata = build_tbird_appdata_path();
+        String tbird_appdata = build_appdata_path();
 
         File prf = new File ( tbird_appdata + "/profiles.ini" );
         if (!prf.exists())
@@ -472,11 +465,12 @@ Path=Profiles/nl1ice4b.default
         cb.addItem(tbpe);
     }
 
-    static void handle_build_tbird_tree(String path, JTree tree) throws IOException
+    @Override
+    void handle_build_tree(NamePathEntry npe, JTree tree) throws IOException
     {
         ArrayList<String>mail_root_dirs = new ArrayList<String>();
 
-        File panacea = new File( path + "/panacea.dat");
+        File panacea = new File( npe.path + "/panacea.dat");
         if (panacea.exists())
         {
             try
@@ -568,17 +562,19 @@ Path=Profiles/nl1ice4b.default
             tree.setModel(model);
             tree.setCellRenderer( new TBirdTreeCellRenderer() );
         }
-        else
-        {
-            // WE HAVE AN ABSOLUTE MAILPATH, JUST TRY TO BUILD TBIRD TREE
-            TBirdTreeNode node = new TBirdTreeNode( new File( path ), "Default" );
-            TBirdTreeModel model = new TBirdTreeModel( node );
-            tree.setModel(model);
-            tree.setCellRenderer( new TBirdTreeCellRenderer() );
-        }
     }
 
-    private static String tb_decode( String mail_path )
+    @Override
+    void handle_build_tree(String path, JTree tree) throws IOException
+    {
+        // WE HAVE AN ABSOLUTE MAILPATH, JUST TRY TO BUILD TBIRD TREE
+        TBirdTreeNode node = new TBirdTreeNode( new File( path ), "Default" );
+        TBirdTreeModel model = new TBirdTreeModel( node );
+        tree.setModel(model);
+        tree.setCellRenderer( new TBirdTreeCellRenderer() );
+    }
+
+    private String tb_decode( String mail_path )
     {
         int idx = mail_path.indexOf('$');
         if (idx == -1)

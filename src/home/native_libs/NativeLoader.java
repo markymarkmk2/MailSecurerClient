@@ -10,12 +10,24 @@ import com.ice.jni.registry.Registry;
 import com.ice.jni.registry.RegistryException;
 import com.ice.jni.registry.RegistryKey;
 import com.ice.jni.registry.RegistryValue;
+import dimm.home.Utilities.CmdExecutor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
+
+/*
+
+
+ WEBSTART NATIVE LIB DESASTER
+ * WE CANNOT LOAD DLL FROM WEBSTART, THEREFOR WE LOAD DLL IN JAR, WRITE TO DISK AND THEN LOAD THIS FILE...
+ *
+ *
+ *
+ * */
 /**
  *
  * @author mw
@@ -179,6 +191,45 @@ public class NativeLoader
             exc.printStackTrace();
         }
         return null;
+    }
+
+    public static String resolve_win_path( String path )
+    {
+        String cmd[] = new String[4];
+
+        cmd[0] = "cmd";
+        cmd[1] = "/C";
+        cmd[2] = "echo";
+        cmd[3] = path;
+        CmdExecutor exec = new CmdExecutor( cmd );
+        if (exec.exec() == 0 && exec.get_out_array_len() == 1)
+        {
+            path = exec.get_out_array()[0].toString();
+            int len = path.length();
+
+            // CUT OFF " AND \"
+            path = path.substring(1, len - 1);
+
+        }
+        return path;
+    }
+    public static String conv_win_to_utf8( String s )
+    {
+        try
+        {
+            char[] ca = s.toCharArray();
+            byte[] b = new byte[ca.length];
+            for (int j = 0; j < ca.length; j++)
+            {
+                char c = ca[j];
+                b[j] = (byte) (c & 0xFF);
+            }
+            s = new String(b, "Cp1250");
+        }
+        catch (UnsupportedEncodingException unsupportedEncodingException)
+        {
+        }
+        return s;
     }
 
     /**
