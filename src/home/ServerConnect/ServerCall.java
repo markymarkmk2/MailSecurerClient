@@ -6,8 +6,10 @@
 package dimm.home.ServerConnect;
 
 import home.shared.SQL.SQLArrayResult;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Socket;
 
 /**
  *
@@ -22,6 +24,7 @@ public abstract class ServerCall {
     Exception last_ex;
     String last_return;
     long last_start;
+
 
     public ServerCall()
     {
@@ -51,8 +54,8 @@ public abstract class ServerCall {
     public abstract String close( ResultSetID c );
 
     public abstract boolean close_in_stream( InStreamID id );
-
     public abstract boolean close_out_stream( OutStreamID id );
+    public abstract boolean close_delete_out_stream( OutStreamID id);
 
     public abstract StatementID createStatement( ConnectionID c );
 
@@ -117,6 +120,18 @@ public abstract class ServerCall {
     public abstract int  read_in_stream( InStreamID id, byte[] data);
     public abstract boolean write_out_stream( OutStreamID id, long len, InputStream is);
     public abstract boolean write_out_stream( OutStreamID id, byte[] data);
+
+    public abstract boolean send_tcp_byteblock( String str, byte[] data);
+
+
+
+    public abstract boolean send_fast_retry_cmd(String str);
+    public abstract String send( String str, OutputStream outp, int to);
+    public abstract String send_rmx( String str, long len, InputStream is, int to);
+    public abstract String send( String str);
+    public abstract String send( String str, int to);
+    public abstract String send_rmx( String str, int to);
+
     
     String get_name_from_hibernate_class( Object o )
     {

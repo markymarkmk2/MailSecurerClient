@@ -12,6 +12,7 @@ import dimm.home.Main;
 import dimm.home.UserMain;
 import dimm.home.Utilities.SizeStr;
 import dimm.home.native_libs.NativeLoader;
+import home.shared.CS_Constants;
 import java.awt.Component;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -24,7 +25,6 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
-import javax.swing.tree.TreeNode;
 
 /**
  *
@@ -68,12 +68,15 @@ class OlexpRootNode extends DefaultMutableTreeNode implements SwitchableNode
     NamePathEntry root;
     boolean is_selected;
     String path;
+    DefaultTreeModel model;
 
     // ABS PATH
-    OlexpRootNode( String _path )
+    OlexpRootNode( DefaultTreeModel _model, String _path )
     {
        path = _path;
        File f = new File(path);
+       model = _model;
+
        children = new Vector<OlexpFileNode>();
 
        if (f.exists() && f.isDirectory())
@@ -84,7 +87,7 @@ class OlexpRootNode extends DefaultMutableTreeNode implements SwitchableNode
             {
                 File file = dbx_files[i];
 
-                children.add(new OlexpFileNode( file ) );
+                children.add(new OlexpFileNode( model, file ) );
             }
        }
        if (this.getChildCount() > 0)
@@ -94,9 +97,10 @@ class OlexpRootNode extends DefaultMutableTreeNode implements SwitchableNode
 
 
     // DATA FROM REGISTRY
-    OlexpRootNode( NamePathEntry npe_profile )
+    OlexpRootNode( DefaultTreeModel _model, NamePathEntry npe_profile )
     {
         root = npe_profile;
+        model = _model;
         children = new Vector<OlexpVersionNode>();
 
         try
@@ -126,14 +130,16 @@ class OlexpRootNode extends DefaultMutableTreeNode implements SwitchableNode
                     }
                     break;
                 }
+                olexp_version_key.closeKey();
 
 
                 NamePathEntry pe = new NamePathEntry(store_path, olexp_version);
 
-                OlexpVersionNode child = new OlexpVersionNode( store_path, olexp_version);
+                OlexpVersionNode child = new OlexpVersionNode( model, store_path, olexp_version);
                 child.setParent(this);
                 children.add( child );
             }
+            key.closeKey();
         }
         catch (Exception registryException)
         {
@@ -160,7 +166,7 @@ class OlexpRootNode extends DefaultMutableTreeNode implements SwitchableNode
     }
 
     @Override
-    public void set_selected( DefaultTreeModel model, boolean s )
+    public void set_selected( boolean s )
     {
         is_selected = s;
         model.nodeChanged(this);
@@ -168,7 +174,7 @@ class OlexpRootNode extends DefaultMutableTreeNode implements SwitchableNode
         for (int i = 0; i < getChildCount(); i++)
         {
             SwitchableNode mboxTreeNode = (SwitchableNode)children.get(i);
-            mboxTreeNode.set_selected(model, s);
+            mboxTreeNode.set_selected( s);
         }
     }
 
@@ -180,11 +186,13 @@ class OlexpVersionNode  extends DefaultMutableTreeNode implements SwitchableNode
     String path;
     String version;
     boolean is_selected;
+    DefaultTreeModel model;
 
-    OlexpVersionNode( String _path, String _version )
+    OlexpVersionNode( DefaultTreeModel _model, String _path, String _version )
     {
         path = _path;
         version = _version;
+        model = _model;
         children = new Vector<OlexpFileNode>();
 
         File f = new File(path);
@@ -196,7 +204,7 @@ class OlexpVersionNode  extends DefaultMutableTreeNode implements SwitchableNode
             {
                 File file = dbx_files[i];
 
-                OlexpFileNode child = new OlexpFileNode( file );
+                OlexpFileNode child = new OlexpFileNode( model, file );
                 child.setParent(this);
                 children.add( child );
 
@@ -214,7 +222,7 @@ class OlexpVersionNode  extends DefaultMutableTreeNode implements SwitchableNode
     }
 
     @Override
-    public void set_selected( DefaultTreeModel model, boolean s )
+    public void set_selected( boolean s )
     {
         is_selected = s;
         model.nodeChanged(this);
@@ -222,7 +230,7 @@ class OlexpVersionNode  extends DefaultMutableTreeNode implements SwitchableNode
         for (int i = 0; i < getChildCount(); i++)
         {
             SwitchableNode mboxTreeNode = (SwitchableNode)children.get(i);
-            mboxTreeNode.set_selected(model, s);
+            mboxTreeNode.set_selected( s);
         }
     }
 }
@@ -235,8 +243,10 @@ class OlexpFileNode  extends DefaultMutableTreeNode implements SwitchableNode
     boolean is_selected;
     String[] default_sel_offnames = {"Junk", "Spam", "Trash", "Drafts", "Templates"};
     File node;
+    DefaultTreeModel model = null;
 
-    OlexpFileNode( File f )
+
+    OlexpFileNode( DefaultTreeModel _model, File f )
     {
         node = f;
         is_selected = true;
@@ -246,6 +256,7 @@ class OlexpFileNode  extends DefaultMutableTreeNode implements SwitchableNode
             if (node.getName().indexOf(no_sel) != -1)
                 is_selected = false;
         }
+        model = _model;
     }
 
     @Override
@@ -269,7 +280,7 @@ class OlexpFileNode  extends DefaultMutableTreeNode implements SwitchableNode
     }
 
     @Override
-    public void set_selected( DefaultTreeModel model, boolean s )
+    public void set_selected(  boolean s )
     {
         is_selected = s;
         model.nodeChanged(this);
@@ -277,15 +288,15 @@ class OlexpFileNode  extends DefaultMutableTreeNode implements SwitchableNode
         for (int i = 0; i < getChildCount(); i++)
         {
             SwitchableNode mboxTreeNode = (SwitchableNode)children.get(i);
-            mboxTreeNode.set_selected(model, s);
+            mboxTreeNode.set_selected( s);
         }
     }
 }
 class OlexpTreeModel extends DefaultTreeModel
 {
-    OlexpTreeModel( TreeNode n )
+    OlexpTreeModel( )
     {
-        super(n);
+        super(null);
     }
 }
 class OlexpTreeCellRenderer implements TreeCellRenderer
@@ -342,6 +353,7 @@ class OlexpTreeCellRenderer implements TreeCellRenderer
 
 class OlexpProfileManager extends ProfileManager
 {
+   
     @Override
     void fill_profile_combo( JComboBox cb ) throws IOException
     {
@@ -361,11 +373,15 @@ class OlexpProfileManager extends ProfileManager
 
                 String user_name = identity_key.getStringValue("Username");
 
+                identity_key.closeKey();
+
                 user_name = NativeLoader.conv_win_to_utf8( user_name );
 
                 NamePathEntry pe = new NamePathEntry(identityname, user_name);
                 cb.addItem(pe);
             }
+
+            key.closeKey();
         }
         catch (RegistryException registryException)
         {
@@ -378,11 +394,18 @@ class OlexpProfileManager extends ProfileManager
     }
 
     @Override
+    String get_type()
+    {
+        return CS_Constants.TYPE_OLEXP;
+    }
+
+    @Override
     void handle_build_tree(String path, JTree tree) throws IOException
     {
         OlexpRootNode node = null;
-        node = new OlexpRootNode( path );
-        OlexpTreeModel model = new OlexpTreeModel( node );
+        DefaultTreeModel model = new OlexpTreeModel();
+        node = new OlexpRootNode( model, path );
+        model.setRoot(node);
         tree.setModel(model);
         tree.setCellRenderer( new OlexpTreeCellRenderer() );
     }
@@ -390,8 +413,9 @@ class OlexpProfileManager extends ProfileManager
     void handle_build_tree(NamePathEntry npe_profile, JTree tree) throws IOException
     {
         OlexpRootNode node = null;
-        node = new OlexpRootNode( npe_profile );
-        OlexpTreeModel model = new OlexpTreeModel( node );
+        OlexpTreeModel model = new OlexpTreeModel();
+        node = new OlexpRootNode( model, npe_profile );
+        model.setRoot(node);
         tree.setModel(model);
         tree.setCellRenderer( new OlexpTreeCellRenderer() );
     }

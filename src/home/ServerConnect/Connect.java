@@ -13,19 +13,7 @@ import dimm.home.Main;
  */
 public class Connect
 {
-/*    ServerWSDLCall sqc;
 
-    public Connect()
-    {
-        sqc = new ServerWSDLCall();
-        sqc.init();
-    }
-
-    public ServerWSDLCall get_sqc()
-    {
-        return sqc;
-    }
-*/
     ServerCall sqc;
 
     public Connect()

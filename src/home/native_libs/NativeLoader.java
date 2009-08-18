@@ -140,20 +140,11 @@ public class NativeLoader
         {
             RegistryKey key = Registry.openSubkey(regkey, key_name, RegistryKey.ACCESS_ALL);
 
-            RegistryValue stringValue = key.getValue(value_name);
-            if (stringValue instanceof RegStringValue)
-            {
-                return ((RegStringValue) stringValue).getData();
-            }
+            String value = key.getStringValue(value_name);
 
-            if (stringValue instanceof RegMultiStringValue)
-            {
-                String[] arr = ((RegMultiStringValue) stringValue).getData();
-                if (arr.length > 0)
-                {
-                    return arr[0];
-                }
-            }
+            key.closeKey();
+
+            return value;
         }
         catch (Exception exc)
         {
@@ -169,9 +160,10 @@ public class NativeLoader
             return null;
         }
 
+        RegistryKey key = null;
         try
         {
-            RegistryKey key = Registry.openSubkey(regkey, key_name, RegistryKey.ACCESS_ALL);
+            key = Registry.openSubkey(regkey, key_name, RegistryKey.ACCESS_ALL);
 
             RegistryValue stringValue = key.getValue(value_name);
             if (stringValue instanceof RegStringValue)
@@ -190,6 +182,21 @@ public class NativeLoader
         {
             exc.printStackTrace();
         }
+        finally
+        {
+            try
+            {
+                if (key != null)
+                {
+                    key.closeKey();
+
+                }
+            }
+            catch (RegistryException registryException)
+            {
+            }
+        }
+
         return null;
     }
 

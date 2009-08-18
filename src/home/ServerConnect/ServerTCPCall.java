@@ -32,6 +32,9 @@ public class ServerTCPCall extends ServerCall
     public static final String WRONG_ARGS = "wrong args";
     public static final String UNKNOWN_CMD = "UNKNOWN_COMMAND";
 
+    private static final String RMX_PREFIX = "RMX_";
+    private static final String CALL_PREFIX = "call_";
+
 /*    MWWebServiceService service;
     MWWebService port;*/
     String name;
@@ -70,6 +73,7 @@ public class ServerTCPCall extends ServerCall
 
     }
 
+    @Override
     public boolean init()
     {
         try
@@ -153,69 +157,6 @@ public class ServerTCPCall extends ServerCall
         return ok;
     }
 
-    public synchronized String send( String str, OutputStream outp, int to)
-    {
-        String a =   tcp_send( server, port, str, outp, null, to );
-        if (check_answer(a))
-            return answer;
-
-        return null;
-    }
-
-    public synchronized String send( String str, long len, InputStream is, int to)
-    {
-        String a =   tcp_send( server, port, str, len, is, to );
- 
-        return a;
-    }
-
-    public synchronized String send( String str)
-    {
-        String a =  tcp_send( server, port, str, null, null, -1 );
- 
-        return a;
-    }
-    public synchronized String send( String str, int to)
-    {
-        String a =  tcp_send( server, port, str, null, null, to );
-
-        return a;
-    }
-
-    public boolean send_tcp_byteblock( String str, byte[] data)
-    {
-        answer =  tcp_send( server, port, str, null, data, -1);
-        return check_answer(answer);
-
-    }
-
-/*
-    public boolean send_cmd(String string)
-    {
-        boolean ok = false;
-
-        answer = send( string, null );
-
-        return check_answer(answer);
-    }
-
-    public boolean send_cmd(String string, OutputStream outp)
-    {
-        boolean ok = false;
-
-        answer = send( string, outp );
-
-        return check_answer(answer);
-    }
-*/
-    public boolean send_fast_retry_cmd(String str)
-    {
-        answer = tcp_send( server, port, str, null, null, 3 );
-        if (check_answer(answer))
-            return true;
-        
-        return false;
-    }
 
     String ping_answer;
     public String get_ping_answer()
@@ -256,7 +197,7 @@ public class ServerTCPCall extends ServerCall
         try
         {
 
-            ping_answer = tcp_send( s, "GETSTATUS MD:SHORT", null, null );
+            ping_answer = tcp_send( s, "GETSTATUS MD:SHORT", null, null, CALL_PREFIX );
 
             ret = ping;
             System.out.println(ret + " ms");
@@ -308,8 +249,10 @@ public class ServerTCPCall extends ServerCall
                 keep_s = new Socket();
                 keep_s.setTcpNoDelay( true );
                 keep_s.setReuseAddress( true );
+
                // keep_s.setSendBufferSize( 6000 );
                // keep_s.setReceiveBufferSize( 60000 );
+
                 if (timeout > 0)
                     keep_s.setSoTimeout(timeout* 1000);
                 else
@@ -329,19 +272,17 @@ public class ServerTCPCall extends ServerCall
                 else
                     keep_s.setSoTimeout(0);
             }
-
     }
 
-    public String tcp_send( String ip, int port, String str, OutputStream outp, byte[] add_data, int timeout)
+    public String tcp_send( String ip, int port, String str, OutputStream outp, byte[] add_data, int timeout, String prefix)
     {
         try
         {
-
             reopen( ip, port, timeout );
             
             Socket s = keep_s;
 
-            String ret = tcp_send( s, str, outp, add_data);
+            String ret = tcp_send( s, str, outp, add_data, prefix);
 
 
             // LATCH IP
@@ -372,16 +313,16 @@ public class ServerTCPCall extends ServerCall
 
         return "--failed--";
     }
-    public String tcp_send( String ip, int port, String str, long len, InputStream inp, int timeout)
+    
+    public String tcp_send( String ip, int port, String str, long len, InputStream inp, int timeout, String prefix)
     {
         try
         {
-
             reopen( ip, port, timeout );
 
             Socket s = keep_s;
 
-            String ret = tcp_send( s, str, len, inp, null);
+            String ret = tcp_send( s, str, len, inp, null, prefix);
 
 
             // LATCH IP
@@ -429,30 +370,122 @@ public class ServerTCPCall extends ServerCall
 
         keep_tcp_open = false;
     }
-    public String tcp_send( Socket s, String str, OutputStream outp, byte[] add_data) throws IOException, Exception
+
+    @Override
+    public synchronized String send( String str, OutputStream outp, int to)
     {
-        String a = tcp_send( s, str, 0, null, outp, add_data );
-       if (check_answer(a))
+        String a =   tcp_send( server, port, str, outp, null, to, CALL_PREFIX );
+
+        if (get_last_err_code() == 0)
+            return a;
+
+        return null;
+    }
+
+    public String send( String str, long len, InputStream is, int to)
+    {
+        String a =   tcp_send( server, port, str, len, is, to, CALL_PREFIX );
+
+        return a;
+    }
+
+    @Override
+    public String send( String str)
+    {
+        String a =  tcp_send( server, port, str, null, null, -1, CALL_PREFIX );
+
+        return a;
+    }
+    @Override
+    public String send( String str, int to)
+    {
+        String a =  tcp_send( server, port, str, null, null, to, CALL_PREFIX );
+
+        return a;
+    }
+
+    @Override
+    public String send_rmx( String str, int to)
+    {
+        String a =  tcp_send( server, port, str, null, null, to, RMX_PREFIX );
+
+        return a;
+    }
+    private String send_rmx( String str, OutputStream os, int to )
+    {
+        String a =   tcp_send( server, port, str, os, null, to, RMX_PREFIX );
+
+        if (get_last_err_code() == 0)
+            return a;
+
+        return null;
+    }
+    @Override
+    public String send_rmx( String str, long len, InputStream is, int to )
+    {
+        String a =   tcp_send( server, port, str, len, is, to, RMX_PREFIX );
+
+        return a;
+    }
+
+
+    private String send_rmx( String str )
+    {
+        String a =   tcp_send( server, port, str, null, null, -1, RMX_PREFIX );
+
+        if (get_last_err_code() == 0)
+            return a;
+
+        return null;
+    }
+
+
+    @Override
+    public synchronized boolean send_tcp_byteblock( String str, byte[] data)
+    {
+        tcp_send( server, port, str, null, data, -1, CALL_PREFIX);
+        return (get_last_err_code() == 0);
+    }
+
+
+
+    @Override
+    public synchronized boolean send_fast_retry_cmd(String str)
+    {
+        String a = tcp_send( server, port, str, null, null, 3, CALL_PREFIX );
+        if (check_answer(a))
+            return true;
+
+        return false;
+    }
+
+    
+    public synchronized String tcp_send( Socket s, String str, OutputStream outp, byte[] add_data, String prefix) throws IOException, Exception
+    {
+        String a = raw_tcp_send( s, str, 0, null, outp, add_data, prefix );
+        if (check_answer(a))
             return answer;
 
         return null;
 
     }
-    public String tcp_send( Socket s, String str, long len, InputStream is, OutputStream outp) throws IOException, Exception
+    
+    public synchronized String tcp_send( Socket s, String str, long len, InputStream is, OutputStream outp, String prefix) throws IOException, Exception
     {
-        String a = tcp_send( s, str, len, is, outp, null );
-       if (check_answer(a))
+        String a = raw_tcp_send( s, str, len, is, outp, null, prefix );
+        if (check_answer(a))
             return answer;
 
         return null;
     }
 
 
-    public synchronized String tcp_send( Socket s, String str, long inp_len, InputStream inp, OutputStream outp, byte[] add_data) throws IOException, Exception
+    private synchronized String raw_tcp_send( Socket s, String str, long inp_len, InputStream inp, OutputStream outp, byte[] add_data, String prefix) throws IOException, Exception
     {
         StringBuffer sb = new StringBuffer();
 
-        sb.append("CMD:RMX_");
+        sb.append("CMD:");
+        sb.append(prefix);  // call_ or RMX_
 
         // DO WE HAVE OPT. DATA?
         int opt_index = str.indexOf(" " );
@@ -613,6 +646,7 @@ public class ServerTCPCall extends ServerCall
         last_ex = null;
     }
 
+    @Override
     void calc_stat( String ret )
     {
         last_end = System.currentTimeMillis();
@@ -620,26 +654,31 @@ public class ServerTCPCall extends ServerCall
         last_return = ret;
     }
 
+    @Override
     public String get_last_err_txt()
     {
         return last_err_txt;
     }
 
+    @Override
     public int get_last_err_code()
     {
         return last_err_code;
     }
 
+    @Override
     public Exception get_last_ex()
     {
         return last_ex;
     }
 
+    @Override
     long get_last_duration()
     {
         return last_duration_ms;
     }
 
+    @Override
     public String get_last_err()
     {
         String ex_str = "";
@@ -652,6 +691,7 @@ public class ServerTCPCall extends ServerCall
 
     }
 
+    @Override
     public ConnectionID open( String db )
     {
 
@@ -659,7 +699,7 @@ public class ServerTCPCall extends ServerCall
 
         try
         {
-            String ret = send( "open " + db, SHORT_CMD_TO );
+            String ret = send_rmx( "open " + db, SHORT_CMD_TO );
 
             calc_stat(ret);
 
@@ -680,13 +720,14 @@ public class ServerTCPCall extends ServerCall
         return null;
     }
 
+    @Override
     public StatementID createStatement( ConnectionID c )
     {
         init_stat("");
 
         try
         {
-            String ret = send( "createStatement " + c.getId(), SHORT_CMD_TO);
+            String ret = send_rmx( "createStatement " + c.getId(), SHORT_CMD_TO);
             int idx = ret.indexOf(':');
             int retcode = Integer.parseInt(ret.substring(0, idx));
 
@@ -705,21 +746,24 @@ public class ServerTCPCall extends ServerCall
         return null;
     }
 
+    @Override
     public String close( ConnectionID c )
     {
-        String st =  send( "close " + c.getId(), SHORT_CMD_TO);
+        String st =  send_rmx( "close " + c.getId(), SHORT_CMD_TO);
         return st;
     }
 
+    @Override
     public String close( StatementID c )
     {
-        String st =  send( "close " + c.getId(), SHORT_CMD_TO);
+        String st =  send_rmx( "close " + c.getId(), SHORT_CMD_TO);
         return st;
     }
 
+    @Override
     public String close( ResultSetID c )
     {
-        String st =  send( "close " + c.getId(), SHORT_CMD_TO);
+        String st =  send_rmx( "close " + c.getId(), SHORT_CMD_TO);
         return st;
     }
 
@@ -731,6 +775,7 @@ public class ServerTCPCall extends ServerCall
         return cmd;
     }
 
+    @Override
     public SQLArrayResult get_sql_array_result( ResultSetID r )
     {
         if (r == null)
@@ -739,7 +784,7 @@ public class ServerTCPCall extends ServerCall
         init_stat("");
         try
         {
-            String ret =  send( "getSQLArrayResult " + r.getId(), SHORT_CMD_TO);
+            String ret =  send_rmx( "getSQLArrayResult " + r.getId(), SHORT_CMD_TO);
 
             calc_stat(ret);
 
@@ -767,6 +812,7 @@ public class ServerTCPCall extends ServerCall
         return null;
     }
 
+    @Override
     public ResultSetID executeQuery( StatementID sta, String qry/*, SQLResult result*/ )
     {
         init_stat(qry);
@@ -774,7 +820,7 @@ public class ServerTCPCall extends ServerCall
         String ret = null;
         try
         {
-            ret =  send( "executeQuery " + sta.getId() + "|" + qry, SHORT_CMD_TO);
+            ret =  send_rmx( "executeQuery " + sta.getId() + "|" + qry, SHORT_CMD_TO);
 
             calc_stat(ret);
 
@@ -796,6 +842,7 @@ public class ServerTCPCall extends ServerCall
         return null;
     }
 
+    @Override
     public int executeUpdate( StatementID sta, String qry/*, SQLResult result*/ )
     {
         init_stat(qry);
@@ -804,7 +851,7 @@ public class ServerTCPCall extends ServerCall
         try
         {
 
-            ret =  send( "executeUpdate " + sta.getId() + "|" + qry, SHORT_CMD_TO);
+            ret =  send_rmx( "executeUpdate " + sta.getId() + "|" + qry, SHORT_CMD_TO);
 
             calc_stat(ret);
 
@@ -826,6 +873,7 @@ public class ServerTCPCall extends ServerCall
         return 0;
     }
 
+    @Override
     public boolean execute( StatementID sta, String qry/*, SQLResult result*/ )
     {
         init_stat(qry);
@@ -834,7 +882,7 @@ public class ServerTCPCall extends ServerCall
         try
         {
 
-            ret =  send( "execute " + sta.getId() + "|" + qry, SHORT_CMD_TO);
+            ret =  send_rmx( "execute " + sta.getId() + "|" + qry, SHORT_CMD_TO);
            
 
             calc_stat(ret);
@@ -858,7 +906,7 @@ public class ServerTCPCall extends ServerCall
     }
 
 
-
+    @Override
     String  get_name_from_hibernate_class( String rec_name )
     {
         
@@ -886,11 +934,14 @@ public class ServerTCPCall extends ServerCall
 
         return sb.toString();
     }
+
+    @Override
     String  get_name_from_hibernate_class( Object o )
     {
         return get_name_from_hibernate_class(  o.getClass().getSimpleName() );
     }
 
+    @Override
     public boolean Insert( StatementID sta, Object o )
     {
         boolean ret = false;
@@ -1060,6 +1111,7 @@ public class ServerTCPCall extends ServerCall
         return false;
     }
 
+    @Override
     public boolean Update( StatementID sta, Object o )
     {
         boolean ret = false;
@@ -1206,6 +1258,7 @@ public class ServerTCPCall extends ServerCall
         return false;
     }
 
+    @Override
     public boolean Delete( StatementID sta, Object o )
     {
         boolean ret = false;
@@ -1234,6 +1287,8 @@ public class ServerTCPCall extends ServerCall
         }
         return false;
     }
+
+    @Override
     public int GetFirstSqlFieldInt( ConnectionID connection_id, String qry, int field )
     {
         String ret = GetFirstSqlField( connection_id, qry, field );
@@ -1241,6 +1296,7 @@ public class ServerTCPCall extends ServerCall
         return Integer.parseInt(ret);
     }
 
+    @Override
     public String GetFirstSqlField( ConnectionID connection_id, String qry, int field )
     {
 
@@ -1248,7 +1304,7 @@ public class ServerTCPCall extends ServerCall
 
         try
         {
-            String ret =  send( "getSQLFirstRowField " + connection_id.getId() + "|" + qry + "|" + field, SHORT_CMD_TO);
+            String ret =  send_rmx( "getSQLFirstRowField " + connection_id.getId() + "|" + qry + "|" + field, SHORT_CMD_TO);
 
             calc_stat(ret);
 
@@ -1269,13 +1325,14 @@ public class ServerTCPCall extends ServerCall
          return null;
     }
 
+    @Override
     public OutStreamID open_out_stream( String file )
     {
         init_stat(file);
 
         try
         {
-            String ret =  send( "OpenOutStream " + file , SHORT_CMD_TO);
+            String ret =  send_rmx( "OpenOutStream " + file , SHORT_CMD_TO);
 
             calc_stat(ret);
 
@@ -1295,6 +1352,7 @@ public class ServerTCPCall extends ServerCall
         }
         return null;
     }
+
     @Override
     public boolean close_out_stream( OutStreamID id)
     {
@@ -1302,8 +1360,35 @@ public class ServerTCPCall extends ServerCall
 
         try
         {
-            String ret =  send( "CloseOutStream " + id.getId() , SHORT_CMD_TO);
+            String ret =  send_rmx( "CloseOutStream " + id.getId() , SHORT_CMD_TO);
            
+
+            calc_stat(ret);
+
+            int idx = ret.indexOf(':');
+            int retcode = Integer.parseInt(ret.substring(0, idx));
+
+            if (retcode == 0)
+            {
+                return true;
+            }
+            last_err_code = retcode;
+        }
+        catch (Exception exc)
+        {
+            last_ex = exc;
+        }
+        return false;
+    }
+    @Override
+    public boolean close_delete_out_stream( OutStreamID id)
+    {
+        init_stat("");
+
+        try
+        {
+            String ret =  send_rmx( "CloseDeleteOutStream " + id.getId() , SHORT_CMD_TO);
+
 
             calc_stat(ret);
 
@@ -1329,7 +1414,7 @@ public class ServerTCPCall extends ServerCall
 
         try
         {
-            String ret =  send( "WriteOutStream " + id.getId() , len, is, SHORT_CMD_TO);
+            String ret =  send_rmx( "WriteOutStream " + id.getId() , len, is, SHORT_CMD_TO);
 
             calc_stat(ret);
 
@@ -1358,7 +1443,7 @@ public class ServerTCPCall extends ServerCall
             String sdata = new String( Base64.encodeBase64(data));
             sdata =encode_pipe(sdata);
 
-            String ret =  send( "WriteOut " + id.getId() + "|" + sdata);
+            String ret =  send_rmx( "WriteOut " + id.getId() + "|" + sdata);
 
             calc_stat(ret);
 
@@ -1386,7 +1471,7 @@ public class ServerTCPCall extends ServerCall
 
         try
         {
-            String ret =  send( "OpenInStream " + file , SHORT_CMD_TO);
+            String ret =  send_rmx( "OpenInStream " + file , SHORT_CMD_TO);
 
             calc_stat(ret);
 
@@ -1423,7 +1508,7 @@ public class ServerTCPCall extends ServerCall
 
         try
         {
-            String ret =  send( "CloseInStream " + id.getId() , SHORT_CMD_TO);
+            String ret =  send_rmx( "CloseInStream " + id.getId() , SHORT_CMD_TO);
             
 
             calc_stat(ret);
@@ -1451,7 +1536,7 @@ public class ServerTCPCall extends ServerCall
 
         try
         {
-            String ret =  send( "ReadInStream " + id.getId() , os, SHORT_CMD_TO);
+            String ret =  send_rmx( "ReadInStream " + id.getId() , os, SHORT_CMD_TO);
 
 
             calc_stat(ret);
@@ -1486,7 +1571,7 @@ public class ServerTCPCall extends ServerCall
 
         try
         {
-            String ret =  send( "ReadIn " + id.getId() + "|" +  data.length, SHORT_CMD_TO);
+            String ret =  send_rmx( "ReadIn " + id.getId() + "|" +  data.length, SHORT_CMD_TO);
 
 
             calc_stat(ret);
@@ -1525,6 +1610,8 @@ public class ServerTCPCall extends ServerCall
         }
         return -1;
     }
+
+
 
 
 

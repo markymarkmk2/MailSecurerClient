@@ -16,6 +16,7 @@ import dimm.home.Utilities.demork.database.MorkDatabase;
 import dimm.home.Utilities.demork.database.MorkRow;
 import dimm.home.Utilities.demork.database.MorkTable;
 import dimm.home.native_libs.NativeLoader;
+import home.shared.CS_Constants;
 import java.awt.Component;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -92,14 +93,17 @@ class TBirdTreeNode implements MutableTreeNode, SwitchableNode
     boolean is_selected;
     String[] default_sel_offnames = {"Junk", "Spam", "Trash", "Drafts", "Templates"};
     String display_name;
+    DefaultTreeModel model = null;
 
-    TBirdTreeNode( TBirdTreeNode p, File n )
+
+    TBirdTreeNode( DefaultTreeModel _model, TBirdTreeNode p, File n )
     {
         parent = p;
         filter = new TBirdFilenameFilter();
         node = n;
         is_selected = true;
         display_name = null;
+        model = _model;
 
         for (int i = 0; i < default_sel_offnames.length; i++)
         {
@@ -108,13 +112,14 @@ class TBirdTreeNode implements MutableTreeNode, SwitchableNode
                 is_selected = false;
         }
     }
-    TBirdTreeNode( File r, String _display_name )
+    TBirdTreeNode( DefaultTreeModel _model, File r, String _display_name )
     {
         parent = null;
         filter = new TBirdFilenameFilter();
         node = r;
         is_selected = true;  // THE WHOLE TREE
         display_name = _display_name;
+        model = _model;
     }
 
     @Override
@@ -191,7 +196,7 @@ class TBirdTreeNode implements MutableTreeNode, SwitchableNode
             for (int i = 0; i < _flist.length; i++)
             {
                 File file = _flist[i];
-                child_list[i] = new TBirdTreeNode( this, file );
+                child_list[i] = new TBirdTreeNode( model, this, file );
             }
         }
     }
@@ -263,7 +268,7 @@ class TBirdTreeNode implements MutableTreeNode, SwitchableNode
 
 
     @Override
-    public void set_selected(DefaultTreeModel model, boolean s)
+    public void set_selected(boolean s)
     {
         is_selected = s;
         model.nodeChanged(this);
@@ -273,7 +278,7 @@ class TBirdTreeNode implements MutableTreeNode, SwitchableNode
         for (int i = 0; i < child_list.length; i++)
         {
             TBirdTreeNode mboxTreeNode = child_list[i];
-            mboxTreeNode.set_selected(model, s);
+            mboxTreeNode.set_selected(s);
         }
     }
 
@@ -323,9 +328,9 @@ class TBirdTreeNode implements MutableTreeNode, SwitchableNode
 }
 class TBirdTreeModel extends DefaultTreeModel
 {
-    TBirdTreeModel( TreeNode n )
+    TBirdTreeModel( )
     {
-        super(n);
+        super(null);
     }
 
 }
@@ -404,6 +409,14 @@ class TBirdProfileManager extends ProfileManager
         return null;
 
     }
+
+    @Override
+    String get_type()
+    {
+        return CS_Constants.TYPE_TBIRD;
+
+    }
+
 
 
 /*
@@ -536,6 +549,7 @@ Path=Profiles/nl1ice4b.default
             {
                 exception.printStackTrace();
             }
+            TBirdTreeModel model = new TBirdTreeModel();
 
             DefaultMutableTreeNode root_node = new DefaultMutableTreeNode("");
             for (int i = 0; i < mail_root_dirs.size(); i++)
@@ -555,10 +569,11 @@ Path=Profiles/nl1ice4b.default
                     }
                 }
 
-                TBirdTreeNode node = new TBirdTreeNode( new File( mail_dir_path ), name );
+                TBirdTreeNode node = new TBirdTreeNode( model, new File( mail_dir_path ), name );
                 root_node.add(node);
             }
-            TBirdTreeModel model = new TBirdTreeModel( root_node );
+
+            model.setRoot(root_node);
             tree.setModel(model);
             tree.setCellRenderer( new TBirdTreeCellRenderer() );
         }
@@ -568,8 +583,9 @@ Path=Profiles/nl1ice4b.default
     void handle_build_tree(String path, JTree tree) throws IOException
     {
         // WE HAVE AN ABSOLUTE MAILPATH, JUST TRY TO BUILD TBIRD TREE
-        TBirdTreeNode node = new TBirdTreeNode( new File( path ), "Default" );
-        TBirdTreeModel model = new TBirdTreeModel( node );
+        TBirdTreeModel model = new TBirdTreeModel();
+        TBirdTreeNode node = new TBirdTreeNode( model, new File( path ), "Default" );
+        model.setRoot(node);
         tree.setModel(model);
         tree.setCellRenderer( new TBirdTreeCellRenderer() );
     }

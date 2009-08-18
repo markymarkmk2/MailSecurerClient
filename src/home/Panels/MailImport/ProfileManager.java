@@ -21,12 +21,28 @@ abstract class ProfileManager
     abstract void handle_build_tree(NamePathEntry npe, JTree tree) throws IOException;
     abstract void handle_build_tree(String path, JTree tree) throws IOException;
 
+    void import_olexp_file( String path )
+    {
+        import_mail_file( "OLEXP", path );
+    }
+    void import_tbird_file( String path )
+    {
+        import_mail_file( "TBIRD", path );
+    }
+
+    void import_mail_file( String type, String path )
+    {
+        
+    }
+
+    abstract String get_type();
+
 }
 
 interface SwitchableNode
 {
     public boolean is_selected();
-    public void set_selected( DefaultTreeModel model, boolean s);
+    public void set_selected(  boolean s);
 }
 class NamePathEntry extends JLabel
 {

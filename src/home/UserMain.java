@@ -15,6 +15,7 @@ import dimm.home.Rendering.GlossErrDialog;
 import dimm.home.Rendering.NavigationHeader;
 import dimm.home.Rendering.SpringGlassPane;
 import dimm.home.Rendering.TitlePanel;
+import dimm.home.ServerConnect.FunctionCallConnect;
 import java.awt.BorderLayout;
 
 import java.awt.Color;
@@ -127,6 +128,7 @@ public class UserMain extends javax.swing.JFrame
     boolean use_mallorca_proxy;
 
     private static SQLConnect sqc;
+    private static FunctionCallConnect fcc;
 
 
     public static String get_version_str()
@@ -326,6 +328,10 @@ public class UserMain extends javax.swing.JFrame
     {
         return sqc;
     }
+    public static FunctionCallConnect fcc()
+    {
+        return fcc;
+    }
 
     @Override
     public void setSize( int width, int height )
@@ -437,6 +443,8 @@ public class UserMain extends javax.swing.JFrame
 
         sqc = new SQLConnect();
         sqc.init_structs();
+
+        fcc = new FunctionCallConnect();
 
         this.repaint();
         

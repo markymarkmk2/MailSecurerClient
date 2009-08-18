@@ -12,10 +12,10 @@ package dimm.home.ServerConnect;
 public class OutStreamID
 {
     String id;
-    OutStreamID( String s )
+    public OutStreamID( String s )
     {
         id = s;
     }
-    String getId()
+    public String getId()
     {return id;}
 }
