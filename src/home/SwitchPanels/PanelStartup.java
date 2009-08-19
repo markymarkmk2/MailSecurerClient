@@ -10,6 +10,7 @@ import dimm.home.Rendering.BackgroundTitle;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
+import dimm.home.Utilities.SwingWorker;
 import java.awt.Dimension;
 import java.awt.Point;
 import org.jdesktop.fuse.ResourceInjector;
@@ -175,6 +176,7 @@ public class PanelStartup extends SwitchSpringPanel
     private void BT_NETWORKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_NETWORKActionPerformed
     {//GEN-HEADEREND:event_BT_NETWORKActionPerformed
         // TODO add your handling code here:
+        
         if (check_selected())
         {
             HTMLDlg dlg = new HTMLDlg(main);
@@ -182,9 +184,53 @@ public class PanelStartup extends SwitchSpringPanel
                dlg.show_dlg("http://www.google.de");
             
      
-        }        
-}//GEN-LAST:event_BT_NETWORKActionPerformed
+        }
+         
+      /*  SwingWorker sw = new SwingWorker()
+        {
 
+            @Override
+            public Object construct()
+            {
+               UserMain.self.show_busy("Haloooooo");
+                UserMain.self.show_busy_val(0.0);
+                sleep(1000);
+                UserMain.self.show_busy_val(10.0);
+                sleep(1000);
+                UserMain.self.show_busy_val(11.0);
+                sleep(1000);
+                UserMain.self.show_busy_val(51.0);
+                sleep(1000);
+                UserMain.self.show_busy_val(60.0);
+                sleep(1000);
+                UserMain.self.show_busy_val(70.0);
+                sleep(1000);
+                UserMain.self.show_busy_val(98.0);
+                sleep(1000);
+                UserMain.self.show_busy_val(99.0);
+                sleep(1000);
+                UserMain.self.show_busy_val(100.0);
+                sleep(1000);
+
+                UserMain.self.hide_busy();
+
+                return null;
+            }
+        };
+        sw.start();
+*/
+ 
+}//GEN-LAST:event_BT_NETWORKActionPerformed
+ private static void sleep(int millis)
+    {
+        try
+        {
+            Thread.sleep(millis);
+        }
+        catch (InterruptedException interruptedException)
+        {
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_NETWORK;
     private javax.swing.JPanel PN_BUTTONS;

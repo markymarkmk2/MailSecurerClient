@@ -803,6 +803,22 @@ public class UserMain extends javax.swing.JFrame
             }
         }
     }    
+    public void show_busy_val( double percent )
+    {
+        if (busy_dlg != null)
+        {
+            busy_dlg.set_radar_percent(percent);
+        }
+    }
+    public boolean is_busy_visible()
+    {
+        if (busy_dlg != null)
+        {
+            return busy_dlg.isVisible();
+        }
+        return false;
+    }
+
     
     public static boolean info_ok_cancel(String txt)
     {
@@ -919,6 +935,8 @@ public class UserMain extends javax.swing.JFrame
         }
         return ret;
     }
+
+
 
    
 

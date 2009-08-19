@@ -20,7 +20,6 @@ import java.net.URL;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
-import org.apache.commons.codec.binary.Base64;
 
 /**
  *
@@ -873,6 +872,54 @@ public class ServerWSDLCall extends ServerCall
 
     @Override
     public boolean write_out_stream( OutStreamID id, byte[] data )
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean close_delete_out_stream( OutStreamID id )
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean send_tcp_byteblock( String str, byte[] data )
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean send_fast_retry_cmd( String str )
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String send( String str, OutputStream outp, int to )
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String send_rmx( String str, long len, InputStream is, int to )
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String send( String str )
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String send( String str, int to )
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String send_rmx( String str, int to )
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }

@@ -65,8 +65,12 @@ public abstract class ServerCall {
 
     public abstract int executeUpdate( StatementID sta, String qry );
 
-    long get_last_duration()
+    public long get_last_duration()
     {
+        // PROTECT DIV ZERO
+        if (last_duration_ms == 0)
+            last_duration_ms = 1;
+
         return last_duration_ms;
     }
 

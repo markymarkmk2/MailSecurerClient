@@ -8,10 +8,12 @@ package dimm.home.Rendering;
  *
  * @author Administrator
  */
+import dimm.home.Main;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -20,6 +22,9 @@ import java.awt.event.ActionEvent;
 // �1998 Sebastian Wallroth
 
 import java.awt.event.ActionListener;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -27,9 +32,8 @@ import javax.swing.Timer;
 
 public class Radar extends JComponent implements ActionListener
 {
-
+    private static final int TICK_MS = 10;
     private static final int DECAY_LEN = 31;
-    private static final int INCR_WIDTH = 2;
     private static final int DECAY_SECTOR_WIDTH = 6;
     private static final float DECAY_DIMM = 0.4f;
 //    private static final int DECAY_LEN = 51;
@@ -39,7 +43,10 @@ public class Radar extends JComponent implements ActionListener
     private BufferedImage PulsBlurBuffer;
     // RescaleOp op;
     private Graphics2D gRadarFrameBuffer;
-    int act_angle;
+
+    double angle_per_tick = 2;
+    double act_angle = 0;
+
     Color color[] = new Color[DECAY_LEN];
     Color rdr_green = new Color( 10, 245, 5 );
     Color rdr_lbrown = new Color( 205, 175, 95 );
@@ -53,13 +60,25 @@ public class Radar extends JComponent implements ActionListener
     Timer timer;
     ImageIcon ic;
     ImageIcon ich;
+    Font pc_font = new Font( Font.SANS_SERIF, Font.PLAIN, 10 );
+
+    double percent_val;
+    boolean with_percent;
 
     public Radar()
     {
-        this( null, null );
+        this( null, null, false );
+    }
+    public Radar(boolean wp)
+    {
+        this( null, null, wp);
+    }
+    public Radar(Color c, Color p )
+    {
+        this(c, p, false);
     }
     
-    public Radar(Color c, Color p)
+    public Radar(Color c, Color p, boolean _with_percent)
     {
         if (c != null)
             start_color = c;
@@ -70,18 +89,141 @@ public class Radar extends JComponent implements ActionListener
             ping_color = p;
         else
             ping_color = rdr_red;
-        
+
+        with_percent = _with_percent;
         back_color = rdr_dark_gray;
         grid_color = rdr_lbrown;
         
         init();
 
-        timer = new Timer(10, this);
+        timer = new Timer(TICK_MS, this);
 
         ic = new ImageIcon(this.getClass().getResource("/dimm/home/images/radarframe.png"));
         size = (ic.getIconHeight() * 80) / 100;
         ich = new ImageIcon(this.getClass().getResource("/dimm/home/images/radarhighlight.png"));
+
+        start_time = System.currentTimeMillis();
+        percent_val = last_percent_val;
+        last_percent_tick = 0;
     }
+    
+    long last_percent_tick;
+    double last_percent_val;
+    long start_time = 0;
+    public void set_percent( double pc )
+    {
+        with_percent = true;
+
+        // DEFAULT IS SLOMO
+        angle_per_tick = 0.1;
+
+        long now = System.currentTimeMillis();
+
+        if (pc == 0.0)
+            start_time = now;
+
+        if (pc == percent_val)
+        {
+            last_percent_tick = System.currentTimeMillis();
+            return;
+        }
+        if (pc <= percent_val)
+        {
+            last_percent_tick = System.currentTimeMillis();
+            percent_val = pc;
+            return;
+        }
+
+        percent_val = pc;
+        double rest_angle = 360 - act_angle;
+        double rest_percent = 100 - pc;
+
+
+        long time_from_start = now - start_time;
+
+        double rest_time = time_from_start * rest_percent / pc ;
+
+        long rest_ticks = (long)(rest_time / TICK_MS);
+        if (rest_ticks <= 0)
+            rest_ticks = 1;
+
+
+        angle_per_tick = rest_angle / rest_ticks;
+        if (angle_per_tick > 5)
+            angle_per_tick = 5;
+
+    }
+
+   /* public void set_percent( double pc )
+    {
+        with_percent = true;
+        
+        // DEFAULT IS SLOMO
+        angle_per_tick = 0.1;
+
+
+
+        if (pc == percent_val)
+        {
+            last_percent_tick = System.currentTimeMillis();
+            return;
+        }
+        if (pc <= percent_val)
+        {
+            last_percent_tick = System.currentTimeMillis();
+            percent_val = pc;
+            return;
+        }
+
+
+        double real_angle =  360.0 * pc / 100 ;
+
+        System.out.println("S PC: " + pc + " PV:" + percent_val + " APT:" + angle_per_tick + " AA:" + act_angle + " RA:" + real_angle + " DT:" + 0 + " DPC:" + 0);
+
+        // IF WE ARE TOO BIG, JUST SLOW DOWN AND SHOW CORRECT PC 
+        if (real_angle < act_angle)
+        {
+            last_percent_tick = System.currentTimeMillis();
+            percent_val = pc;
+            return;
+        }
+
+        double real_percent_val = act_angle * 100 / 360;
+
+        long now = System.currentTimeMillis();
+
+        double d_pc = pc - real_percent_val;
+
+        if (d_pc < 0)
+        {
+            last_percent_tick = System.currentTimeMillis();
+            percent_val = pc;
+            return;
+        }
+
+        if (d_pc == 0.0)
+            d_pc = 0.01;
+
+        // TIME SINCE LAST SAMPLE
+        long d_ticks = now - last_percent_tick;
+        if (d_ticks == 0)
+            d_ticks = 1;
+
+        // PERCENT PER SECOND
+        double pc_per_s = (d_pc * 1000) / d_ticks;
+
+
+        // TICK KOMMT ALLE 10 ms
+        // PERCENT JE TICK
+        double pc_per_tick = (pc_per_s * TICK_MS) / 1000;
+
+        angle_per_tick = (pc_per_tick * 360 / 100);
+        percent_val = pc;
+        last_percent_tick = now;
+        //act_angle = pc * 360.0 / 100;
+
+        System.out.println("E PC: " + pc + " RPV:" + real_percent_val + " APT:" + angle_per_tick + " AA:" + act_angle + " DT:" + d_ticks + " DPC:" + d_pc);
+    }*/
 
     @Override
     public int getWidth()
@@ -104,7 +246,7 @@ public class Radar extends JComponent implements ActionListener
     public void start()
     {
         timer.start();
-        act_angle = 91;
+        act_angle = 1;
     }
 
     public void stop()
@@ -146,6 +288,10 @@ public class Radar extends JComponent implements ActionListener
         // DARKER THAN RDR-BEAM
         grid_color = color[5];
     }
+    int get_angle_int(double a)
+    {
+        return (int)(a + 0.5);
+    }
 
     @Override
     public void paint(Graphics g)
@@ -156,6 +302,7 @@ public class Radar extends JComponent implements ActionListener
         int ry = ds;
         int rw = size - 2 * ds;
         int rh = size - 2 * ds;
+        double angle = 360 - act_angle + 90;
 
 
         if (RadarFrameBuffer == null)
@@ -177,7 +324,7 @@ public class Radar extends JComponent implements ActionListener
         gRadarPulsBuffer.fillOval(rx, ry, rw, rh);
 
         // BLIP RED ON SCTRAIGHT UP
-        if (act_angle > 85 && act_angle < 95)
+        if (angle > 85 && angle < 95)
         {
             gRadarPulsBuffer.setColor(ping_color);
         }
@@ -187,13 +334,13 @@ public class Radar extends JComponent implements ActionListener
         }
         
         // MAIN LINE
-        gRadarPulsBuffer.fillArc(rx, ry, rw, rh, act_angle + DECAY_SECTOR_WIDTH - 3, 3);
+        gRadarPulsBuffer.fillArc(rx, ry, rw, rh, get_angle_int(angle) + DECAY_SECTOR_WIDTH - 3, 3);
 
         // AFTERGLOW
         for (int i = 1; i < DECAY_LEN; i++)
         {
             gRadarPulsBuffer.setColor(color[i]);
-            gRadarPulsBuffer.fillArc(rx, ry, rw, rh, act_angle + i * DECAY_SECTOR_WIDTH, DECAY_SECTOR_WIDTH);
+            gRadarPulsBuffer.fillArc(rx, ry, rw, rh, get_angle_int(angle) + i * DECAY_SECTOR_WIDTH, DECAY_SECTOR_WIDTH);
         }
         
         // GRID
@@ -221,16 +368,40 @@ public class Radar extends JComponent implements ActionListener
         g2.drawImage(RadarPulsBuffer, 0, 0, this);
         g2.drawImage(RadarFrameBuffer, 0, 0, this);
 
-    }
-
-    public void actionPerformed(ActionEvent e)
-    {
-        act_angle -= INCR_WIDTH;
-        if (act_angle <= 0)
+        if (with_percent)
         {
-            act_angle = 360;
+            g2.setColor(Main.ui.get_nice_white());
+            String pc_str = "" + (int)(percent_val + 0.5) + "%";
+            FontRenderContext frc = g2.getFontRenderContext();
+            TextLayout tl = new TextLayout(pc_str, pc_font, frc);
+            Rectangle2D rr = tl.getBounds();
+            tl.draw(g2, (float)(size/2  - rr.getWidth() / 2) , (float)(size*3 / 4 - rr.getHeight()/2 ));
+            //g2.drawString( pc_str, DECAY_DIMM, DECAY_DIMM);
         }
 
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+
+        act_angle += angle_per_tick;
+
+        if (with_percent)
+        {
+            if (act_angle > 360)
+            {
+                act_angle -= angle_per_tick;
+                return;
+            }
+        }
+        else
+        {
+            if (act_angle >= 360)
+            {
+                act_angle = 0;
+            }
+        }
         repaint();
     }
 }

@@ -10,7 +10,10 @@ import home.shared.hibernate.DiskSpace;
 import home.shared.hibernate.Mandant;
 import com.thoughtworks.xstream.XStream;
 
+import home.shared.CS_Constants;
 import home.shared.SQL.SQLArrayResult;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -482,6 +485,7 @@ public class ServerTCPCall extends ServerCall
 
     private synchronized String raw_tcp_send( Socket s, String str, long inp_len, InputStream inp, OutputStream outp, byte[] add_data, String prefix) throws IOException, Exception
     {
+        int buff_len = CS_Constants.STREAM_BUFFER_LEN;
         StringBuffer sb = new StringBuffer();
 
         sb.append("CMD:");
@@ -527,21 +531,29 @@ public class ServerTCPCall extends ServerCall
         long start = System.currentTimeMillis();
         ping_connected = false;
 
+        OutputStream sock_os = s.getOutputStream();
+        if (inp_len > 0)
+        {
+            BufferedOutputStream bos = new BufferedOutputStream( sock_os, buff_len*2 );
+            sock_os = bos;
+        }
 
-        s.getOutputStream().write( data, 0, TCP_LEN );
+        sock_os.write( data, 0, TCP_LEN );
 
         // AND PUT OPT DATA IN NEXT BLOCK
         if (opt_len > 0)
         {
-            s.getOutputStream().write( opt_data );
+            sock_os.write( opt_data );
         }
         if (add_data_len > 0)
         {
-            s.getOutputStream().write( add_data );
+            sock_os.write( add_data );
         }
         if (inp_len > 0)
         {
-            byte[] buff = new byte[64*1024];
+
+            BufferedInputStream bis = new BufferedInputStream( inp, buff_len*2);
+            byte[] buff = new byte[buff_len];
             long len = inp_len;
             while( len > 0)
             {
@@ -549,14 +561,14 @@ public class ServerTCPCall extends ServerCall
                 if (len < rlen)
                     rlen = (int)len;
 
-                int rrlen = inp.read(buff, 0, rlen);
-                s.getOutputStream().write(buff, 0, rrlen);
+                int rrlen = bis.read(buff, 0, rlen);
+                sock_os.write(buff, 0, rrlen);
 
                 len -= rrlen;
             }
         }
 
-        s.getOutputStream().flush();
+        sock_os.flush();
 
 
         // READ ANSER
@@ -611,7 +623,7 @@ public class ServerTCPCall extends ServerCall
     void write_output( InputStream ins, int alen, OutputStream outs ) throws IOException
     {
          // PUSH DATA OVER BUFFER
-        int buff_len = 8192;
+        int buff_len = CS_Constants.STREAM_BUFFER_LEN;
         byte[] buff = new byte[buff_len];
 
         while (alen > 0)
@@ -632,63 +644,6 @@ public class ServerTCPCall extends ServerCall
     public ConnectionID open()
     {
         return open("");
-    }
-
-    @Override
-    void init_stat( String cmd )
-    {
-        last_start = System.currentTimeMillis();
-        last_err_txt = "";
-        last_return = "";
-        last_cmd = cmd;
-        last_err_code = 0;
-        last_duration_ms = 0;
-        last_ex = null;
-    }
-
-    @Override
-    void calc_stat( String ret )
-    {
-        last_end = System.currentTimeMillis();
-        last_duration_ms = last_end - last_start;
-        last_return = ret;
-    }
-
-    @Override
-    public String get_last_err_txt()
-    {
-        return last_err_txt;
-    }
-
-    @Override
-    public int get_last_err_code()
-    {
-        return last_err_code;
-    }
-
-    @Override
-    public Exception get_last_ex()
-    {
-        return last_ex;
-    }
-
-    @Override
-    long get_last_duration()
-    {
-        return last_duration_ms;
-    }
-
-    @Override
-    public String get_last_err()
-    {
-        String ex_str = "";
-        if (last_ex != null)
-        {
-            ex_str = last_ex.getMessage();
-        }
-
-        return "ServerCall <" + last_cmd + "> Code:" + last_err_code + " Txt:" + last_err_txt + " EX:" + ex_str;
-
     }
 
     @Override

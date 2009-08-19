@@ -341,4 +341,10 @@ public class GlossErrDialog extends javax.swing.JDialog
     {
         this.okay = okay;
     }
+
+    public void set_radar_percent( double percent )
+    {
+        if (radar != null)
+            radar.set_percent(percent);
+    }
 }

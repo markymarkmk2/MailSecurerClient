@@ -164,7 +164,7 @@
                 <Component class="org.jdesktop.swingx.JXLabel" name="LBX_ICON">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="dimm/home/images/radarframe.png"/>
+                      <Image iconType="3" name="/dimm/home/images/radarframe.png"/>
                     </Property>
                   </Properties>
                 </Component>

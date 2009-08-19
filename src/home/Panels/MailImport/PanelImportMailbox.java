@@ -122,6 +122,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 BT_BACK.setVisible(false);
 
                 handle_import();
+
                 break;
             }
             case IMP_STATUS:
@@ -131,7 +132,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         }
         repaint();
 
-        timer = new Timer(1000, this);
+        
     }
 
     private void set_prev_state()
@@ -172,14 +173,10 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
     void build_tree_callback()
     {
         if (is_in_fill_cb)
-        {
             return;
-        }
 
         if (manager == null)
-        {
             return;
-        }
 
         String path = null;
         NamePathEntry npe = null;
@@ -222,109 +219,164 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
     ArrayList<String> import_status_list;
     int import_err_code;
     boolean abort_import;
+    boolean finished = false;
+
+    private File get_file_from_node( TreeNode tnode )
+    {
+        File mbox = null;
+
+        // GET FILE FROM NODE
+        SwitchableNode node = (SwitchableNode) tnode;
+        if (node instanceof TBirdTreeNode)
+        {
+            TBirdTreeNode tbn = (TBirdTreeNode) node;
+            mbox = tbn.get_mailbox();
+        }
+        if (node instanceof OlexpFileNode)
+        {
+            OlexpFileNode tbn = (OlexpFileNode) node;
+            mbox = tbn.node;
+        }
+        return mbox;
+    }
 
     int run_import( final ArrayList<TreeNode> node_list )
     {
         int files_uploaded = 0;
-        for (int i = 0; i < node_list.size(); i++)
+        try
         {
-            File mbox = null;
-            if (abort_import)
-            {
-                import_status_list.add(UserMain.Txt("Aborting_import"));
-                break;
-            }
-
-            SwitchableNode node = (SwitchableNode) node_list.get(i);
-            if (node instanceof TBirdTreeNode)
-            {
-                TBirdTreeNode tbn = (TBirdTreeNode) node;
-                mbox = tbn.get_mailbox();
-            }
-            if (node instanceof OlexpFileNode)
-            {
-                OlexpFileNode tbn = (OlexpFileNode) node;
-                mbox = tbn.node;
-            }
-            if (mbox == null)
-            {
-                continue;
-            }
-
+            FileInputStream fis;
+            files_uploaded = 0;
 
             import_status_list.add(UserMain.Txt("Connecting_server"));
+            long total_size = 0;
+            long act_size = 0;
 
-            FileInputStream fis;
-
-            try
+            for (int i = 0; i < node_list.size(); i++)
             {
-                fis = new FileInputStream(mbox);
-            }
-            catch (FileNotFoundException fileNotFoundException)
-            {
-                import_status_list.add(UserMain.Txt("Cannot_open_Mailbox") + " " + mbox.getAbsolutePath());
-                continue;
-            }
-            // IMPORT MAIL RETURNS A HANDLE FOR AN OPEN STREAM
-            long file_len = mbox.length();
-            int mandant_id = UserMain.sqc().get_act_mandant_id();
-
-            // RETRIEVE DA DROM COMBO
-            DiskArchiveComboModel dacm = (DiskArchiveComboModel) CB_VAULT.getModel();
-            DiskArchive da = dacm.get_selected_da();
-            int da_id = da.getId();
-
-            // SEND UPLOAD REQUEST
-            String ret = UserMain.fcc().get_sqc().send("upload_mail_file MA:" + mandant_id + " TY:" + manager.get_type() + " SI:" + file_len);
-
-            // CHECK FOR ERROR
-            int idx = ret.indexOf(':');
-            import_err_code = Integer.parseInt(ret.substring(0, idx));
-            if (import_err_code != 0)
-            {
-                import_status_list.add(UserMain.Txt("Transfer_failed") + ": " + ret.substring(idx + 2));
-                continue;
-            }
-            import_status_list.add(UserMain.Txt("Transfering") + " " + mbox.getName() + " " + new SizeStr(file_len).toString());
-
-            // GET STREAM HANDLE
-            OutStreamID oid = new OutStreamID(ret.substring(idx + 2));
-
-            // SEND FILE TO SERVER
-            boolean bret = UserMain.fcc().get_sqc().write_out_stream(oid, file_len, fis);
-            try
-            {
-                fis.close();
-            }
-            catch (IOException iOException)
-            {
-            }
-            // SEND FAILED
-            if (!bret)
-            {
-                import_status_list.add(UserMain.Txt("Transfer_failed"));
-                UserMain.fcc().get_sqc().close_delete_out_stream(oid);                
-                continue;
+                File mbox = get_file_from_node(node_list.get(i));
+                if (mbox == null)
+                {
+                    continue;
+                }
+                total_size += mbox.length();
             }
 
-            // NOW BEGIN THE IMPORT IN BACKGROUND (BG:1) FOR THE OPEN STREAM
-            ret = UserMain.fcc().get_sqc().send("import_mail_handle OI:" + oid + " MA:" + mandant_id + " DA:" + da_id + " BG:1");
 
-            import_status_list.add(UserMain.Txt("Import_started_for") + " " + mbox.getName());
+            for (int i = 0; i < node_list.size(); i++)
+            {
+                // DETECT USER ABORT
+                if (abort_import)
+                {
+                    import_status_list.add(UserMain.Txt("Aborted_import"));
+                    break;
+                }
 
-            // SET AS HANDLES IN TREE, ONLY THE ERROR FILES STAY SELECTED
-            node.set_selected(false);
-            files_uploaded++;
+                // GET FILE FROM NODE
+                File mbox = get_file_from_node(node_list.get(i));
+                if (mbox == null)
+                {
+                    continue;
+                }
 
+                // GET MANMDANT / DISKARCHIVE / SIZE
+                long file_len = mbox.length();
+                int mandant_id = UserMain.sqc().get_act_mandant_id();
+
+                // RETRIEVE DA DROM COMBO
+                DiskArchiveComboModel dacm = (DiskArchiveComboModel) CB_VAULT.getModel();
+                DiskArchive da = dacm.get_selected_da();
+                int da_id = da.getId();
+
+                // SEND UPLOAD REQUEST
+                // IMPORT MAIL RETURNS A HANDLE FOR AN OPEN STREAM
+                String ret = UserMain.fcc().get_sqc().send("upload_mail_file MA:" + mandant_id + " TY:" + manager.get_type() + " SI:" + file_len);
+
+                // CHECK FOR ERROR
+                int idx = ret.indexOf(':');
+                import_err_code = Integer.parseInt(ret.substring(0, idx));
+                if (import_err_code != 0)
+                {
+                    import_status_list.add(UserMain.Txt("Transfer_failed") + ": " + ret.substring(idx + 2));
+                    continue;
+                }
+
+                String transfer_txt = UserMain.Txt("Transfering") + " " + mbox.getName() + " " + new SizeStr(file_len).toString();
+                import_status_list.add(transfer_txt);
+
+                // GET STREAM HANDLE FROM ANSWER
+                OutStreamID oid = new OutStreamID(ret.substring(idx + 2));
+
+                // OPEN I-STREAM
+                try
+                {
+                    fis = new FileInputStream(mbox);
+                }
+                catch (FileNotFoundException fileNotFoundException)
+                {
+                    import_status_list.add(UserMain.Txt("Cannot_open_Mailbox") + " " + mbox.getAbsolutePath());
+                    continue;
+                }
+
+                // SEND FILE TO SERVER
+                boolean bret = UserMain.fcc().get_sqc().write_out_stream(oid, file_len, fis);
+                try
+                {
+                    fis.close();
+                }
+                catch (IOException iOException)
+                {
+                }
+
+                // SEND FAILED ?
+                if (!bret)
+                {
+                    import_status_list.add(UserMain.Txt("Transfer_failed"));
+                    UserMain.fcc().get_sqc().close_delete_out_stream(oid);
+                    continue;
+                }
+
+                if (file_len > 1024 * 1024)
+                {
+                    // REPLACE LAST ENTRY WITH STATUSTEXT WITH RATIO
+                    long duration_ms = UserMain.fcc().get_sqc().get_last_duration();
+                    transfer_txt += " " + new SizeStr((file_len * 1000.0f) / duration_ms).toString() + "/s";
+                    import_status_list.set(import_status_list.size() - 1, transfer_txt);
+                }
+
+                act_size += file_len;
+                double percent = act_size * 100.0 / total_size;
+                UserMain.self.show_busy_val(percent);
+
+
+                // NOW BEGIN THE IMPORT IN BACKGROUND (BG:1) FOR THE OPEN STREAM
+                ret = UserMain.fcc().get_sqc().send("import_mail_file OI:" + oid.getId() + " MA:" + mandant_id + " DA:" + da_id + " BG:1");
+                if (ret != null && ret.charAt(0) == '0')
+                {
+                    import_status_list.add(UserMain.Txt("Import_started_for") + " " + mbox.getName());
+
+                    // SET AS HANDLES IN TREE, ONLY THE ERROR FILES STAY SELECTED
+                    SwitchableNode node = (SwitchableNode) node_list.get(i);
+                    node.set_selected(false);
+                    files_uploaded++;
+                }
+            }
         }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+            UserMain.errm_ok(my_dlg, UserMain.Txt("Unknown_error_during_import") + " "+ ex.getMessage());
+        }
+        finished = true;
         return files_uploaded;
-
     }
 
     private void handle_import( final ArrayList<TreeNode> node_list )
     {
         import_status_list = new ArrayList<String>();
         abort_import = false;
+        finished = false;
+
 
         final String type = manager.get_type();
         if (sw_import != null)
@@ -337,21 +389,26 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         }
 
 
-        SwingWorker sw = new SwingWorker()
+        sw_import = new SwingWorker()
         {
 
             @Override
             public Object construct()
             {
+                BT_NEXT.setEnabled(false);
                 int ret = run_import(node_list);
+                BT_ABORT.setVisible(false);
+                BT_NEXT.setEnabled(true);
 
                 return new Integer(ret);
             }
         };
-        sw.start();
 
-        timer.start();
         UserMain.self.show_busy(my_dlg, UserMain.Txt("Starting_import"), true);
+        UserMain.self.show_busy_val(0.0);
+
+        sw_import.start();
+        timer.start();
     }
 
     private void handle_import()
@@ -486,19 +543,27 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
     @Override
     public void actionPerformed( ActionEvent e )
     {
-        if (sw_import != null)
+        if (finished)
         {
-            if (sw_import.finished())
-            {
-                timer.stop();
-                UserMain.self.hide_busy();
-            }
+            timer.stop();
+            UserMain.self.hide_busy();
+            sw_import = null;
+            abort_import = false;
         }
 
         if (UserMain.self.is_busy_aborted())
         {
-            abort_import = true;
+            if (abort_import == false)
+            {
+                import_status_list.add(UserMain.Txt("Aborted_import"));
+                abort_import = true;
+            }
         }
+        if (abort_import && !UserMain.self.is_busy_visible())
+        {
+            UserMain.self.show_busy(my_dlg, UserMain.Txt("Aborting_please_wait"), true);
+        }
+
 
         int idx = import_status_list.size() - 1;
         if (idx >= 0)
@@ -506,8 +571,19 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
             String last_txt = import_status_list.get(idx);
             if (last_txt.compareTo(last_status_text) != 0)
             {
-                UserMain.self.show_busy(my_dlg, last_txt, true);
+                if (!finished)
+                    UserMain.self.show_busy(my_dlg, last_txt, true);
+                
                 last_status_text = last_txt;
+
+                StringBuffer sb = new StringBuffer();
+                for (int i = 0; i < import_status_list.size(); i++)
+                {
+                    sb.append( import_status_list.get(i) );
+                    sb.append("\n");
+                }
+                TXTA_STATUS.setText(sb.toString());
+                TXTA_STATUS.setCaretPosition( sb.length());
             }
         }
     }
@@ -563,6 +639,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
             }
         };
         JT_DIR.addMouseListener(ml);
+        timer = new Timer(1000, this);
     }
 
     void mySingleClick( int selRow, TreePath selPath )
@@ -615,6 +692,8 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         CB_VAULT = new javax.swing.JComboBox();
         PN_STATUS = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        TXTA_STATUS = new javax.swing.JTextArea();
 
         BT_NEXT.setText(UserMain.getString("Next")); // NOI18N
         BT_NEXT.addActionListener(new java.awt.event.ActionListener() {
@@ -808,15 +887,20 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(UserMain.getString("Statistics"))); // NOI18N
 
+        TXTA_STATUS.setColumns(20);
+        TXTA_STATUS.setEditable(false);
+        TXTA_STATUS.setRows(5);
+        jScrollPane3.setViewportView(TXTA_STATUS);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 307, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 265, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout PN_STATUSLayout = new javax.swing.GroupLayout(PN_STATUS);
@@ -900,6 +984,12 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
     private void BT_ABORTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_ABORTActionPerformed
     {//GEN-HEADEREND:event_BT_ABORTActionPerformed
         // TODO add your handling code here:
+        if (sw_import != null)
+        {
+            import_status_list.add(UserMain.Txt("Aborted_import"));
+            abort_import = true;
+        }
+
         this.setVisible(false);
     }//GEN-LAST:event_BT_ABORTActionPerformed
 
@@ -940,6 +1030,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
     private javax.swing.JRadioButton RD_FREE;
     private javax.swing.JRadioButton RD_OUTLOOKXPRESS;
     private javax.swing.JTabbedPane TP_PANE;
+    private javax.swing.JTextArea TXTA_STATUS;
     private javax.swing.JTextPane TXTP_CONFIRM;
     private javax.swing.JTextField TXT_PATH;
     private javax.swing.ButtonGroup buttonGroup1;
@@ -951,6 +1042,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     // End of variables declaration//GEN-END:variables
 
     @Override

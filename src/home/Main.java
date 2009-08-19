@@ -295,10 +295,14 @@ public class Main
 
         mn.setDefaultCloseOperation(UserMain.EXIT_ON_CLOSE);
         mn.setVisible(true);
+
+        
+
 //            mn.init_news( splash.get_check_news() );
 
 
     }
+   
 
     public static void err_log_warn( String string )
     {
