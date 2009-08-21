@@ -221,7 +221,7 @@ public class SQLConnect extends Connect
         sqc.close(sta);
         sqc.close(c);
     }
-
+/*
     private void sql_test()
     {
         ServerWSDLCall sc = new ServerWSDLCall();
@@ -249,7 +249,7 @@ public class SQLConnect extends Connect
         sc.close(c);
 
     }
-
+*/
     public Mandant get_act_mandant()
     {
         for (int i = 0; i < mandant_res.size(); i++)

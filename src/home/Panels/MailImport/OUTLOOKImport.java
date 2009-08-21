@@ -60,7 +60,7 @@ class OutlookFilenameFilter implements FilenameFilter
     @Override
     public boolean accept( File dir, String name )
     {
-        if (name.endsWith(extension))
+        if (name.toLowerCase().endsWith(extension))
         {
             return true;
         }
@@ -257,32 +257,14 @@ class OutlookVersionNode  extends DefaultMutableTreeNode implements SwitchableNo
 
 
 
-class OutlookFileNode  extends DefaultMutableTreeNode implements SwitchableNode
+class OutlookFileNode  extends FileNode
 {
-    boolean is_selected;
-    String[] default_sel_offnames = {"Junk", "Spam", "Trash", "Drafts", "Templates"};
-    File node;
-    DefaultTreeModel model = null;
-
-
     OutlookFileNode( DefaultTreeModel _model, File f )
     {
-        node = f;
-        is_selected = true;
-        for (int i = 0; i < default_sel_offnames.length; i++)
-        {
-            String no_sel = default_sel_offnames[i];
-            if (node.getName().indexOf(no_sel) != -1)
-                is_selected = false;
-        }
-        model = _model;
+        super( _model, f );
     }
 
     @Override
-    public boolean isLeaf()
-    {
-        return false;
-    }
     String get_mbox_name()
     {
         if (node.getName().endsWith(OutlookFilenameFilter.extension))
@@ -290,25 +272,6 @@ class OutlookFileNode  extends DefaultMutableTreeNode implements SwitchableNode
             return node.getName().substring(0, node.getName().length() - OutlookFilenameFilter.extension.length());
         }
         return "?";
-    }
-
-    @Override
-    public boolean is_selected()
-    {
-        return is_selected;
-    }
-
-    @Override
-    public void set_selected(  boolean s )
-    {
-        is_selected = s;
-        model.nodeChanged(this);
-
-        for (int i = 0; i < getChildCount(); i++)
-        {
-            SwitchableNode mboxTreeNode = (SwitchableNode)children.get(i);
-            mboxTreeNode.set_selected( s);
-        }
     }
 }
 class OutlookTreeModel extends DefaultTreeModel

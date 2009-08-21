@@ -239,6 +239,32 @@ public class NativeLoader
         return s;
     }
 
+    public String build_user_profile_path()
+    {
+        /*
+         # On Linux, the path is usually ~/.thunderbird/xxxxxxxx.default/
+        # On Mac OS X, the path is usually ~/Library/Thunderbird/Profiles/xxxxxxxx.default/
+         */
+        if (NativeLoader.is_win())
+        {
+            String user_appdata_path = NativeLoader.get_HKCU_reg_value("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders", "AppData");
+            if (user_appdata_path == null)
+            {
+                user_appdata_path = NativeLoader.get_HKCU_reg_value("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders", "AppData");
+            }
+            user_appdata_path = NativeLoader.resolve_win_path(user_appdata_path);
+
+
+            int idx = user_appdata_path.lastIndexOf("\\");
+            if (idx > 0)
+                user_appdata_path = user_appdata_path.substring(0, idx);
+
+            return user_appdata_path;
+        }
+        return null;
+    }
+
+
     /**
      * @param args
      */

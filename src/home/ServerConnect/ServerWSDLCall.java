@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 package dimm.home.ServerConnect;
-
+/*
 import java.lang.reflect.Method;
 import home.shared.hibernate.DiskArchive;
 import home.shared.hibernate.DiskSpace;
@@ -20,11 +20,11 @@ import java.net.URL;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
-
+*/
 /**
  *
  * @author mw
- */
+ *//*
 public class ServerWSDLCall extends ServerCall
 {
 
@@ -194,7 +194,7 @@ public class ServerWSDLCall extends ServerCall
         return null;
     }
 
-    public ResultSetID executeQuery( StatementID sta, String qry/*, SQLResult result*/ )
+    public ResultSetID executeQuery( StatementID sta, String qry )
     {
         init_stat(qry);
 
@@ -223,7 +223,7 @@ public class ServerWSDLCall extends ServerCall
         return null;
     }
 
-    public int executeUpdate( StatementID sta, String qry/*, SQLResult result*/ )
+    public int executeUpdate( StatementID sta, String qry )
     {
         init_stat(qry);
 
@@ -253,7 +253,7 @@ public class ServerWSDLCall extends ServerCall
         return 0;
     }
 
-    public boolean execute( StatementID sta, String qry/*, SQLResult result*/ )
+    public boolean execute( StatementID sta, String qry )
     {
         init_stat(qry);
 
@@ -715,7 +715,7 @@ public class ServerWSDLCall extends ServerCall
     @Override
     public boolean write_out_stream( OutStreamID id, long len, InputStream is)
     {
-       /* init_stat("");
+        init_stat("");
 
         try
         {
@@ -735,7 +735,7 @@ public class ServerWSDLCall extends ServerCall
         catch (Exception exc)
         {
             last_ex = exc;
-        }*/
+        }
         return false;
     }
 
@@ -804,7 +804,7 @@ public class ServerWSDLCall extends ServerCall
     @Override
     public boolean  read_in_stream( InStreamID id, OutputStream os)
     {
-      /*  init_stat("");
+        init_stat("");
 
         try
         {
@@ -832,13 +832,13 @@ public class ServerWSDLCall extends ServerCall
         catch (Exception exc)
         {
             last_ex = exc;
-        }*/
+        }
         return false;
     }
     @Override
     public int read_in_stream( InStreamID id, byte[] buff)
     {
-      /*  init_stat("");
+        init_stat("");
 
         try
         {
@@ -866,7 +866,7 @@ public class ServerWSDLCall extends ServerCall
         catch (Exception exc)
         {
             last_ex = exc;
-        }*/
+        }
         return -1;
     }
 
@@ -929,3 +929,4 @@ public class ServerWSDLCall extends ServerCall
 
 
 }
+*/

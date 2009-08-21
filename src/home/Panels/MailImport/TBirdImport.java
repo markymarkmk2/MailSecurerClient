@@ -49,7 +49,7 @@ class TBirdFilenameFilter implements FilenameFilter
     @Override
     public boolean accept( File dir, String name )
     {
-        if (name.endsWith(extension))
+        if (name.toLowerCase().endsWith(extension))
         {
             // DOES MAILBOX FILE EXIST ALSO?
             if (new File(dir, name.substring(0, name.lastIndexOf(extension))).exists())
@@ -62,7 +62,7 @@ class TBirdFilenameFilter implements FilenameFilter
             if (fdir.isDirectory())
             {
                 // SBD ARE HANDLED INTERNALLY
-                if (!fdir.getName().endsWith(".sbd"))
+                if (!fdir.getName().toLowerCase().endsWith(".sbd"))
                     return true;
             }
         }
@@ -73,9 +73,9 @@ class TBirdFilenameFilter implements FilenameFilter
 
     static String get_mbox_name_from_msfg( String name )
     {
-        if (name.endsWith(extension))
+        if (name.toLowerCase().endsWith(extension))
         {
-            return name.substring(0, name.lastIndexOf(extension));
+            return name.substring(0, name.toLowerCase().lastIndexOf(extension));
         }
         return null;
     }

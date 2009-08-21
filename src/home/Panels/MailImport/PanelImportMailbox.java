@@ -72,6 +72,14 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 {
                     manager = new OlexpProfileManager();
                 }
+                if (RD_OUTLOOK.isSelected())
+                {
+                    manager = new OutlookProfileManager();
+                }
+                if (RD_EML.isSelected())
+                {
+                    manager = new EMLProfileManager();
+                }
 
                 if (manager != null)
                 {
@@ -166,9 +174,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         BT_NEXT.setVisible(b);
     }
 
-    void handle_build_outlook_express_tree()
-    {
-    }
+   
 
     void build_tree_callback()
     {
@@ -207,9 +213,10 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 manager.handle_build_tree(path, JT_DIR);
             }
         }
-        catch (IOException ex)
+        catch (Exception ex)
         {
-            UserMain.errm_ok(my_dlg, UserMain.Txt("Cannot_build_mail_tree"));
+            ex.printStackTrace();
+            UserMain.errm_ok(my_dlg, UserMain.Txt("Cannot_build_mail_tree") + ": " + ex.getMessage());
             set_enable_next(false);
             return;
         }
@@ -221,26 +228,26 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
     boolean abort_import;
     boolean finished = false;
 
-    private File get_file_from_node( TreeNode tnode )
+    private File get_file_from_node( SwitchableNode node )
     {
         File mbox = null;
 
         // GET FILE FROM NODE
-        SwitchableNode node = (SwitchableNode) tnode;
         if (node instanceof TBirdTreeNode)
         {
             TBirdTreeNode tbn = (TBirdTreeNode) node;
             mbox = tbn.get_mailbox();
         }
-        if (node instanceof OlexpFileNode)
+        if (node instanceof FileNode)
         {
-            OlexpFileNode tbn = (OlexpFileNode) node;
+            FileNode tbn = (FileNode) node;
             mbox = tbn.node;
         }
+        
         return mbox;
     }
 
-    int run_import( final ArrayList<TreeNode> node_list )
+    int run_import( final ArrayList<SwitchableNode> node_list )
     {
         int files_uploaded = 0;
         try
@@ -371,7 +378,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         return files_uploaded;
     }
 
-    private void handle_import( final ArrayList<TreeNode> node_list )
+    private void handle_import( final ArrayList<SwitchableNode> node_list )
     {
         import_status_list = new ArrayList<String>();
         abort_import = false;
@@ -416,7 +423,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         DefaultTreeModel tm = (DefaultTreeModel) JT_DIR.getModel();
         MutableTreeNode root = (MutableTreeNode) tm.getRoot();
 
-        ArrayList<TreeNode> node_list = new ArrayList<TreeNode>();
+        ArrayList<SwitchableNode> node_list = new ArrayList<SwitchableNode>();
         ArrayList<File> file_list = new ArrayList<File>();
 
         build_tn_array(root, node_list);
@@ -439,7 +446,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         CB_VAULT.setModel(dacm);
 
 
-        ArrayList<TreeNode> list = new ArrayList<TreeNode>();
+        ArrayList<SwitchableNode> list = new ArrayList<SwitchableNode>();
 
         build_tn_array(root, list);
 
@@ -452,7 +459,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
 
         for (int i = 0; i < list.size(); i++)
         {
-            TreeNode c = list.get(i);
+            SwitchableNode c = list.get(i);
             if (c instanceof TBirdTreeNode)
             {
                 TBirdTreeNode tbn = (TBirdTreeNode) c;
@@ -462,9 +469,9 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                     file_size += mbox.length();
                 }
             }
-            if (c instanceof OlexpFileNode)
+            if (c instanceof FileNode)
             {
-                OlexpFileNode tbn = (OlexpFileNode) c;
+                FileNode tbn = (FileNode) c;
                 File mbox = tbn.node;
                 if (mbox != null)
                 {
@@ -482,7 +489,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         TXTP_CONFIRM.setText(txt);
     }
 
-    void build_tn_array( TreeNode tn, ArrayList<TreeNode> list )
+    void build_tn_array( TreeNode tn, ArrayList<SwitchableNode> list )
     {
         int cnt = tn.getChildCount();
         for (int i = 0; i < cnt; i++)
@@ -496,18 +503,19 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                     continue;
                 }
 
-                list.add(c);
+                list.add(tbn);
             }
-            if (c instanceof OlexpFileNode)
+            if (c instanceof FileNode)
             {
-                OlexpFileNode ofn = (OlexpFileNode) c;
+                FileNode ofn = (FileNode) c;
                 if (!ofn.is_selected())
                 {
                     continue;
                 }
 
-                list.add(c);
+                list.add(ofn);
             }
+
             if (c.getChildCount() > 0)
             {
                 build_tn_array(c, list);
@@ -673,7 +681,8 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         PN_SELECT = new javax.swing.JPanel();
         RD_FIREFOX = new javax.swing.JRadioButton();
         RD_OUTLOOKXPRESS = new javax.swing.JRadioButton();
-        RD_FREE = new javax.swing.JRadioButton();
+        RD_OUTLOOK = new javax.swing.JRadioButton();
+        RD_EML = new javax.swing.JRadioButton();
         PN_THUNDERBIRD = new javax.swing.JPanel();
         LB_PATH = new javax.swing.JLabel();
         TXT_PATH = new javax.swing.JTextField();
@@ -716,6 +725,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
             }
         });
 
+        buttonGroup1.add(RD_FIREFOX);
         RD_FIREFOX.setText(UserMain.getString("Thunderbird")); // NOI18N
         RD_FIREFOX.setActionCommand(UserMain.getString("Thunderbird")); // NOI18N
         RD_FIREFOX.addActionListener(new java.awt.event.ActionListener() {
@@ -724,20 +734,32 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
             }
         });
 
+        buttonGroup1.add(RD_OUTLOOKXPRESS);
         RD_OUTLOOKXPRESS.setText(UserMain.getString("Outlook_Express")); // NOI18N
 
-        RD_FREE.setText(UserMain.getString("EML_Files")); // NOI18N
+        buttonGroup1.add(RD_OUTLOOK);
+        RD_OUTLOOK.setText(UserMain.getString("EML_Files")); // NOI18N
+
+        buttonGroup1.add(RD_EML);
+        RD_EML.setText(UserMain.getString("EML_Files")); // NOI18N
 
         javax.swing.GroupLayout PN_SELECTLayout = new javax.swing.GroupLayout(PN_SELECT);
         PN_SELECT.setLayout(PN_SELECTLayout);
         PN_SELECTLayout.setHorizontalGroup(
             PN_SELECTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PN_SELECTLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(PN_SELECTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(RD_FIREFOX)
-                    .addComponent(RD_OUTLOOKXPRESS)
-                    .addComponent(RD_FREE))
+                    .addGroup(PN_SELECTLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(PN_SELECTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(RD_FIREFOX)
+                            .addComponent(RD_OUTLOOKXPRESS)))
+                    .addGroup(PN_SELECTLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(RD_EML))
+                    .addGroup(PN_SELECTLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(RD_OUTLOOK)))
                 .addContainerGap(230, Short.MAX_VALUE))
         );
         PN_SELECTLayout.setVerticalGroup(
@@ -748,8 +770,10 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(RD_OUTLOOKXPRESS)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(RD_FREE)
-                .addContainerGap(231, Short.MAX_VALUE))
+                .addComponent(RD_EML)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(RD_OUTLOOK)
+                .addContainerGap(205, Short.MAX_VALUE))
         );
 
         TP_PANE.addTab("tab1", PN_SELECT);
@@ -1026,8 +1050,9 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
     private javax.swing.JPanel PN_SELECT;
     private javax.swing.JPanel PN_STATUS;
     private javax.swing.JPanel PN_THUNDERBIRD;
+    private javax.swing.JRadioButton RD_EML;
     private javax.swing.JRadioButton RD_FIREFOX;
-    private javax.swing.JRadioButton RD_FREE;
+    private javax.swing.JRadioButton RD_OUTLOOK;
     private javax.swing.JRadioButton RD_OUTLOOKXPRESS;
     private javax.swing.JTabbedPane TP_PANE;
     private javax.swing.JTextArea TXTA_STATUS;

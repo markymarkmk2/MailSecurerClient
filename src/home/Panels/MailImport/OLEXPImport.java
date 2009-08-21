@@ -42,7 +42,7 @@ class OlexpFilenameFilter implements FilenameFilter
     @Override
     public boolean accept( File dir, String name )
     {
-        if (name.endsWith(extension))
+        if (name.toLowerCase().endsWith(extension))
         {
             return true;
         }
@@ -238,32 +238,14 @@ class OlexpVersionNode  extends DefaultMutableTreeNode implements SwitchableNode
 
 
 
-class OlexpFileNode  extends DefaultMutableTreeNode implements SwitchableNode
+class OlexpFileNode  extends FileNode
 {
-    boolean is_selected;
-    String[] default_sel_offnames = {"Junk", "Spam", "Trash", "Drafts", "Templates"};
-    File node;
-    DefaultTreeModel model = null;
-
-
     OlexpFileNode( DefaultTreeModel _model, File f )
     {
-        node = f;
-        is_selected = true;
-        for (int i = 0; i < default_sel_offnames.length; i++)
-        {
-            String no_sel = default_sel_offnames[i];
-            if (node.getName().indexOf(no_sel) != -1)
-                is_selected = false;
-        }
-        model = _model;
+        super( _model, f );
     }
 
     @Override
-    public boolean isLeaf()
-    {
-        return false;
-    }
     String get_mbox_name()
     {
         if (node.getName().endsWith(OlexpFilenameFilter.extension))
@@ -271,26 +253,7 @@ class OlexpFileNode  extends DefaultMutableTreeNode implements SwitchableNode
             return node.getName().substring(0, node.getName().length() - OlexpFilenameFilter.extension.length());
         }
         return "?";
-    }
-
-    @Override
-    public boolean is_selected()
-    {
-        return is_selected;
-    }
-
-    @Override
-    public void set_selected(  boolean s )
-    {
-        is_selected = s;
-        model.nodeChanged(this);
-
-        for (int i = 0; i < getChildCount(); i++)
-        {
-            SwitchableNode mboxTreeNode = (SwitchableNode)children.get(i);
-            mboxTreeNode.set_selected( s);
-        }
-    }
+    }    
 }
 class OlexpTreeModel extends DefaultTreeModel
 {
@@ -299,6 +262,7 @@ class OlexpTreeModel extends DefaultTreeModel
         super(null);
     }
 }
+
 class OlexpTreeCellRenderer implements TreeCellRenderer
 {
 
@@ -351,99 +315,3 @@ class OlexpTreeCellRenderer implements TreeCellRenderer
 
 
 
-class OlexpProfileManager extends ProfileManager
-{
-   
-    @Override
-    void fill_profile_combo( JComboBox cb ) throws IOException
-    {
-        cb.removeAllItems();
-
-        try
-        {
-            RegistryKey regkey = Registry.HKEY_CURRENT_USER;
-            RegistryKey key = Registry.openSubkey(regkey, "Identities", RegistryKey.ACCESS_ALL);
-
-            int nkeys = key.getNumberSubkeys();
-
-            for (int i = 0; i < nkeys; i++)
-            {
-                String identityname = key.regEnumKey(i);
-                RegistryKey identity_key = Registry.openSubkey(key, identityname, RegistryKey.ACCESS_ALL);
-
-                String user_name = identity_key.getStringValue("Username");
-
-                identity_key.closeKey();
-
-                user_name = NativeLoader.conv_win_to_utf8( user_name );
-
-                NamePathEntry pe = new NamePathEntry(identityname, user_name);
-                cb.addItem(pe);
-            }
-
-            key.closeKey();
-        }
-        catch (RegistryException registryException)
-        {
-        }
-
-        
-        NamePathEntry tbpe = new NamePathEntry( null, UserMain.Txt("Select_mail_directory_manually") );
-        
-        cb.addItem(tbpe);
-    }
-
-    @Override
-    String get_type()
-    {
-        return CS_Constants.TYPE_OLEXP;
-    }
-
-    @Override
-    void handle_build_tree(String path, JTree tree) throws IOException
-    {
-        OlexpRootNode node = null;
-        DefaultTreeModel model = new OlexpTreeModel();
-        node = new OlexpRootNode( model, path );
-        model.setRoot(node);
-        tree.setModel(model);
-        tree.setCellRenderer( new OlexpTreeCellRenderer() );
-    }
-    @Override
-    void handle_build_tree(NamePathEntry npe_profile, JTree tree) throws IOException
-    {
-        OlexpRootNode node = null;
-        OlexpTreeModel model = new OlexpTreeModel();
-        node = new OlexpRootNode( model, npe_profile );
-        model.setRoot(node);
-        tree.setModel(model);
-        tree.setCellRenderer( new OlexpTreeCellRenderer() );
-    }
-
-    String build_user_profile_path()
-    {
-        /*
-         # On Linux, the path is usually ~/.thunderbird/xxxxxxxx.default/
-        # On Mac OS X, the path is usually ~/Library/Thunderbird/Profiles/xxxxxxxx.default/
-         */
-        if (NativeLoader.is_win())
-        {
-            String user_appdata_path = NativeLoader.get_HKCU_reg_value("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders", "AppData");
-            if (user_appdata_path == null)
-            {
-                user_appdata_path = NativeLoader.get_HKCU_reg_value("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders", "AppData");
-            }
-            user_appdata_path = NativeLoader.resolve_win_path(user_appdata_path);
-
-
-            int idx = user_appdata_path.lastIndexOf("\\");
-            if (idx > 0)
-                user_appdata_path = user_appdata_path.substring(0, idx);
-
-            return user_appdata_path;
-        }
-        return null;
-    }
-
-  
-}
