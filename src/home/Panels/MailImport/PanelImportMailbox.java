@@ -738,7 +738,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         RD_OUTLOOKXPRESS.setText(UserMain.getString("Outlook_Express")); // NOI18N
 
         buttonGroup1.add(RD_OUTLOOK);
-        RD_OUTLOOK.setText(UserMain.getString("EML_Files")); // NOI18N
+        RD_OUTLOOK.setText(UserMain.getString("Outlook")); // NOI18N
 
         buttonGroup1.add(RD_EML);
         RD_EML.setText(UserMain.getString("EML_Files")); // NOI18N
@@ -748,19 +748,13 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         PN_SELECTLayout.setHorizontalGroup(
             PN_SELECTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PN_SELECTLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(PN_SELECTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(PN_SELECTLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(PN_SELECTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(RD_FIREFOX)
-                            .addComponent(RD_OUTLOOKXPRESS)))
-                    .addGroup(PN_SELECTLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(RD_EML))
-                    .addGroup(PN_SELECTLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(RD_OUTLOOK)))
-                .addContainerGap(230, Short.MAX_VALUE))
+                    .addComponent(RD_FIREFOX)
+                    .addComponent(RD_OUTLOOKXPRESS)
+                    .addComponent(RD_OUTLOOK)
+                    .addComponent(RD_EML))
+                .addContainerGap(340, Short.MAX_VALUE))
         );
         PN_SELECTLayout.setVerticalGroup(
             PN_SELECTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -770,13 +764,13 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(RD_OUTLOOKXPRESS)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(RD_EML)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(RD_OUTLOOK)
-                .addContainerGap(205, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(RD_EML)
+                .addContainerGap(269, Short.MAX_VALUE))
         );
 
-        TP_PANE.addTab("tab1", PN_SELECT);
+        TP_PANE.addTab(UserMain.getString("Source_type"), PN_SELECT); // NOI18N
 
         LB_PATH.setText("Folder");
 
@@ -793,12 +787,12 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -828,9 +822,9 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                             .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(PN_THUNDERBIRDLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(CB_PROFILE, 0, 285, Short.MAX_VALUE)
+                            .addComponent(CB_PROFILE, 0, 395, Short.MAX_VALUE)
                             .addGroup(PN_THUNDERBIRDLayout.createSequentialGroup()
-                                .addComponent(TXT_PATH, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
+                                .addComponent(TXT_PATH, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(BT_SET_PATH)))))
                 .addContainerGap())
@@ -854,7 +848,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 .addContainerGap())
         );
 
-        TP_PANE.addTab("tab2", PN_THUNDERBIRD);
+        TP_PANE.addTab(UserMain.getString("Select_mailboxes"), PN_THUNDERBIRD); // NOI18N
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(UserMain.getString("Summary"))); // NOI18N
 
@@ -867,13 +861,13 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -885,29 +879,29 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         PN_CONFIRM.setLayout(PN_CONFIRMLayout);
         PN_CONFIRMLayout.setHorizontalGroup(
             PN_CONFIRMLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(PN_CONFIRMLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_CONFIRMLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(PN_CONFIRMLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(PN_CONFIRMLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(PN_CONFIRMLayout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addGap(18, 18, 18)
-                        .addComponent(CB_VAULT, 0, 263, Short.MAX_VALUE)))
+                        .addComponent(CB_VAULT, 0, 373, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         PN_CONFIRMLayout.setVerticalGroup(
             PN_CONFIRMLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_CONFIRMLayout.createSequentialGroup()
+            .addGroup(PN_CONFIRMLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(PN_CONFIRMLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(CB_VAULT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        TP_PANE.addTab("tab3", PN_CONFIRM);
+        TP_PANE.addTab(UserMain.getString("Confirm_selection"), PN_CONFIRM); // NOI18N
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(UserMain.getString("Statistics"))); // NOI18N
 
@@ -920,11 +914,11 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout PN_STATUSLayout = new javax.swing.GroupLayout(PN_STATUS);
@@ -944,7 +938,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 .addContainerGap())
         );
 
-        TP_PANE.addTab("tab4", PN_STATUS);
+        TP_PANE.addTab(UserMain.getString("Status"), PN_STATUS); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -959,7 +953,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                         .addComponent(BT_BACK, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(BT_NEXT, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(TP_PANE, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE))
+                    .addComponent(TP_PANE, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -969,7 +963,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(TP_PANE, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
+                .addComponent(TP_PANE, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_NEXT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
