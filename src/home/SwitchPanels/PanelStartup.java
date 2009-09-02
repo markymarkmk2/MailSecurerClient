@@ -6,24 +6,24 @@
 package dimm.home.SwitchPanels;
 
 import dimm.home.*;
+import dimm.home.Panels.MailViewPanel;
 import dimm.home.Rendering.BackgroundTitle;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
-import dimm.home.Utilities.SwingWorker;
 import java.awt.Dimension;
 import java.awt.Point;
 import org.jdesktop.fuse.ResourceInjector;
 
 
 
-class HTMLDlg extends GenericGlossyDlg
+class MailDlg extends GenericGlossyDlg
 {
 
     UserMain main;
-    HTMLDlg( UserMain parent)
+    MailDlg( UserMain parent)
     {
-        super( parent, true, new HTMLViewPanel( "" ));
+        super( parent, true, new MailViewPanel());
         main = parent;
         if (parent.isVisible())
             this.setLocation(parent.getLocationOnScreen().x + 30, parent.getLocationOnScreen().y + 30);
@@ -31,27 +31,12 @@ class HTMLDlg extends GenericGlossyDlg
             this.setLocationRelativeTo(null);
 
         this.setSize( 700, 600);
-        ((HTMLViewPanel)pg_painter).set_cancel_text( null );
+        
 
     }
 
 
 
-   // String file;
-    public void show_dlg( String uri)
-    {
-  //      file = _file;
-        try
-        {
-            this.setLocation(main.getLocationOnScreen().x + 30, main.getLocationOnScreen().y + 30);
-            this.setSize( 700, 600);
-            ((HTMLViewPanel)pg_painter).show_browser( uri);
-        }
-        catch (Exception exc)
-        {
-            System.err.println("Error while reading HTML file: " + exc.getMessage() );
-        }
-    }
 
 
 }
@@ -177,14 +162,9 @@ public class PanelStartup extends SwitchSpringPanel
     {//GEN-HEADEREND:event_BT_NETWORKActionPerformed
         // TODO add your handling code here:
         
-        if (check_selected())
-        {
-            HTMLDlg dlg = new HTMLDlg(main);
-
-               dlg.show_dlg("http://www.google.de");
-            
+            MailDlg dlg = new MailDlg(main);
+            dlg.setVisible(true);
      
-        }
          
       /*  SwingWorker sw = new SwingWorker()
         {

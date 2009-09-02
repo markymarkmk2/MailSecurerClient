@@ -6,6 +6,7 @@
 package dimm.home.ServerConnect;
 
 import dimm.home.Main;
+import dimm.home.Preferences;
 
 /**
  *
@@ -19,7 +20,9 @@ public class Connect
     public Connect()
     {
 //        sqc = new ServerWSDLCall();
-        sqc = new ServerTCPCall(Main.server_ip, Main.server_port);
+        String ip = Main.get_prop(Preferences.SERVER_IP, Main.server_ip );
+        String port = Main.get_prop(Preferences.SERVER_PORT, Main.server_port );
+        sqc = new ServerTCPCall(ip, port);
         sqc.init();
     }
 

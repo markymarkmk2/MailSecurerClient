@@ -11,162 +11,81 @@
 
 package dimm.home.Panels;
 
-import dimm.general.SQL.SQLResult;
+import com.thoughtworks.xstream.XStream;
+import dimm.home.Rendering.GlossDialogPanel;
+import dimm.home.ServerConnect.FunctionCallConnect;
 import dimm.home.UserMain;
-import java.awt.Insets;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import javax.swing.ImageIcon;
+import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
 
 
 class MailTableModel extends DefaultTableModel
 {
-    protected String[] col_names = null;
-    protected Class[] col_classes = null;
-    JButton tonne_bt;
-    JButton edit_bt;
     MailViewPanel pnl;
-    SQLResult sqlResult;
+    ArrayList<ArrayList<String>> result_array;
+    ArrayList<String> field_list;
 
 
 
-    MailTableModel(MailViewPanel _pnl, String qry)
+    MailTableModel(MailViewPanel _pnl, ArrayList<String> field_list, ArrayList<ArrayList<String>> ret_arr)
     {
         super();
 
         pnl = _pnl;
-        tonne_bt = create_table_button( "/dimm/home/images/web_delete.png", pnl );
-        edit_bt = create_table_button(  "/dimm/home/images/web_edit.png", pnl );
-
-        String[] _col_names = {"Id",UserMain.getString("Name"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
-        Class[] _col_classes = {String.class,  String.class,  Boolean.class, JButton.class, JButton.class};
-        set_columns( _col_names, _col_classes );
+        result_array = ret_arr;
+        this.field_list = field_list;
 
     }
 
-    public JButton create_table_button(String rsrc, MailViewPanel pnl)
-    {
-        ImageIcon icn = new ImageIcon(this.getClass().getResource(rsrc));
-        JButton bt = new JButton(icn);
-        bt.addMouseListener(pnl);
-        bt.setBorderPainted(false);
-        bt.setOpaque(false);
-        bt.setMargin(new Insets(0, 0, 0, 0));
-        bt.setContentAreaFilled(false);
-
-        return bt;
-    }
-
-
-    public void set_columns( String[] names, Class[] classes)
-    {
-        col_names = names;
-        col_classes = classes;
-    }
 
 
     @Override
     public String getColumnName(int column)
     {
-        return col_names[column];
+        return field_list.get(column);
     }
 
     @Override
     public Class<?> getColumnClass(int columnIndex)
     {
-        return col_classes[columnIndex];
+        return new String().getClass();
     }
 
     @Override
     public int getRowCount()
     {
-
-        return 0;
+        if (result_array == null)
+            return 0;
+        return result_array.size();
     }
 
     @Override
     public int getColumnCount()
     {
-        // EDIT IST 2.LAST ROW!!!!
-        if (UserMain.self.getUserLevel() < UserMain.UL_USER)
-            return col_names.length - 2;
-
-        // EDIT IST 2.LAST ROW!!!!
-        if (UserMain.self.getUserLevel() < UserMain.UL_ADMIN)
-            return col_names.length - 1;
-
-
-        return col_names.length;
+        if (field_list == null)
+            return 0;
+        return field_list.size();
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex)
     {
-        if (sqlResult == null)
-            return null;
-
-        if (columnIndex == (col_names.length - 2))
-           return edit_bt;
-        if (columnIndex == (col_names.length - 1))
-           return tonne_bt;
-
-        return null;
+        return result_array.get(rowIndex).get(columnIndex);
     }
-
-    public SQLResult getSqlResult()
-    {
-        return sqlResult;
-    }
-
-    public void setSqlResult(SQLResult sqlResult)
-    {
-        this.sqlResult = sqlResult;
-    }
-
-    public boolean is_new(int row)
-    {
-        // THESE ARE THE CONDITIONS FOR THE DECISION "NEW RECORD"
-        return (getSqlResult() == null || getSqlResult().getRows() <= row || row == -1);
-    }
-
-    // SETS THE WIDTH OF THE LAST TWO ICON-COLUMNS
-    public void set_table_header( TableColumnModel cm )
-    {
-        if (getColumnCount() > get_edit_column())
-        {
-            cm.getColumn( get_edit_column() ).setMinWidth(60);
-            cm.getColumn( get_edit_column() ).setMaxWidth(60);
-
-            if (getColumnCount() > get_del_column() )
-            {
-                cm.getColumn( get_del_column() ).setMinWidth(50);
-                cm.getColumn( get_del_column() ).setMaxWidth(50);
-            }
-        }
-    }
-    public int get_edit_column()
-    {
-        return col_names.length - 2;
-    }
-    public int get_del_column()
-    {
-        return col_names.length - 1;
-    }
-
-
 }
 /**
  *
  * @author mw
  */
-public class MailViewPanel extends javax.swing.JPanel implements MouseListener
+public class MailViewPanel extends GlossDialogPanel implements MouseListener
 {
 
     /** Creates new form MailViewPanel */
-    public MailViewPanel() {
+    public MailViewPanel()
+    {
         initComponents();
     }
 
@@ -184,9 +103,9 @@ public class MailViewPanel extends javax.swing.JPanel implements MouseListener
         jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        TB_RESULT = new javax.swing.JTable();
+        BT_CLOSE = new javax.swing.JButton();
+        BT_EXPORT = new javax.swing.JButton();
         jTextField2 = new javax.swing.JTextField();
         jComboBox1 = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
@@ -197,8 +116,13 @@ public class MailViewPanel extends javax.swing.JPanel implements MouseListener
         jButton1.setIconTextGap(0);
         jButton1.setInheritsPopupMenu(true);
         jButton1.setMargin(new java.awt.Insets(1, 1, 1, 1));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        TB_RESULT.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -209,7 +133,7 @@ public class MailViewPanel extends javax.swing.JPanel implements MouseListener
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(TB_RESULT);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -222,9 +146,9 @@ public class MailViewPanel extends javax.swing.JPanel implements MouseListener
             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE)
         );
 
-        jButton2.setText(UserMain.getString("Schliessen")); // NOI18N
+        BT_CLOSE.setText(UserMain.getString("Schliessen")); // NOI18N
 
-        jButton3.setText(UserMain.getString("Export_Mail")); // NOI18N
+        BT_EXPORT.setText(UserMain.getString("Export_Mail")); // NOI18N
 
         jTextField2.setEditable(false);
         jTextField2.setText("UserStatus");
@@ -242,9 +166,9 @@ public class MailViewPanel extends javax.swing.JPanel implements MouseListener
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton3)
+                        .addComponent(BT_EXPORT)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 445, Short.MAX_VALUE)
-                        .addComponent(jButton2))
+                        .addComponent(BT_CLOSE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(49, 49, 49)
@@ -280,23 +204,62 @@ public class MailViewPanel extends javax.swing.JPanel implements MouseListener
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(BT_CLOSE)
+                    .addComponent(BT_EXPORT))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
+    {//GEN-HEADEREND:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        FunctionCallConnect fcc = UserMain.fcc();
+        String ret = fcc.call_abstract_function("SearchMail CMD:open MA:1 EM:'vorstand@esv.de' FL:'FLDN_MA' VL:'1' CNT:1 ", 5000);
+        if (ret.charAt(0) == '0')
+        {
+            String[] l = ret.split(" ");
+
+            String id = l[1];
+            ArrayList<String>field_list = new ArrayList<String>();
+            
+
+            field_list.add("FLDN_MA");
+            field_list.add("FLDN_DA");
+            field_list.add("FLDN_DS");
+            field_list.add("FLDN_TM");
+
+
+            ret = fcc.call_abstract_function("SearchMail CMD:get MA:1 ID:" + id + " ROW:-1 FLL:'FLDN_MA,FLDN_DA,FLDN_DS,FLDN_TM'", 5000);
+            if (ret.charAt(0) == '0')
+            {
+                XStream xstream = new XStream();
+                Object o = xstream.fromXML(ret.substring(3));
+
+                if (o instanceof ArrayList)
+                {
+                    ArrayList<ArrayList<String>> ret_arr = (ArrayList<ArrayList<String>>)o;
+
+                    MailTableModel model = new MailTableModel( this, field_list, ret_arr );
+                    TB_RESULT.setModel(model);
+                }
+            }
+        }
+
+
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BT_CLOSE;
+    private javax.swing.JButton BT_EXPORT;
+    private javax.swing.JTable TB_RESULT;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
@@ -304,31 +267,32 @@ public class MailViewPanel extends javax.swing.JPanel implements MouseListener
     @Override
     public void mouseClicked( MouseEvent e )
     {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void mousePressed( MouseEvent e )
     {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void mouseReleased( MouseEvent e )
     {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void mouseEntered( MouseEvent e )
     {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void mouseExited( MouseEvent e )
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public JButton get_default_button()
+    {
+        return BT_CLOSE;
     }
 
 }

@@ -19,12 +19,12 @@ public class FunctionCallConnect extends Connect
         super();
     }
 
-    String call_abstract_function( String cmd, int to )
+    public String call_abstract_function( String cmd, int to )
     {
         return sqc.send(cmd, to);
     }
 
-    String call_rmx_function( String cmd, int to )
+    public String call_rmx_function( String cmd, int to )
     {
         return sqc.send_rmx(cmd, to);
     }

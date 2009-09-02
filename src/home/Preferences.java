@@ -57,6 +57,8 @@ public class Preferences
     public static final String TS_DEVICE_ID  ="TSDeviceID";
     public static final String VKEY_ALPHA = "VKeyboardAlpha";
     
+    public static final String SERVER_IP = "ServerIP";
+    public static final String SERVER_PORT = "ServerPort";
 
     public static final String SERVER_USERCLIP_PATH = "/websense/v5/userclips";
     public static final String SERVER_DATA_PATH = "/websense/v5/data";
@@ -95,6 +97,9 @@ public class Preferences
         prop_names.add( MALLORCAPROXYSERVER );
         prop_names.add( TS_DEVICE_ID );
         prop_names.add( VKEY_ALPHA );
+
+        prop_names.add( SERVER_IP );
+        prop_names.add( SERVER_PORT );
         
                 
         read_props();
