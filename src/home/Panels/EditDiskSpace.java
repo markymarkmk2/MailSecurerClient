@@ -14,10 +14,27 @@ import javax.swing.JButton;
 import home.shared.hibernate.DiskArchive;
 import home.shared.hibernate.DiskSpace;
 import dimm.home.Utilities.Validator;
+import home.shared.CS_Constants;
 
 
 
 
+class DS_mode_entry
+{
+    String txt;
+    int flags;
+
+    DS_mode_entry( String t, int f )
+    {
+        txt = t;
+        flags = f;
+    }
+    @Override
+    public String toString()
+    {
+        return txt;
+    }
+}
 /**
  
  @author  Administrator
@@ -38,6 +55,7 @@ public class EditDiskSpace extends GenericEditPanel
         model = object_overview.get_object_model();
         
         CB_STATUS.removeAllItems();
+        CB_MODE.removeAllItems();
         CB_CAP_DIM.removeAllItems();
 
         CB_CAP_DIM.addItem("MB");
@@ -50,6 +68,10 @@ public class EditDiskSpace extends GenericEditPanel
             DiskSpaceOverview.DiskSpaceTypeEntry mte = object_overview.get_ds_entry_list()[i];
             CB_STATUS.addItem( mte );
         }
+        // FILL COMBOBOX MODE
+        CB_MODE.addItem( new DS_mode_entry( UserMain.Txt("Index_and_Data"), CS_Constants.DS_MODE_BOTH)  );
+        CB_MODE.addItem( new DS_mode_entry( UserMain.Txt("Index_only"), CS_Constants.DS_MODE_INDEX)  );
+        CB_MODE.addItem( new DS_mode_entry( UserMain.Txt("Data_only"), CS_Constants.DS_MODE_DATA )  );
                                
         row = _row;
         
@@ -70,15 +92,28 @@ public class EditDiskSpace extends GenericEditPanel
             TXT_PATH.setText(object.getPath());
             TXT_CAP.setText( get_capa_val( object.getMaxCapacity() ));
             CB_CAP_DIM.setSelectedItem(get_capa_dim( object.getMaxCapacity() ) );
+
+            BT_DISABLED.setSelected( object_is_disabled() );
+
+            int mode = object_get_mode();
+            if (mode == CS_Constants.DS_MODE_BOTH)
+                CB_MODE.setSelectedIndex(0);
+            else if (mode == CS_Constants.DS_MODE_INDEX)
+                CB_MODE.setSelectedIndex(1);
+            else if (mode == CS_Constants.DS_MODE_DATA)
+                CB_MODE.setSelectedIndex(2);
         }
         else
         {
             object = new DiskSpace();
             CB_STATUS.setSelectedIndex(0);
+            CB_MODE.setSelectedIndex(0);  // DATA + INDEX
             object.setDiskArchive(da);
             TXT_PATH.setText(UserMain.Txt("Neuer_Pfad") );
             TXT_CAP.setText( "100");
             CB_CAP_DIM.setSelectedItem("GB" );
+            BT_DISABLED.setSelected( false );
+
         }
     }
 
@@ -142,6 +177,8 @@ public class EditDiskSpace extends GenericEditPanel
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         CB_STATUS = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
+        CB_MODE = new javax.swing.JComboBox();
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
@@ -178,6 +215,10 @@ public class EditDiskSpace extends GenericEditPanel
 
         CB_STATUS.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        jLabel1.setText(UserMain.getString("Mode")); // NOI18N
+
+        CB_MODE.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout PN_ACTIONLayout = new javax.swing.GroupLayout(PN_ACTION);
         PN_ACTION.setLayout(PN_ACTIONLayout);
         PN_ACTIONLayout.setHorizontalGroup(
@@ -187,16 +228,19 @@ public class EditDiskSpace extends GenericEditPanel
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(BT_DISABLED, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(BT_DISABLED, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel4))
                 .addGap(50, 50, 50)
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                        .addComponent(TXT_CAP, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(CB_CAP_DIM, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(TXT_PATH, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-                    .addComponent(CB_STATUS, 0, 210, Short.MAX_VALUE))
+                    .addComponent(TXT_PATH, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
+                    .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(CB_STATUS, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(CB_MODE, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, PN_ACTIONLayout.createSequentialGroup()
+                            .addComponent(TXT_CAP, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(CB_CAP_DIM, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         PN_ACTIONLayout.setVerticalGroup(
@@ -212,10 +256,14 @@ public class EditDiskSpace extends GenericEditPanel
                     .addComponent(jLabel3)
                     .addComponent(CB_CAP_DIM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(CB_MODE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel4)
                     .addComponent(CB_STATUS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
                 .addComponent(BT_DISABLED)
                 .addContainerGap())
         );
@@ -248,7 +296,7 @@ public class EditDiskSpace extends GenericEditPanel
         PN_BUTTONSLayout.setHorizontalGroup(
             PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
-                .addContainerGap(192, Short.MAX_VALUE)
+                .addContainerGap(187, Short.MAX_VALUE)
                 .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -303,11 +351,13 @@ public class EditDiskSpace extends GenericEditPanel
     private javax.swing.JCheckBox BT_DISABLED;
     private javax.swing.JButton BT_OK;
     private javax.swing.JComboBox CB_CAP_DIM;
+    private javax.swing.JComboBox CB_MODE;
     private javax.swing.JComboBox CB_STATUS;
     private javax.swing.JPanel PN_ACTION;
     private javax.swing.JPanel PN_BUTTONS;
     private javax.swing.JTextField TXT_CAP;
     private javax.swing.JTextField TXT_PATH;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -331,6 +381,10 @@ public class EditDiskSpace extends GenericEditPanel
 
         return flags;
     }
+    void set_object_flags(int flags)
+    {
+        object.setFlags(Integer.toString(flags));
+    }
     void set_object_flag(int flag)
     {
         int flags = get_object_flags();
@@ -350,19 +404,28 @@ public class EditDiskSpace extends GenericEditPanel
 
         flags = get_object_flags();
 
-        return ((flags & DiskSpaceOverview.DISABLED) == DiskSpaceOverview.DISABLED);
+        return ((flags & CS_Constants.DS_DISABLED) == CS_Constants.DS_DISABLED);
+    }
+    int object_get_mode()
+    {
+        int flags = 0;
+
+        flags = get_object_flags();
+
+        return (flags & CS_Constants.DS_MODE_BOTH);
     }
     void set_object_disabled( boolean f)
     {
         int flags = get_object_flags();
 
         if (f)
-            set_object_flag( DiskSpaceOverview.DISABLED );
+            set_object_flag( CS_Constants.DS_DISABLED );
         else
-            clr_object_flag( DiskSpaceOverview.DISABLED );
+            clr_object_flag( CS_Constants.DS_DISABLED );
     }
 
     
+    @Override
     protected boolean check_changed()
     {        
         if (model.is_new(row))
@@ -371,7 +434,6 @@ public class EditDiskSpace extends GenericEditPanel
         String path = object.getPath();
         if (path != null && TXT_PATH.getText().compareTo(path ) != 0)
             return true;
-
 
 
         if (BT_DISABLED.isSelected() != object_is_disabled())
@@ -385,10 +447,14 @@ public class EditDiskSpace extends GenericEditPanel
         String cap_txt = build_capa_str( TXT_CAP.getText(), CB_CAP_DIM.getSelectedItem().toString());
         if (object.getMaxCapacity().compareTo(cap_txt) != 0)
             return true;
-        
+
+        if (object_get_mode() != ((DS_mode_entry)CB_MODE.getSelectedItem()).flags)
+            return true;
+
         return false;
     }
                         
+    @Override
     protected boolean is_plausible()
     {
         if (!Validator.is_valid_path( TXT_PATH.getText(), 255))
@@ -416,6 +482,7 @@ public class EditDiskSpace extends GenericEditPanel
     }
 
 
+    @Override
     protected void set_object_props()
     {
         String path = TXT_PATH.getText();
@@ -425,7 +492,13 @@ public class EditDiskSpace extends GenericEditPanel
         object.setPath(path);
         object.setStatus(dsty.type);
         object.setMaxCapacity( build_capa_str( TXT_CAP.getText(), CB_CAP_DIM.getSelectedItem().toString()) );
+        int mode_flags = ((DS_mode_entry)CB_MODE.getSelectedItem()).flags;
+        if (BT_DISABLED.isSelected())
+            mode_flags |= CS_Constants.DS_DISABLED;
+
+        set_object_flags(mode_flags);
         set_object_disabled( de );
+
     }
 
     
