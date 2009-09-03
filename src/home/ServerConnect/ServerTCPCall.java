@@ -46,7 +46,7 @@ public class ServerTCPCall extends ServerCall
 
     private static final int TCP_LEN = 64;
     
-    public static final int SHORT_CMD_TO = 3000;
+    public static final int SHORT_CMD_TO = 60;
 
     Socket keep_s;
     boolean keep_tcp_open;

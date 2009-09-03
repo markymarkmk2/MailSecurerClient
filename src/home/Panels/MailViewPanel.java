@@ -14,9 +14,15 @@ package dimm.home.Panels;
 import com.thoughtworks.xstream.XStream;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.FunctionCallConnect;
+import dimm.home.ServerConnect.InStreamID;
+import dimm.home.ServerConnect.ServerInputStream;
+import dimm.home.ServerConnect.StreamConnect;
 import dimm.home.UserMain;
+import dimm.home.Utilities.ParseToken;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
@@ -38,6 +44,12 @@ class MailTableModel extends DefaultTableModel
         result_array = ret_arr;
         this.field_list = field_list;
 
+    }
+
+    @Override
+    public boolean isCellEditable( int row, int column )
+    {
+        return false;
     }
 
 
@@ -82,11 +94,14 @@ class MailTableModel extends DefaultTableModel
  */
 public class MailViewPanel extends GlossDialogPanel implements MouseListener
 {
+    String search_id;
 
     /** Creates new form MailViewPanel */
     public MailViewPanel()
     {
         initComponents();
+
+        TB_RESULT.addMouseListener(this);
     }
 
     /** This method is called from within the constructor to
@@ -213,40 +228,46 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
     {//GEN-HEADEREND:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        search_id = null;
         FunctionCallConnect fcc = UserMain.fcc();
         String ret = fcc.call_abstract_function("SearchMail CMD:open MA:1 EM:'vorstand@esv.de' FL:'FLDN_MA' VL:'1' CNT:1 ", 5000);
-        if (ret.charAt(0) == '0')
+        if (ret.charAt(0) != '0')
         {
-            String[] l = ret.split(" ");
+            UserMain.errm_ok(my_dlg, "SearchMail open gave " + ret );
+            return;
+        }
+        String[] l = ret.split(" ");
 
-            String id = l[1];
-            ArrayList<String>field_list = new ArrayList<String>();
-            
-
-            field_list.add("FLDN_MA");
-            field_list.add("FLDN_DA");
-            field_list.add("FLDN_DS");
-            field_list.add("FLDN_TM");
+        search_id = l[1];
+        ArrayList<String>field_list = new ArrayList<String>();
 
 
-            ret = fcc.call_abstract_function("SearchMail CMD:get MA:1 ID:" + id + " ROW:-1 FLL:'FLDN_MA,FLDN_DA,FLDN_DS,FLDN_TM'", 5000);
-            if (ret.charAt(0) == '0')
-            {
-                XStream xstream = new XStream();
-                Object o = xstream.fromXML(ret.substring(3));
+        field_list.add("FLDN_MA");
+        field_list.add("FLDN_DA");
+        field_list.add("FLDN_DS");
+        field_list.add("FLDN_TM");
+       
 
-                if (o instanceof ArrayList)
-                {
-                    ArrayList<ArrayList<String>> ret_arr = (ArrayList<ArrayList<String>>)o;
+       
 
-                    MailTableModel model = new MailTableModel( this, field_list, ret_arr );
-                    TB_RESULT.setModel(model);
-                }
-            }
+        ret = fcc.call_abstract_function("SearchMail CMD:get MA:1 ID:" + search_id + " ROW:-1 FLL:'FLDN_MA,FLDN_DA,FLDN_DS,FLDN_TM'", 5000);
+        if (ret.charAt(0) != '0')
+        {
+            UserMain.errm_ok(my_dlg, "SearchMail get gave " + ret );
+            return;
         }
 
+        XStream xstream = new XStream();
+        Object o = xstream.fromXML(ret.substring(3));
 
+        if (o instanceof ArrayList)
+        {
+            ArrayList<ArrayList<String>> ret_arr = (ArrayList<ArrayList<String>>)o;
 
+            MailTableModel model = new MailTableModel( this, field_list, ret_arr );
+            TB_RESULT.setModel(model);
+
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
 
@@ -267,6 +288,55 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     @Override
     public void mouseClicked( MouseEvent e )
     {
+        if (e.getClickCount() == 2)
+        {
+            if (e.getSource() == TB_RESULT)
+            {
+                int row = TB_RESULT.rowAtPoint(e.getPoint());
+                ServerInputStream sis = null;
+
+                try
+                {
+                    FunctionCallConnect fcc = UserMain.fcc();
+                    String ret = fcc.call_abstract_function("SearchMail CMD:open_mail ID:" + search_id + " ROW:" + row, 5);
+                    if (ret.charAt(0) != '0')
+                    {
+                        UserMain.errm_ok(my_dlg, "SearchMail open_mail gave " + ret);
+                        return;
+                    }
+                    String[] l = ret.split(" ");
+                    String instream_id = l[1];
+                    ParseToken pt = new ParseToken(l[2]);
+                    long len = pt.GetLong("LEN:");
+
+                    InStreamID id = new InStreamID(instream_id, len);
+                    StreamConnect sc = new StreamConnect();
+                    FileOutputStream fos = new FileOutputStream( "c:\\tmp\\dl.eml");
+                    sis = new ServerInputStream(sc, id);
+                    sis.read(fos);
+                    sis.close();
+                    fos.close();
+                }
+                catch (Exception iOException)
+                {
+                    UserMain.errm_ok(my_dlg, "Fehler beim abholen der Mail: " + iOException.getMessage() );
+                }
+                finally
+                {
+                    if (sis != null)
+                    {
+                        try
+                        {
+                            sis.close();
+                        }
+                        catch (IOException iOException)
+                        {
+                        }
+                    }
+
+                }
+            }
+        }
     }
 
     @Override

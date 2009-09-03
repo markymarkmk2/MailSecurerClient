@@ -165,6 +165,7 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
       
     
 
+    @Override
     public void mouseClicked(MouseEvent e)
     {
         Component c = table.getComponentAt(e.getPoint());

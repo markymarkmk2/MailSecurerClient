@@ -13,15 +13,15 @@ public class InStreamID
 {
     String id;
     long len;
-    InStreamID( String s, long l )
+    public InStreamID( String s, long l )
     {
         id = s;
         len = l;
     }
-    String getId()
+    public String getId()
     {return id;}
 
-    long getLen()
+    public long getLen()
     {
         return len;
     }

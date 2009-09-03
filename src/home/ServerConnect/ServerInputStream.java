@@ -30,6 +30,11 @@ public class ServerInputStream extends InputStream
             throw new IOException( "Cannot open Serverstream " + file + ": " + sc.get_last_err_txt() + " Err: " + sc.get_last_err_code()) ;
         }
     }
+    public ServerInputStream( StreamConnect _conn, InStreamID _id ) throws IOException
+    {
+        conn = _conn;
+        id = _id;
+    }
 
 
     @Override
