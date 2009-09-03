@@ -130,7 +130,7 @@ public abstract class ServerCall {
 
 
     public abstract boolean send_fast_retry_cmd(String str);
-    public abstract String send( String str, OutputStream outp, int to);
+    public abstract String send( String str, long len, OutputStream outp, int to);
     public abstract String send_rmx( String str, long len, InputStream is, int to);
     public abstract String send( String str);
     public abstract String send( String str, int to);

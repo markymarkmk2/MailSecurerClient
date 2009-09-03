@@ -145,6 +145,9 @@
           <ResourceString bundle="dimm/home/MA_Properties.properties" key="Schliessen" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_CLOSEActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="BT_EXPORT">
       <Properties>

@@ -16,9 +16,9 @@ import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.FunctionCallConnect;
 import dimm.home.ServerConnect.InStreamID;
 import dimm.home.ServerConnect.ServerInputStream;
-import dimm.home.ServerConnect.StreamConnect;
 import dimm.home.UserMain;
 import dimm.home.Utilities.ParseToken;
+import home.shared.CS_Constants;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.FileOutputStream;
@@ -162,6 +162,11 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         );
 
         BT_CLOSE.setText(UserMain.getString("Schliessen")); // NOI18N
+        BT_CLOSE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_CLOSEActionPerformed(evt);
+            }
+        });
 
         BT_EXPORT.setText(UserMain.getString("Export_Mail")); // NOI18N
 
@@ -230,7 +235,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         // TODO add your handling code here:
         search_id = null;
         FunctionCallConnect fcc = UserMain.fcc();
-        String ret = fcc.call_abstract_function("SearchMail CMD:open MA:1 EM:'vorstand@esv.de' FL:'FLDN_MA' VL:'1' CNT:1 ", 5000);
+        String ret = fcc.call_abstract_function("SearchMail CMD:open MA:1 EM:'vorstand@esv.de' FL:'FLDN_MA' VL:'1' CNT:5 ", 5000);
         if (ret.charAt(0) != '0')
         {
             UserMain.errm_ok(my_dlg, "SearchMail open gave " + ret );
@@ -242,15 +247,22 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         ArrayList<String>field_list = new ArrayList<String>();
 
 
-        field_list.add("FLDN_MA");
-        field_list.add("FLDN_DA");
-        field_list.add("FLDN_DS");
-        field_list.add("FLDN_TM");
+        field_list.add(CS_Constants.FLD_DATE);
+        field_list.add(CS_Constants.FLD_SUBJECT);
+        field_list.add(CS_Constants.FLD_SIZE);
        
 
+        String cmd =  "SearchMail CMD:get MA:1 ID:" + search_id + " ROW:-1 FLL:'";
+        for ( int i = 0; i < field_list.size(); i++ )
+        {
+            if (i > 0)
+                cmd += ",";
+            cmd += field_list.get(i);
+        }
+        cmd += "'";
        
 
-        ret = fcc.call_abstract_function("SearchMail CMD:get MA:1 ID:" + search_id + " ROW:-1 FLL:'FLDN_MA,FLDN_DA,FLDN_DS,FLDN_TM'", 5000);
+        ret = fcc.call_abstract_function( cmd, 5000);
         if (ret.charAt(0) != '0')
         {
             UserMain.errm_ok(my_dlg, "SearchMail get gave " + ret );
@@ -266,9 +278,14 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
 
             MailTableModel model = new MailTableModel( this, field_list, ret_arr );
             TB_RESULT.setModel(model);
-
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void BT_CLOSEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_CLOSEActionPerformed
+    {//GEN-HEADEREND:event_BT_CLOSEActionPerformed
+        // TODO add your handling code here:
+        setVisible(false);
+    }//GEN-LAST:event_BT_CLOSEActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -294,6 +311,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             {
                 int row = TB_RESULT.rowAtPoint(e.getPoint());
                 ServerInputStream sis = null;
+                FileOutputStream fos = null;
 
                 try
                 {
@@ -310,12 +328,11 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                     long len = pt.GetLong("LEN:");
 
                     InStreamID id = new InStreamID(instream_id, len);
-                    StreamConnect sc = new StreamConnect();
-                    FileOutputStream fos = new FileOutputStream( "c:\\tmp\\dl.eml");
-                    sis = new ServerInputStream(sc, id);
+                    
+                    fos = new FileOutputStream( "c:\\tmp\\dl.eml");
+                    sis = new ServerInputStream(fcc.get_sqc(), id);
                     sis.read(fos);
-                    sis.close();
-                    fos.close();
+                    
                 }
                 catch (Exception iOException)
                 {
@@ -330,6 +347,16 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                             sis.close();
                         }
                         catch (IOException iOException)
+                        {
+                        }
+                    }
+                    if (fos != null)
+                    {
+                        try
+                        {
+                            fos.close();
+                        }
+                        catch ( IOException iOException )
                         {
                         }
                     }

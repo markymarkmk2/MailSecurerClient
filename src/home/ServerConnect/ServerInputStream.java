@@ -5,7 +5,6 @@
 
 package dimm.home.ServerConnect;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,13 +15,12 @@ import java.io.OutputStream;
  */
 public class ServerInputStream extends InputStream
 {
-    StreamConnect conn;
+    ServerCall sc;
     InStreamID id;
 
-    public ServerInputStream( StreamConnect _conn, String file ) throws IOException
+    public ServerInputStream( ServerCall _sc, String file ) throws IOException
     {
-        conn = _conn;
-        ServerCall sc = conn.get_sqc();
+        sc = _sc;
         id = sc.open_in_stream(file);
 
         if (id == null)
@@ -30,9 +28,9 @@ public class ServerInputStream extends InputStream
             throw new IOException( "Cannot open Serverstream " + file + ": " + sc.get_last_err_txt() + " Err: " + sc.get_last_err_code()) ;
         }
     }
-    public ServerInputStream( StreamConnect _conn, InStreamID _id ) throws IOException
+    public ServerInputStream( ServerCall _sc, InStreamID _id ) throws IOException
     {
-        conn = _conn;
+        sc = _sc;
         id = _id;
     }
 
@@ -40,7 +38,7 @@ public class ServerInputStream extends InputStream
     @Override
     public int read() throws IOException
     {
-        ServerCall sc = conn.get_sqc();
+        
         byte data[] = new byte[1];
         data[0] = 0;
         int len = sc.read_in_stream(id, data);
@@ -61,7 +59,7 @@ public class ServerInputStream extends InputStream
         if (id == null)
             return;
         
-        ServerCall sc = conn.get_sqc();
+        
         if (sc.close_in_stream(id)  == false)
         {
             throw new IOException( "Cannot close Serverstream " + id.getId() + ": " + sc.get_last_err_txt() + " Err: " + sc.get_last_err_code()) ;
@@ -72,8 +70,6 @@ public class ServerInputStream extends InputStream
    
     public void read( OutputStream os ) throws IOException
     {
-        ServerCall sc = conn.get_sqc();
-
         if(! sc.read_in_stream(id, os) )
         {
             throw new IOException( "Cannot read Serverstream " + id.getId() + ": " + sc.get_last_err_txt() + " Err: " + sc.get_last_err_code()) ;
@@ -82,8 +78,7 @@ public class ServerInputStream extends InputStream
 
     @Override
     public int read( byte[] b, int off, int len ) throws IOException
-    {
-        ServerCall sc = conn.get_sqc();
+    {        
         byte data[] = new byte[len];
         int rlen = read( data );
         if (rlen == -1)

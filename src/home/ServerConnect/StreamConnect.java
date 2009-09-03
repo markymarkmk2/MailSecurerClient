@@ -29,11 +29,11 @@ public class StreamConnect extends Connect
 
     public OutputStream open_out_stream( String file ) throws IOException
     {
-        return new ServerOutputStream( this, file);
+        return new ServerOutputStream( get_sqc(), file);
     }
     public InputStream open_in_stream( String file ) throws IOException
     {
-        return new ServerInputStream( this, file);
+        return new ServerInputStream( get_sqc(), file);
     }
 
     public static void main( String[] args )

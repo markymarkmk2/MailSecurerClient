@@ -200,7 +200,7 @@ public class ServerTCPCall extends ServerCall
         try
         {
 
-            ping_answer = tcp_send( s, "GETSTATUS MD:SHORT", null, null, CALL_PREFIX );
+            ping_answer = tcp_send( s, "GETSTATUS MD:SHORT", 0, (InputStream)null, null, CALL_PREFIX );
 
             ret = ping;
             System.out.println(ret + " ms");
@@ -277,7 +277,7 @@ public class ServerTCPCall extends ServerCall
             }
     }
 
-    public String tcp_send( String ip, int port, String str, OutputStream outp, byte[] add_data, int timeout, String prefix)
+    public String tcp_send( String ip, int port, String str, long len, OutputStream outp, byte[] add_data, int timeout, String prefix)
     {
         try
         {
@@ -285,7 +285,7 @@ public class ServerTCPCall extends ServerCall
             
             Socket s = keep_s;
 
-            String ret = tcp_send( s, str, outp, add_data, prefix);
+            String ret = tcp_send( s, str, len, outp, add_data, prefix);
 
 
             // LATCH IP
@@ -375,9 +375,9 @@ public class ServerTCPCall extends ServerCall
     }
 
     @Override
-    public synchronized String send( String str, OutputStream outp, int to)
+    public synchronized String send( String str, long len, OutputStream outp, int to)
     {
-        String a =   tcp_send( server, port, str, outp, null, to, CALL_PREFIX );
+        String a =   tcp_send( server, port, str, len, outp, null, to, CALL_PREFIX );
 
         if (get_last_err_code() == 0)
             return a;
@@ -395,14 +395,14 @@ public class ServerTCPCall extends ServerCall
     @Override
     public String send( String str)
     {
-        String a =  tcp_send( server, port, str, null, null, -1, CALL_PREFIX );
+        String a =  tcp_send( server, port, str, 0, null, null, -1, CALL_PREFIX );
 
         return a;
     }
     @Override
     public String send( String str, int to)
     {
-        String a =  tcp_send( server, port, str, null, null, to, CALL_PREFIX );
+        String a =  tcp_send( server, port, str, 0, null, null, to, CALL_PREFIX );
 
         return a;
     }
@@ -410,13 +410,13 @@ public class ServerTCPCall extends ServerCall
     @Override
     public String send_rmx( String str, int to)
     {
-        String a =  tcp_send( server, port, str, null, null, to, RMX_PREFIX );
+        String a =  tcp_send( server, port, str, 0, null, null, to, RMX_PREFIX );
 
         return a;
     }
-    private String send_rmx( String str, OutputStream os, int to )
+    private String send_rmx( String str, long len, OutputStream os, int to )
     {
-        String a =   tcp_send( server, port, str, os, null, to, RMX_PREFIX );
+        String a =   tcp_send( server, port, str, len, os, null, to, RMX_PREFIX );
 
         if (get_last_err_code() == 0)
             return a;
@@ -434,7 +434,7 @@ public class ServerTCPCall extends ServerCall
 
     private String send_rmx( String str )
     {
-        String a =   tcp_send( server, port, str, null, null, -1, RMX_PREFIX );
+        String a =   tcp_send( server, port, str, 0, null, null, -1, RMX_PREFIX );
 
         if (get_last_err_code() == 0)
             return a;
@@ -446,7 +446,7 @@ public class ServerTCPCall extends ServerCall
     @Override
     public synchronized boolean send_tcp_byteblock( String str, byte[] data)
     {
-        tcp_send( server, port, str, null, data, -1, CALL_PREFIX);
+        tcp_send( server, port, str, 0, null, data, -1, CALL_PREFIX);
         return (get_last_err_code() == 0);
     }
 
@@ -455,7 +455,7 @@ public class ServerTCPCall extends ServerCall
     @Override
     public synchronized boolean send_fast_retry_cmd(String str)
     {
-        String a = tcp_send( server, port, str, null, null, 3, CALL_PREFIX );
+        String a = tcp_send( server, port, str, 0, null, null, 3, CALL_PREFIX );
         if (check_answer(a))
             return true;
 
@@ -463,9 +463,9 @@ public class ServerTCPCall extends ServerCall
     }
 
     
-    public synchronized String tcp_send( Socket s, String str, OutputStream outp, byte[] add_data, String prefix) throws IOException, Exception
+    public synchronized String tcp_send( Socket s, String str, long len, OutputStream outp, byte[] add_data, String prefix) throws IOException, Exception
     {
-        String a = raw_tcp_send( s, str, 0, null, outp, add_data, prefix );
+        String a = raw_tcp_send( s, str, len, null, outp, add_data, prefix );
         if (check_answer(a))
             return answer;
 
@@ -483,7 +483,7 @@ public class ServerTCPCall extends ServerCall
     }
 
 
-    private synchronized String raw_tcp_send( Socket s, String str, long inp_len, InputStream inp, OutputStream outp, byte[] add_data, String prefix) throws IOException, Exception
+    private synchronized String raw_tcp_send( Socket s, String str, long stream_len, InputStream inp, OutputStream outp, byte[] add_data, String prefix) throws IOException, Exception
     {
         int buff_len = CS_Constants.STREAM_BUFFER_LEN;
         StringBuffer sb = new StringBuffer();
@@ -499,11 +499,11 @@ public class ServerTCPCall extends ServerCall
         {
             sb.append( str.substring( 0, opt_index ) );  // CUT OFF CMD
         }
-        if (inp_len > 0)
+        if (stream_len > 0)
         {
             sb.append( " SLEN:");
 
-            sb.append( inp_len );
+            sb.append( stream_len );
         }
 
         sb.append( " PLEN:");
@@ -532,7 +532,7 @@ public class ServerTCPCall extends ServerCall
         ping_connected = false;
 
         OutputStream sock_os = s.getOutputStream();
-        if (inp_len > 0)
+        if (stream_len > 0)
         {
             BufferedOutputStream bos = new BufferedOutputStream( sock_os, buff_len*2 );
             sock_os = bos;
@@ -549,12 +549,11 @@ public class ServerTCPCall extends ServerCall
         {
             sock_os.write( add_data );
         }
-        if (inp_len > 0)
+        if (inp != null && stream_len > 0)
         {
-
             BufferedInputStream bis = new BufferedInputStream( inp, buff_len*2);
             byte[] buff = new byte[buff_len];
-            long len = inp_len;
+            long len = stream_len;
             while( len > 0)
             {
                 int rlen = buff.length;
@@ -590,13 +589,17 @@ public class ServerTCPCall extends ServerCall
         String local_answer = new String( in_buff, "UTF-8" );
 
 
+        long alen = 0; 
+        String ret = "OK";
+        
         int len_idx = local_answer.indexOf("LEN:");
         if (len_idx <= 0)
+        {
             throw new Exception( "Data error" );
-
+        }
         // GET OK / NOK
-        String ret = local_answer.substring(0, len_idx );
-        int alen = Integer.parseInt( local_answer.substring( len_idx + 4).trim() );
+        ret = local_answer.substring(0, len_idx );
+        alen = Long.parseLong( local_answer.substring( len_idx + 4).trim() );
 
         // MORE DATA?
         if (alen > 0)
@@ -607,11 +610,11 @@ public class ServerTCPCall extends ServerCall
             }
             else
             {
-                byte[] res_data = new byte[alen];
+                byte[] res_data = new byte[(int)alen];
                 rlen = s.getInputStream().read( res_data );
                 while (rlen != alen)
                 {
-                    int rrlen = s.getInputStream().read( res_data, rlen, alen - rlen );
+                    int rrlen = s.getInputStream().read( res_data, rlen, (int)alen - rlen );
                     rlen +=  rrlen;
                 }
                 ret += new String( res_data, "UTF-8" );
@@ -620,7 +623,7 @@ public class ServerTCPCall extends ServerCall
         return ret;
 
     }
-    void write_output( InputStream ins, int alen, OutputStream outs ) throws IOException
+    void write_output( InputStream ins, long alen, OutputStream outs ) throws IOException
     {
          // PUSH DATA OVER BUFFER
         int buff_len = CS_Constants.STREAM_BUFFER_LEN;
@@ -1491,26 +1494,12 @@ public class ServerTCPCall extends ServerCall
 
         try
         {
-            String ret =  send_rmx( "ReadInStream " + id.getId() , os, SHORT_CMD_TO);
+            String ret =  send_rmx( "ReadInStream " + id.getId() , id.getLen(), os, SHORT_CMD_TO);
 
 
-            calc_stat(ret);
+            calc_stat("");
 
-            int idx = ret.indexOf(':');
-            int retcode = Integer.parseInt(ret.substring(0, idx));
-
-            if (retcode == 0)
-            {
-                return true;
-            }
-
-            // HANDLE EOF
-            if (retcode == 1)
-                return true;
-
-            last_err_code = retcode;
-
-            return false;
+            return true;
         }
         catch (Exception exc)
         {

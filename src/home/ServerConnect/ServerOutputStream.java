@@ -16,13 +16,12 @@ import java.io.OutputStream;
  */
 public class ServerOutputStream extends OutputStream
 {
-    StreamConnect conn;
+    ServerCall sc;
     OutStreamID id;
 
-    public ServerOutputStream( StreamConnect _conn, String file ) throws IOException
+    public ServerOutputStream( ServerCall _sc, String file ) throws IOException
     {
-        conn = _conn;
-        ServerCall sc = conn.get_sqc();
+        sc = _sc;
         id = sc.open_out_stream(file);
 
         if (id == null)
@@ -35,7 +34,6 @@ public class ServerOutputStream extends OutputStream
     @Override
     public void write( int b ) throws IOException
     {
-        ServerCall sc = conn.get_sqc();
         byte data[] = new byte[1];
         data[0] = (byte)b;
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
@@ -53,7 +51,6 @@ public class ServerOutputStream extends OutputStream
         if (id == null)
             return;
 
-        ServerCall sc = conn.get_sqc();
         if (sc.close_out_stream(id)  == false)
         {
             throw new IOException( "Cannot close Serverstream " + id.getId() + ": " + sc.get_last_err_txt() + " Err: " + sc.get_last_err_code()) ;
@@ -64,8 +61,6 @@ public class ServerOutputStream extends OutputStream
     @Override
     public void write( byte[] b ) throws IOException
     {
-        ServerCall sc = conn.get_sqc();
-
         ByteArrayInputStream bais = new ByteArrayInputStream(b);
 
         if (sc.write_out_stream(id, b.length, bais)  == false)
@@ -99,7 +94,6 @@ public class ServerOutputStream extends OutputStream
 
     public void write( InputStream is, long len) throws IOException
     {
-        ServerCall sc = conn.get_sqc();
         if (sc.write_out_stream(id, len, is)  == false)
         {
             throw new IOException( "Cannot write Serverstream " + id.getId() + ": " + sc.get_last_err_txt() + " Err: " + sc.get_last_err_code()) ;
