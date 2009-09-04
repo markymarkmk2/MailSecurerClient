@@ -9,9 +9,10 @@
  * Created on 15.07.2009, 16:14:22
  */
 
-package dimm.home.Panels;
+package dimm.home.Panels.MailView;
 
 import com.thoughtworks.xstream.XStream;
+import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.FunctionCallConnect;
 import dimm.home.ServerConnect.InStreamID;
@@ -21,11 +22,37 @@ import dimm.home.Utilities.ParseToken;
 import home.shared.CS_Constants;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Part;
+import javax.mail.Session;
+import javax.mail.internet.MimeMessage;
 import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
+
+class MailPreviewDlg extends GenericGlossyDlg
+{
+
+    UserMain main;
+    MailPreviewDlg( UserMain parent, String body, boolean is_html)
+    {
+        super( parent, true, new MailPreviewPanel(body, is_html));
+        main = parent;
+        if (parent.isVisible())
+            this.setLocation(parent.getLocationOnScreen().x + 30, parent.getLocationOnScreen().y + 30);
+        else
+            this.setLocationRelativeTo(null);
+
+        this.setSize( 700, 600);
+    }
+
+}
+
 
 
 class MailTableModel extends DefaultTableModel
@@ -121,9 +148,10 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         TB_RESULT = new javax.swing.JTable();
         BT_CLOSE = new javax.swing.JButton();
         BT_EXPORT = new javax.swing.JButton();
-        jTextField2 = new javax.swing.JTextField();
+        TXT_MAIL = new javax.swing.JTextField();
         jComboBox1 = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         jLabel1.setText(UserMain.getString("Suche")); // NOI18N
 
@@ -154,7 +182,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 659, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -170,37 +198,40 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
 
         BT_EXPORT.setText(UserMain.getString("Export_Mail")); // NOI18N
 
-        jTextField2.setEditable(false);
-        jTextField2.setText("UserStatus");
-
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel2.setText(UserMain.getString("Filter")); // NOI18N
+
+        jLabel3.setText("Mailadresse");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(BT_EXPORT)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 445, Short.MAX_VALUE)
-                        .addComponent(BT_CLOSE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(49, 49, 49)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(BT_EXPORT)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 451, Short.MAX_VALUE)
+                                .addComponent(BT_CLOSE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(TXT_MAIL, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
+                                .addGap(49, 49, 49)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton1)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -214,8 +245,9 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                         .addGap(19, 19, 19)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))))
+                            .addComponent(TXT_MAIL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3))))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -235,7 +267,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         // TODO add your handling code here:
         search_id = null;
         FunctionCallConnect fcc = UserMain.fcc();
-        String ret = fcc.call_abstract_function("SearchMail CMD:open MA:1 EM:'vorstand@esv.de' FL:'FLDN_MA' VL:'1' CNT:5 ", 5000);
+        String mail = TXT_MAIL.getText();
+        String ret = fcc.call_abstract_function("SearchMail CMD:open MA:1 EM:'" + mail + "' FL:'FLDN_MA' VL:'1' CNT:5 ", 5000);
         if (ret.charAt(0) != '0')
         {
             UserMain.errm_ok(my_dlg, "SearchMail open gave " + ret );
@@ -292,15 +325,66 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     private javax.swing.JButton BT_CLOSE;
     private javax.swing.JButton BT_EXPORT;
     private javax.swing.JTable TB_RESULT;
+    private javax.swing.JTextField TXT_MAIL;
     private javax.swing.JButton jButton1;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
+
+
+    Part html_part = null;
+    Part text_part = null;
+    protected void check_part_content( Part p ) throws IOException, MessagingException
+    {
+        // SELECT THE PLAIN PART OF AN ALTERNATIVE MP
+        if (p.isMimeType("multipart/alternative"))
+        {
+            Multipart mp = (Multipart) p.getContent();
+            for (int i = 0; i < mp.getCount(); i++)
+            {
+                Part bp = mp.getBodyPart(i);
+                if (bp.isMimeType("text/plain"))
+                {
+                    text_part = bp;
+                }
+                if (bp.isMimeType("text/html"))
+                {
+                    html_part = bp;
+                }
+            }
+        }
+        else if (p.isMimeType("text/plain"))
+        {
+            text_part = p;
+        }
+        else if (p.isMimeType("text/html"))
+        {
+            html_part = p;
+        }
+    }
+
+    protected void check_mp_content( Multipart mp ) throws MessagingException, IOException
+    {
+
+        for (int i = 0; i < mp.getCount(); i++)
+        {
+            Part p = mp.getBodyPart(i);
+            if (p instanceof Multipart)
+            {
+                check_mp_content((Multipart) p);
+            }
+            else
+            {
+                check_part_content( p);
+            }
+
+        }
+    }
 
     @Override
     public void mouseClicked( MouseEvent e )
@@ -311,7 +395,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             {
                 int row = TB_RESULT.rowAtPoint(e.getPoint());
                 ServerInputStream sis = null;
-                FileOutputStream fos = null;
+                
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
                 try
                 {
@@ -329,10 +414,49 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
 
                     InStreamID id = new InStreamID(instream_id, len);
                     
-                    fos = new FileOutputStream( "c:\\tmp\\dl.eml");
                     sis = new ServerInputStream(fcc.get_sqc(), id);
-                    sis.read(fos);
-                    
+                    sis.read(baos);
+
+                    String msg = new String( baos.toString("UTF-8") );
+                    Message mmsg;
+                    Session session;
+                    java.util.Properties props = new java.util.Properties();
+                    props.put("mail.smtp.host", "localhost");
+                    session = Session.getDefaultInstance(props, null);
+
+
+
+                    ByteArrayInputStream bais = new ByteArrayInputStream( baos.toByteArray(), 0, baos.toByteArray().length );
+                    mmsg = new MimeMessage(session, bais);
+
+                    bais.close();
+
+                    Object content = mmsg.getContent();
+                    if (content instanceof Multipart)
+                    {
+                        check_mp_content( (Multipart) content);
+                    }
+                    else if (content instanceof Part)
+                    {
+                        Part p = (Part) content;
+                        check_part_content(p);
+                    }
+                    Part p = html_part;
+                    if (p == null)
+                        p = text_part;
+
+
+                    String txt_msg = null;
+                    if (p != null)
+                    {
+                        txt_msg = p.getContent().toString();
+                    }
+                    if (txt_msg == null)
+                        txt_msg = mmsg.getContent().toString();
+
+                    MailPreviewDlg dlg = new MailPreviewDlg(UserMain.self, txt_msg, (html_part != null));
+                    dlg.setVisible(true);
+
                 }
                 catch (Exception iOException)
                 {
@@ -350,11 +474,11 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                         {
                         }
                     }
-                    if (fos != null)
+                    if (baos != null)
                     {
                         try
                         {
-                            fos.close();
+                            baos.close();
                         }
                         catch ( IOException iOException )
                         {

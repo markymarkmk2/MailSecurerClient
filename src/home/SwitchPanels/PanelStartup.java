@@ -6,7 +6,7 @@
 package dimm.home.SwitchPanels;
 
 import dimm.home.*;
-import dimm.home.Panels.MailViewPanel;
+import dimm.home.Panels.MailView.MailViewPanel;
 import dimm.home.Rendering.BackgroundTitle;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GhostButton;

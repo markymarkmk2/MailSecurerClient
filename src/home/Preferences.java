@@ -59,9 +59,8 @@ public class Preferences
     
     public static final String SERVER_IP = "ServerIP";
     public static final String SERVER_PORT = "ServerPort";
+    public static final String HTML_HQ_RENDERER = "HTMLHQRenderer";
 
-    public static final String SERVER_USERCLIP_PATH = "/websense/v5/userclips";
-    public static final String SERVER_DATA_PATH = "/websense/v5/data";
     
     java.util.Properties props;
 
@@ -86,7 +85,6 @@ public class Preferences
         prop_names.add( SONGPATH );
         prop_names.add( DEFAULT_USER );
         prop_names.add( DEFAULT_STATION );
-        prop_names.add( SERVER_USERCLIP_PATH );
         prop_names.add( X_POS );
         prop_names.add( Y_POS );
         prop_names.add( COUNTRYCODE );
@@ -100,6 +98,7 @@ public class Preferences
 
         prop_names.add( SERVER_IP );
         prop_names.add( SERVER_PORT );
+        prop_names.add( HTML_HQ_RENDERER );
         
                 
         read_props();
@@ -145,6 +144,31 @@ public class Preferences
         }
         String ret = props.getProperty( p );
         return ret;
+    }
+    public boolean get_boolean_prop(String p)
+    {
+        return get_boolean_prop(p, false);
+    }
+    public boolean get_boolean_prop(String p, boolean def)
+    {
+        if (!check_prop(p))
+        {
+            Main.err_log_warn("Unbekannte property <" + p + ">" );
+            return def;
+        }
+            String ret = props.getProperty( p );
+            if (ret == null || ret.length() == 0)
+                return def;
+
+            if (ret.charAt(0) == '1')
+                return true;
+
+            if (ret.toLowerCase().charAt(0) == 'j')
+                return true;
+            if (ret.toLowerCase().charAt(0) == 'Y')
+                return true;
+
+            return false;
     }
     
     public void set_prop(String p, String v)

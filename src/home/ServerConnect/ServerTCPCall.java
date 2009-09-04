@@ -725,13 +725,6 @@ public class ServerTCPCall extends ServerCall
         return st;
     }
 
-    static public String encode( String cmd )
-    {
-        cmd = cmd.replace("\\", "\\\\");
-        cmd = cmd.replace("'", "\\'");
-        cmd = cmd.replace("\"", "\\\"");
-        return cmd;
-    }
 
     @Override
     public SQLArrayResult get_sql_array_result( ResultSetID r )
@@ -755,6 +748,7 @@ public class ServerTCPCall extends ServerCall
 
                 XStream xstream = new XStream();
                 SQLArrayResult retarr = (SQLArrayResult) xstream.fromXML(xml);
+                retarr.decode();
                 return retarr;
             }
             last_err_code = retcode;
@@ -955,7 +949,7 @@ public class ServerTCPCall extends ServerCall
                         throw new Exception( "Object " + rec_name + " has not value for method " + meth_name );
                     }
                     String val = method.invoke(o).toString();
-                    val = encode(val);
+                    val = SQLArrayResult.encode(val);
 
                     vals += "'" + val + "'";
                     fields += field_name;
@@ -975,7 +969,7 @@ public class ServerTCPCall extends ServerCall
                         throw new Exception( "Object " + rec_name + " has not value for method " + meth_name );
                     }
                     String val = method.invoke(o).toString();
-                    val = encode(val);
+                    val = SQLArrayResult.encode(val);
 
                     vals +=  val;
                     fields += field_name;
@@ -1116,7 +1110,7 @@ public class ServerTCPCall extends ServerCall
                     }
                     field_idx++;
                     String val = method.invoke(o).toString();
-                    val = encode(val);
+                    val = SQLArrayResult.encode(val);
 
                     upd_cmd += field_name + "='" + val + "'";
                 }
@@ -1128,7 +1122,7 @@ public class ServerTCPCall extends ServerCall
                     }
                     field_idx++;
                     String val = method.invoke(o).toString();
-                    val = encode(val);
+                    val = SQLArrayResult.encode(val);
 
                     upd_cmd += field_name + "=" + val;
                 }
