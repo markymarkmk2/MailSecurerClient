@@ -20,18 +20,13 @@ import dimm.home.ServerConnect.ServerInputStream;
 import dimm.home.UserMain;
 import dimm.home.Utilities.ParseToken;
 import home.shared.CS_Constants;
+import home.shared.mail.RFCMimeMail;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
 import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
 
@@ -39,9 +34,9 @@ class MailPreviewDlg extends GenericGlossyDlg
 {
 
     UserMain main;
-    MailPreviewDlg( UserMain parent, String body, boolean is_html)
+    MailPreviewDlg( UserMain parent, RFCMimeMail mail)
     {
-        super( parent, true, new MailPreviewPanel(body, is_html));
+        super( parent, true, new MailPreviewPanel(mail));
         main = parent;
         if (parent.isVisible())
             this.setLocation(parent.getLocationOnScreen().x + 30, parent.getLocationOnScreen().y + 30);
@@ -337,54 +332,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     // End of variables declaration//GEN-END:variables
 
 
-    Part html_part = null;
-    Part text_part = null;
-    protected void check_part_content( Part p ) throws IOException, MessagingException
-    {
-        // SELECT THE PLAIN PART OF AN ALTERNATIVE MP
-        if (p.isMimeType("multipart/alternative"))
-        {
-            Multipart mp = (Multipart) p.getContent();
-            for (int i = 0; i < mp.getCount(); i++)
-            {
-                Part bp = mp.getBodyPart(i);
-                if (bp.isMimeType("text/plain"))
-                {
-                    text_part = bp;
-                }
-                if (bp.isMimeType("text/html"))
-                {
-                    html_part = bp;
-                }
-            }
-        }
-        else if (p.isMimeType("text/plain"))
-        {
-            text_part = p;
-        }
-        else if (p.isMimeType("text/html"))
-        {
-            html_part = p;
-        }
-    }
 
-    protected void check_mp_content( Multipart mp ) throws MessagingException, IOException
-    {
-
-        for (int i = 0; i < mp.getCount(); i++)
-        {
-            Part p = mp.getBodyPart(i);
-            if (p instanceof Multipart)
-            {
-                check_mp_content((Multipart) p);
-            }
-            else
-            {
-                check_part_content( p);
-            }
-
-        }
-    }
 
     @Override
     public void mouseClicked( MouseEvent e )
@@ -418,48 +366,25 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                     sis.read(baos);
 
                     String msg = new String( baos.toString("UTF-8") );
-                    Message mmsg;
-                    Session session;
-                    java.util.Properties props = new java.util.Properties();
-                    props.put("mail.smtp.host", "localhost");
-                    session = Session.getDefaultInstance(props, null);
+                    RFCMimeMail mmsg;
 
+                    mmsg = new RFCMimeMail();
 
 
                     ByteArrayInputStream bais = new ByteArrayInputStream( baos.toByteArray(), 0, baos.toByteArray().length );
-                    mmsg = new MimeMessage(session, bais);
+
+                    mmsg.parse(bais);
+                                     
+
+                    MailPreviewDlg dlg = new MailPreviewDlg(UserMain.self, mmsg);
+                    dlg.setVisible(true);
 
                     bais.close();
-
-                    Object content = mmsg.getContent();
-                    if (content instanceof Multipart)
-                    {
-                        check_mp_content( (Multipart) content);
-                    }
-                    else if (content instanceof Part)
-                    {
-                        Part p = (Part) content;
-                        check_part_content(p);
-                    }
-                    Part p = html_part;
-                    if (p == null)
-                        p = text_part;
-
-
-                    String txt_msg = null;
-                    if (p != null)
-                    {
-                        txt_msg = p.getContent().toString();
-                    }
-                    if (txt_msg == null)
-                        txt_msg = mmsg.getContent().toString();
-
-                    MailPreviewDlg dlg = new MailPreviewDlg(UserMain.self, txt_msg, (html_part != null));
-                    dlg.setVisible(true);
 
                 }
                 catch (Exception iOException)
                 {
+                    iOException.printStackTrace();
                     UserMain.errm_ok(my_dlg, "Fehler beim abholen der Mail: " + iOException.getMessage() );
                 }
                 finally
