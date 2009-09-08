@@ -13,6 +13,7 @@ package dimm.home.Panels.MailView;
 import dimm.home.Main;
 import dimm.home.Preferences;
 import dimm.home.Rendering.GlossDialogPanel;
+import dimm.home.Rendering.GlossTable;
 import dimm.home.UserMain;
 import home.shared.CS_Constants;
 import home.shared.mail.RFCMimeMail;
@@ -98,6 +99,11 @@ class MailHeaderModel extends AbstractTableModel
     @Override
     public int getRowCount()
     {
+        if (from == null)
+            return 0;
+        if (to == null)
+            return 0;
+
         return from.length + to.length;
     }
 
@@ -106,6 +112,12 @@ class MailHeaderModel extends AbstractTableModel
     {
         return 2;
     }
+    @Override
+    public Class<?> getColumnClass(int columnIndex)
+    {
+        return String.class;
+    }
+
 }
 class MailAttachmentModel extends AbstractTableModel
 {
@@ -158,6 +170,12 @@ class MailAttachmentModel extends AbstractTableModel
     {
         return 1;
     }
+    @Override
+    public Class<?> getColumnClass(int columnIndex)
+    {
+        return String.class;
+    }
+
 }
 
 
@@ -169,6 +187,8 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
     RFCMimeMail msg;
     String html_txt;
     String plain_txt;
+    GlossTable tb_header;
+    GlossTable tb_att;
 
     /** Creates new form MailViewPanel */
     public MailPreviewPanel( RFCMimeMail msg )
@@ -177,7 +197,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
 
         initComponents();
 
-        last_renderer_component = SC_TXT_PANE;
+        last_renderer_component = SCP_TXTA;
 
         html_txt = msg.get_html_content();
         plain_txt = msg.get_text_content();
@@ -198,29 +218,35 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         else
         {
             CB_HQ.setVisible(false);
-            TXT_PANE.setText(plain_txt);
-            TXT_PANE.setCaretPosition(0);
+            TXTA_MAIL.setText(plain_txt);
+            TXTA_MAIL.setCaretPosition(0);
         }
 
         set_table_models();
 
-        TB_ATTACHMENTS.addMouseListener(this);
+        
     }
 
     void set_table_models()
     {
         MailHeaderModel header_model = new MailHeaderModel(msg);
 
-        TB_HEADER.setModel(header_model);
-        TB_HEADER.setTableHeader(null);
-        TB_HEADER.getColumnModel().getColumn(0).setMinWidth(40);
-        TB_HEADER.getColumnModel().getColumn(0).setMaxWidth(60);
+        tb_header = new GlossTable();
+
+        // REGISTER TABLE TO SCROLLPANEL
+        tb_header.embed_to_scrollpanel( SCP_HEADER );
+        tb_header.setModel(header_model);
+        tb_header.setTableHeader(null);
+        tb_header.getColumnModel().getColumn(0).setMinWidth(40);
+        tb_header.getColumnModel().getColumn(0).setMaxWidth(60);
+
 
         MailAttachmentModel attachment_model = new MailAttachmentModel(msg);
-
-
-        TB_ATTACHMENTS.setModel(attachment_model);
-        TB_ATTACHMENTS.setTableHeader(null);
+        tb_att = new GlossTable();
+        tb_att.setModel(attachment_model);
+        tb_att.setTableHeader(null);
+        tb_att.addMouseListener(this);
+        tb_att.embed_to_scrollpanel( SCP_ATTACHMENT );
     }
 
     Component create_columba_renderer()
@@ -239,9 +265,9 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
 
     Component create_text_renderer()
     {
-        TXT_PANE.setText(plain_txt);
-        TXT_PANE.setCaretPosition(0);
-        return TXT_PANE;
+        TXTA_MAIL.setText(plain_txt);
+        TXTA_MAIL.setCaretPosition(0);
+        return TXTA_MAIL;
     }
 
     Component create_lobobrowser_renderer()
@@ -358,41 +384,27 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        TB_HEADER = new javax.swing.JTable();
         PN_VIEW = new javax.swing.JPanel();
-        SC_TXT_PANE = new javax.swing.JScrollPane();
-        TXT_PANE = new javax.swing.JTextPane();
+        SCP_TXTA = new javax.swing.JScrollPane();
+        TXTA_MAIL = new javax.swing.JTextArea();
         BT_CLOSE = new javax.swing.JButton();
         CB_HQ = new javax.swing.JCheckBox();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        TB_ATTACHMENTS = new javax.swing.JTable();
+        SCP_ATTACHMENT = new javax.swing.JScrollPane();
+        SCP_HEADER = new javax.swing.JScrollPane();
 
-        TB_HEADER.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(TB_HEADER);
-
-        TXT_PANE.setEditable(false);
-        SC_TXT_PANE.setViewportView(TXT_PANE);
+        TXTA_MAIL.setColumns(20);
+        TXTA_MAIL.setRows(5);
+        SCP_TXTA.setViewportView(TXTA_MAIL);
 
         javax.swing.GroupLayout PN_VIEWLayout = new javax.swing.GroupLayout(PN_VIEW);
         PN_VIEW.setLayout(PN_VIEWLayout);
         PN_VIEWLayout.setHorizontalGroup(
             PN_VIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SC_TXT_PANE, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE)
+            .addComponent(SCP_TXTA, javax.swing.GroupLayout.DEFAULT_SIZE, 751, Short.MAX_VALUE)
         );
         PN_VIEWLayout.setVerticalGroup(
             PN_VIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SC_TXT_PANE, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
+            .addComponent(SCP_TXTA, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
         );
 
         BT_CLOSE.setText(UserMain.getString("Schliessen")); // NOI18N
@@ -410,19 +422,6 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             }
         });
 
-        TB_ATTACHMENTS.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane2.setViewportView(TB_ATTACHMENTS);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -433,12 +432,12 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
                     .addComponent(PN_VIEW, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(CB_HQ)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 442, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 559, Short.MAX_VALUE)
                         .addComponent(BT_CLOSE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(SCP_HEADER, javax.swing.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(SCP_ATTACHMENT, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -446,8 +445,8 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(SCP_HEADER, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+                    .addComponent(SCP_ATTACHMENT, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(PN_VIEW, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
@@ -461,7 +460,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
     private void BT_CLOSEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_CLOSEActionPerformed
     {//GEN-HEADEREND:event_BT_CLOSEActionPerformed
         // TODO add your handling code here:
-        setVisible(false);
+        my_dlg.setVisible(false);
     }//GEN-LAST:event_BT_CLOSEActionPerformed
 
     private void CB_HQActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_HQActionPerformed
@@ -482,12 +481,10 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
     private javax.swing.JButton BT_CLOSE;
     private javax.swing.JCheckBox CB_HQ;
     private javax.swing.JPanel PN_VIEW;
-    private javax.swing.JScrollPane SC_TXT_PANE;
-    private javax.swing.JTable TB_ATTACHMENTS;
-    private javax.swing.JTable TB_HEADER;
-    private javax.swing.JTextPane TXT_PANE;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane SCP_ATTACHMENT;
+    private javax.swing.JScrollPane SCP_HEADER;
+    private javax.swing.JScrollPane SCP_TXTA;
+    private javax.swing.JTextArea TXTA_MAIL;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -499,9 +496,9 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
     @Override
     public void mouseClicked( MouseEvent e )
     {
-        if (e.getClickCount() == 2 && e.getSource() == TB_ATTACHMENTS)
+        if (e.getClickCount() == 2 && e.getSource() == tb_att)
         {
-            int row = TB_ATTACHMENTS.rowAtPoint(e.getPoint());
+            int row = tb_att.rowAtPoint(e.getPoint());
 
             store_attachment( row );
 
@@ -543,6 +540,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         fd.setMode(FileDialog.SAVE);
 
         fd.setLocation(my_dlg.getLocationOnScreen().x + 20, my_dlg.getLocationOnScreen().y + 20 );
+
 
         if (last_dir != null)
         {

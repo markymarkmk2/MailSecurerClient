@@ -19,12 +19,15 @@ public class GlossTable extends JTable
     {        
         SCP_TABLE.setViewportView(this);
         SCP_TABLE.getViewport().setOpaque(false);
-        
-        Component coh = getTableHeader().getParent();
-        if (coh instanceof JViewport)
+
+        if (getTableHeader() != null)
         {
-            JViewport vp = (JViewport) coh;
-            vp.setOpaque(false);
+            Component coh = getTableHeader().getParent();
+            if (coh instanceof JViewport)
+            {
+                JViewport vp = (JViewport) coh;
+                vp.setOpaque(false);
+            }
         }
     }
     

@@ -212,6 +212,7 @@ public class MilterOverview extends SQLOverviewDialog implements PropertyChangeL
 
 
 
+    @Override
     protected GlossDialogPanel get_edit_panel( int row )
     {
         return new EditMilter( row, this );

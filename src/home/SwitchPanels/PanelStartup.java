@@ -163,6 +163,7 @@ public class PanelStartup extends SwitchSpringPanel
         // TODO add your handling code here:
         
             MailDlg dlg = new MailDlg(main);
+            dlg.setModal(false);
             dlg.setVisible(true);
      
          
