@@ -20,7 +20,6 @@ import dimm.home.UserMain;
 import dimm.home.Utilities.SizeStr;
 import dimm.home.Utilities.SwingWorker;
 import home.shared.hibernate.DiskArchive;
-import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -34,6 +33,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.Timer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
@@ -87,9 +87,8 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                     {
                         is_in_fill_cb = true;
                         manager.fill_profile_combo(CB_PROFILE);
-                        CB_PROFILE.setSelectedIndex(0);
                         is_in_fill_cb = false;
-                        build_tree_callback();
+                        CB_PROFILE.setSelectedIndex(0);
                     }
                     catch (IOException ex)
                     {
@@ -174,6 +173,10 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         BT_NEXT.setVisible(b);
     }
 
+    boolean is_manual_path()
+    {
+        return TXT_PATH.isEditable();
+    }
    
 
     void build_tree_callback()
@@ -495,37 +498,47 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         for (int i = 0; i < cnt; i++)
         {
             TreeNode c = tn.getChildAt(i);
-            if (c instanceof TBirdTreeNode)
-            {
-                TBirdTreeNode tbn = (TBirdTreeNode) c;
-                if (!tbn.is_selected)
-                {
-                    continue;
-                }
-
-                list.add(tbn);
-            }
-            if (c instanceof FileNode)
-            {
-                FileNode ofn = (FileNode) c;
-                if (!ofn.is_selected())
-                {
-                    continue;
-                }
-
-                list.add(ofn);
-            }
+            SwitchableNode snc = (SwitchableNode)tn.getChildAt(i);
 
             if (c.getChildCount() > 0)
             {
                 build_tn_array(c, list);
             }
+            
+            // NO DIRECTORIES
+            if (!snc.contains_data())
+                continue;
+            
+            if (!snc.is_selected())
+                continue;
+
+            list.add(snc);
+
         }
     }
     static File last_dir;
 
     private void open_mail_path_select()
     {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setCurrentDirectory(last_dir);
+        if (JFileChooser.APPROVE_OPTION==chooser.showDialog(my_dlg, "Select"))
+          {
+               File dir = chooser.getSelectedFile();
+               last_dir = dir;
+               TXT_PATH.setText(dir.getAbsolutePath());
+               
+          }
+        
+        try
+        {
+            manager.handle_build_tree(TXT_PATH.getText(), JT_DIR);
+        }
+        catch (IOException iOException)
+        {
+        }
+/*-
         FileDialog fd = new FileDialog(my_dlg, UserMain.Txt("Dateiauswahl"), FileDialog.LOAD);
         if (last_dir != null)
         {
@@ -544,6 +557,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         last_dir = f.getParentFile();
 
         TXT_PATH.setText(f.getAbsolutePath());
+ * */
 
     }
     static String last_status_text = "";
@@ -1021,7 +1035,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
             if (nbpe.path == null)
             {
                 TXT_PATH.setEditable(true);
-                BT_SET_PATH.setEnabled(false);
+                BT_SET_PATH.setEnabled(true);
             }
             else
             {

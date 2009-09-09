@@ -324,6 +324,12 @@ class TBirdTreeNode implements MutableTreeNode, SwitchableNode
         return is_selected;
     }
 
+    @Override
+    public boolean contains_data()
+    {
+        return node.isFile();  // MSF-DIR AND FILE CONTAIN DATA
+    }
+
    
 }
 class TBirdTreeModel extends DefaultTreeModel
@@ -588,6 +594,7 @@ Path=Profiles/nl1ice4b.default
         model.setRoot(node);
         tree.setModel(model);
         tree.setCellRenderer( new TBirdTreeCellRenderer() );
+        tree.setRootVisible(false);
     }
 
     private String tb_decode( String mail_path )

@@ -6,20 +6,15 @@
 package dimm.home.Panels.MailImport;
 
 import com.ice.jni.registry.Registry;
-import com.ice.jni.registry.RegistryException;
 import com.ice.jni.registry.RegistryKey;
 import dimm.home.Main;
-import dimm.home.UserMain;
 import dimm.home.Utilities.SizeStr;
 import dimm.home.native_libs.NativeLoader;
-import home.shared.CS_Constants;
 import java.awt.Component;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.Vector;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -60,6 +55,8 @@ class OlexpFilenameFilter implements FilenameFilter
         return false;
     }
 }
+
+
 
 
 
@@ -178,7 +175,15 @@ class OlexpRootNode extends DefaultMutableTreeNode implements SwitchableNode
         }
     }
 
+    @Override
+    public boolean contains_data()
+    {
+        return false;
+    }
+
 }
+
+
 
 
 class OlexpVersionNode  extends DefaultMutableTreeNode implements SwitchableNode
@@ -233,11 +238,13 @@ class OlexpVersionNode  extends DefaultMutableTreeNode implements SwitchableNode
             mboxTreeNode.set_selected( s);
         }
     }
+
+    @Override
+    public boolean contains_data()
+    {
+        return false;
+    }
 }
-
-
-
-
 class OlexpFileNode  extends FileNode
 {
     OlexpFileNode( DefaultTreeModel _model, File f )
@@ -253,7 +260,13 @@ class OlexpFileNode  extends FileNode
             return node.getName().substring(0, node.getName().length() - OlexpFilenameFilter.extension.length());
         }
         return "?";
-    }    
+    }
+
+    @Override
+    public boolean contains_data()
+    {
+        return true;
+    }
 }
 class OlexpTreeModel extends DefaultTreeModel
 {

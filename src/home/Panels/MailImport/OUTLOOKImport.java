@@ -81,6 +81,12 @@ class OutlookFilenameFilter implements FilenameFilter
 
 
 
+
+
+
+
+
+
 class OutlookRootNode extends DefaultMutableTreeNode implements SwitchableNode
 {
     NamePathEntry root;
@@ -197,9 +203,13 @@ class OutlookRootNode extends DefaultMutableTreeNode implements SwitchableNode
         }
     }
 
+    @Override
+    public boolean contains_data()
+    {
+        return false;
+    }
+
 }
-
-
 class OutlookVersionNode  extends DefaultMutableTreeNode implements SwitchableNode
 {
     String path;
@@ -252,11 +262,13 @@ class OutlookVersionNode  extends DefaultMutableTreeNode implements SwitchableNo
             mboxTreeNode.set_selected( s);
         }
     }
+
+    @Override
+    public boolean contains_data()
+    {
+        return false;
+    }
 }
-
-
-
-
 class OutlookFileNode  extends FileNode
 {
     OutlookFileNode( DefaultTreeModel _model, File f )
@@ -272,6 +284,12 @@ class OutlookFileNode  extends FileNode
             return node.getName().substring(0, node.getName().length() - OutlookFilenameFilter.extension.length());
         }
         return "?";
+    }
+
+    @Override
+    public boolean contains_data()
+    {
+        return true;
     }
 }
 class OutlookTreeModel extends DefaultTreeModel
@@ -390,6 +408,7 @@ class OutlookProfileManager extends ProfileManager
         model.setRoot(node);
         tree.setModel(model);
         tree.setCellRenderer( new OutlookTreeCellRenderer() );
+        tree.setRootVisible(false);
     }
     @Override
     void handle_build_tree(NamePathEntry npe_profile, JTree tree) throws IOException
@@ -400,6 +419,7 @@ class OutlookProfileManager extends ProfileManager
         model.setRoot(node);
         tree.setModel(model);
         tree.setCellRenderer( new OutlookTreeCellRenderer() );
+        tree.setRootVisible(false);
     }
 
 

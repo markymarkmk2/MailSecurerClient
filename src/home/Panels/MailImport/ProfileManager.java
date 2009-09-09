@@ -43,6 +43,8 @@ interface SwitchableNode
 {
     public boolean is_selected();
     public void set_selected(  boolean s);
+
+    public boolean contains_data();
 }
 class NamePathEntry extends JLabel
 {

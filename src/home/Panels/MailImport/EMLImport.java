@@ -62,6 +62,10 @@ class EMLFilenameFilter implements FilenameFilter
 
 
 
+
+
+
+
 class EMLRootNode extends DefaultMutableTreeNode implements SwitchableNode
 {
     NamePathEntry root;
@@ -124,11 +128,13 @@ class EMLRootNode extends DefaultMutableTreeNode implements SwitchableNode
             mboxTreeNode.set_selected( s);
         }
     }
+
+    @Override
+    public boolean contains_data()
+    {
+        return false;
+    }
 }
-
-
-
-
 class EMLFileNode  extends FileNode
 {
     EMLFileNode( DefaultTreeModel _model, File f )
@@ -139,11 +145,20 @@ class EMLFileNode  extends FileNode
     @Override
     String get_mbox_name()
     {
+        if (node.isDirectory())
+            return node.getName();
+
         if (node.getName().toLowerCase().endsWith(EMLFilenameFilter.extension))
         {
             return node.getName().substring(0, node.getName().length() - EMLFilenameFilter.extension.length());
         }
         return "?";
+    }
+
+    @Override
+    public boolean contains_data()
+    {
+        return node.isFile();
     }
 }
 class EMLTreeModel extends DefaultTreeModel
@@ -173,9 +188,12 @@ class EMLTreeCellRenderer implements TreeCellRenderer
         if (value instanceof EMLRootNode)
         {
             EMLRootNode node = (EMLRootNode) value;
-            jcb.setText(node.root.name);
-            jcb.setSelected( node.is_selected);
-            return jcb;
+            if (node.root != null)
+            {
+                jcb.setText(node.root.name);
+                jcb.setSelected( node.is_selected);
+                return jcb;
+            }
         }
 
         if (value instanceof EMLFileNode)
@@ -226,13 +244,16 @@ class EMLProfileManager extends ProfileManager
         model.setRoot(node);
         tree.setModel(model);
         tree.setCellRenderer( new EMLTreeCellRenderer() );
+        tree.setRootVisible(true);
     }
 
     @Override
     void handle_build_tree( NamePathEntry npe, JTree tree ) throws IOException
     {
-        throw new UnsupportedOperationException("Not supported");
+        
     }
+
+
 
   
 }
