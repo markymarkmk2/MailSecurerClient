@@ -26,17 +26,17 @@ import home.shared.mail.RFCMimeMail;
 import java.awt.Insets;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.event.ListDataListener;
 import javax.swing.table.AbstractTableModel;
 
 class MailPreviewDlg extends GenericGlossyDlg
@@ -234,9 +234,187 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
 
         CB_FIELD.setSelectedIndex(0);
        
+    }
+
+    void search_mail()
+    {
+        // TODO add your handling code here:
+        FunctionCallConnect fcc = UserMain.fcc();
+
+        if (search_id != null)
+        {
+                    // CLOSE CALL;
+            fcc.call_abstract_function("SearchMail CMD:close MA:1 ID:" + search_id, 5000);
+        }
 
 
-       
+        String mail =  TXT_MAIL.getText();
+        String search_val = TXT_SEARCH.getText();
+
+        int entries = 5;
+
+        FieldComboEntry fld_entry= (FieldComboEntry)CB_FIELD.getSelectedItem();
+        String field_name = fld_entry.getField();
+
+        try
+        {
+            int idx = CB_ENTRIES.getSelectedIndex();
+            if (idx == -1)
+            {
+                idx = 0;
+
+            }
+            entries = Integer.parseInt(CB_ENTRIES.getSelectedItem().toString());
+        }
+        catch (NumberFormatException numberFormatException)
+        {
+        }
+
+        String open_ret = fcc.call_abstract_function("SearchMail CMD:open MA:1 EM:'" + mail + "' FL:'" + field_name + "' VL:'" + search_val + "' CNT:'" + entries + "' ", 5000);
+        if (open_ret.charAt(0) != '0')
+        {
+            UserMain.errm_ok(my_dlg, "SearchMail open gave " + open_ret );
+            return;
+        }
+        String[] l = open_ret.split(" ");
+
+        search_id = l[1];
+        ArrayList<String>field_list = new ArrayList<String>();
+
+
+        field_list.add(CS_Constants.FLD_DATE);
+        field_list.add(CS_Constants.FLD_HAS_ATTACHMENT);
+        field_list.add(CS_Constants.FLD_SUBJECT);
+        field_list.add(CS_Constants.FLD_SIZE);
+
+
+        String cmd =  "SearchMail CMD:get MA:1 ID:" + search_id + " ROW:-1 FLL:'";
+        for ( int i = 0; i < field_list.size(); i++ )
+        {
+            if (i > 0)
+                cmd += ",";
+            cmd += field_list.get(i);
+        }
+        cmd += "'";
+
+
+        String search_get_ret = fcc.call_abstract_function( cmd, 5000);
+
+
+
+
+        if (search_get_ret.charAt(0) != '0')
+        {
+            UserMain.errm_ok(my_dlg, "SearchMail get gave " + search_get_ret );
+            return;
+        }
+
+
+
+        XStream xstream = new XStream();
+        Object o = xstream.fromXML(search_get_ret.substring(3));
+
+        if (o instanceof ArrayList)
+        {
+            ArrayList<ArrayList<String>> ret_arr = (ArrayList<ArrayList<String>>)o;
+
+            model = new MailTableModel( this, field_list, ret_arr );
+            table.setModel(model);
+
+            table.getColumnModel().getColumn(0).setMinWidth(80);
+            table.getColumnModel().getColumn(0).setPreferredWidth(120);
+            table.getColumnModel().getColumn(0).setMaxWidth(180);
+            table.getColumnModel().getColumn(1).setMinWidth(20);
+            table.getColumnModel().getColumn(1).setMaxWidth(20);
+            table.getColumnModel().getColumn(2).setPreferredWidth(180);
+            table.getColumnModel().getColumn(3).setMinWidth(30);
+            table.getColumnModel().getColumn(3).setMaxWidth(50);
+        }
+
+    }
+
+    void open_mail( int row )
+    {
+        String subject = table.getModel().getValueAt(row, MailTableModel.SUBJECT_COL).toString();
+        ServerInputStream sis = null;
+        BufferedOutputStream baos = null;
+        BufferedInputStream bais = null;
+        File tmp_file = null;
+
+        try
+        {
+            tmp_file = File.createTempFile("dlml", ".tmp", new File("."));
+            FileOutputStream fos = new FileOutputStream( tmp_file );
+            baos = new BufferedOutputStream(fos);
+
+
+            FunctionCallConnect fcc = UserMain.fcc();
+            String ret = fcc.call_abstract_function("SearchMail CMD:open_mail ID:" + search_id + " ROW:" + row, 5);
+            if (ret.charAt(0) != '0')
+            {
+                UserMain.errm_ok(my_dlg, "SearchMail open_mail gave " + ret);
+                return;
+            }
+            String[] l = ret.split(" ");
+            String instream_id = l[1];
+            ParseToken pt = new ParseToken(l[2]);
+            long len = pt.GetLong("LEN:");
+
+            InStreamID id = new InStreamID(instream_id, len);
+
+            sis = new ServerInputStream(fcc.get_sqc(), id);
+            sis.read(baos);
+
+            baos.close();
+
+
+            FileInputStream fis = new FileInputStream( tmp_file );
+            bais = new BufferedInputStream(fis);
+          
+            RFCMimeMail mmsg;
+
+            mmsg = new RFCMimeMail();
+            
+            mmsg.parse(bais);
+
+
+            MailPreviewDlg dlg = new MailPreviewDlg(UserMain.self, mmsg);
+            bais.close();
+            
+            dlg.setModal(false);
+            dlg.setTitle(subject);
+            dlg.setLocation( my_dlg.getLocation().x + 20,my_dlg.getLocation().y + 20);
+            dlg.setVisible(true);
+        }
+        catch (Exception iOException)
+        {
+            iOException.printStackTrace();
+            UserMain.errm_ok(my_dlg, "Fehler beim Abholen der Mail: " + iOException.getMessage() );
+        }
+        finally
+        {
+            try
+            {
+                if (sis != null)
+                {
+                    sis.close();
+                }
+                if (baos != null)
+                {
+                    baos.close();
+                }
+                if (bais != null)
+                {
+                    bais.close();
+                }
+                if (tmp_file != null)
+                    tmp_file.delete();
+            }
+            catch (IOException iOException)
+            {
+            }
+        }
+
     }
 
     /** This method is called from within the constructor to
@@ -284,11 +462,11 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SCP_TABLE, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 575, Short.MAX_VALUE)
+            .addComponent(SCP_TABLE, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SCP_TABLE, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE)
+            .addComponent(SCP_TABLE, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
         );
 
         BT_CLOSE.setText(UserMain.getString("Schliessen")); // NOI18N
@@ -315,10 +493,10 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
@@ -327,12 +505,12 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(BT_EXPORT)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 367, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 382, Short.MAX_VALUE)
                                 .addComponent(BT_CLOSE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(TXT_MAIL, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
+                                        .addComponent(TXT_MAIL, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
                                         .addGap(49, 49, 49))
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(CB_ENTRIES, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -371,8 +549,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                         .addComponent(CB_ENTRIES, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel4)))
                 .addGap(24, 24, 24)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_CLOSE)
                     .addComponent(BT_EXPORT))
@@ -383,97 +561,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
     {//GEN-HEADEREND:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        FunctionCallConnect fcc = UserMain.fcc();
-
-        if (search_id != null)
-        {
-                    // CLOSE CALL;
-            fcc.call_abstract_function("SearchMail CMD:close MA:1 ID:" + search_id, 5000);
-        }
-
-        
-        String mail =  TXT_MAIL.getText();
-        String search_val = TXT_SEARCH.getText();
-
-        int entries = 5;
-
-        FieldComboEntry fld_entry= (FieldComboEntry)CB_FIELD.getSelectedItem();
-        String field_name = fld_entry.getField();
-
-        try
-        {
-            int idx = CB_ENTRIES.getSelectedIndex();
-            if (idx == -1)
-            {
-                idx = 0;
-
-            }
-            entries = Integer.parseInt(CB_ENTRIES.getSelectedItem().toString());
-        }
-        catch (NumberFormatException numberFormatException)
-        {
-        }
-
-        String open_ret = fcc.call_abstract_function("SearchMail CMD:open MA:1 EM:'" + mail + "' FL:'" + field_name + "' VL:'" + search_val + "' CNT:'" + entries + "' ", 5000);
-        if (open_ret.charAt(0) != '0')
-        {
-            UserMain.errm_ok(my_dlg, "SearchMail open gave " + open_ret );
-            return;
-        }
-        String[] l = open_ret.split(" ");
-
-        search_id = l[1];
-        ArrayList<String>field_list = new ArrayList<String>();
-
-
-        field_list.add(CS_Constants.FLD_DATE);
-        field_list.add(CS_Constants.FLD_HAS_ATTACHMENT);
-        field_list.add(CS_Constants.FLD_SUBJECT);
-        field_list.add(CS_Constants.FLD_SIZE);
-       
-
-        String cmd =  "SearchMail CMD:get MA:1 ID:" + search_id + " ROW:-1 FLL:'";
-        for ( int i = 0; i < field_list.size(); i++ )
-        {
-            if (i > 0)
-                cmd += ",";
-            cmd += field_list.get(i);
-        }
-        cmd += "'";
-       
-
-        String search_get_ret = fcc.call_abstract_function( cmd, 5000);
-
-
-
-
-        if (search_get_ret.charAt(0) != '0')
-        {
-            UserMain.errm_ok(my_dlg, "SearchMail get gave " + search_get_ret );
-            return;
-        }
-
-
-
-        XStream xstream = new XStream();
-        Object o = xstream.fromXML(search_get_ret.substring(3));
-
-        if (o instanceof ArrayList)
-        {
-            ArrayList<ArrayList<String>> ret_arr = (ArrayList<ArrayList<String>>)o;
-
-            model = new MailTableModel( this, field_list, ret_arr );
-            table.setModel(model);
-            
-            table.getColumnModel().getColumn(0).setMinWidth(80);
-            table.getColumnModel().getColumn(0).setPreferredWidth(120);
-            table.getColumnModel().getColumn(0).setMaxWidth(180);
-            table.getColumnModel().getColumn(1).setMinWidth(20);
-            table.getColumnModel().getColumn(1).setMaxWidth(20);
-            table.getColumnModel().getColumn(2).setPreferredWidth(180);
-            table.getColumnModel().getColumn(3).setMinWidth(30);
-            table.getColumnModel().getColumn(3).setMaxWidth(50);
-        }
+        search_mail();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void BT_CLOSEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_CLOSEActionPerformed
@@ -492,6 +580,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     private void TXT_SEARCHActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_TXT_SEARCHActionPerformed
     {//GEN-HEADEREND:event_TXT_SEARCHActionPerformed
         // TODO add your handling code here:
+        search_mail();
+
     }//GEN-LAST:event_TXT_SEARCHActionPerformed
 
 
@@ -522,75 +612,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             if (e.getSource() == table)
             {
                 int row = table.rowAtPoint(e.getPoint());
-                String subject = table.getModel().getValueAt(row, MailTableModel.SUBJECT_COL).toString();
-                ServerInputStream sis = null;
                 
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-                try
-                {
-                    FunctionCallConnect fcc = UserMain.fcc();
-                    String ret = fcc.call_abstract_function("SearchMail CMD:open_mail ID:" + search_id + " ROW:" + row, 5);
-                    if (ret.charAt(0) != '0')
-                    {
-                        UserMain.errm_ok(my_dlg, "SearchMail open_mail gave " + ret);
-                        return;
-                    }
-                    String[] l = ret.split(" ");
-                    String instream_id = l[1];
-                    ParseToken pt = new ParseToken(l[2]);
-                    long len = pt.GetLong("LEN:");
-
-                    InStreamID id = new InStreamID(instream_id, len);
-                    
-                    sis = new ServerInputStream(fcc.get_sqc(), id);
-                    sis.read(baos);
-
-                    String msg = new String( baos.toString("UTF-8") );
-                    RFCMimeMail mmsg;
-
-                    mmsg = new RFCMimeMail();
-
-
-                    ByteArrayInputStream bais = new ByteArrayInputStream( baos.toByteArray(), 0, baos.toByteArray().length );
-
-                    mmsg.parse(bais);
-                                     
-                    MailPreviewDlg dlg = new MailPreviewDlg(UserMain.self, mmsg);
-                    bais.close();
-                    dlg.setModal(false);
-                    dlg.setTitle(subject);
-                    dlg.setLocation( my_dlg.getLocation().x + 20,my_dlg.getLocation().y + 20);
-                    dlg.setVisible(true);
-                }
-                catch (Exception iOException)
-                {
-                    iOException.printStackTrace();
-                    UserMain.errm_ok(my_dlg, "Fehler beim Abholen der Mail: " + iOException.getMessage() );
-                }
-                finally
-                {
-                    if (sis != null)
-                    {
-                        try
-                        {
-                            sis.close();
-                        }
-                        catch (IOException iOException)
-                        {
-                        }
-                    }
-                    if (baos != null)
-                    {
-                        try
-                        {
-                            baos.close();
-                        }
-                        catch ( IOException iOException )
-                        {
-                        }
-                    }
-                }
+                open_mail( row );
             }
         }
     }

@@ -140,6 +140,24 @@ class EMLFileNode  extends FileNode
     EMLFileNode( DefaultTreeModel _model, File f )
     {
         super(_model, f);
+
+       children = new Vector<EMLFileNode>();
+
+       if (f.exists() && f.isDirectory())
+       {
+            File[] dbx_files = f.listFiles(new EMLFilenameFilter());
+
+            for (int i = 0; i < dbx_files.length; i++)
+            {
+                File file = dbx_files[i];
+
+                children.add(new EMLFileNode( model, file ) );
+            }
+       }
+       
+       if (this.getChildCount() > 0)
+            is_selected = true;
+
     }
 
     @Override

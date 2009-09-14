@@ -24,6 +24,7 @@ import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StatementID;
+import home.shared.CS_Constants;
 import home.shared.SQL.SQLArrayResult;
 
 
@@ -123,8 +124,8 @@ public class ImapFetcherOverview extends SQLOverviewDialog implements PropertyCh
 
     ImapFetcherTypeEntry[] mt_entry_list =
     {
-        new ImapFetcherTypeEntry("imap","IMAP"),
-        new ImapFetcherTypeEntry("exchange","Exchange Envelope")
+        new ImapFetcherTypeEntry(CS_Constants.IFETCHER_TYPE_IMAP,"IMAP"),
+        new ImapFetcherTypeEntry(CS_Constants.IFETCHER_TYPE_ENVELOPE,"Exchange Envelope")
     };
     public ImapFetcherTypeEntry[] get_mt_entry_list()
     {
