@@ -692,8 +692,8 @@ public class ServerTCPCall extends ServerCall
             calc_stat(ret);
             if (retcode == 0)
             {
-                StatementID cid = new StatementID(ret.substring(idx + 2));
-                return cid;
+                StatementID sid = new StatementID( c, ret.substring(idx + 2));
+                return sid;
             }
             last_err_code = retcode;
         }
@@ -911,6 +911,8 @@ public class ServerTCPCall extends ServerCall
 
             String vals = "";
             String fields = "";
+            String where_str = "";
+
             int field_idx = 0;
             Method[] meths = o.getClass().getDeclaredMethods();
             for (int i = 0; i < meths.length; i++)
@@ -940,6 +942,7 @@ public class ServerTCPCall extends ServerCall
                     {
                         vals += ",";
                         fields += ",";
+                        where_str += " and ";
                     }
                     field_idx++;
 
@@ -953,6 +956,8 @@ public class ServerTCPCall extends ServerCall
 
                     vals += "'" + val + "'";
                     fields += field_name;
+                    where_str += field_name + "='" + val + "'";
+
                 }
                 else if (ret_type.compareTo("java.lang.Integer") == 0 || ret_type.compareTo("java.lang.Long") == 0)
                 {
@@ -960,6 +965,7 @@ public class ServerTCPCall extends ServerCall
                     {
                         vals += ",";
                         fields += ",";
+                        where_str += " and ";
                     }
                     field_idx++;
 
@@ -973,6 +979,7 @@ public class ServerTCPCall extends ServerCall
 
                     vals +=  val;
                     fields += field_name;
+                    where_str += field_name + "='" + val + "'";
                 }
                 else if (ret_type.compareTo("int") == 0)
                 {
@@ -980,11 +987,14 @@ public class ServerTCPCall extends ServerCall
                     {
                         vals += ",";
                         fields += ",";
+                        where_str += " and ";
                     }
                     field_idx++;
 
-                    vals += " " + ((Integer) method.invoke(o)).intValue() + " ";
+                    int val = ((Integer) method.invoke(o)).intValue();
+                    vals += " " + val + " ";
                     fields += field_name;
+                    where_str += field_name + "=" + val;
                 }
                 else if (ret_type.compareTo("long") == 0)
                 {
@@ -992,11 +1002,14 @@ public class ServerTCPCall extends ServerCall
                     {
                         vals += ",";
                         fields += ",";
+                        where_str += " and ";
                     }
                     field_idx++;
 
-                    vals += " " + ((Long) method.invoke(o)).longValue() + " ";
+                    long val = ((Long) method.invoke(o)).longValue();
+                    vals += " " + val + " ";
                     fields += field_name;
+                    where_str += field_name + "=" + val;
                 }
                 else if (ret_type.contains(".DiskArchive"))
                 {
@@ -1006,11 +1019,14 @@ public class ServerTCPCall extends ServerCall
                     {
                         vals += ",";
                         fields += ",";
+                        where_str += ",";
                     }
                     field_idx++;
 
                     vals += da.getId();
                     fields += "da_id";
+                    where_str += "da_id=" +da.getId();
+
                 }
                 else if (ret_type.contains(".DiskSpace"))
                 {
@@ -1020,11 +1036,13 @@ public class ServerTCPCall extends ServerCall
                     {
                         vals += ",";
                         fields += ",";
+                        where_str += " and ";
                     }
                     field_idx++;
 
                     vals += ds.getId();
                     fields += "ds_id";
+                    where_str += "ds_id=" +ds.getId();
                 }
                 else if (ret_type.contains(".Mandant"))
                 {
@@ -1034,11 +1052,13 @@ public class ServerTCPCall extends ServerCall
                     {
                         vals += ",";
                         fields += ",";
+                        where_str += " and ";
                     }
                     field_idx++;
 
                     vals += m.getId();
                     fields += "mid";
+                    where_str += "mid=" +m.getId();
                 }
                 else if (!ret_type.contains(".hibernate.") && !ret_type.contains("java.util.Set") )
                 {
@@ -1051,7 +1071,20 @@ public class ServerTCPCall extends ServerCall
 
             int rows = executeUpdate(sta, ins_stmt);
 
-            return (rows == 1) ? true : false;
+            ret = (rows == 1) ? true : false;
+            if (ret)
+            {
+                // SET NEW ID BACK TO OBJECT
+                String sel_stmt = "select max(id) from " + rec_name + " where " + where_str;
+                
+                int new_id = GetFirstSqlFieldInt( sta.getConnnId() , sel_stmt, 0 );
+
+                if (new_id <= 0)
+                    throw new Exception("Cannot retrieve new index for table " + rec_name );
+
+                Method setId = o.getClass().getDeclaredMethod("setId");
+                setId.invoke(o, new Integer(new_id ));
+            }
 
             
         }

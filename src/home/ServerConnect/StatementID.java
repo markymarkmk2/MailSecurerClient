@@ -12,10 +12,14 @@ package dimm.home.ServerConnect;
 public class StatementID
 {
     String id;
-    StatementID( String s )
+    ConnectionID conn_id;
+    StatementID( ConnectionID cid, String s )
     {
+        conn_id = cid;
         id = s;
     }
     String getId()
     {return id;}
+    ConnectionID getConnnId()
+    {return conn_id;}
 }

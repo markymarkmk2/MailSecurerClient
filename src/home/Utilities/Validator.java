@@ -64,6 +64,24 @@ public class Validator
         return false;
     }
 
+    public static boolean is_valid_int( String text, int min, int max )
+    {
+        try
+        {
+            int p = Integer.parseInt(text);
+            if (min != max)
+            {
+                if (p < min || p > max)
+                    return false;
+            }
+            return true;
+        }
+        catch (Exception exception)
+        {
+        }
+        return false;
+    }
+
 
 
 }
