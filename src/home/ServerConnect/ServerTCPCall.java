@@ -952,6 +952,8 @@ public class ServerTCPCall extends ServerCall
                         throw new Exception( "Object " + rec_name + " has not value for method " + meth_name );
                     }
                     String val = method.invoke(o).toString();
+
+                    // HANDLE BACKSLASHES, AND QUOTES
                     val = SQLArrayResult.encode(val);
 
                     vals += "'" + val + "'";
@@ -974,12 +976,11 @@ public class ServerTCPCall extends ServerCall
                     {
                         throw new Exception( "Object " + rec_name + " has not value for method " + meth_name );
                     }
-                    String val = method.invoke(o).toString();
-                    val = SQLArrayResult.encode(val);
+                    String val = method.invoke(o).toString();                    
 
                     vals +=  val;
                     fields += field_name;
-                    where_str += field_name + "='" + val + "'";
+                    where_str += field_name + "=" + val;
                 }
                 else if (ret_type.compareTo("int") == 0)
                 {
@@ -1082,8 +1083,10 @@ public class ServerTCPCall extends ServerCall
                 if (new_id <= 0)
                     throw new Exception("Cannot retrieve new index for table " + rec_name );
 
-                Method setId = o.getClass().getDeclaredMethod("setId");
+                Method setId = o.getClass().getDeclaredMethod("setId", int.class);
                 setId.invoke(o, new Integer(new_id ));
+
+                return true;
             }
 
             
@@ -1300,6 +1303,7 @@ public class ServerTCPCall extends ServerCall
                 return ret.substring(idx + 2);
             }
             last_err_code = retcode;
+            last_err_txt = ret.substring(idx + 2);
         }
         catch (Exception ex)
         {

@@ -383,5 +383,9 @@ String  get_name_from_hibernate_class( String rec_name )
     {
         res = resarr;
     }
+    public int getFieldNumer( String fname )
+    {
+        return res.getField(fname);
+    }
     
 }

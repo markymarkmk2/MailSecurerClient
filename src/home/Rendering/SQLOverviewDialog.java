@@ -163,7 +163,16 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
 
     protected abstract GlossDialogPanel get_edit_panel( int row);
       
-    
+    void open_edit_dlg( int row )
+    {
+        GlossDialogPanel pnl = get_edit_panel( row );
+        GenericGlossyDlg dlg = new GenericGlossyDlg( null, true, pnl );
+
+        pnl.addPropertyChangeListener("REBUILD", this);
+
+        dlg.set_next_location(this);
+        dlg.setVisible(true );
+    }
 
     @Override
     public void mouseClicked(MouseEvent e)
@@ -172,37 +181,41 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
         int row = table.rowAtPoint(e.getPoint());
         int col = table.columnAtPoint(e.getPoint());
 
-        if (col == model.get_edit_column())
+        if (e.getClickCount() == 1)
         {
-            GlossDialogPanel pnl = get_edit_panel( row );
-            GenericGlossyDlg dlg = new GenericGlossyDlg( null, true, pnl );
-
-            pnl.addPropertyChangeListener("REBUILD", this);
-
-            dlg.set_next_location(this);
-            dlg.setVisible(true );
-        }
-
-        if (col == model.get_del_column())
-        {
-
-            String name = null;
-            if (name_field != null)
-                name = model.getSqlResult().getString( row, name_field) ;
-
-            String txt = UserMain.getString("Wollen_Sie_wirklich_diesen_Eintrag_loeschen");
-            if (name != null)
+            if (col == model.get_edit_column())
             {
-                txt += ": <" + name + ">";
+                open_edit_dlg( row );
             }
-            
-            if (UserMain.errm_ok_cancel( txt + "?" ))
-            {
-                boolean okay = del_object( row );
 
-                propertyChange( new PropertyChangeEvent(this, "REBUILD", null, null ) );
+            if (col == model.get_del_column())
+            {
+
+                String name = null;
+                if (name_field != null)
+                    name = model.getSqlResult().getString( row, name_field) ;
+
+                String txt = UserMain.getString("Wollen_Sie_wirklich_diesen_Eintrag_loeschen");
+                if (name != null)
+                {
+                    txt += ": <" + name + ">";
+                }
+
+                if (UserMain.errm_ok_cancel( txt + "?" ))
+                {
+                    boolean okay = del_object( row );
+
+                    propertyChange( new PropertyChangeEvent(this, "REBUILD", null, null ) );
+                }
             }
         }
+
+        // DBLCLICK OPENS EDIT TOO
+        if (e.getClickCount() == 2)
+        {           
+             open_edit_dlg( row );
+        }
+
         //System.out.println("Row " + row + "Col " + col);
     }
 
