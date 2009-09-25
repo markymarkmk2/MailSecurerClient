@@ -78,8 +78,7 @@ public class SQLResult<T> extends ArrayList<T>
             }
         }
     }
-
-    public T get_obj_by_id( int id)
+    public int get_row_by_id( int id)
     {
         for (int i = 0; i < size(); i++)
         {
@@ -90,7 +89,7 @@ public class SQLResult<T> extends ArrayList<T>
                 int m_id = ((Integer) m.invoke(o)).intValue();
                 if (id == m_id)
                 {
-                    return (T) o;
+                    return i;
                 }
             }
             catch (IllegalAccessException ex)
@@ -113,20 +112,18 @@ public class SQLResult<T> extends ArrayList<T>
                 Logger.getLogger(SQLResult.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return null;
-    }
-  /*  public SQLResult()
-    {
-        duration = 0;
+        return -1;
     }
 
-    
-    public SQLResult(SQLArrayResult _res)
+    public T get_obj_by_id( int id)
     {
-        duration = 0;
-        res = _res;
+        int row = get_row_by_id( id );
+        if (row == -1)
+            return null;
+
+        return get(row);
     }
-*/
+
     /**
      * @return the qry
      */
@@ -224,7 +221,7 @@ public class SQLResult<T> extends ArrayList<T>
     {
         this.errText = errText;
     }
-String  get_name_from_hibernate_class( String rec_name )
+    String  get_name_from_hibernate_class( String rec_name )
     {
 
         StringBuffer sb = new StringBuffer();

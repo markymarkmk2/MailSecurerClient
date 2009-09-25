@@ -1586,6 +1586,37 @@ public class ServerTCPCall extends ServerCall
         return -1;
     }
 
+    @Override
+    public boolean DeleteObject( Object o )
+    {
+        init_stat("");
+
+        try
+        {
+            XStream xs = new XStream();
+            String xml = xs.toXML(o);
+
+            String ret =  send_rmx( "DeleteObject " + xml, SHORT_CMD_TO);
+
+            calc_stat(ret);
+
+            int idx = ret.indexOf(':');
+            int retcode = Integer.parseInt(ret.substring(0, idx));
+
+            if (retcode == 0)
+            {
+                return true;
+            }
+
+            last_err_code = retcode;
+        }
+        catch (Exception exc)
+        {
+            last_ex = exc;
+        }
+        return false;
+    }
+
 
 
 

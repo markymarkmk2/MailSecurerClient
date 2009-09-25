@@ -129,6 +129,10 @@ public abstract class OverviewModel extends AbstractTableModel
         // THESE ARE THE CONDITIONS FOR THE DECISION "NEW RECORD"
         return (getSqlResult() == null || getSqlResult().getRows() <= row || row == -1);
     }
+    public int get_row_by_id( int id)
+    {
+        return sqlResult.get_row_by_id(id);
+    }
     
     // SETS THE WIDTH OF THE LAST TWO ICON-COLUMNS
     public void set_table_header( TableColumnModel cm )

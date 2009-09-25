@@ -342,7 +342,7 @@ public class DAOverview extends SQLOverviewDialog
         this.setVisible(false);
     }
 
-    boolean check_del_constaints(int row)
+    boolean check_del_constraints(int row)
     {
         ConnectionID cid = null;
         boolean ret = true;
@@ -404,7 +404,7 @@ public class DAOverview extends SQLOverviewDialog
     @Override
     protected boolean del_object( int row )
     {
-        if (!check_del_constaints(row))
+        if (!check_del_constraints(row))
             return false;
 
         boolean ok = super.del_object(row);

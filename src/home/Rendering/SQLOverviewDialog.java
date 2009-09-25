@@ -219,26 +219,38 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
         //System.out.println("Row " + row + "Col " + col);
     }
 
+
     protected boolean del_object( int row )
     {
-                Object object = model.getSqlResult().get(row);
+        Object object = model.getSqlResult().get(row);
 
-                ServerCall sql = UserMain.sqc().get_sqc();
-                ConnectionID cid = sql.open();
-                StatementID sta = sql.createStatement(cid);
+        ServerCall sql = UserMain.sqc().get_sqc();
+        boolean okay = sql.DeleteObject( object);
 
-                boolean okay = sql.Delete( sta, object );
+        return okay;
+    }
 
-                sql.close(sta);
-                sql.close(cid);
 
-                if (!okay)
-                {
-                    String object_name = object.getClass().getSimpleName();
-                    UserMain.errm_ok(this, UserMain.Txt("Cannot_delete") + " " + object_name + " " + sql.get_last_err());
-                }
+    protected boolean del_no_hibernate_object( int row )
+    {
+        Object object = model.getSqlResult().get(row);
 
-                return okay;
+        ServerCall sql = UserMain.sqc().get_sqc();
+        ConnectionID cid = sql.open();
+        StatementID sta = sql.createStatement(cid);
+
+        boolean okay = sql.Delete( sta, object );
+
+        sql.close(sta);
+        sql.close(cid);
+
+        if (!okay)
+        {
+            String object_name = object.getClass().getSimpleName();
+            UserMain.errm_ok(this, UserMain.Txt("Cannot_delete") + " " + object_name + " " + sql.get_last_err());
+        }
+
+        return okay;
     }
 
      public void new_edit_dlg()
@@ -259,18 +271,22 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
 
 
 
+    @Override
     public void mousePressed(MouseEvent e)
     {
     }
 
+    @Override
     public void mouseReleased(MouseEvent e)
     {
     }
 
+    @Override
     public void mouseEntered(MouseEvent e)
     {
     }
 
+    @Override
     public void mouseExited(MouseEvent e)
     {
     }

@@ -226,8 +226,22 @@ public class MandantOverview extends SQLOverviewDialog implements PropertyChange
 
     }
 
+    @Override
+    protected boolean del_object( int row )
+    {
+        Mandant m = get_object_model().get_object( row );
+
+        ServerCall sql = UserMain.sqc().get_sqc();
+        boolean okay = sql.DeleteObject( m);
+
+        return okay;
+
+    }
 
 
+
+
+    @Override
     protected GlossDialogPanel get_edit_panel( int row )
     {
         return new EditMandant( row, this );

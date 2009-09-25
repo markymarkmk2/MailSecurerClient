@@ -525,7 +525,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
     private void BT_ADD_HEADERActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_ADD_HEADERActionPerformed
     {//GEN-HEADEREND:event_BT_ADD_HEADERActionPerformed
         // TODO add your handling code here:
-        new_object();
+        new_hmv_object();
     }//GEN-LAST:event_BT_ADD_HEADERActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
@@ -813,7 +813,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         }
     }
 
-    protected boolean del_object( int row )
+    protected boolean del_hmv_object( int row )
     {
         Object hmv = hmodel.getSqlResult().get(row);
 
@@ -831,12 +831,13 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             String object_name = hmv.getClass().getSimpleName();
             UserMain.errm_ok(my_dlg, UserMain.Txt("Cannot_delete") + " " + object_name + " " + sql.get_last_err());
         }
+
         propertyChange(new PropertyChangeEvent(this, "REBUILD", null, null));
 
         return okay;
     }
 
-    public void new_object()
+    public void new_hmv_object()
     {
         boolean was_new = model.is_new(row);
 
@@ -847,6 +848,10 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             {
                 return;
             }
+            // REBUILD MODEL AND SET VARS
+            object_overview.gather_sql_result();
+            model = object_overview.get_object_model();
+            row = model.get_row_by_id( object.getId() );
         }
         int id = object.getId();
 
@@ -903,7 +908,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
 
                     if (UserMain.errm_ok_cancel(txt + "?"))
                     {
-                        boolean okay = del_object(hrow);
+                        boolean okay = del_hmv_object(hrow);
 
                         propertyChange(new PropertyChangeEvent(this, "REBUILD", null, null));
                     }

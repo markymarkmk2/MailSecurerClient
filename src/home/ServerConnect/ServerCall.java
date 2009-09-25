@@ -6,6 +6,7 @@
 package dimm.home.ServerConnect;
 
 import home.shared.SQL.SQLArrayResult;
+import home.shared.hibernate.Mandant;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -228,5 +229,7 @@ public abstract class ServerCall {
     }
 
     public abstract boolean init();
+
+    public abstract boolean DeleteObject( Object o );
 
 }
