@@ -5,6 +5,7 @@
 
 package dimm.general.SQL;
 
+import dimm.home.UserMain;
 import home.shared.SQL.SQLArrayResult;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -274,7 +275,7 @@ public class SQLResult<T> extends ArrayList<T>
                     String val = res.getString(row, field_name);
                     method.invoke(o, val);
                 }
-                if (type.compareTo("java.lang.Integer") == 0)
+                else if (type.compareTo("java.lang.Integer") == 0)
                 {
                     Integer val = new Integer( res.getInt(row, field_name) );
                     method.invoke(o, val);
@@ -288,6 +289,25 @@ public class SQLResult<T> extends ArrayList<T>
                 {
                     long val = res.getLong(row, field_name);
                     method.invoke(o, val);
+                }
+                else if (type.compareTo("home.shared.hibernate.Mandant") == 0)
+                {
+                    int id = res.getInt(row, "mid");
+                    method.invoke(o, UserMain.sqc().get_mandant( id ));
+                }
+                else if (type.compareTo("home.shared.hibernate.DiskArchive") == 0)
+                {
+                    int id = res.getInt(row, "da_id");
+                    method.invoke(o, UserMain.sqc().get_disk_archive( id ));
+                }
+                else if (type.compareTo("home.shared.hibernate.AccountConnector") == 0)
+                {
+                    int id = res.getInt(row, "ac_id");
+                    method.invoke(o, UserMain.sqc().get_account_connector( id ));
+                }
+                else if (!type.contains("java.util.Set"))
+                {
+                    Logger.getLogger(SQLResult.class.getName()).log(Level.SEVERE, "unresolved Object type " + type + " in SQLResult.get_object()");
                 }
             }
         }

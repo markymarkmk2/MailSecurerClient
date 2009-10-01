@@ -6,15 +6,25 @@
 
 package dimm.home.Panels;
 
+import dimm.general.SQL.SQLResult;
+import dimm.home.Models.AccountConnectorComboModel;
 import dimm.home.Rendering.GlossButton;
+import dimm.home.ServerConnect.ConnectionID;
+import dimm.home.ServerConnect.ResultSetID;
+import dimm.home.ServerConnect.ServerCall;
+import dimm.home.ServerConnect.StatementID;
 import dimm.home.UserMain;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.JButton;
 import home.shared.hibernate.Role;
 import dimm.home.Utilities.Validator;
 import home.shared.SQL.OptCBEntry;
-import java.awt.Component;
+import home.shared.SQL.SQLArrayResult;
+import home.shared.hibernate.AccountConnector;
+import home.shared.hibernate.RoleOption;
+import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JCheckBox;
 
 
@@ -31,6 +41,9 @@ public class EditRole extends GenericEditPanel
     
     String object_name;
 
+    AccountConnectorComboModel accm;
+    
+    SQLResult<RoleOption>  option_res;
 
     
     /** Creates new form EditChannelPanel */
@@ -41,30 +54,12 @@ public class EditRole extends GenericEditPanel
         vbox_overview = _overview;
         model = vbox_overview.get_object_model();
 
-        int cb_field_idx = 0;
-        for (int i = 0; i < PN_OPTS.getComponentCount(); i++)
-        {
-            Component c = PN_OPTS.getComponent(i);
-            if (!(c instanceof JCheckBox))
-                    continue;
+        create_option_buttons();
 
-            if (i >= OptCBEntry.opt_list.length)
-                break;
+        SQLResult<AccountConnector> da_res = UserMain.sqc().get_account_result();
 
-            // PUBLISH CB TO STRUCT AND GET TEXT
-            JCheckBox cb = (JCheckBox)c;
-
-            OptCBEntry optCBEntry = OptCBEntry.opt_list[cb_field_idx];
-
-            optCBEntry.setTxt(UserMain.Txt(optCBEntry.getToken()));
-
-            cb.setText(optCBEntry.getTxt());
-            optCBEntry.setCb(cb);
-
-            cb_field_idx++;
-        }
-
-
+        // COMBO-MODEL DISK ARCHIVE
+        accm = new AccountConnectorComboModel(da_res );
                                 
         row = _row;
         
@@ -76,9 +71,10 @@ public class EditRole extends GenericEditPanel
             TXT_NAME.setText(object.getName());
             TXT_ACCOUNTMATCH.setText( vbox_overview.get_account_match_descr(object.getAccountmatch()));
             String opts = object.getOpts();
-            set_opts_buttons( opts );
+            read_opts_buttons( object.getId() );
             BT_DISABLED.setSelected( object_is_disabled() );
-
+            int ac_id = model.getSqlResult().getInt( row, "ac_id");
+            accm.set_act_id(ac_id);
             
         }
         else
@@ -87,7 +83,49 @@ public class EditRole extends GenericEditPanel
             object.setMandant(UserMain.sqc().get_act_mandant());
         }
 
+        CB_ACCOUNT.setModel(accm);
         object_name = object.getClass().getSimpleName();
+
+    }
+
+    void create_option_buttons()
+    {
+        javax.swing.GroupLayout PN_OPTSLayout = new javax.swing.GroupLayout(PN_OPTS);
+        PN_OPTS.setLayout(PN_OPTSLayout);
+
+        ParallelGroup parallel_group = PN_OPTSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING);
+        SequentialGroup seq_group = PN_OPTSLayout.createSequentialGroup();
+
+        for (int i = 0; i < OptCBEntry.opt_list.length; i++)
+        {
+            OptCBEntry optCBEntry = OptCBEntry.opt_list[i];
+            JCheckBox cb = new javax.swing.JCheckBox();
+
+            optCBEntry.setTxt(UserMain.Txt(optCBEntry.getToken()));
+
+            cb.setText(optCBEntry.getTxt());
+            optCBEntry.setCb(cb);
+
+            parallel_group.addComponent(cb);
+            seq_group.addComponent(cb);
+            if (i +1 == OptCBEntry.opt_list.length)
+                seq_group.addContainerGap(26, Short.MAX_VALUE);
+            else
+                seq_group.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED);
+
+        }
+
+        PN_OPTSLayout.setHorizontalGroup(
+            PN_OPTSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PN_OPTSLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup( parallel_group )
+                .addContainerGap(380, Short.MAX_VALUE))
+        );
+        PN_OPTSLayout.setVerticalGroup(
+            PN_OPTSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup( seq_group )
+        );
 
     }
     
@@ -116,6 +154,8 @@ public class EditRole extends GenericEditPanel
         CP_OPT5 = new javax.swing.JCheckBox();
         CP_OPT6 = new javax.swing.JCheckBox();
         BT_EDIT_MATCH = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        CB_ACCOUNT = new javax.swing.JComboBox();
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
@@ -175,7 +215,7 @@ public class EditRole extends GenericEditPanel
                     .addComponent(CP_OPT4)
                     .addComponent(CP_OPT5)
                     .addComponent(CP_OPT6))
-                .addContainerGap(374, Short.MAX_VALUE))
+                .addContainerGap(380, Short.MAX_VALUE))
         );
         PN_OPTSLayout.setVerticalGroup(
             PN_OPTSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -197,6 +237,11 @@ public class EditRole extends GenericEditPanel
         BT_EDIT_MATCH.setText("...");
         BT_EDIT_MATCH.setMargin(new java.awt.Insets(2, 5, 2, 5));
 
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/MA_Properties"); // NOI18N
+        jLabel3.setText(bundle.getString("Realm")); // NOI18N
+
+        CB_ACCOUNT.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout PN_ACTIONLayout = new javax.swing.GroupLayout(PN_ACTION);
         PN_ACTION.setLayout(PN_ACTIONLayout);
         PN_ACTIONLayout.setHorizontalGroup(
@@ -204,20 +249,25 @@ public class EditRole extends GenericEditPanel
             .addGroup(PN_ACTIONLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(PN_OPTS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(BT_DISABLED, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
-                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addGap(15, 15, 15)
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(TXT_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_ACTIONLayout.createSequentialGroup()
-                                .addComponent(TXT_ACCOUNTMATCH, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
-                                .addGap(18, 18, 18)
-                                .addComponent(BT_EDIT_MATCH)))))
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(TXT_ACCOUNTMATCH, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+                    .addComponent(CB_ACCOUNT, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TXT_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BT_EDIT_MATCH)
                 .addContainerGap())
+            .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(PN_OPTS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(11, Short.MAX_VALUE))
+            .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(BT_DISABLED, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
+                .addContainerGap(11, Short.MAX_VALUE))
         );
         PN_ACTIONLayout.setVerticalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -226,14 +276,18 @@ public class EditRole extends GenericEditPanel
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(TXT_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(CB_ACCOUNT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(TXT_ACCOUNTMATCH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(BT_EDIT_MATCH))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(PN_OPTS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
                 .addComponent(BT_DISABLED)
                 .addContainerGap())
         );
@@ -266,7 +320,7 @@ public class EditRole extends GenericEditPanel
         PN_BUTTONSLayout.setHorizontalGroup(
             PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
-                .addContainerGap(305, Short.MAX_VALUE)
+                .addContainerGap(312, Short.MAX_VALUE)
                 .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -321,6 +375,7 @@ public class EditRole extends GenericEditPanel
     private javax.swing.JCheckBox BT_DISABLED;
     private javax.swing.JButton BT_EDIT_MATCH;
     private javax.swing.JButton BT_OK;
+    private javax.swing.JComboBox CB_ACCOUNT;
     private javax.swing.JCheckBox CP_OPT1;
     private javax.swing.JCheckBox CP_OPT2;
     private javax.swing.JCheckBox CP_OPT3;
@@ -334,6 +389,7 @@ public class EditRole extends GenericEditPanel
     private javax.swing.JTextField TXT_NAME;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     // End of variables declaration//GEN-END:variables
 
     int get_object_flags()
@@ -398,17 +454,24 @@ public class EditRole extends GenericEditPanel
         if (BT_DISABLED.isSelected() != object_is_disabled())
             return true;
 
-        String opts = object.getOpts();
-        if (opts == null || get_opts_buttons().compareTo(opts) != 0)
-            return true;
-
+      
         String ac = object.getAccountmatch();
-
 
         if (ac == null || TXT_ACCOUNTMATCH.getText().compareTo(ac) != 0)
             return true;
 
-        
+        long ac_id = model.getSqlResult().getLong( row, "ac_id");
+
+        if ( CB_ACCOUNT.getSelectedItem() != null)
+        {
+            if (accm.get_act_id() != ac_id)
+                return true;
+        }
+
+        if (check_opts_buttons_changed())
+            return true;
+
+
         return false;
     }
                         
@@ -418,6 +481,16 @@ public class EditRole extends GenericEditPanel
         if (!Validator.is_valid_path( TXT_NAME.getText(), 255))
         {
             UserMain.errm_ok(UserMain.getString("Der_Pfad_ist_nicht_okay"));
+            return false;
+        }
+        try
+        {
+            AccountConnector da = accm.get_selected_ac();
+            String n = accm.getName(da);
+        }
+        catch (Exception e)
+        {
+            UserMain.errm_ok(UserMain.getString("Realm_ist_nicht_okay"));
             return false;
         }
 
@@ -430,21 +503,26 @@ public class EditRole extends GenericEditPanel
     @Override
     protected void set_object_props()
     {
-        String name = TXT_NAME.getText();
-        String opts = get_opts_buttons();
+        String opts = "";
+        String name = TXT_NAME.getText();        
         boolean de = BT_DISABLED.isSelected();
 
 
         String ac = TXT_ACCOUNTMATCH.getText();
 
-
         object.setName(name);
         object.setOpts(opts);
         object.setAccountmatch(ac);
         object.setLicense( new Integer(0));
-
+        object.setAccountConnector( accm.get_selected_ac());
         set_object_disabled( de );
     }
+    public String get_option_qry(long role_id)
+    {
+        String qry = "select * from role_option where ro_id=" + role_id + " order by id";
+        return qry;
+    }
+
     
     
         
@@ -461,46 +539,141 @@ public class EditRole extends GenericEditPanel
         return BT_OK;
     }
 
-    private void set_opts_buttons( String opts )
+    private void read_opts_buttons( int id)
     {
+        ServerCall sql = UserMain.sqc().get_sqc();
+        ConnectionID cid = sql.open();
+        StatementID sid = sql.createStatement(cid);
+
+
+        String qry = get_option_qry( id );
+        ResultSetID rid = sql.executeQuery(sid, qry);
+
+        SQLArrayResult resa = sql.get_sql_array_result(rid);
+
+        option_res = new SQLResult<RoleOption>(resa, new RoleOption().getClass());
+
         for (int i = 0; i < OptCBEntry.opt_list.length; i++)
         {
             OptCBEntry optCBEntry = OptCBEntry.opt_list[i];
-            if (optCBEntry.getCb() != null)
+
+            RoleOption  ro = get_option_for_token( optCBEntry.getToken() );
+
+            if (ro != null)
+            {
+                optCBEntry.getCb().setSelected(true);
+            }
+            else
             {
                 optCBEntry.getCb().setSelected(false);
             }
         }
 
-        for (int i = 0; i < OptCBEntry.opt_list.length; i++)
-        {
-            OptCBEntry optCBEntry = OptCBEntry.opt_list[i];
-            if (opts.length() <= i)
-                break;
+        sql.close(cid);
 
-            char ch = opts.charAt(i);
-            if (ch == '1')
-            {
-                optCBEntry.getCb().setSelected(true);
-            }
-        }
     }
-    private String get_opts_buttons(  )
+    private boolean  write_opts_buttons( int id)
     {
-        StringBuffer sb = new StringBuffer();
+        ServerCall sql = UserMain.sqc().get_sqc();
+        ConnectionID cid = sql.open();
+        StatementID sid = sql.createStatement(cid);
+
+        boolean ret = true;
+
+
         for (int i = 0; i < OptCBEntry.opt_list.length; i++)
         {
-            sb.append('0');
-
             OptCBEntry optCBEntry = OptCBEntry.opt_list[i];
-            if (optCBEntry.getCb() != null)
+
+            RoleOption  ro = get_option_for_token( optCBEntry.getToken() );
+
+            if (ro != null && !optCBEntry.getCb().isSelected())
             {
-                if (optCBEntry.getCb().isSelected())
-                    sb.setCharAt(i, '1');
+                sql.Delete(sid, ro);
+            }
+            if (ro == null && optCBEntry.getCb().isSelected())
+            {
+                ro = new RoleOption( 0, object, optCBEntry.getToken(), 0);
+                if (!sql.Insert(sid, ro))
+                    ret = false;
             }
         }
 
-        return sb.toString();
+        sql.close(cid);
+
+        return ret;
+
+    }
+
+    private RoleOption get_option_for_token(String token)
+    {
+        // NEW ?
+        if (option_res == null)
+            return null;
+
+        for (int j = 0; j < option_res.size(); j++)
+        {
+            try
+            {
+                RoleOption roleOption = option_res.get(j);
+                if (roleOption.getToken().compareTo(token) == 0)
+                {
+                    return roleOption;
+                }
+            }
+            catch (Exception e)
+            {
+                System.out.println("Exception in get_option_for_token(): " + e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    private boolean check_opts_buttons_changed()
+    {
+        boolean changed = false;
+
+        for (int i = 0; i < OptCBEntry.opt_list.length; i++)
+        {
+            OptCBEntry optCBEntry = OptCBEntry.opt_list[i];
+
+            RoleOption  ro = get_option_for_token( optCBEntry.getToken() );
+            if (ro != null && !optCBEntry.getCb().isSelected())
+            {
+                changed = true;
+                break;
+            }
+            if (ro == null && optCBEntry.getCb().isSelected())
+            {
+                changed = true;
+                break;
+            }
+        }
+        return changed;
+    }
+
+    @Override
+    protected boolean update_db(Object object)
+    {
+        boolean ret = super.update_db(object);
+        if (ret)
+        {
+            ret = write_opts_buttons( this.object.getId() );
+        }
+        return ret;
+
+    }
+    @Override
+    protected boolean insert_db(Object object)
+    {
+        boolean ret = super.insert_db(object);
+        if (ret)
+        {
+            ret = write_opts_buttons( this.object.getId() );
+        }
+        return ret;
+
     }
     
+   
 }

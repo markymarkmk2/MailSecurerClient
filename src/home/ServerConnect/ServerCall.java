@@ -26,6 +26,7 @@ public abstract class ServerCall {
     String last_return;
     long last_start;
 
+    public static final int SHORT_CMD_TO = 60;
 
     public ServerCall()
     {

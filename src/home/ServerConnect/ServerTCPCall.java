@@ -12,6 +12,8 @@ import com.thoughtworks.xstream.XStream;
 
 import home.shared.CS_Constants;
 import home.shared.SQL.SQLArrayResult;
+import home.shared.hibernate.AccountConnector;
+import home.shared.hibernate.Role;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -46,7 +48,7 @@ public class ServerTCPCall extends ServerCall
 
     private static final int TCP_LEN = 64;
     
-    public static final int SHORT_CMD_TO = 60;
+    
 
     Socket keep_s;
     boolean keep_tcp_open;
@@ -1061,6 +1063,38 @@ public class ServerTCPCall extends ServerCall
                     fields += "mid";
                     where_str += "mid=" +m.getId();
                 }
+                else if (ret_type.contains(".Role"))
+                {
+                    Role role = (Role) method.invoke(o);
+
+                    if (field_idx > 0)
+                    {
+                        vals += ",";
+                        fields += ",";
+                        where_str += " and ";
+                    }
+                    field_idx++;
+
+                    vals += role.getId();
+                    fields += "ro_id";
+                    where_str += "ro_id=" +role.getId();
+                }
+                else if (ret_type.contains(".AccountConnector"))
+                {
+                    AccountConnector ac = (AccountConnector) method.invoke(o);
+
+                    if (field_idx > 0)
+                    {
+                        vals += ",";
+                        fields += ",";
+                        where_str += " and ";
+                    }
+                    field_idx++;
+
+                    vals += ac.getId();
+                    fields += "ac_id";
+                    where_str += "ac_id=" +ac.getId();
+                }
                 else if (!ret_type.contains(".hibernate.") && !ret_type.contains("java.util.Set") )
                 {
                     Object unknown = method.invoke(o);
@@ -1225,7 +1259,35 @@ public class ServerTCPCall extends ServerCall
                         upd_cmd += "mid=" + m.getId();
                     }
                 }
-                else if (!ret_type.contains(".hibernate.") && !ret_type.contains("java.util.Set") )
+                else if (ret_type.contains(".Role"))
+                {
+                    Role ro = (Role) method.invoke(o);
+                    if (ro != null)
+                    {
+                        if (field_idx > 0)
+                        {
+                            upd_cmd += ",";
+                        }
+                        field_idx++;
+
+                        upd_cmd += "ro_id=" + ro.getId();
+                    }
+                }
+                else if (ret_type.contains(".AccountConnector"))
+                {
+                    AccountConnector ac = (AccountConnector) method.invoke(o);
+                    if (ac != null)
+                    {
+                        if (field_idx > 0)
+                        {
+                            upd_cmd += ",";
+                        }
+                        field_idx++;
+
+                        upd_cmd += "ac_id=" + ac.getId();
+                    }
+                }
+                else if (!ret_type.contains("java.util.Set") )
                 {
                     Object unknown = method.invoke(o);
                     if (unknown != null)

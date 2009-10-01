@@ -5,6 +5,7 @@
  */
 package dimm.home.SwitchPanels;
 
+import dimm.general.SQL.SQLResult;
 import dimm.home.*;
 import dimm.home.Panels.AccountConnectorOverview;
 import dimm.home.Panels.DAOverview;
@@ -17,6 +18,7 @@ import dimm.home.Rendering.BackgroundTitle;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
 import dimm.home.Rendering.TimingTargetAdapter;
+import home.shared.hibernate.AccountConnector;
 import java.awt.Dimension;
 import java.awt.Point;
 import org.jdesktop.fuse.ResourceInjector;
@@ -71,7 +73,6 @@ public class PanelVerwaltung extends SwitchSpringPanel
     {
          
     }
-
 
     
             
@@ -131,7 +132,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         BT_ROLE.setForeground(new java.awt.Color(201, 201, 201));
         BT_ROLE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
         BT_ROLE.setText(UserMain.Txt("Roles")); // NOI18N
-        BT_ROLE.setToolTipText(UserMain.Txt("File_to_Mail_Archive")); // NOI18N
+        BT_ROLE.setToolTipText(UserMain.Txt("Roles_help")); // NOI18N
         BT_ROLE.setBorderPainted(false);
         BT_ROLE.setContentAreaFilled(false);
         BT_ROLE.setFocusPainted(false);
@@ -143,7 +144,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_ROLE, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 130, 190, 50));
 
-        BT_MILTER.setFont(new java.awt.Font("Arial", 0, 14));
+        BT_MILTER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_MILTER.setForeground(new java.awt.Color(201, 201, 201));
         BT_MILTER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_schedule.png"))); // NOI18N
         BT_MILTER.setText(UserMain.Txt("Milter")); // NOI18N
@@ -163,7 +164,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         BT_PROXY.setForeground(new java.awt.Color(201, 201, 201));
         BT_PROXY.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
         BT_PROXY.setText(UserMain.Txt("Mail_Proxy")); // NOI18N
-        BT_PROXY.setToolTipText(UserMain.Txt("Proxy_für_ SMTP_/_POP3")); // NOI18N
+        BT_PROXY.setToolTipText(UserMain.Txt("Proxy_for_ SMTP_/_POP3")); // NOI18N
         BT_PROXY.setBorderPainted(false);
         BT_PROXY.setContentAreaFilled(false);
         BT_PROXY.setFocusPainted(false);
@@ -213,7 +214,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         BT_ACCOUNTCONN.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_ACCOUNTCONN.setForeground(new java.awt.Color(201, 201, 201));
         BT_ACCOUNTCONN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/login-register.png"))); // NOI18N
-        BT_ACCOUNTCONN.setText(UserMain.Txt("Roles")); // NOI18N
+        BT_ACCOUNTCONN.setText(UserMain.Txt("Realms")); // NOI18N
         BT_ACCOUNTCONN.setToolTipText(UserMain.Txt("File_to_Mail_Archive")); // NOI18N
         BT_ACCOUNTCONN.setBorderPainted(false);
         BT_ACCOUNTCONN.setContentAreaFilled(false);
@@ -265,56 +266,16 @@ public class PanelVerwaltung extends SwitchSpringPanel
         // TODO add your handling code here:
         if (check_selected())
         {
+            SQLResult<AccountConnector> da_res = UserMain.sqc().get_account_result();
+            if (da_res.getRows() == 0)
+            {
+                UserMain.errm_ok(null, UserMain.Txt("Please_create_a_realm_first"));
+                return;
+            }
+
             TimingTargetAdapter tt = make_spring_button_dlg( new RoleOverview(main, true),  get_dlg_pos(),  UserMain.getString("Roles") );
             spring_button_action(evt.getSource(), tt);
-            /*
-            UserMain.self.show_busy("Kuckst Du hier, machst Du stop wenn Du willst", true);
-
-            SwingWorker sw = new SwingWorker()
-            {
-
-                @Override
-                public Object construct()
-                {
-                    boolean aborted = false;
-                   try
-                    {
-                       int i = 50;
-                       while (i-- > 0)
-                       {
-                            Thread.sleep(100);
-                            if (UserMain.self.is_busy_aborted())
-                            {
-                                aborted = true;
-                                UserMain.self.show_busy("Wiedergesehen...");
-                                break;
-                            }
-                       }
-                    }
-                    catch (InterruptedException interruptedException)
-                    {
-                    }
-                   if (aborted)
-                   {
-                       try
-                       {
-                           Thread.sleep(1000);
-                       }
-                       catch (InterruptedException interruptedException)
-                       {
-                       }
-                   }
-
-
-                    UserMain.self.hide_busy();
-                    return null;
-
-                }
-            };
-
-            sw.start();
-         }
-             * */
+            
         }
 
 }//GEN-LAST:event_BT_ROLEActionPerformed

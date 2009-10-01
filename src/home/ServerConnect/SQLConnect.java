@@ -161,14 +161,6 @@ public class SQLConnect extends Connect
             m_id = m.getId();
 
 
-        // HOTFOLDERS
-        rs = sqc.executeQuery(sta, "select * from hotfolder where mid=" + m_id);
-
-        resarr = sqc.get_sql_array_result(rs);
-        sqc.close(rs);
-
-        hf_res = new SQLResult<Hotfolder>(resarr, new Hotfolder().getClass());
-
         // DISKARCHIVE
         rs = sqc.executeQuery(sta, "select * from disk_archive where mid=" + m_id);
 
@@ -176,6 +168,14 @@ public class SQLConnect extends Connect
         sqc.close(rs);
 
         da_res = new SQLResult<DiskArchive>(resarr, new DiskArchive().getClass());
+
+        // HOTFOLDERS
+        rs = sqc.executeQuery(sta, "select * from hotfolder where mid=" + m_id);
+
+        resarr = sqc.get_sql_array_result(rs);
+        sqc.close(rs);
+
+        hf_res = new SQLResult<Hotfolder>(resarr, new Hotfolder().getClass());
 
         // IMAPFETCHER
         rs = sqc.executeQuery(sta, "select * from imap_fetcher where mid=" + m_id);
@@ -250,6 +250,38 @@ public class SQLConnect extends Connect
 
     }
 */
+    public Mandant get_mandant( int id )
+    {
+        for (int i = 0; i < mandant_res.size(); i++)
+        {
+            Mandant mandant = mandant_res.get(i);
+            if (mandant.getId() == id)
+                return mandant;
+        }
+        return null;
+    }
+    public DiskArchive get_disk_archive( int id )
+    {
+        for (int i = 0; i < da_res.size(); i++)
+        {
+            DiskArchive da = da_res.get(i);
+            if (da.getId() == id)
+                return da;
+        }
+        return null;
+    }
+
+    public AccountConnector get_account_connector( int id )
+    {
+        for (int i = 0; i < account_res.size(); i++)
+        {
+            AccountConnector ac = account_res.get(i);
+            if (ac.getId() == id)
+                return ac;
+        }
+        return null;
+    }
+
     public Mandant get_act_mandant()
     {
         for (int i = 0; i < mandant_res.size(); i++)

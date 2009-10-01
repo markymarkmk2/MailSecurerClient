@@ -21,6 +21,7 @@ import dimm.home.ServerConnect.ServerInputStream;
 import dimm.home.UserMain;
 import dimm.home.Utilities.ParseToken;
 import dimm.home.Utilities.SizeStr;
+import dimm.home.Utilities.SwingWorker;
 import home.shared.CS_Constants;
 import home.shared.mail.RFCMimeMail;
 import java.awt.Insets;
@@ -333,7 +334,29 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
 
     }
 
-    void open_mail( int row )
+    SwingWorker sw;
+    void open_mail( final int row )
+    {
+        if (sw != null)
+            return;
+
+        sw = new SwingWorker() {
+
+            @Override
+            public Object construct()
+            {
+                run_open_mail(row);
+                sw = null;
+                return null;
+            }
+        };
+
+        sw.start();
+
+
+    }
+
+    void run_open_mail( int row )
     {
         String subject = table.getModel().getValueAt(row, MailTableModel.SUBJECT_COL).toString();
         ServerInputStream sis = null;
@@ -341,6 +364,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         BufferedInputStream bais = null;
         File tmp_file = null;
 
+        UserMain.self.show_busy(my_dlg, UserMain.Txt("Loading_mail") + "...");
         try
         {
             tmp_file = File.createTempFile("dlml", ".tmp", new File("."));
@@ -380,11 +404,14 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
 
             MailPreviewDlg dlg = new MailPreviewDlg(UserMain.self, mmsg);
             bais.close();
-            
+
+            UserMain.self.hide_busy();
+
             dlg.setModal(false);
             dlg.setTitle(subject);
             dlg.setLocation( my_dlg.getLocation().x + 20,my_dlg.getLocation().y + 20);
             dlg.setVisible(true);
+
         }
         catch (Exception iOException)
         {
@@ -413,6 +440,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             catch (IOException iOException)
             {
             }
+            UserMain.self.hide_busy();
         }
 
     }

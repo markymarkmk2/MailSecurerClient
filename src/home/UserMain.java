@@ -34,6 +34,9 @@ import  sun.audio.*;    //import the sun.audio package
 
 import dimm.home.ServerConnect.SQLConnect;
 import dimm.home.SwitchPanels.PanelTools;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 
@@ -195,6 +198,8 @@ public class UserMain extends javax.swing.JFrame
 
 
    // static boolean translation_warned = false;
+    static ArrayList<String> missing_transl_tokens = new ArrayList<String>();
+
     static public String getString(String string)
     {
         try
@@ -208,6 +213,20 @@ public class UserMain extends javax.swing.JFrame
 
         System.err.println("Missing translation resource: " + string);
 
+        if (!missing_transl_tokens.contains(string))
+        {
+            missing_transl_tokens.add(string);
+            try
+            {
+                FileWriter fw = new FileWriter("MissingTransl.txt", true);
+                fw.append(string + "\n");
+                fw.close();
+            }
+            catch (IOException iOException)
+            {
+            }
+        }
+        
         // REMOVE UNDERSCORES FROM KEY
         string = string.replace('_', ' ');
         return string;
@@ -536,6 +555,7 @@ public class UserMain extends javax.swing.JFrame
     {
         userLevel = UL_DUMMY;
         restart_gui();
+
     }        
 
 
@@ -799,8 +819,10 @@ public class UserMain extends javax.swing.JFrame
             if (busy_dlg.isVisible())
             {
                 busy_dlg.setVisible(false);
-                busy_dlg = null;
+                
             }
+            busy_dlg.dispose();
+            busy_dlg = null;
         }
     }    
     public void show_busy_val( double percent )

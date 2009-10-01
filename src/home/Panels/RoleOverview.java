@@ -50,6 +50,7 @@ class RoleTableModel extends OverviewModel
 
 
 
+
     @Override
     public Object getValueAt(int rowIndex, int columnIndex)
     {
@@ -82,7 +83,6 @@ class RoleTableModel extends OverviewModel
         return (Role) sqlResult.get(index);
     }
 
-
 }
 /**
  *
@@ -99,7 +99,7 @@ public class RoleOverview extends SQLOverviewDialog implements PropertyChangeLis
     /** Creates new form NewJDialog */
     public RoleOverview(UserMain parent, boolean modal)
     {
-        super(parent, "path", modal);
+        super(parent, "name", modal);
         initComponents();
 
         main = parent;
@@ -170,6 +170,9 @@ public class RoleOverview extends SQLOverviewDialog implements PropertyChangeLis
         SQLResult<Role>  res = new SQLResult<Role>(resa, new Role().getClass());
 
         model.setSqlResult(res);
+
+
+
         table.tableChanged(new TableModelEvent(table.getModel()) );
         set_tabel_row_height();
 

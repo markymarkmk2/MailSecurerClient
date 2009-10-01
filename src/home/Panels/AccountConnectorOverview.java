@@ -124,6 +124,9 @@ public class AccountConnectorOverview extends SQLOverviewDialog implements Prope
     AccountConnectorTypeEntry[] mt_entry_list =
     {
         new AccountConnectorTypeEntry("ldap","LDAP"),
+        new AccountConnectorTypeEntry("smtp","SMTP"),
+        new AccountConnectorTypeEntry("pop","POP3"),
+        new AccountConnectorTypeEntry("imap","IMAP"),
     };
     public AccountConnectorTypeEntry[] get_ac_entry_list()
     {
