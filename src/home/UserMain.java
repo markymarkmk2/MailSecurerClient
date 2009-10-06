@@ -53,6 +53,7 @@ public class UserMain extends javax.swing.JFrame
     {
         return "DE";
     }
+
     // PANELS
     NavigationHeader navPanel ;
     PanelVerwaltung pn_verwaltung;
@@ -139,7 +140,7 @@ public class UserMain extends javax.swing.JFrame
         return Main.version_str;
     }
     private String l_code = "DE";
-    private long firmen_id = 1;
+    //private long firmen_id = 1;
 
     public void call_navigation_click()
     {
@@ -155,7 +156,7 @@ public class UserMain extends javax.swing.JFrame
     public long get_firmen_id()
     {
         // ACTIVE MANDANT
-        return firmen_id;
+        return sqc.get_act_mandant_id();
     }
 
     public void restart_gui()
@@ -338,7 +339,7 @@ public class UserMain extends javax.swing.JFrame
 
 
         
-        userLevel = (int)Main.get_long_prop( Preferences.DEFAULT_USER, (long)UL_SYSADMIN );
+        userLevel = (int)Main.get_long_prop( Preferences.DEFAULT_USER, (long)UL_DUMMY );
         
         restart_gui();      
         
@@ -460,14 +461,22 @@ public class UserMain extends javax.swing.JFrame
 
         switch_to_panel(PBC_SEARCH);
 
-        sqc = new SQLConnect();
-        sqc.init_structs();
-
-        fcc = new FunctionCallConnect();
+       
 
         this.repaint();
         
     }
+    public static void set_comm_params( String ip, int port )
+    {
+        if (sqc != null)
+            sqc.close();
+
+        sqc = new SQLConnect( ip, port);
+        sqc.init_structs();
+
+        fcc = new FunctionCallConnect(ip, port);
+    }
+
 
 
     public boolean is_touchscreen()
@@ -497,9 +506,9 @@ public class UserMain extends javax.swing.JFrame
             if (this.getUserLevel() == UL_SYSADMIN)
             {
                 navPanel.enable_button(PBC_ADMIN, false);
-                navPanel.enable_button(PBC_TOOLS, true);
+                navPanel.enable_button(PBC_TOOLS, false);
                 navPanel.enable_button(PBC_SYSTEM, true);
-                navPanel.enable_button(PBC_SEARCH, false );
+                navPanel.enable_button(PBC_SEARCH, true );
             }
             else
             {
@@ -508,13 +517,19 @@ public class UserMain extends javax.swing.JFrame
                 navPanel.enable_button(PBC_SYSTEM, false);
                 navPanel.enable_button(PBC_SEARCH, true );
             }
+
             navPanel.remove_button(PBC_LOGIN);
 
             navPanel.add_trail_button(getString("Abmelden"), PBC_LOGOFF, null);
-
-
-            navPanel.update_active_panel();
         }
+        else
+        {
+            navPanel.enable_button(PBC_ADMIN, false);
+            navPanel.enable_button(PBC_TOOLS, false);
+            navPanel.enable_button(PBC_SYSTEM, false);
+            navPanel.enable_button(PBC_SEARCH, true );
+        }
+        navPanel.update_active_panel();        
     }
 
 
@@ -956,6 +971,11 @@ public class UserMain extends javax.swing.JFrame
             update_panels();
         }
         return ret;
+    }
+
+    public void set_titel( String name )
+    {
+        titlePanel.setTitle(name);
     }
 
 

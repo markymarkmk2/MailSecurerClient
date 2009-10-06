@@ -6,28 +6,195 @@
 
 package dimm.home.Panels;
 
+import dimm.general.SQL.SQLResult;
 import dimm.home.CheckPwdPanel;
 import dimm.home.Main;
 import dimm.home.Preferences;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
+import dimm.home.ServerConnect.CommContainer;
 import dimm.home.ServerConnect.SQLConnect;
+import dimm.home.ServerConnect.StationEntry;
+import dimm.home.ServerConnect.UDP_Communicator;
 import dimm.home.UserMain;
+import dimm.home.Utilities.ParseToken;
+import dimm.home.Utilities.SwingWorker;
 import home.shared.SQL.SQLArrayResult;
+import home.shared.hibernate.Mandant;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListDataListener;
 
+
+
+class MailSecurerComboModel implements ComboBoxModel
+{
+    ArrayList<StationEntry> st_list;
+    int act_st_idx;
+
+
+    public MailSecurerComboModel( ArrayList<StationEntry> st_list )
+    {
+        this.st_list = st_list;
+        if (st_list.size() == 0)
+            act_st_idx = -1;
+        else
+            act_st_idx = 0;
+
+    }
+
+
+    @Override
+    public void setSelectedItem( Object anItem )
+    {
+        for (int i = 0; i < st_list.size(); i++)
+        {
+            if (st_list.get(i).toString().compareTo(anItem.toString()) == 0)
+            {
+                act_st_idx = i;
+                break;
+            }
+        }
+    }
+
+   @Override
+    public Object getSelectedItem()
+    {
+       if (st_list.size() == 0)
+           return null;
+        StationEntry da = st_list.get(act_st_idx);
+        if (da != null)
+            return da.toString();
+        return null;
+    }
+
+   @Override
+    public int getSize()
+    {
+        return st_list.size();
+    }
+
+   @Override
+    public Object getElementAt( int index )
+    {
+        return st_list.get(index).toString();
+    }
+
+   @Override
+    public void addListDataListener( ListDataListener l )
+    {
+    }
+
+   @Override
+    public void removeListDataListener( ListDataListener l )
+    {
+    }
+   StationEntry get_act_station()
+   {
+        if (st_list.size() == 0)
+           return null;
+       return st_list.get(act_st_idx);
+   }
+}
+class MandantComboModel implements ComboBoxModel
+{
+    ArrayList<Mandant> ma_list;
+    int act_ma_idx;
+
+
+    public MandantComboModel( ArrayList<Mandant> st_list )
+    {
+        this.ma_list = st_list;
+    }
+
+
+    @Override
+    public void setSelectedItem( Object anItem )
+    {
+
+        if (anItem instanceof String)
+        {
+            for (int i = 0; i < ma_list.size(); i++)
+            {
+                if (ma_list.get(i).getName().compareTo(anItem.toString()) == 0)
+                {
+                    act_ma_idx = i;
+                    break;
+                }
+            }
+        }
+        if (anItem instanceof Mandant)
+        {
+            for (int i = 0; i < ma_list.size(); i++)
+            {
+                if (ma_list.get(i) == anItem)
+                {
+                    act_ma_idx = i;
+                    break;
+                }
+            }
+        }
+    }
+
+   @Override
+    public Object getSelectedItem()
+    {
+       if (ma_list.size() == 0)
+           return null;
+
+        Mandant da = ma_list.get(act_ma_idx);
+        if (da != null)
+            return da.getName();
+        return null;
+    }
+
+   @Override
+    public int getSize()
+    {
+        return ma_list.size();
+    }
+
+   @Override
+    public Object getElementAt( int index )
+    {
+       if (ma_list.size() == 0)
+           return null;
+       
+        return ma_list.get(index).getName();
+    }
+
+   @Override
+    public void addListDataListener( ListDataListener l )
+    {
+    }
+
+   @Override
+    public void removeListDataListener( ListDataListener l )
+    {
+    }
+
+   Mandant get_act_mandant()
+   {
+       if (ma_list.size() == 0)
+           return null;
+       return ma_list.get(act_ma_idx);
+   }
+}
 /**
  
  @author  Administrator
  */
-public class LoginPanel extends GlossDialogPanel
+public class LoginPanel extends GlossDialogPanel implements CommContainer
 {
     UserMain main;
     int login_retries;
     private boolean in_init;
-    
+
+
     /** Creates new form LoginPanel */
     public LoginPanel(UserMain _main)
     {
@@ -53,8 +220,53 @@ public class LoginPanel extends GlossDialogPanel
            CB_LANG.setSelectedIndex(1);
         
         in_init = false;
-        
+
+
         PF_PWD.requestFocus();
+        main.set_titel("");
+
+            SwingUtilities.invokeLater( new Runnable()
+                 {
+                @Override
+                 public void run()
+                     {
+                     PF_PWD.requestFocus();
+                     set_lists_bg();
+                 }
+             });
+
+    }
+
+  
+
+
+    void set_lists_bg()
+    {
+        UserMain.self.show_busy(my_dlg, UserMain.Txt("Scanning") + "...");
+        SwingWorker sw = new SwingWorker() {
+
+            @Override
+            public Object construct()
+            {
+                ArrayList<StationEntry> st_list = build_st_list();
+
+                MailSecurerComboModel server_model = new MailSecurerComboModel(st_list);
+                CB_SERVER.setModel(server_model);
+                if (st_list.size() > 0)
+                {
+                    server_model.setSelectedItem(0);
+
+                    ArrayList<Mandant> ma_list = build_mandant_list( st_list.get(0) );
+                    MandantComboModel mandant_model = new MandantComboModel(ma_list);
+                    CB_MANDANT.setModel(mandant_model);
+                }
+                UserMain.self.hide_busy();
+
+                return null;
+            }
+        };
+        sw.start();
+
     }
     
     boolean use_mallorca_proxy()
@@ -64,7 +276,37 @@ public class LoginPanel extends GlossDialogPanel
 
     boolean do_login()
     {
-        boolean ret = _do_login();
+        Mandant ma = null;
+        StationEntry st = ((MailSecurerComboModel)CB_SERVER.getModel()).get_act_station();
+
+        if (st != null)
+        {
+            if (CB_MANDANT.isVisible())
+            {
+                ma = ((MandantComboModel)CB_MANDANT.getModel()).get_act_mandant();
+                if (CB_MANDANT.getModel().getSize() == 0)
+                {
+                    UserMain.errm_ok(UserMain.getString("This_MailSecurer_has_not_any_valid_companies_yet"));
+                    return false;
+                }
+            }
+        }
+
+        
+        if (st == null || (ma == null && CB_MANDANT.isVisible()))
+        {
+            UserMain.errm_ok(UserMain.getString("Please_select_Server_and_a_company_first"));
+            return false;            
+        }
+
+        int ma_id = -1;
+
+        if (ma != null)
+            ma_id = ma.getId();
+
+        UserMain.set_comm_params( st.get_ip(), st.get_port() + ma_id + 1 );
+
+        boolean ret = _do_login(ma_id);
         
         if (!ret)
         {
@@ -76,16 +318,17 @@ public class LoginPanel extends GlossDialogPanel
             if (login_retries >= 8)
             {
                 UserMain.errm_ok(UserMain.getString("Na,_ich_glaub_das_wird_nichts_mehr!"));                                                          
-            }                
+            }
         }
         else
         {
-            login_retries = 0;
+            UserMain.self.set_titel( (ma == null) ? "System" : ma.getName() );
+            login_retries = 0;            
         }
         return ret;
     }
     
-    boolean _do_login()
+    boolean _do_login( int ma_id)
     {
         boolean ret = false;
         
@@ -100,7 +343,7 @@ public class LoginPanel extends GlossDialogPanel
         {
             String user = this.TXT_USER.getText();
 
-            ret = try_user_login( user, pwd );
+            ret = try_user_login( ma_id, user, pwd );
 
             return ret;
         }
@@ -109,7 +352,7 @@ public class LoginPanel extends GlossDialogPanel
         {
             String user = this.TXT_USER.getText();
 
-            ret = try_admin_login( user, pwd );
+            ret = try_admin_login( ma_id, user, pwd );
 
 
             return ret;
@@ -141,7 +384,7 @@ public class LoginPanel extends GlossDialogPanel
             
             //int firmen_id = sql.get_sql_first_int_lazy(SQLListBuilder.OLD_PARA_DB, "select firmenid from customer_testings where id='" + main.get_station_id() + "'");
             main.setUserLevel( UserMain.UL_SYSADMIN );
-            sql.set_mandant_id(1);
+            //sql.set_mandant_id(1);
             //main.set_mallorca_proxy( use_mallorca_proxy() );
             
                        
@@ -160,13 +403,6 @@ public class LoginPanel extends GlossDialogPanel
         super.setVisible(aFlag);
         if (aFlag)
         {
-            SwingUtilities.invokeLater( new Runnable() 
-                 { 
-                 public void run() 
-                     { 
-                     PF_PWD.requestFocus();
-                 } 
-             });             
         }
             
     }
@@ -190,6 +426,10 @@ public class LoginPanel extends GlossDialogPanel
         jLabel3 = new javax.swing.JLabel();
         LB_USER = new javax.swing.JLabel();
         TXT_USER = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        CB_SERVER = new javax.swing.JComboBox();
+        jLabel4 = new javax.swing.JLabel();
+        CB_MANDANT = new javax.swing.JComboBox();
 
         PF_PWD.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -246,6 +486,22 @@ public class LoginPanel extends GlossDialogPanel
             }
         });
 
+        jLabel2.setText(UserMain.Txt("Server")); // NOI18N
+
+        CB_SERVER.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CB_SERVERActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText(UserMain.Txt("Mandant")); // NOI18N
+
+        CB_MANDANT.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CB_MANDANTActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -254,47 +510,60 @@ public class LoginPanel extends GlossDialogPanel
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(LB_PWD)
-                            .addComponent(jLabel1)
-                            .addComponent(LB_USER))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(TXT_USER, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(CB_LANG, 0, 103, Short.MAX_VALUE)
-                                .addGap(88, 88, 88))
-                            .addComponent(PF_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
-                            .addComponent(CB_USER, 0, 191, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(BT_CHANGE_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 99, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(BT_OK, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(BT_OK, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(11, 11, 11)
+                        .addComponent(CB_LANG, 0, 153, Short.MAX_VALUE)
+                        .addGap(88, 88, 88))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(LB_USER)
+                            .addComponent(LB_PWD)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(CB_SERVER, 0, 241, Short.MAX_VALUE)
+                            .addComponent(CB_MANDANT, 0, 241, Short.MAX_VALUE)
+                            .addComponent(CB_USER, 0, 241, Short.MAX_VALUE)
+                            .addComponent(TXT_USER, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
+                            .addComponent(PF_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(CB_SERVER, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(CB_MANDANT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(CB_USER, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(LB_USER)
-                    .addComponent(TXT_USER, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TXT_USER, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LB_USER))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(LB_PWD)
-                    .addComponent(PF_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(PF_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LB_PWD))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(CB_LANG, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(32, 32, 32)
+                    .addComponent(CB_LANG, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(BT_CHANGE_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
@@ -313,15 +582,18 @@ public class LoginPanel extends GlossDialogPanel
             BT_CHANGE_PWD.setVisible(true);
             TXT_USER.setVisible(true);
             LB_USER.setVisible(true);
+             CB_MANDANT.setVisible(true);
         }
         if (CB_USER.getSelectedIndex() == 1) // MULTIADMIN
         {
             BT_CHANGE_PWD.setVisible(true);
             TXT_USER.setVisible(true);
             LB_USER.setVisible(true);
+            CB_MANDANT.setVisible(true);
         }
         if (CB_USER.getSelectedIndex() == 2) // SYSADMIN
         {
+            CB_MANDANT.setVisible(false);
             BT_CHANGE_PWD.setVisible(false);
             TXT_USER.setVisible(true);
             LB_USER.setVisible(true);
@@ -332,6 +604,12 @@ public class LoginPanel extends GlossDialogPanel
     private void BT_OKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_OKActionPerformed
     {//GEN-HEADEREND:event_BT_OKActionPerformed
         // TODO add your handling code here:
+        StationEntry st = ((MailSecurerComboModel)CB_SERVER.getModel()).get_act_station();
+        if (st == null)
+        {
+                        UserMain.errm_ok(UserMain.getString("Please_select_Server_and_a_company_first"));
+                        return;
+        }
         String pwd = new String(PF_PWD.getPassword());
         if (pwd.length() == 0)
         {
@@ -459,6 +737,25 @@ public class LoginPanel extends GlossDialogPanel
         }
 
     }//GEN-LAST:event_PF_PWDMouseClicked
+
+    private void CB_SERVERActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_SERVERActionPerformed
+    {//GEN-HEADEREND:event_CB_SERVERActionPerformed
+        // TODO add your handling code here:
+        MailSecurerComboModel model = (MailSecurerComboModel)CB_SERVER.getModel();
+        if (model.st_list.size() > 0) 
+        {
+            int idx = CB_SERVER.getSelectedIndex();
+            ArrayList<Mandant> ma_list = build_mandant_list( model.st_list.get(idx) );
+            MandantComboModel mandant_model = new MandantComboModel(ma_list);
+            CB_MANDANT.setModel(mandant_model);
+        }
+    }//GEN-LAST:event_CB_SERVERActionPerformed
+
+    private void CB_MANDANTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_MANDANTActionPerformed
+    {//GEN-HEADEREND:event_CB_MANDANTActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_CB_MANDANTActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -466,13 +763,17 @@ public class LoginPanel extends GlossDialogPanel
     private javax.swing.JButton BT_CHANGE_PWD;
     private javax.swing.JButton BT_OK;
     private javax.swing.JComboBox CB_LANG;
+    private javax.swing.JComboBox CB_MANDANT;
+    private javax.swing.JComboBox CB_SERVER;
     private javax.swing.JComboBox CB_USER;
     private javax.swing.JLabel LB_PWD;
     private javax.swing.JLabel LB_USER;
     private javax.swing.JPasswordField PF_PWD;
     private javax.swing.JTextField TXT_USER;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -480,16 +781,15 @@ public class LoginPanel extends GlossDialogPanel
     {
         return BT_OK;
     }
-
     
  
     
-    boolean try_admin_login( String nname, String pwd )
+    boolean try_admin_login( int m_id, String nname, String pwd )
     {
         SQLConnect sql = UserMain.sqc();
 
 
-        String qry = "select password,id from mandant where loginname='" + nname + "'";
+        String qry = "select password from mandant where loginname='" + nname + "' and id=" + m_id;
         SQLArrayResult res = sql.build_sql_arraylist_lazy( qry);
 
         if (res.getRows() == 0)
@@ -508,20 +808,19 @@ public class LoginPanel extends GlossDialogPanel
 
         main.setUserLevel( UserMain.UL_ADMIN );
 
-        int mandant = res.getInt(0, 1 );
 
-        sql.set_mandant_id(mandant);
+        sql.set_mandant_id(m_id);
 
 
  //       main.set_mallorca_proxy( use_mallorca_proxy() );
         return true;
     }
-    boolean try_user_login( String nname, String pwd )
+    boolean try_user_login( int m_id, String nname, String pwd )
     {
         SQLConnect sql = UserMain.sqc();
 
 
-        String qry = "select password,id from mandant where name='" + nname + "'";
+        String qry = "select password from mandant where name='" + nname + "' and id=" + m_id;
         SQLArrayResult res = sql.build_sql_arraylist_lazy( qry);
 
         if (res.getRows() == 0)
@@ -540,15 +839,125 @@ public class LoginPanel extends GlossDialogPanel
 
         main.setUserLevel( UserMain.UL_USER );
 
-        int mandant = res.getInt(0, 1 );
+      
 
-        sql.set_mandant_id(mandant);
+        sql.set_mandant_id(m_id);
 
 
  //       main.set_mallorca_proxy( use_mallorca_proxy() );
         return true;
     }
+
     
+    ArrayList<StationEntry> build_st_list()
+    {
+        ArrayList<StationEntry> st_list = new ArrayList<StationEntry>();
+
+        try
+        {
+            UDP_Communicator comm = new UDP_Communicator(this);
+
+            String answer_remote = comm.udp_send("HELLO", /*scan*/ true, /*local*/false, /*retries*/ 3, null, 500);
+            if (answer_remote == null || answer_remote.length() == 0)
+                answer_remote = comm.udp_send("HELLO", /*scan*/ true, /*local*/true, /*retries*/ 3, null, 500);
+
+            StringTokenizer str = new StringTokenizer(answer_remote, "\n");
+
+            while (str.hasMoreElements())
+            {
+                String line = str.nextToken().trim();
+                if (line.length() == 0)
+                    continue;
+
+                try
+                {
+                    ParseToken pt = new ParseToken(line);
+                    String version = pt.GetString("VER:");
+                    long station = pt.GetLongValue("STATION:");
+                    String name = pt.GetString("NAME:");
+                    String ip = pt.GetString("IP:");
+                    int port = (int) pt.GetLongValue("PO:");
+
+                    StationEntry st = new StationEntry(name, station, version, ip, port);
+
+                    boolean found = false;
+                    for (int i = 0; i < st_list.size(); i++)
+                    {
+                        StationEntry stationEntry = st_list.get(i);
+                        if (stationEntry.toString().compareTo( st.toString() ) == 0)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                        st_list.add(st);
+                }
+                catch (Exception e)
+                {
+                    System.out.println("Error reading Station entry " + line + ": " +  e.getMessage());
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        UserMain.self.hide_busy();
+
+        if (st_list.size() == 0)
+        {
+            UserMain.errm_ok(my_dlg, UserMain.Txt("No_Stations_could_be_found"));
+        }
+
+        return st_list;
+
+    }
+
+    ArrayList<Mandant> build_mandant_list(StationEntry st)
+    {
+        ArrayList<Mandant> ma_list = new ArrayList<Mandant>();
+
+        SQLConnect sqc = new SQLConnect(st.get_ip(), Main.server_port );
+
+        SQLResult<Mandant> ma_res = sqc.init_mandant_list();
+        if (ma_res != null)
+        {
+            for (int i = 0; i < ma_res.size(); i++)
+            {
+                Mandant mandant = ma_res.get(i);
+                ma_list.add(mandant);
+            }
+        }
+        return ma_list;
+    }
+
+
+
+    @Override
+    public StationEntry get_selected_box()
+    {
+        MailSecurerComboModel model = (MailSecurerComboModel)CB_SERVER.getModel();
+        if (model.st_list.size() > 0)
+            return model.st_list.get(model.act_st_idx);
+        return null;
+    }
+
+    @Override
+    public void set_status( String st )
+    {
+        //UserMain.self.show_busy(my_dlg, st);
+    }
+
+    @Override
+    public boolean do_scan_local()
+    {
+        return false;
+    }
+
+   
+
+   
     
     
 }

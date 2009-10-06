@@ -67,16 +67,32 @@ public class ServerTCPCall extends ServerCall
         status = s;
     }
 
-    public ServerTCPCall(String _server, String _port)
+    public ServerTCPCall(String _server, int _port)
     {
         System.setProperty("javax.net.ssl.trustStore", "jxws.ts");
         System.setProperty("javax.net.ssl.trustStorePassword", "123456");
 
 
         server = _server;
-        port = Integer.parseInt(_port);
+        port = _port;
 
     }
+    @Override
+    public void close()
+    {
+        try
+        {
+            if (keep_s != null)
+            {
+                keep_s.close();
+
+            }
+        }
+        catch (IOException iOException)
+        {
+        }
+    }
+
 
     @Override
     public boolean init()
@@ -1022,7 +1038,7 @@ public class ServerTCPCall extends ServerCall
                     {
                         vals += ",";
                         fields += ",";
-                        where_str += ",";
+                        where_str += " and ";
                     }
                     field_idx++;
 

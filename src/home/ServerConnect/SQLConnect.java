@@ -44,6 +44,10 @@ public class SQLConnect extends Connect
     {
         super();
     }
+    public SQLConnect(String ip, int port)
+    {
+        super(ip, port);
+    }
 
 
     public void rebuild_da_array( long m_id)
@@ -135,6 +139,27 @@ public class SQLConnect extends Connect
 
         return rows;
     }
+    public SQLResult<Mandant> init_mandant_list()
+    {
+        ConnectionID c = sqc.open("");
+        if (c == null)
+        {
+            UserMain.errm_ok( UserMain.Txt("Cannot_connect_to_database"));
+            return null;
+        }
+        StatementID sta = sqc.createStatement(c);
+
+        // ALLE MANDANTEN
+        ResultSetID rs = sqc.executeQuery(sta, "select * from mandant");
+
+        SQLArrayResult resarr = sqc.get_sql_array_result(rs);
+        sqc.close(rs);
+
+        SQLResult<Mandant> ma_res = new SQLResult<Mandant>(resarr, new Mandant().getClass());
+
+        return ma_res;
+    }
+
 
     public void init_structs()
     {

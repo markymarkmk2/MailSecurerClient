@@ -83,7 +83,9 @@ public class TitlePanel extends JComponent
     Component parent;
     @InjectedResource
     private Font titleFont;
-    
+
+
+    String title;
     
     public TitlePanel(Component _parent)
     {
@@ -105,6 +107,13 @@ public class TitlePanel extends JComponent
    
 
     }
+
+    public void setTitle( String title )
+    {
+        this.title = title;
+    }
+
+
 
     MouseInputHandler mouse_handler;
     WindowHandler window_handler;
@@ -297,17 +306,17 @@ public class TitlePanel extends JComponent
         g2.drawLine(0, getHeight() - 2, getWidth(), getHeight() - 2);
 
         g2.drawImage(active ? grip : inactiveGrip, 0, 0, null);
-        
-        if (parent instanceof JDialog)
+
+        if (title == null && parent instanceof JDialog)
         {
-            JDialog dlg = (JDialog) parent;
-            String title = dlg.getTitle();
-            if (title != null)
-            {
-                g2.setColor( Main.ui.get_nice_white() );
-                g2.setFont(titleFont);
-                g2.drawString(title, 22, getHeight() - 6);
-            }
+            title = ((JDialog) parent).getTitle();
+        }
+        
+        if (title != null)
+        {
+            g2.setColor( Main.ui.get_nice_white() );
+            g2.setFont(titleFont);
+            g2.drawString(title, 22, getHeight() - 6);
         }
     }
 

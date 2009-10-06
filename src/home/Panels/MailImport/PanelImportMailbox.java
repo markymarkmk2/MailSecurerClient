@@ -410,6 +410,8 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 BT_ABORT.setVisible(false);
                 BT_NEXT.setEnabled(true);
 
+                timer.stop();
+                actionPerformed(null);
                 return new Integer(ret);
             }
         };
@@ -566,8 +568,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
     public void actionPerformed( ActionEvent e )
     {
         if (finished)
-        {
-            timer.stop();
+        {            
             UserMain.self.hide_busy();
             sw_import = null;
             abort_import = false;
@@ -638,6 +639,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
 
         state = IMPORT_STATE.IMP_SEL_TYPE;
 
+        last_status_text = "";
 
         MouseListener ml = new MouseAdapter()
         {

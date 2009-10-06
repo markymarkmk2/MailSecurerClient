@@ -6,11 +6,8 @@
 package dimm.home.ServerConnect;
 
 import home.shared.SQL.SQLArrayResult;
-import home.shared.hibernate.Mandant;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Socket;
 
 /**
  *
@@ -32,6 +29,7 @@ public abstract class ServerCall {
     {
     }
 
+    public abstract void close();
     public abstract boolean Delete( StatementID sta, Object o );
 
     public abstract String GetFirstSqlField( ConnectionID connection_id, String qry, int field );

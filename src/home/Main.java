@@ -11,7 +11,6 @@ package dimm.home;
 import dimm.home.Rendering.UI_Bluesea;
 import dimm.home.Rendering.UI_Generic;
 import dimm.home.Rendering.UI_Pirates;
-import dimm.home.ServerConnect.StreamConnect;
 import dimm.home.native_libs.NativeLoader;
 import javax.swing.UIManager;
 
@@ -38,7 +37,8 @@ public class Main
     public static UI_Generic ui;
 
     public static String server_ip = "127.0.0.1";
-    public static String server_port = "8050";
+    public static int server_port = 8050;
+
 
     /** Creates a new instance of Main */
     public Main()
@@ -91,7 +91,7 @@ public class Main
             {
                 try
                 {
-                    server_port = args[i + 1];
+                    server_port = Integer.parseInt( args[i + 1] );
                 }
                 catch (Exception exception)
                 {
@@ -204,7 +204,13 @@ public class Main
             }
             if (args[i].compareTo("-server_port") == 0)
             {
-                server_port = args[i + 1];
+                try
+                {
+                    server_port = Integer.parseInt(args[i + 1]);
+                }
+                catch (NumberFormatException numberFormatException)
+                {
+                }
             }
 
 

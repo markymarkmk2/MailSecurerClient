@@ -21,7 +21,13 @@ public class Connect
     {
 //        sqc = new ServerWSDLCall();
         String ip = Main.get_prop(Preferences.SERVER_IP, Main.server_ip );
-        String port = Main.get_prop(Preferences.SERVER_PORT, Main.server_port );
+        int port = (int)Main.get_long_prop(Preferences.SERVER_PORT, (long)Main.server_port );
+        sqc = new ServerTCPCall(ip, port);
+        sqc.init();
+    }
+    public Connect(String ip, int port )
+    {
+//        sqc = new ServerWSDLCall();
         sqc = new ServerTCPCall(ip, port);
         sqc.init();
     }
@@ -29,5 +35,9 @@ public class Connect
     public ServerCall get_sqc()
     {
         return sqc;
+    }
+    public void close()
+    {
+        sqc.close();
     }
 }

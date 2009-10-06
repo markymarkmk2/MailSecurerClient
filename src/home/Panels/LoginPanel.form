@@ -19,70 +19,85 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="LB_PWD" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                          <Component id="LB_USER" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="TXT_USER" alignment="1" pref="191" max="32767" attributes="1"/>
-                          <Group type="102" attributes="0">
-                              <Component id="CB_LANG" pref="103" max="32767" attributes="0"/>
-                              <EmptySpace min="-2" pref="88" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="PF_PWD" pref="191" max="32767" attributes="1"/>
-                          <Component id="CB_USER" alignment="0" pref="191" max="32767" attributes="1"/>
-                      </Group>
-                  </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="BT_CHANGE_PWD" min="-2" pref="120" max="-2" attributes="0"/>
-                      <EmptySpace pref="55" max="32767" attributes="0"/>
+                      <EmptySpace pref="99" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="BT_ABORT" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
                           <Component id="BT_OK" alignment="1" min="-2" pref="80" max="-2" attributes="0"/>
                       </Group>
                   </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+                      <Component id="CB_LANG" pref="153" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="88" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="LB_USER" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="LB_PWD" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel4" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
+                          <Component id="jLabel2" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="CB_SERVER" alignment="0" pref="241" max="32767" attributes="1"/>
+                          <Component id="CB_MANDANT" alignment="0" pref="241" max="32767" attributes="1"/>
+                          <Component id="CB_USER" alignment="0" pref="241" max="32767" attributes="1"/>
+                          <Component id="TXT_USER" alignment="1" pref="241" max="32767" attributes="1"/>
+                          <Component id="PF_PWD" pref="241" max="32767" attributes="1"/>
+                      </Group>
+                  </Group>
               </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="CB_SERVER" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="CB_MANDANT" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="CB_USER" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="LB_USER" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="TXT_USER" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="LB_USER" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="LB_PWD" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="PF_PWD" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="LB_PWD" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace pref="55" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="CB_LANG" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="CB_LANG" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="BT_CHANGE_PWD" min="-2" pref="25" max="-2" attributes="0"/>
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
                       <Component id="BT_ABORT" min="-2" pref="25" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="BT_OK" min="-2" pref="25" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -96,7 +111,7 @@
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="sonicremote/NewGUI/SR_Properties.properties" key="Benutzer" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+          <ResourceString bundle="dimm/home/MA_Properties.properties" key="Benutzer" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -117,14 +132,14 @@
     <Component class="javax.swing.JLabel" name="LB_PWD">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="sonicremote/NewGUI/SR_Properties.properties" key="Passwort" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+          <ResourceString bundle="dimm/home/MA_Properties.properties" key="Passwort" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="BT_OK">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="sonicremote/NewGUI/SR_Properties.properties" key="Okay" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+          <ResourceString bundle="dimm/home/MA_Properties.properties" key="Okay" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
@@ -137,7 +152,7 @@
     <Component class="javax.swing.JButton" name="BT_ABORT">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="sonicremote/NewGUI/SR_Properties.properties" key="Abbruch" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+          <ResourceString bundle="dimm/home/MA_Properties.properties" key="Abbruch" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
@@ -150,7 +165,7 @@
     <Component class="javax.swing.JButton" name="BT_CHANGE_PWD">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="sonicremote/NewGUI/SR_Properties.properties" key="Neues_Passwort" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+          <ResourceString bundle="dimm/home/MA_Properties.properties" key="Neues_Passwort" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
@@ -177,7 +192,7 @@
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="sonicremote/NewGUI/SR_Properties.properties" key="Sprache" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+          <ResourceString bundle="dimm/home/MA_Properties.properties" key="Sprache" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -191,6 +206,40 @@
     <Component class="javax.swing.JTextField" name="TXT_USER">
       <Events>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="TXT_USERMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel2">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="dimm/home/MA_Properties.properties" key="Server" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="CB_SERVER">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="0"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CB_SERVERActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel4">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="dimm/home/MA_Properties.properties" key="Mandant" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="CB_MANDANT">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="0"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CB_MANDANTActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>
