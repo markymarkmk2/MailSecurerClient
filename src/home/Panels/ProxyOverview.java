@@ -176,7 +176,13 @@ public class ProxyOverview extends SQLOverviewDialog implements PropertyChangeLi
         TableColumnModel cm = table.getTableHeader().getColumnModel();
         cm.getColumn(0).setMinWidth(40);
         cm.getColumn(0).setMaxWidth(40);
-        cm.getColumn(1).setPreferredWidth(150);
+        cm.getColumn(1).setMinWidth(60);
+        cm.getColumn(1).setMaxWidth(60);
+        cm.getColumn(2).setPreferredWidth(120);
+        cm.getColumn(3).setPreferredWidth(120);
+
+        cm.getColumn(4).setMinWidth(60);
+        cm.getColumn(4).setMaxWidth(60);
 
         model.set_table_header(cm);
     }

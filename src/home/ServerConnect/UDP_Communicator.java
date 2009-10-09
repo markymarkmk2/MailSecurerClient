@@ -5,6 +5,7 @@
 
 package dimm.home.ServerConnect;
 
+import dimm.home.UserMain;
 import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -25,7 +26,7 @@ public class UDP_Communicator
     String answer;
 
     private static final int UDP_SEND_TO_MS = 20000;   
-    private static final int UDP_LEN = 1024;
+    private static final int UDP_LEN = 256;
     public  final int UDP_BIGBLOCK_SIZE = 48000;
 
     private static final int UDP_CLIENT_PORT = 11411;
@@ -294,6 +295,7 @@ public class UDP_Communicator
     
     public String udp_send( String str, boolean scan, boolean do_scan_local, int retries, OutputStream outp, int timeout )
     {
+        UserMain.debug_msg( 4, "udp_send: " + str + " SC:" + (scan?"1":"0"));
         synchronized (this)
         {
                
@@ -411,9 +413,10 @@ public class UDP_Communicator
                     }
                     else
                     {
-                        if (result.substring(0, 8).compareTo("SONICBOX") != 0)
-                            System.out.println("Result: " + result );
-
+                        if (result.substring(0, 11).compareTo("MAILSECURER") != 0)
+                        {
+                            UserMain.self.debug_msg( 4, "udp_recv: " + result);
+                        }
                     }
 
                     keep_udp_s.close();
@@ -448,6 +451,8 @@ public class UDP_Communicator
                                 ip = ip.substring( 0, e_idx );
 
                             ping_str += " IP:" + ip;
+                            
+                            UserMain.debug_msg( 4, "ping_recv: " + ping_str);
 
                             main.set_status("Scanning... found: " +  ping_str);
 
@@ -463,6 +468,8 @@ public class UDP_Communicator
                     }
                     keep_udp_s.close();
                     keep_udp_s = null;
+
+                    UserMain.debug_msg( 4, "finished ping");
 
                     return result;
                 }                                           

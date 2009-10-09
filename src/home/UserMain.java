@@ -187,7 +187,7 @@ public class UserMain extends javax.swing.JFrame
         return glassPane;
     }
     
-    private int debug = 1;
+    public static int debug = 1;
     
     
 
@@ -926,10 +926,15 @@ public class UserMain extends javax.swing.JFrame
         errm( dlg, txt, GlossErrDialog.MODE_ERROR, false, p );
     }
     
-    public void debug_msg(int level, String txt)
+    public static void debug_msg(int level, String txt)
     {
+//        System.out.println( "Debug " + level + ": " +  txt );
         if (level >= debug)
+        {
             System.out.println( txt );
+            System.out.flush();
+        }
+
     }
 
 

@@ -159,6 +159,8 @@ public class Main
 
         ui = null;
         String force_mandant = null;
+        boolean verbose = false;
+        int debug = 0;
 
         for (int i = 0; i < args.length; i++)
         {
@@ -185,6 +187,22 @@ public class Main
             if (args[i].compareTo("-V") == 0)
             {
                 enable_distributor = true;
+            }
+            if (args[i].compareTo("-v") == 0)
+            {
+                verbose = true;
+            }
+            if (args[i].compareTo("-d") == 0)
+            {
+                try
+                {
+                    debug = Integer.parseInt(args[i + 1]);
+                }
+                catch (Exception e)
+                {
+                    debug = 1;
+                }
+                System.out.println("Debuglevel: " + UserMain.debug);
             }
             if (args[i].compareTo("-no-updater") == 0)
             {
@@ -225,7 +243,7 @@ public class Main
         if (ui == null)
             ui = new UI_Pirates();
 
-        ui.set_ui(false);
+        ui.set_ui(verbose);
 
         //StreamConnect.main(args);
 
@@ -261,6 +279,7 @@ public class Main
                e.printStackTrace();
         }
 
+        UserMain.debug = debug;
         mn.setLocation(mn.x_pos, mn.y_pos);
         if (force_mandant != null)
         {

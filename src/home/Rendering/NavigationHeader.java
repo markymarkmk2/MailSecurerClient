@@ -674,13 +674,17 @@ public class NavigationHeader extends JComponent
                     pathShadowOpacity));
             
             if (enabled)
+            {
                 g2.setColor(pathShadowColor);
+                layout.draw(g2, shadowOffsetX + offset,layout.getAscent() + layout.getDescent() + shadowOffsetY);
+            }
             else
+            {
                 g2.setColor(disablepathColor);
-                
-            layout.draw(g2,
-                    shadowOffsetX + offset,
-                    layout.getAscent() + layout.getDescent() + shadowOffsetY);
+                layout.draw(g2, shadowOffsetX + offset, layout.getAscent() + layout.getDescent() );
+            }
+
+
             g2.setComposite(composite);
 
             if (enabled)

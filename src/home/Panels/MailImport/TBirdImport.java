@@ -408,7 +408,9 @@ class TBirdProfileManager extends ProfileManager
         }
         if (NativeLoader.is_osx())
         {
-            File f = new File( "~/Library/Thunderbird");
+            System.out.println("OSX");
+            File f = new File( System.getProperty("user.home") + "/Library/Thunderbird");
+            System.out.println(f.getAbsolutePath());
             if (f.exists())
                 return f.getAbsolutePath();
         }
@@ -445,10 +447,13 @@ Path=Profiles/nl1ice4b.default
         
         String tbird_appdata = build_appdata_path();
 
+        UserMain.debug_msg(1, "Checking TBird Appdata: " + tbird_appdata + "/profiles.ini");
         File prf = new File ( tbird_appdata + "/profiles.ini" );
         if (!prf.exists())
         {
-            throw new IOException( UserMain.Txt("Cannot_find_Thunderbird_profiles_path") );
+            NamePathEntry tbpe = new NamePathEntry( null, UserMain.Txt("Select_mail_directory_manually") );
+            cb.addItem(tbpe);
+            return;
         }
         INIFile objINI = new INIFile(prf.getAbsolutePath());
 
