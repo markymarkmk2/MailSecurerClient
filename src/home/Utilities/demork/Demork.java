@@ -457,15 +457,16 @@ public class Demork {
 	 * @param args
 	 * @throws Exception 
 	 */
-	public static void main(String[] args) throws Exception {
-		if (args.length == 0) {
-			System.err.println("Usage: java Demork <morkfile>");
-			System.exit(-1);
+	public static void main(String[] args) throws Exception 
+        {
+            String filename = "z:\\tmp\\panacea.dat";
+		if (args.length > 0)
+                {
+                        filename = args[0];
 		}
 		
 		Demork demork = new Demork();
 
-		String filename = args[0];
 
 		String encoding=demork.getEncoding(filename);
 		

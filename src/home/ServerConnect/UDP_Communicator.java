@@ -29,9 +29,9 @@ public class UDP_Communicator
     private static final int UDP_LEN = 256;
     public  final int UDP_BIGBLOCK_SIZE = 48000;
 
-    private static final int UDP_CLIENT_PORT = 11411;
-    private static final int UDP_SERVER_PORT = 11410;
-    private static final int TCP_SERVER_PORT = 11410;
+    private static final int UDP_CLIENT_PORT = 11511;
+    private static final int UDP_SERVER_PORT = 11510;
+    private static final int TCP_SERVER_PORT = 11510;
 
     int answer_station_id;
     DatagramSocket keep_udp_s = null;
