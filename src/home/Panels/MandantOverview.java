@@ -34,8 +34,8 @@ class MandantTableModel extends OverviewModel
     {
         super( _main, _dlg );
 
-        String[] _col_names = {"Id",UserMain.getString("Name"), UserMain.getString("Lizenz"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
-        Class[] _col_classes = {String.class,  String.class,  String.class,  Boolean.class, JButton.class, JButton.class};
+        String[] _col_names = {"Id",UserMain.getString("Name"), UserMain.getString("Lizenz"), UserMain.getString("IMAP"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
+        Class[] _col_classes = {String.class,  String.class,  String.class,  Boolean.class,  Boolean.class, JButton.class, JButton.class};
         set_columns( _col_names, _col_classes );
 
     }
@@ -81,6 +81,8 @@ class MandantTableModel extends OverviewModel
             case 2:
                 return get_license_str( mandant.getLicense());
             case 3:
+                return new Boolean(mandant.getImap_port() != 0);
+            case 4:
                 int flags = sqlResult.getInt(rowIndex, "Flags");
                 return new Boolean((flags & MandantOverview.DISABLED) == MandantOverview.DISABLED); // DISABLED
             default:
