@@ -9,18 +9,18 @@ import com.thoughtworks.xstream.XStream;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.UserMain;
 import javax.swing.JButton;
-import dimm.general.SQL.*;
-import home.shared.hibernate.DiskArchive;
 import home.shared.hibernate.AccountConnector;
 import dimm.home.Models.DiskArchiveComboModel;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.Utilities.SwingWorker;
 import dimm.home.Utilities.Validator;
+import home.shared.CS_Constants;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import javax.swing.JFileChooser;
+import home.shared.AccountConnectorTypeEntry;
 
 /**
 
@@ -46,16 +46,11 @@ public class EditAccountConnector extends GenericEditPanel
         CB_TYPE.removeAllItems();
 
         // FILL COMBOBOX TYPE
-        for (int i = 0; i < object_overview.get_ac_entry_list().length; i++)
+        for (int i = 0; i < CS_Constants.get_ac_list_count(); i++)
         {
-            AccountConnectorOverview.AccountConnectorTypeEntry mte = object_overview.get_ac_entry_list()[i];
+            AccountConnectorTypeEntry mte = CS_Constants.get_ac(i);
             CB_TYPE.addItem(mte);
         }
-
-
-        SQLResult<DiskArchive> da_res = UserMain.sqc().get_da_result();
-
-
 
         row = _row;
 
@@ -66,30 +61,42 @@ public class EditAccountConnector extends GenericEditPanel
                 object = model.get_object(row);
 
                 String type = object.getType();
-                for (int i = 0; i < object_overview.get_ac_entry_list().length; i++)
+                for (int i = 0; i < CS_Constants.get_ac_list_count(); i++)
                 {
-                    AccountConnectorOverview.AccountConnectorTypeEntry mte = object_overview.get_ac_entry_list()[i];
-                    if (mte.type.compareTo(type) == 0)
+                    AccountConnectorTypeEntry mte = CS_Constants.get_ac(i);
+                    if (mte.getType().compareTo(type) == 0)
                     {
                         CB_TYPE.setSelectedIndex(i);
                         break;
                     }
                 }
 
-
-
                 TXT_SERVER1.setText(object.getIp());
                 TXT_PORT1.setText(object.getPort().toString());
                 TXT_USERNAME.setText(object.getUsername());
                 TXTP_PWD.setText(object.getPwd());
-                CB_SSL.setSelected(object_has_ssl());
+                BT_DISABLED.setSelected(test_flag(CS_Constants.ACCT_DISABLED));
+
+                if (test_flag( CS_Constants.ACCT_USE_SSL))
+                    RB_SSL.setSelected(true);
+                else if (test_flag( CS_Constants.ACCT_USE_TLS_IF_AVAIL))
+                    RB_TLS_IV_AVAIL.setSelected(true);
+                else if (test_flag( CS_Constants.ACCT_USE_TLS_FORCE))
+                    RB_TLS_FORCE.setSelected(true);
+                else
+                    RB_INSECURE.setSelected(true);
+
+
+                CB_CERTIFICATE.setSelected(test_flag(CS_Constants.ACCT_HAS_TLS_CERT));
+                if (CB_CERTIFICATE.isSelected())
+                {
+                    BT_IMPORT_CERT.setVisible(true);
+                }
             }
             catch (Exception exc)
             {
                 UserMain.errm_ok(UserMain.getString("Fehler_beim_Lesen_der_Datenbankdaten"));
             }
-
-
         }
         else
         {
@@ -97,13 +104,26 @@ public class EditAccountConnector extends GenericEditPanel
             object.setMandant(UserMain.sqc().get_act_mandant());
             TXT_SERVER1.setText("127.0.0.1");
             TXT_PORT1.setText(Integer.toString(DFLT_LDAP_PORT));
-
+            RB_INSECURE.setSelected(true);
+            CB_CERTIFICATE.setSelected(false);
         }
-
 
 
     }
 
+    int get_dflt_port( String type, boolean secure )
+    {
+        if (type.compareTo("smtp") == 0)
+            return 25;
+        if (type.compareTo("pop") == 0)
+            return (secure ? 995 : 110);
+        if (type.compareTo("imap") == 0)
+            return (secure ? 993 : 143);
+        if (type.compareTo("ldap") == 0)
+            return (secure ? 636 : 389);
+
+        return 0;
+    }
     /** This method is called from within the constructor to
     initialize the form.
     WARNING: Do NOT modify this code. The content of this method is
@@ -113,6 +133,7 @@ public class EditAccountConnector extends GenericEditPanel
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         PN_ACTION = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         TXT_SERVER1 = new javax.swing.JTextField();
@@ -121,11 +142,16 @@ public class EditAccountConnector extends GenericEditPanel
         CB_TYPE = new javax.swing.JComboBox();
         TXT_PORT1 = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        LB_USER = new javax.swing.JLabel();
         TXTP_PWD = new javax.swing.JPasswordField();
-        jLabel5 = new javax.swing.JLabel();
-        CB_SSL = new javax.swing.JCheckBox();
+        LB_PWD = new javax.swing.JLabel();
         TXT_USERNAME = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
+        RB_INSECURE = new javax.swing.JRadioButton();
+        RB_TLS_IV_AVAIL = new javax.swing.JRadioButton();
+        RB_TLS_FORCE = new javax.swing.JRadioButton();
+        RB_SSL = new javax.swing.JRadioButton();
+        CB_CERTIFICATE = new javax.swing.JCheckBox();
         BT_IMPORT_CERT = new javax.swing.JButton();
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
@@ -160,6 +186,11 @@ public class EditAccountConnector extends GenericEditPanel
         BT_DISABLED.setOpaque(false);
 
         CB_TYPE.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        CB_TYPE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CB_TYPEActionPerformed(evt);
+            }
+        });
 
         TXT_PORT1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -175,24 +206,98 @@ public class EditAccountConnector extends GenericEditPanel
         jLabel4.setText(UserMain.getString("Port")); // NOI18N
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/MA_Properties"); // NOI18N
-        jLabel3.setText(bundle.getString("User")); // NOI18N
+        LB_USER.setText(bundle.getString("User")); // NOI18N
 
-        jLabel5.setText(bundle.getString("Password")); // NOI18N
+        LB_PWD.setText(bundle.getString("Password")); // NOI18N
 
-        CB_SSL.setText("SSL");
-        CB_SSL.setFocusable(false);
-        CB_SSL.addActionListener(new java.awt.event.ActionListener() {
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(UserMain.Txt("Security"))); // NOI18N
+
+        buttonGroup1.add(RB_INSECURE);
+        RB_INSECURE.setText(UserMain.Txt("unsecure")); // NOI18N
+        RB_INSECURE.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CB_SSLActionPerformed(evt);
+                RB_INSECUREActionPerformed(evt);
             }
         });
 
-        BT_IMPORT_CERT.setText(bundle.getString("Import_certificate")); // NOI18N
+        buttonGroup1.add(RB_TLS_IV_AVAIL);
+        RB_TLS_IV_AVAIL.setText(UserMain.Txt("TLS_if_available")); // NOI18N
+        RB_TLS_IV_AVAIL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RB_TLS_IV_AVAILActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(RB_TLS_FORCE);
+        RB_TLS_FORCE.setText(UserMain.Txt("only_TLS")); // NOI18N
+        RB_TLS_FORCE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RB_TLS_FORCEActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(RB_SSL);
+        RB_SSL.setText(UserMain.Txt("SSL")); // NOI18N
+        RB_SSL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RB_SSLActionPerformed(evt);
+            }
+        });
+
+        CB_CERTIFICATE.setText(UserMain.Txt("with_Certificate")); // NOI18N
+        CB_CERTIFICATE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CB_CERTIFICATEActionPerformed(evt);
+            }
+        });
+
+        BT_IMPORT_CERT.setText(UserMain.Txt("Import_certificate")); // NOI18N
         BT_IMPORT_CERT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_IMPORT_CERTActionPerformed(evt);
             }
         });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(RB_TLS_IV_AVAIL)
+                                .addComponent(RB_INSECURE, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                                .addComponent(RB_TLS_FORCE))
+                            .addGap(63, 63, 63))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(RB_SSL)
+                            .addContainerGap(124, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(CB_CERTIFICATE)
+                            .addContainerGap(68, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(BT_IMPORT_CERT)
+                        .addContainerGap())))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(RB_INSECURE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(RB_TLS_IV_AVAIL)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(RB_TLS_FORCE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(RB_SSL)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(CB_CERTIFICATE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(BT_IMPORT_CERT)
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout PN_ACTIONLayout = new javax.swing.GroupLayout(PN_ACTION);
         PN_ACTION.setLayout(PN_ACTIONLayout);
@@ -202,63 +307,59 @@ public class EditAccountConnector extends GenericEditPanel
                 .addContainerGap()
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                        .addComponent(BT_DISABLED, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(BT_IMPORT_CERT))
-                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel5))
+                            .addComponent(jLabel2))
+                        .addGap(85, 85, 85)
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(CB_TYPE, 0, 185, Short.MAX_VALUE)
+                            .addComponent(TXT_PORT1, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                            .addComponent(TXT_SERVER1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)))
+                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(280, 280, 280))
+                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(LB_USER)
+                            .addComponent(LB_PWD))
                         .addGap(71, 71, 71)
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(CB_TYPE, 0, 332, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, PN_ACTIONLayout.createSequentialGroup()
-                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                                        .addComponent(TXT_SERVER1, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_ACTIONLayout.createSequentialGroup()
-                                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(TXTP_PWD, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-                                            .addComponent(TXT_USERNAME, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE))
-                                        .addGap(56, 56, 56)))
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(CB_SSL, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE)
-                                    .addComponent(TXT_PORT1, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE))))))
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(TXTP_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                            .addComponent(TXT_USERNAME, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)))
+                    .addComponent(BT_DISABLED, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(10, 10, 10))
         );
         PN_ACTIONLayout.setVerticalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PN_ACTIONLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(CB_TYPE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(4, 4, 4)
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(TXT_SERVER1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(TXT_PORT1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(TXT_USERNAME, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(CB_SSL))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(CB_TYPE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(4, 4, 4)
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(TXT_SERVER1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(6, 6, 6)
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(TXT_PORT1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(LB_USER)
+                            .addComponent(TXT_USERNAME, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel5)
+                            .addComponent(LB_PWD)
                             .addComponent(TXTP_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(BT_DISABLED))
-                    .addComponent(BT_IMPORT_CERT))
-                .addContainerGap())
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -298,7 +399,7 @@ public class EditAccountConnector extends GenericEditPanel
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(BT_TEST)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 191, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 247, Short.MAX_VALUE)
                 .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -362,42 +463,25 @@ public class EditAccountConnector extends GenericEditPanel
     {//GEN-HEADEREND:event_TXT_PORT1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_TXT_PORT1ActionPerformed
-
-    private void CB_SSLActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_SSLActionPerformed
-    {//GEN-HEADEREND:event_CB_SSLActionPerformed
-        // TODO add your handling code here:
-        try
-        {
-            if (CB_SSL.isSelected())
-            {
-                int port = Integer.parseInt(TXT_PORT1.getText());
-                if (port == DFLT_LDAP_PORT)
-                {
-                    TXT_PORT1.setText(Integer.toString(DFLT_LDAP_SSL_PORT));
-
-                }
-            }
-            else
-            {
-                int port = Integer.parseInt(TXT_PORT1.getText());
-                if (port == DFLT_LDAP_SSL_PORT)
-                {
-                    TXT_PORT1.setText(Integer.toString(DFLT_LDAP_PORT));
-
-                }
-            }
-        }
-        catch (NumberFormatException numberFormatException)
-        {
-        }
-
-    }//GEN-LAST:event_CB_SSLActionPerformed
     SwingWorker sw;
     private void BT_TESTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_TESTActionPerformed
     {//GEN-HEADEREND:event_BT_TESTActionPerformed
         // TODO add your handling code here:
-        final String cmd = "TestLoginLDAP CMD:test NM:'" + TXT_USERNAME.getText() + "' PW:'" + get_pwd() + "' HO:" +
-                TXT_SERVER1.getText() + " PO:" + TXT_PORT1.getText() + " SSL:" + (CB_SSL.isSelected() ? "1" : "0");
+
+        AccountConnectorTypeEntry mte = (AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
+        String type = mte.getType();
+
+        int flags = 0;
+        if (RB_SSL.isSelected())
+            flags |= CS_Constants.ACCT_USE_SSL;
+        if (RB_TLS_FORCE.isSelected())
+            flags |= CS_Constants.ACCT_USE_TLS_FORCE;
+        if (RB_TLS_IV_AVAIL.isSelected())
+            flags |= CS_Constants.ACCT_USE_TLS_IF_AVAIL;
+
+        
+        final String cmd = "TestLogin CMD:test NM:'" + TXT_USERNAME.getText() + "' PW:'" + get_pwd() + "' HO:" +
+                TXT_SERVER1.getText() + " PO:" + TXT_PORT1.getText() + " TY:" + type + " FL:" + flags;
 
         if (sw != null)
         {
@@ -410,16 +494,16 @@ public class EditAccountConnector extends GenericEditPanel
             @Override
             public Object construct()
             {
-                UserMain.self.show_busy(my_dlg, UserMain.Txt("Checking_LDAP_login") + "...");
+                UserMain.self.show_busy(my_dlg, UserMain.Txt("Checking_login") + "...");
                 String ret = UserMain.fcc().call_abstract_function(cmd, ServerCall.SHORT_CMD_TO);
                 UserMain.self.hide_busy();
                 if (ret.charAt(0) == '0')
                 {
-                    UserMain.info_ok(my_dlg, UserMain.Txt("LDAP_login_succeeded"));
+                    UserMain.info_ok(my_dlg, UserMain.Txt("Login_succeeded"));
                 }
                 else
                 {
-                    UserMain.errm_ok(my_dlg, UserMain.Txt("LDAP_login_failed") + ": " + ret.substring(3));
+                    UserMain.errm_ok(my_dlg, UserMain.Txt("Login_failed") + ": " + ret.substring(3));
                 }
                 sw = null;
                 return null;
@@ -501,25 +585,95 @@ public class EditAccountConnector extends GenericEditPanel
 
     }//GEN-LAST:event_BT_IMPORT_CERTActionPerformed
 
+    private void CB_TYPEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_TYPEActionPerformed
+    {//GEN-HEADEREND:event_CB_TYPEActionPerformed
+        // TODO add your handling code here:
+        AccountConnectorTypeEntry mte = (AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
+        String type = mte.getType();
+        boolean user_visible = true;
+
+        if (type.compareTo("smtp") == 0 || type.compareTo("pop") == 0 || type.compareTo("imap") == 0 )
+        {
+            user_visible = false;
+        }
+        
+        TXT_USERNAME.setVisible(user_visible);
+        TXTP_PWD.setVisible(user_visible);
+        LB_USER.setVisible(user_visible);
+        LB_PWD.setVisible(user_visible);
+
+        my_dlg.pack();
+
+
+
+    }//GEN-LAST:event_CB_TYPEActionPerformed
+
+    private void CB_CERTIFICATEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_CERTIFICATEActionPerformed
+    {//GEN-HEADEREND:event_CB_CERTIFICATEActionPerformed
+        // TODO add your handling code here:
+        BT_IMPORT_CERT.setVisible(CB_CERTIFICATE.isSelected());
+    }//GEN-LAST:event_CB_CERTIFICATEActionPerformed
+
+    private void RB_INSECUREActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_RB_INSECUREActionPerformed
+    {//GEN-HEADEREND:event_RB_INSECUREActionPerformed
+        // TODO add your handling code here:
+        AccountConnectorTypeEntry mte = (AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
+        String type = mte.getType();
+        TXT_PORT1.setText( "" + get_dflt_port( type, false ) );
+    }//GEN-LAST:event_RB_INSECUREActionPerformed
+
+    private void RB_TLS_IV_AVAILActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_RB_TLS_IV_AVAILActionPerformed
+    {//GEN-HEADEREND:event_RB_TLS_IV_AVAILActionPerformed
+        // TODO add your handling code here:
+        AccountConnectorTypeEntry mte = (AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
+        String type = mte.getType();
+        TXT_PORT1.setText( "" + get_dflt_port( type, false ) );
+
+    }//GEN-LAST:event_RB_TLS_IV_AVAILActionPerformed
+
+    private void RB_TLS_FORCEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_RB_TLS_FORCEActionPerformed
+    {//GEN-HEADEREND:event_RB_TLS_FORCEActionPerformed
+        // TODO add your handling code here:
+        AccountConnectorTypeEntry mte = (AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
+        String type = mte.getType();
+        TXT_PORT1.setText( "" + get_dflt_port( type, false ) );
+
+    }//GEN-LAST:event_RB_TLS_FORCEActionPerformed
+
+    private void RB_SSLActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_RB_SSLActionPerformed
+    {//GEN-HEADEREND:event_RB_SSLActionPerformed
+        // TODO add your handling code here:
+        AccountConnectorTypeEntry mte = (AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
+        String type = mte.getType();
+        TXT_PORT1.setText( "" + get_dflt_port( type, true ) );
+
+    }//GEN-LAST:event_RB_SSLActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JCheckBox BT_DISABLED;
     private javax.swing.JButton BT_IMPORT_CERT;
     private javax.swing.JButton BT_OK;
     private javax.swing.JButton BT_TEST;
-    private javax.swing.JCheckBox CB_SSL;
+    private javax.swing.JCheckBox CB_CERTIFICATE;
     private javax.swing.JComboBox CB_TYPE;
+    private javax.swing.JLabel LB_PWD;
+    private javax.swing.JLabel LB_USER;
     private javax.swing.JPanel PN_ACTION;
     private javax.swing.JPanel PN_BUTTONS;
+    private javax.swing.JRadioButton RB_INSECURE;
+    private javax.swing.JRadioButton RB_SSL;
+    private javax.swing.JRadioButton RB_TLS_FORCE;
+    private javax.swing.JRadioButton RB_TLS_IV_AVAIL;
     private javax.swing.JPasswordField TXTP_PWD;
     private javax.swing.JTextField TXT_PORT1;
     private javax.swing.JTextField TXT_SERVER1;
     private javax.swing.JTextField TXT_USERNAME;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 
     int get_object_flags()
@@ -541,34 +695,63 @@ public class EditAccountConnector extends GenericEditPanel
         flags &= ~flag;
         object.setFlags(flags);
     }
-
+/*
     boolean object_is_disabled()
     {
         int flags = 0;
 
         flags = get_object_flags();
 
-        return ((flags & AccountConnectorOverview.DISABLED) == AccountConnectorOverview.DISABLED);
+        return ((flags & CS_Constants.ACCT_DISABLED) == CS_Constants.ACCT_DISABLED);
     }
-
+*/
+    boolean test_flag( int test_flag )
+    {
+        int flags = get_object_flags();
+        return ((flags & test_flag) == test_flag);
+    }
+    void set_flag( boolean state, int flag )
+    {
+        if (state)
+        {
+            set_object_flag(flag);
+        }
+        else
+        {
+            clr_object_flag(flag);
+        }
+    }
+    /*
     boolean object_has_ssl()
     {
-        int flags = 0;
-
-        flags = get_object_flags();
-
-        return ((flags & AccountConnectorOverview.USE_SSL) == AccountConnectorOverview.USE_SSL);
+        int flags = get_object_flags();
+        return ((flags & CS_Constants.ACCT_USE_SSL) == CS_Constants.ACCT_USE_SSL);
+    }
+    boolean object_has_tls_if_avail()
+    {
+        int flags = get_object_flags();
+        return ((flags & CS_Constants.ACCT_USE_TLS_IF_AVAIL) == CS_Constants.ACCT_USE_TLS_IF_AVAIL);
+    }
+    boolean object_has_tls_force()
+    {
+        int flags = get_object_flags();
+        return ((flags & CS_Constants.ACCT_USE_TLS_FORCE) == CS_Constants.ACCT_USE_TLS_FORCE);
+    }
+    boolean object_use_tls_cert()
+    {
+        int flags = get_object_flags();
+        return ((flags & CS_Constants.ACCT_USE_TLS_FORCE) == CS_Constants.ACCT_USE_TLS_FORCE);
     }
 
     void set_object_disabled( boolean f )
     {
         if (f)
         {
-            set_object_flag(AccountConnectorOverview.DISABLED);
+            set_object_flag(CS_Constants.ACCT_DISABLED);
         }
         else
         {
-            clr_object_flag(AccountConnectorOverview.DISABLED);
+            clr_object_flag(CS_Constants.ACCT_DISABLED);
         }
     }
 
@@ -576,14 +759,14 @@ public class EditAccountConnector extends GenericEditPanel
     {
         if (f)
         {
-            set_object_flag(AccountConnectorOverview.USE_SSL);
+            set_object_flag(CS_Constants.ACCT_USE_SSL);
         }
         else
         {
-            clr_object_flag(AccountConnectorOverview.USE_SSL);
+            clr_object_flag(CS_Constants.ACCT_USE_SSL);
         }
     }
-
+*/
     String get_pwd()
     {
         char[] pwd = TXTP_PWD.getPassword();
@@ -616,12 +799,24 @@ public class EditAccountConnector extends GenericEditPanel
         }
 
 
-        if (BT_DISABLED.isSelected() != object_is_disabled())
+        if (BT_DISABLED.isSelected() != test_flag(CS_Constants.ACCT_DISABLED))
         {
             return true;
         }
 
-        if (CB_SSL.isSelected() != object_has_ssl())
+        if (CB_CERTIFICATE.isSelected() != test_flag(CS_Constants.ACCT_HAS_TLS_CERT))
+        {
+            return true;
+        }
+        if (RB_SSL.isSelected() != test_flag(CS_Constants.ACCT_USE_SSL))
+        {
+            return true;
+        }
+        if (RB_TLS_FORCE.isSelected() != test_flag(CS_Constants.ACCT_USE_TLS_FORCE))
+        {
+            return true;
+        }
+        if (RB_TLS_IV_AVAIL.isSelected() != test_flag(CS_Constants.ACCT_USE_TLS_IF_AVAIL))
         {
             return true;
         }
@@ -638,8 +833,8 @@ public class EditAccountConnector extends GenericEditPanel
             return true;
         }
 
-        AccountConnectorOverview.AccountConnectorTypeEntry mte = (AccountConnectorOverview.AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
-        String typ = mte.type;
+        AccountConnectorTypeEntry mte = (AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
+        String typ = mte.getType();
         if (object.getType() != null && object.getType().compareTo(typ) != 0)
         {
             return true;
@@ -672,12 +867,20 @@ public class EditAccountConnector extends GenericEditPanel
             UserMain.errm_ok(UserMain.getString("Das_Passwort_ist_nicht_okay"));
             return false;
         }
+        if (CB_CERTIFICATE.isSelected())
+        {
+            if (RB_INSECURE.isSelected())
+            {
+                UserMain.errm_ok(UserMain.getString("Zertifikate_werden_nur_sicheren_Verbindungen_verwendet"));
+                return false;
+            }
+        }
 
 
         try
         {
-            AccountConnectorOverview.AccountConnectorTypeEntry mte = (AccountConnectorOverview.AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
-            String name = mte.name;
+            AccountConnectorTypeEntry mte = (AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
+            String name = mte.getName();
         }
         catch (Exception e)
         {
@@ -693,18 +896,26 @@ public class EditAccountConnector extends GenericEditPanel
     {
         String server1 = TXT_SERVER1.getText();
         int port1 = Integer.parseInt(TXT_PORT1.getText());
-        boolean de = BT_DISABLED.isSelected();
-        boolean ssl = CB_SSL.isSelected();
+        
         String name = TXT_USERNAME.getText();
         String pwd = get_pwd();
         String type = "";
-        AccountConnectorOverview.AccountConnectorTypeEntry mte = (AccountConnectorOverview.AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
-        type = mte.type;
+        AccountConnectorTypeEntry mte = (AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
+        type = mte.getType();
 
+        object.setFlags(0);
         object.setIp(server1);
         object.setPort(new Integer(port1));
-        set_object_disabled(de);
-        set_object_ssl(ssl);
+        
+        set_flag( BT_DISABLED.isSelected(), CS_Constants.ACCT_DISABLED);
+        if (RB_TLS_IV_AVAIL.isSelected())
+            set_flag(true, CS_Constants.ACCT_USE_TLS_IF_AVAIL);
+        if (RB_TLS_FORCE.isSelected())
+            set_flag(true, CS_Constants.ACCT_USE_TLS_FORCE);
+        if (RB_SSL.isSelected())
+            set_flag(true, CS_Constants.ACCT_USE_SSL);
+
+        
         object.setType(type);
         object.setUsername(name);
         object.setPwd(pwd);

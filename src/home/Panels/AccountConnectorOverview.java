@@ -24,6 +24,7 @@ import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StatementID;
+import home.shared.CS_Constants;
 import home.shared.SQL.SQLArrayResult;
 
 
@@ -49,17 +50,7 @@ class AccountConnectorTableModel extends OverviewModel
 
     String get_type_str( String type)
     {
-        AccountConnectorOverview mo_dlg = (AccountConnectorOverview)dlg;
-
-        for (int i = 0; i < mo_dlg.get_ac_entry_list().length; i++)
-        {
-            AccountConnectorOverview.AccountConnectorTypeEntry mte = mo_dlg.get_ac_entry_list()[i];
-            if (mte.type.compareTo(type)== 0)
-            {
-                return mte.name;
-            }
-        }
-        return "unknown";
+        return CS_Constants.get_name_from_ac_type(type);
     }
 
 
@@ -81,7 +72,7 @@ class AccountConnectorTableModel extends OverviewModel
                 return get_type_str( ac.getType());
             case 3:
                 int flags = ac.getFlags();
-                return new Boolean((flags & AccountConnectorOverview.DISABLED) == AccountConnectorOverview.DISABLED); // DISABLED
+                return new Boolean((flags & CS_Constants.ACCT_DISABLED) == CS_Constants.ACCT_DISABLED); // DISABLED
             default:
                 return super.getValueAt(rowIndex, columnIndex);
         }
@@ -100,9 +91,7 @@ class AccountConnectorTableModel extends OverviewModel
 public class AccountConnectorOverview extends SQLOverviewDialog implements PropertyChangeListener
 {
     
-    public static final int DISABLED =   0x01;
-    public static final int USE_SSL =   0x02;
-
+/*
     public class AccountConnectorTypeEntry
     {
         String type;
@@ -132,7 +121,7 @@ public class AccountConnectorOverview extends SQLOverviewDialog implements Prope
     {
         return mt_entry_list;
     }
-
+*/
 
     /** Creates new form NewJDialog */
     public AccountConnectorOverview(UserMain parent, boolean modal)
