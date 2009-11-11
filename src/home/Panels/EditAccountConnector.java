@@ -156,7 +156,8 @@ public class EditAccountConnector extends GenericEditPanel
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
-        BT_TEST = new javax.swing.JButton();
+        BT_TEST = new GlossButton();
+        BT_EDIT_USERS = new GlossButton();
 
         setDoubleBuffered(false);
         setOpaque(false);
@@ -392,6 +393,13 @@ public class EditAccountConnector extends GenericEditPanel
             }
         });
 
+        BT_EDIT_USERS.setText(UserMain.Txt("Edit_users_and_addresses")); // NOI18N
+        BT_EDIT_USERS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_EDIT_USERSActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PN_BUTTONSLayout = new javax.swing.GroupLayout(PN_BUTTONS);
         PN_BUTTONS.setLayout(PN_BUTTONSLayout);
         PN_BUTTONSLayout.setHorizontalGroup(
@@ -399,7 +407,9 @@ public class EditAccountConnector extends GenericEditPanel
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(BT_TEST)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 247, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(BT_EDIT_USERS)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
                 .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -415,7 +425,8 @@ public class EditAccountConnector extends GenericEditPanel
                 .addGroup(PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_TEST))
+                    .addComponent(BT_TEST, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BT_EDIT_USERS, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -589,6 +600,8 @@ public class EditAccountConnector extends GenericEditPanel
     {//GEN-HEADEREND:event_CB_TYPEActionPerformed
         // TODO add your handling code here:
         AccountConnectorTypeEntry mte = (AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
+        if (mte == null)
+            return;
         String type = mte.getType();
         boolean user_visible = true;
 
@@ -596,13 +609,16 @@ public class EditAccountConnector extends GenericEditPanel
         {
             user_visible = false;
         }
+        // WE SHOW OUR USER DB ONLY IF NOT LDAP
+        BT_EDIT_USERS.setVisible(!user_visible);
         
         TXT_USERNAME.setVisible(user_visible);
         TXTP_PWD.setVisible(user_visible);
         LB_USER.setVisible(user_visible);
         LB_PWD.setVisible(user_visible);
 
-        my_dlg.pack();
+        if (my_dlg != null)
+            my_dlg.pack();
 
 
 
@@ -649,9 +665,45 @@ public class EditAccountConnector extends GenericEditPanel
 
     }//GEN-LAST:event_RB_SSLActionPerformed
 
+    private void BT_EDIT_USERSActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_EDIT_USERSActionPerformed
+    {//GEN-HEADEREND:event_BT_EDIT_USERSActionPerformed
+        // TODO add your handling code here:
+        boolean _is_new = is_new();
+
+        // IF WE WANT TO INSERT DISKSPACE IN A NEW OBJECT , WE HAVE TO SAVE FIRST
+        if (_is_new)
+        {
+            // IN CASE OF ERROR -> LEAVE, MESSAGE WAS ALREADY SHOWN
+            if (!save_action(object) || model.getRowCount() <= 0)
+                return;
+
+            // NOW THE LAST OBJECT IN OVERVIEWLIST IS OUR NEW OBJECT, OBJECTS ARE ORDERED BY ID
+            int size = model.getRowCount();
+            AccountConnector new_object = model.get_object(size - 1);
+            if (new_object.getUsername().compareTo(object.getUsername()) != 0)
+            {
+                return;
+            }
+
+            // SET INTERNAL VARS
+            object = new_object;
+            row = size - 1;
+        }
+
+        MailUserOverview dlg = new MailUserOverview(UserMain.self,  true);
+        dlg.pack();
+
+        dlg.setLocation(this.getLocationOnScreen().x + 30, this.getLocationOnScreen().y + 30);
+        dlg.setTitle(UserMain.Txt("MailUser"));
+        dlg.setVisible(true);
+
+
+    }//GEN-LAST:event_BT_EDIT_USERSActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JCheckBox BT_DISABLED;
+    private javax.swing.JButton BT_EDIT_USERS;
     private javax.swing.JButton BT_IMPORT_CERT;
     private javax.swing.JButton BT_OK;
     private javax.swing.JButton BT_TEST;
@@ -721,52 +773,7 @@ public class EditAccountConnector extends GenericEditPanel
             clr_object_flag(flag);
         }
     }
-    /*
-    boolean object_has_ssl()
-    {
-        int flags = get_object_flags();
-        return ((flags & CS_Constants.ACCT_USE_SSL) == CS_Constants.ACCT_USE_SSL);
-    }
-    boolean object_has_tls_if_avail()
-    {
-        int flags = get_object_flags();
-        return ((flags & CS_Constants.ACCT_USE_TLS_IF_AVAIL) == CS_Constants.ACCT_USE_TLS_IF_AVAIL);
-    }
-    boolean object_has_tls_force()
-    {
-        int flags = get_object_flags();
-        return ((flags & CS_Constants.ACCT_USE_TLS_FORCE) == CS_Constants.ACCT_USE_TLS_FORCE);
-    }
-    boolean object_use_tls_cert()
-    {
-        int flags = get_object_flags();
-        return ((flags & CS_Constants.ACCT_USE_TLS_FORCE) == CS_Constants.ACCT_USE_TLS_FORCE);
-    }
-
-    void set_object_disabled( boolean f )
-    {
-        if (f)
-        {
-            set_object_flag(CS_Constants.ACCT_DISABLED);
-        }
-        else
-        {
-            clr_object_flag(CS_Constants.ACCT_DISABLED);
-        }
-    }
-
-    void set_object_ssl( boolean f )
-    {
-        if (f)
-        {
-            set_object_flag(CS_Constants.ACCT_USE_SSL);
-        }
-        else
-        {
-            clr_object_flag(CS_Constants.ACCT_USE_SSL);
-        }
-    }
-*/
+    
     String get_pwd()
     {
         char[] pwd = TXTP_PWD.getPassword();
@@ -856,16 +863,34 @@ public class EditAccountConnector extends GenericEditPanel
             UserMain.errm_ok(UserMain.getString("Port_ist_nicht_okay"));
             return false;
         }
+        AccountConnectorTypeEntry mte;
 
-        if (!Validator.is_valid_name(TXT_USERNAME.getText(), 80))
+        try
         {
-            UserMain.errm_ok(UserMain.getString("Der_User_ist_nicht_okay"));
+            mte = (AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
+            String name = mte.getName();
+        }
+        catch (Exception e)
+        {
+            UserMain.errm_ok(UserMain.getString("Typ_ist_nicht_okay"));
             return false;
         }
-        if (get_pwd().length() == 0 || get_pwd().length() > 80)
+
+        
+        String type = mte.getType();
+        if (type.compareTo("ldap") == 0)
         {
-            UserMain.errm_ok(UserMain.getString("Das_Passwort_ist_nicht_okay"));
-            return false;
+
+            if (!Validator.is_valid_name(TXT_USERNAME.getText(), 80))
+            {
+                UserMain.errm_ok(UserMain.getString("Der_User_ist_nicht_okay"));
+                return false;
+            }
+            if (get_pwd().length() == 0 || get_pwd().length() > 80)
+            {
+                UserMain.errm_ok(UserMain.getString("Das_Passwort_ist_nicht_okay"));
+                return false;
+            }
         }
         if (CB_CERTIFICATE.isSelected())
         {
@@ -876,17 +901,6 @@ public class EditAccountConnector extends GenericEditPanel
             }
         }
 
-
-        try
-        {
-            AccountConnectorTypeEntry mte = (AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
-            String name = mte.getName();
-        }
-        catch (Exception e)
-        {
-            UserMain.errm_ok(UserMain.getString("Typ_ist_nicht_okay"));
-            return false;
-        }
 
         return true;
     }

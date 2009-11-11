@@ -111,7 +111,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         PN_BUTTONS.setOpaque(false);
         PN_BUTTONS.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        BT_INIT.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_INIT.setFont(new java.awt.Font("Arial", 0, 14));
         BT_INIT.setForeground(new java.awt.Color(201, 201, 201));
         BT_INIT.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_einstellungen.png"))); // NOI18N
         BT_INIT.setText(UserMain.Txt("Init")); // NOI18N
@@ -213,11 +213,11 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_HOTFOLDER, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 130, 190, 50));
 
-        BT_ACCOUNTCONN.setFont(new java.awt.Font("Arial", 0, 14));
+        BT_ACCOUNTCONN.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_ACCOUNTCONN.setForeground(new java.awt.Color(201, 201, 201));
         BT_ACCOUNTCONN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/login-register.png"))); // NOI18N
         BT_ACCOUNTCONN.setText(UserMain.Txt("Realms")); // NOI18N
-        BT_ACCOUNTCONN.setToolTipText(UserMain.Txt("File_to_Mail_Archive")); // NOI18N
+        BT_ACCOUNTCONN.setToolTipText(UserMain.Txt("Realms_long")); // NOI18N
         BT_ACCOUNTCONN.setBorderPainted(false);
         BT_ACCOUNTCONN.setContentAreaFilled(false);
         BT_ACCOUNTCONN.setFocusPainted(false);
@@ -229,7 +229,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_ACCOUNTCONN, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 130, 190, 50));
 
-        BT_IMAPFETCHER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_IMAPFETCHER.setFont(new java.awt.Font("Arial", 0, 14));
         BT_IMAPFETCHER.setForeground(new java.awt.Color(201, 201, 201));
         BT_IMAPFETCHER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_einstellungen.png"))); // NOI18N
         BT_IMAPFETCHER.setText(UserMain.Txt("IMAP-Connect")); // NOI18N

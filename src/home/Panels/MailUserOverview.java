@@ -28,15 +28,15 @@ import home.shared.CS_Constants;
 import home.shared.SQL.SQLArrayResult;
 
 
-class AccountConnectorTableModel extends OverviewModel
+class MailUserOverviewTableModel extends OverviewModel
 {
     
-    public AccountConnectorTableModel(UserMain _main, AccountConnectorOverview _dlg)
+    public MailUserOverviewTableModel(UserMain _main, MailUserOverview _dlg)
     {
         super( _main, _dlg );
 
-        String[] _col_names = {"Id",UserMain.getString("Typ"), UserMain.getString("Server"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
-        Class[] _col_classes = {String.class,  String.class,  String.class,  Boolean.class, JButton.class, JButton.class};
+        String[] _col_names = {"Id",UserMain.getString("User"), UserMain.getString("Disabled"),UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
+        Class[] _col_classes = {String.class,  String.class, Boolean.class,  JButton.class, JButton.class};
         set_columns( _col_names, _col_classes );
 
     }
@@ -44,14 +44,11 @@ class AccountConnectorTableModel extends OverviewModel
     @Override
     public String get_qry(long mandanten_id)
     {
-        String qry = "select * from account_connector where mid=" + mandanten_id + " order by id";
+        String qry = "select * from mail_user where mid=" + mandanten_id + " order by id";
         return qry;
     }
 
-    String get_type_str( String type)
-    {
-        return CS_Constants.get_name_from_ac_type(type);
-    }
+    
 
 
     @Override
@@ -60,26 +57,24 @@ class AccountConnectorTableModel extends OverviewModel
         if (sqlResult == null)
             return null;
 
-        AccountConnector ac = (AccountConnector)sqlResult.get(rowIndex);
+        MailUser mu = (MailUser)sqlResult.get(rowIndex);
 
         switch (columnIndex)
         {
             case 0:
-                return ac.getId(); // ID
+                return mu.getId(); // ID
             case 1:
-                return ac.getIp() + ":" + ac.getPort();
+                return mu.getEmail() + " (" + mu.getUsername() + ")";
             case 2:
-                return get_type_str( ac.getType());
-            case 3:
-                int flags = ac.getFlags();
+                int flags = mu.getFlags();
                 return new Boolean((flags & CS_Constants.ACCT_DISABLED) == CS_Constants.ACCT_DISABLED); // DISABLED
             default:
                 return super.getValueAt(rowIndex, columnIndex);
         }
     }
-     public AccountConnector get_object( int index )
+     public MailUser get_object( int index )
     {
-        return (AccountConnector) sqlResult.get(index);
+        return (MailUser) sqlResult.get(index);
     }
 
 
@@ -88,13 +83,13 @@ class AccountConnectorTableModel extends OverviewModel
  *
  * @author  mw
  */
-public class AccountConnectorOverview extends SQLOverviewDialog implements PropertyChangeListener
+public class MailUserOverview extends SQLOverviewDialog implements PropertyChangeListener
 {
     
 
 
     /** Creates new form NewJDialog */
-    public AccountConnectorOverview(UserMain parent, boolean modal)
+    public MailUserOverview(UserMain parent, boolean modal)
     {
         super(parent, "ip", modal);
         initComponents();
@@ -105,7 +100,7 @@ public class AccountConnectorOverview extends SQLOverviewDialog implements Prope
         PN_TITLE.add(titlePanel);
         titlePanel.installListeners();
 
-        model = new AccountConnectorTableModel(main, this);
+        model = new MailUserOverviewTableModel(main, this);
         table = new GlossTable();
 
         table.setModel(model);
@@ -122,9 +117,9 @@ public class AccountConnectorOverview extends SQLOverviewDialog implements Prope
         create_sql_worker();
     }
 
-    AccountConnectorTableModel get_object_model()
+    MailUserOverviewTableModel get_object_model()
     {
-        return (AccountConnectorTableModel) model;
+        return (MailUserOverviewTableModel) model;
     }
 
 
@@ -159,7 +154,7 @@ public class AccountConnectorOverview extends SQLOverviewDialog implements Prope
         ResultSetID rid = sql.executeQuery(sid, qry);
         SQLArrayResult resa = sql.get_sql_array_result(rid);
 
-        SQLResult<AccountConnector>  res = new SQLResult<AccountConnector>(resa, new AccountConnector().getClass());
+        SQLResult<MailUser>  res = new SQLResult<MailUser>(resa, new MailUser().getClass());
 
         model.setSqlResult(res);
         table.tableChanged(new TableModelEvent(table.getModel()) );
@@ -173,7 +168,7 @@ public class AccountConnectorOverview extends SQLOverviewDialog implements Prope
     @Override
     protected GlossDialogPanel get_edit_panel( int row )
     {
-        return new EditAccountConnector( row, this );
+        return new EditMailUser( row, this );
     }
 
 
@@ -236,12 +231,13 @@ public class AccountConnectorOverview extends SQLOverviewDialog implements Prope
         PN_BUTTONS.setOpaque(false);
 
         BT_NEW.setForeground(new java.awt.Color(204, 204, 204));
-        BT_NEW.setText(UserMain.Txt("Neuen_Realm_hinzufuegen")); // NOI18N
+        BT_NEW.setText(UserMain.Txt("Neuen_User_hinzufuegen")); // NOI18N
         BT_NEW.setActionCommand("        ");
         BT_NEW.setBorder(null);
         BT_NEW.setContentAreaFilled(false);
         BT_NEW.setMargin(new java.awt.Insets(2, 20, 2, 20));
         BT_NEW.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_NEWActionPerformed(evt);
             }
@@ -252,6 +248,7 @@ public class AccountConnectorOverview extends SQLOverviewDialog implements Prope
         BT_QUIT.setBorder(BT_NEW.getBorder());
         BT_QUIT.setContentAreaFilled(false);
         BT_QUIT.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_QUITActionPerformed(evt);
             }

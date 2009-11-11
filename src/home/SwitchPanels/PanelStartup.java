@@ -7,12 +7,15 @@ package dimm.home.SwitchPanels;
 
 import dimm.home.*;
 import dimm.home.Panels.MailView.MailViewPanel;
+import dimm.home.Panels.RoleFilter;
 import dimm.home.Rendering.BackgroundTitle;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
+import dimm.home.Rendering.TimingTargetAdapter;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.ArrayList;
 import org.jdesktop.fuse.ResourceInjector;
 
 
@@ -110,6 +113,7 @@ public class PanelStartup extends SwitchSpringPanel
 
         PN_BUTTONS = new javax.swing.JPanel();
         BT_NETWORK = new GhostButton();
+        BT_TEST = new GhostButton();
         PN_HEADER = new javax.swing.JPanel();
 
         setOpaque(false);
@@ -117,7 +121,7 @@ public class PanelStartup extends SwitchSpringPanel
         PN_BUTTONS.setOpaque(false);
         PN_BUTTONS.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        BT_NETWORK.setFont(new java.awt.Font("Arial", 0, 14));
+        BT_NETWORK.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_NETWORK.setForeground(new java.awt.Color(201, 201, 201));
         BT_NETWORK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_lupe.png"))); // NOI18N
         BT_NETWORK.setText(UserMain.Txt("Nach_Mail_stoebern")); // NOI18N
@@ -133,7 +137,25 @@ public class PanelStartup extends SwitchSpringPanel
                 BT_NETWORKActionPerformed(evt);
             }
         });
-        PN_BUTTONS.add(BT_NETWORK, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, 170, 50));
+        PN_BUTTONS.add(BT_NETWORK, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 120, 170, 50));
+
+        BT_TEST.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_TEST.setForeground(new java.awt.Color(201, 201, 201));
+        BT_TEST.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/turntable_33x48.png"))); // NOI18N
+        BT_TEST.setText(UserMain.Txt("Nach_Mail_stoebern")); // NOI18N
+        BT_TEST.setBorderPainted(false);
+        BT_TEST.setContentAreaFilled(false);
+        BT_TEST.setFocusPainted(false);
+        BT_TEST.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        BT_TEST.setMaximumSize(new java.awt.Dimension(101, 26));
+        BT_TEST.setMinimumSize(new java.awt.Dimension(101, 26));
+        BT_TEST.setPreferredSize(new java.awt.Dimension(101, 26));
+        BT_TEST.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_TESTActionPerformed(evt);
+            }
+        });
+        PN_BUTTONS.add(BT_TEST, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 220, 170, 50));
 
         PN_HEADER.setOpaque(false);
         PN_HEADER.setLayout(new javax.swing.BoxLayout(PN_HEADER, javax.swing.BoxLayout.LINE_AXIS));
@@ -202,6 +224,19 @@ public class PanelStartup extends SwitchSpringPanel
 */
  
 }//GEN-LAST:event_BT_NETWORKActionPerformed
+
+    private void BT_TESTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_TESTActionPerformed
+    {//GEN-HEADEREND:event_BT_TESTActionPerformed
+        // TODO add your handling code here:
+        ArrayList<String> var_names = new ArrayList<String>();
+        var_names.add("Username");
+        var_names.add("EMail");
+        var_names.add("Domainname");
+
+        TimingTargetAdapter tt = make_spring_button_dlg( new RoleFilter(var_names, ""),  get_dlg_pos(),  UserMain.getString("Roles") );
+        spring_button_action(evt.getSource(), tt);
+
+    }//GEN-LAST:event_BT_TESTActionPerformed
  private static void sleep(int millis)
     {
         try
@@ -214,6 +249,7 @@ public class PanelStartup extends SwitchSpringPanel
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_NETWORK;
+    private javax.swing.JButton BT_TEST;
     private javax.swing.JPanel PN_BUTTONS;
     private javax.swing.JPanel PN_HEADER;
     // End of variables declaration//GEN-END:variables

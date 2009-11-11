@@ -6,9 +6,12 @@
 
 package dimm.home.Panels;
 
+import com.thoughtworks.xstream.XStream;
 import dimm.general.SQL.SQLResult;
 import dimm.home.Models.AccountConnectorComboModel;
+import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
+import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.ServerCall;
@@ -22,10 +25,13 @@ import home.shared.hibernate.Role;
 import dimm.home.Utilities.Validator;
 import home.shared.SQL.OptCBEntry;
 import home.shared.SQL.SQLArrayResult;
+import home.shared.filter.LogicEntry;
 import home.shared.hibernate.AccountConnector;
 import home.shared.hibernate.RoleOption;
+import java.util.ArrayList;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JCheckBox;
+import org.jdesktop.swingx.plaf.misc.GlossyTaskPaneUI;
 
 
 
@@ -236,6 +242,11 @@ public class EditRole extends GenericEditPanel
 
         BT_EDIT_MATCH.setText("...");
         BT_EDIT_MATCH.setMargin(new java.awt.Insets(2, 5, 2, 5));
+        BT_EDIT_MATCH.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_EDIT_MATCHActionPerformed(evt);
+            }
+        });
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/MA_Properties"); // NOI18N
         jLabel3.setText(bundle.getString("Realm")); // NOI18N
@@ -368,6 +379,34 @@ public class EditRole extends GenericEditPanel
     {//GEN-HEADEREND:event_TXT_NAMEActionPerformed
         // TODO add your handling code here:
 }//GEN-LAST:event_TXT_NAMEActionPerformed
+
+    private void BT_EDIT_MATCHActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_EDIT_MATCHActionPerformed
+    {//GEN-HEADEREND:event_BT_EDIT_MATCHActionPerformed
+        // TODO add your handling code here:
+       
+        try
+        {
+            ArrayList<String> var_names = new ArrayList<String>();
+            var_names.add("Username");
+            var_names.add("Email");
+            var_names.add("Domain");
+            RoleFilter rf = new RoleFilter(var_names, object.getAccountmatch());
+
+            GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, rf);
+            dlg.setVisible(true);
+
+            if (rf.isOkay())
+            {
+                 String xml = rf.get_xml_list_data();
+                 object.setAccountmatch(xml);
+            }
+        }
+        catch (Exception exc)
+        {
+        }
+
+
+    }//GEN-LAST:event_BT_EDIT_MATCHActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
