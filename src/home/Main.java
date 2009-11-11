@@ -32,6 +32,7 @@ public class Main
     public static final String LOG_PATH = "logs/";
     public static String version_str = "0.0.1";
     public static boolean enable_distributor;
+
     // public static final String SERVER_UPDATEWORKER_PATH = "/websense/v5/update/";
     Preferences prefs;
     public static UI_Generic ui;
@@ -347,7 +348,14 @@ public class Main
         }
         return null;
     }
-
+    public static boolean get_bool_prop( String pref_name, boolean dflt )
+    {
+        if (me != null)
+        {
+            return me.prefs.get_boolean_prop(pref_name, dflt);
+        }
+        return dflt;
+    }
     static public long get_long_prop( String pref_name, long def )
     {
         if (me != null)

@@ -200,6 +200,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     {
         in_init = true;
         initComponents();
+        BT_SSL.setSelected(true);
         CB_USER.removeAllItems();
         CB_USER.addItem(UserMain.getString("Anwender") );
         CB_USER.addItem(UserMain.getString("Verwaltung") );
@@ -304,7 +305,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         if (ma != null)
             ma_id = ma.getId();
 
-        UserMain.set_comm_params( st.get_ip(), st.get_port() + ma_id + 1 );
+        UserMain.set_comm_params( st.get_ip(), st.get_port() + ma_id + 1, BT_SSL.isSelected() );
 
         boolean ret = _do_login(ma_id);
         
@@ -430,6 +431,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         CB_SERVER = new javax.swing.JComboBox();
         jLabel4 = new javax.swing.JLabel();
         CB_MANDANT = new javax.swing.JComboBox();
+        BT_SSL = new javax.swing.JCheckBox();
 
         PF_PWD.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -502,6 +504,8 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             }
         });
 
+        BT_SSL.setText("SSL");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -516,11 +520,6 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                             .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(BT_OK, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(11, 11, 11)
-                        .addComponent(CB_LANG, 0, 153, Short.MAX_VALUE)
-                        .addGap(88, 88, 88))
-                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(LB_USER)
                             .addComponent(LB_PWD)
@@ -533,7 +532,15 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                             .addComponent(CB_MANDANT, 0, 241, Short.MAX_VALUE)
                             .addComponent(CB_USER, 0, 241, Short.MAX_VALUE)
                             .addComponent(TXT_USER, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
-                            .addComponent(PF_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE))))
+                            .addComponent(PF_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(11, 11, 11)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(BT_SSL)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(CB_LANG, 0, 153, Short.MAX_VALUE)
+                                .addGap(88, 88, 88)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -559,7 +566,9 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(PF_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LB_PWD))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                .addComponent(BT_SSL)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(CB_LANG, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
@@ -762,6 +771,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JButton BT_CHANGE_PWD;
     private javax.swing.JButton BT_OK;
+    private javax.swing.JCheckBox BT_SSL;
     private javax.swing.JComboBox CB_LANG;
     private javax.swing.JComboBox CB_MANDANT;
     private javax.swing.JComboBox CB_SERVER;
@@ -921,7 +931,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     {
         ArrayList<Mandant> ma_list = new ArrayList<Mandant>();
 
-        SQLConnect sqc = new SQLConnect(st.get_ip(), Main.server_port );
+        SQLConnect sqc = new SQLConnect(st.get_ip(), Main.server_port, BT_SSL.isSelected() );
 
         SQLResult<Mandant> ma_res = sqc.init_mandant_list();
         if (ma_res != null)

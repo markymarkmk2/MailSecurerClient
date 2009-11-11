@@ -28,12 +28,6 @@
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
-                      <Component id="CB_LANG" pref="153" max="32767" attributes="0"/>
-                      <EmptySpace min="-2" pref="88" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="LB_USER" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="LB_PWD" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -48,6 +42,17 @@
                           <Component id="CB_USER" alignment="0" pref="241" max="32767" attributes="1"/>
                           <Component id="TXT_USER" alignment="1" pref="241" max="32767" attributes="1"/>
                           <Component id="PF_PWD" pref="241" max="32767" attributes="1"/>
+                      </Group>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="BT_SSL" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="CB_LANG" pref="153" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="88" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                   </Group>
               </Group>
@@ -83,7 +88,9 @@
                   <Component id="PF_PWD" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="LB_PWD" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="55" max="32767" attributes="0"/>
+              <EmptySpace pref="25" max="32767" attributes="0"/>
+              <Component id="BT_SSL" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="CB_LANG" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -241,6 +248,11 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CB_MANDANTActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="BT_SSL">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="SSL"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

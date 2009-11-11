@@ -44,9 +44,9 @@ public class SQLConnect extends Connect
     {
         super();
     }
-    public SQLConnect(String ip, int port)
+    public SQLConnect(String ip, int port, boolean ssl)
     {
-        super(ip, port);
+        super(ip, port, ssl);
     }
 
 

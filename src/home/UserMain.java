@@ -466,15 +466,15 @@ public class UserMain extends javax.swing.JFrame
         this.repaint();
         
     }
-    public static void set_comm_params( String ip, int port )
+    public static void set_comm_params( String ip, int port, boolean ssl )
     {
         if (sqc != null)
             sqc.close();
 
-        sqc = new SQLConnect( ip, port);
+        sqc = new SQLConnect( ip, port, ssl);
         sqc.init_structs();
 
-        fcc = new FunctionCallConnect(ip, port);
+        fcc = new FunctionCallConnect(ip, port, ssl);
     }
 
 

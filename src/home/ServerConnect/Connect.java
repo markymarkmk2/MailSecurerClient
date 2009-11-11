@@ -22,13 +22,14 @@ public class Connect
 //        sqc = new ServerWSDLCall();
         String ip = Main.get_prop(Preferences.SERVER_IP, Main.server_ip );
         int port = (int)Main.get_long_prop(Preferences.SERVER_PORT, (long)Main.server_port );
-        sqc = new ServerTCPCall(ip, port);
+        boolean use_ssl = Main.get_bool_prop(Preferences.SERVER_SSL, true );
+        sqc = new ServerTCPCall(ip, port, use_ssl);
         sqc.init();
     }
-    public Connect(String ip, int port )
+    public Connect(String ip, int port, boolean ssl )
     {
 //        sqc = new ServerWSDLCall();
-        sqc = new ServerTCPCall(ip, port);
+        sqc = new ServerTCPCall(ip, port, ssl);
         sqc.init();
     }
 

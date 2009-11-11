@@ -18,9 +18,9 @@ public class FunctionCallConnect extends Connect
     {
         super();
     }
-    public FunctionCallConnect(String ip, int port)
+    public FunctionCallConnect(String ip, int port, boolean ssl)
     {
-        super(ip, port);
+        super(ip, port, ssl);
     }
 
     public String call_abstract_function( String cmd, int to )

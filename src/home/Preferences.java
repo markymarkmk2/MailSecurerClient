@@ -60,6 +60,7 @@ public class Preferences
     public static final String SERVER_IP = "ServerIP";
     public static final String SERVER_PORT = "ServerPort";
     public static final String HTML_HQ_RENDERER = "HTMLHQRenderer";
+    public static final String SERVER_SSL = "ServerSSL";
 
     
     java.util.Properties props;
@@ -99,6 +100,7 @@ public class Preferences
         prop_names.add( SERVER_IP );
         prop_names.add( SERVER_PORT );
         prop_names.add( HTML_HQ_RENDERER );
+        prop_names.add( SERVER_SSL );
         
                 
         read_props();
