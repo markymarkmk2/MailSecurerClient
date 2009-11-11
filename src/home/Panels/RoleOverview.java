@@ -24,6 +24,7 @@ import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StatementID;
+import home.shared.CS_Constants;
 import home.shared.SQL.SQLArrayResult;
 
 
@@ -73,7 +74,7 @@ class RoleTableModel extends OverviewModel
             }
             case 3:
                 int flags = sqlResult.getInt(rowIndex, "Flags");
-                return new Boolean((flags & RoleOverview.DISABLED) == RoleOverview.DISABLED); // DISABLED
+                return new Boolean((flags & CS_Constants.ROLE_DISABLED) == CS_Constants.ROLE_DISABLED); // DISABLED
             default:
                 return super.getValueAt(rowIndex, columnIndex);
         }
@@ -90,11 +91,6 @@ class RoleTableModel extends OverviewModel
  */
 public class RoleOverview extends SQLOverviewDialog implements PropertyChangeListener
 {
-
-
-    public static final int DISABLED =   0x01;
-
-
 
     /** Creates new form NewJDialog */
     public RoleOverview(UserMain parent, boolean modal)
@@ -133,7 +129,7 @@ public class RoleOverview extends SQLOverviewDialog implements PropertyChangeLis
     // DECODE DB-STRING TO HUMAN READABLE 
     String get_account_match_descr( String acm )
     {
-        return acm;
+        return RoleFilter.get_nice_filter_text( acm );
     }
 
 
@@ -143,7 +139,12 @@ public class RoleOverview extends SQLOverviewDialog implements PropertyChangeLis
         TableColumnModel cm = table.getTableHeader().getColumnModel();
         cm.getColumn(0).setMinWidth(40);
         cm.getColumn(0).setMaxWidth(40);
-        cm.getColumn(1).setPreferredWidth(150);
+        cm.getColumn(1).setPreferredWidth(80);
+        cm.getColumn(2).setPreferredWidth(150);
+
+        // BT_DISABLED
+        cm.getColumn(3).setMinWidth(60);
+        cm.getColumn(3).setMaxWidth(60);
 
         model.set_table_header(cm);
     }
@@ -184,6 +185,7 @@ public class RoleOverview extends SQLOverviewDialog implements PropertyChangeLis
 
 
 
+    @Override
     protected GlossDialogPanel get_edit_panel( int row )
     {
         return new EditRole( row, this );
@@ -255,6 +257,7 @@ public class RoleOverview extends SQLOverviewDialog implements PropertyChangeLis
         BT_NEW.setContentAreaFilled(false);
         BT_NEW.setMargin(new java.awt.Insets(2, 20, 2, 20));
         BT_NEW.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_NEWActionPerformed(evt);
             }
@@ -265,6 +268,7 @@ public class RoleOverview extends SQLOverviewDialog implements PropertyChangeLis
         BT_QUIT.setBorder(BT_NEW.getBorder());
         BT_QUIT.setContentAreaFilled(false);
         BT_QUIT.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_QUITActionPerformed(evt);
             }

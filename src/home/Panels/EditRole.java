@@ -6,12 +6,10 @@
 
 package dimm.home.Panels;
 
-import com.thoughtworks.xstream.XStream;
 import dimm.general.SQL.SQLResult;
 import dimm.home.Models.AccountConnectorComboModel;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
-import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.ServerCall;
@@ -23,15 +21,14 @@ import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.JButton;
 import home.shared.hibernate.Role;
 import dimm.home.Utilities.Validator;
+import home.shared.CS_Constants;
 import home.shared.SQL.OptCBEntry;
 import home.shared.SQL.SQLArrayResult;
-import home.shared.filter.LogicEntry;
 import home.shared.hibernate.AccountConnector;
 import home.shared.hibernate.RoleOption;
 import java.util.ArrayList;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JCheckBox;
-import org.jdesktop.swingx.plaf.misc.GlossyTaskPaneUI;
 
 
 
@@ -50,6 +47,7 @@ public class EditRole extends GenericEditPanel
     AccountConnectorComboModel accm;
     
     SQLResult<RoleOption>  option_res;
+    String role_filter_save;
 
     
     /** Creates new form EditChannelPanel */
@@ -81,12 +79,16 @@ public class EditRole extends GenericEditPanel
             BT_DISABLED.setSelected( object_is_disabled() );
             int ac_id = model.getSqlResult().getInt( row, "ac_id");
             accm.set_act_id(ac_id);
-            
+
+            role_filter_save = object.getAccountmatch();
+
+            set_filter_preview( RoleFilter.get_nice_filter_text( role_filter_save ) );
         }
         else
         {
             object = new Role();
             object.setMandant(UserMain.sqc().get_act_mandant());
+            role_filter_save = "";
         }
 
         CB_ACCOUNT.setModel(accm);
@@ -151,7 +153,6 @@ public class EditRole extends GenericEditPanel
         TXT_NAME = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         BT_DISABLED = new javax.swing.JCheckBox();
-        TXT_ACCOUNTMATCH = new javax.swing.JTextField();
         PN_OPTS = new javax.swing.JPanel();
         CP_OPT1 = new javax.swing.JCheckBox();
         CP_OPT2 = new javax.swing.JCheckBox();
@@ -162,6 +163,8 @@ public class EditRole extends GenericEditPanel
         BT_EDIT_MATCH = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         CB_ACCOUNT = new javax.swing.JComboBox();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        TXT_ACCOUNTMATCH = new javax.swing.JTextArea();
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
@@ -191,8 +194,6 @@ public class EditRole extends GenericEditPanel
 
         BT_DISABLED.setText(UserMain.getString("Gesperrt")); // NOI18N
         BT_DISABLED.setOpaque(false);
-
-        TXT_ACCOUNTMATCH.setText("jTextField1");
 
         PN_OPTS.setBorder(javax.swing.BorderFactory.createTitledBorder(UserMain.getString("Options"))); // NOI18N
 
@@ -253,6 +254,12 @@ public class EditRole extends GenericEditPanel
 
         CB_ACCOUNT.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        TXT_ACCOUNTMATCH.setColumns(20);
+        TXT_ACCOUNTMATCH.setEditable(false);
+        TXT_ACCOUNTMATCH.setRows(2);
+        TXT_ACCOUNTMATCH.setTabSize(4);
+        jScrollPane1.setViewportView(TXT_ACCOUNTMATCH);
+
         javax.swing.GroupLayout PN_ACTIONLayout = new javax.swing.GroupLayout(PN_ACTION);
         PN_ACTION.setLayout(PN_ACTIONLayout);
         PN_ACTIONLayout.setHorizontalGroup(
@@ -265,20 +272,20 @@ public class EditRole extends GenericEditPanel
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TXT_ACCOUNTMATCH, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+                    .addComponent(TXT_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(CB_ACCOUNT, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(TXT_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 408, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BT_EDIT_MATCH)
                 .addContainerGap())
             .addGroup(PN_ACTIONLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addComponent(PN_OPTS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(11, Short.MAX_VALUE))
-            .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
                 .addComponent(BT_DISABLED, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
                 .addContainerGap(11, Short.MAX_VALUE))
+            .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(PN_OPTS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(11, 11, 11))
         );
         PN_ACTIONLayout.setVerticalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -291,14 +298,18 @@ public class EditRole extends GenericEditPanel
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(CB_ACCOUNT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(TXT_ACCOUNTMATCH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(BT_EDIT_MATCH))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(BT_EDIT_MATCH)))
+                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                        .addGap(11, 11, 11)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(PN_OPTS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(BT_DISABLED)
                 .addContainerGap())
         );
@@ -397,12 +408,14 @@ public class EditRole extends GenericEditPanel
 
             if (rf.isOkay())
             {
-                 String xml = rf.get_xml_list_data();
-                 object.setAccountmatch(xml);
+                 String role_filter_xml = rf.get_compressed_xml_list_data();
+                 object.setAccountmatch(role_filter_xml);
+                 set_filter_preview( RoleFilter.get_nice_filter_text( role_filter_xml ) );
             }
         }
         catch (Exception exc)
         {
+            exc.printStackTrace();
         }
 
 
@@ -424,11 +437,12 @@ public class EditRole extends GenericEditPanel
     private javax.swing.JPanel PN_ACTION;
     private javax.swing.JPanel PN_BUTTONS;
     private javax.swing.JPanel PN_OPTS;
-    private javax.swing.JTextField TXT_ACCOUNTMATCH;
+    private javax.swing.JTextArea TXT_ACCOUNTMATCH;
     private javax.swing.JTextField TXT_NAME;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
     int get_object_flags()
@@ -467,16 +481,16 @@ public class EditRole extends GenericEditPanel
 
         flags = get_object_flags();
 
-        return ((flags & RoleOverview.DISABLED) == RoleOverview.DISABLED);
+        return ((flags & CS_Constants.ROLE_DISABLED) == CS_Constants.ROLE_DISABLED);
     }
     void set_object_disabled( boolean f)
     {
         int flags = get_object_flags();
 
         if (f)
-            set_object_flag( RoleOverview.DISABLED );
+            set_object_flag( CS_Constants.ROLE_DISABLED);
         else
-            clr_object_flag( RoleOverview.DISABLED );
+            clr_object_flag( CS_Constants.ROLE_DISABLED);
     }
 
     
@@ -510,6 +524,8 @@ public class EditRole extends GenericEditPanel
         if (check_opts_buttons_changed())
             return true;
 
+        if (object.getAccountmatch().compareTo(role_filter_save) != 0)
+            return true;
 
         return false;
     }
@@ -532,6 +548,11 @@ public class EditRole extends GenericEditPanel
             UserMain.errm_ok(UserMain.getString("Realm_ist_nicht_okay"));
             return false;
         }
+        if (object.getAccountmatch().length() == 0)
+        {
+            UserMain.errm_ok(UserMain.getString("Benutzerfilter_ist_nicht_okay"));
+            return false;
+        }
 
                 
         return true;
@@ -547,11 +568,11 @@ public class EditRole extends GenericEditPanel
         boolean de = BT_DISABLED.isSelected();
 
 
-        String ac = TXT_ACCOUNTMATCH.getText();
+        //String ac = TXT_ACCOUNTMATCH.getText();
 
         object.setName(name);
         object.setOpts(opts);
-        object.setAccountmatch(ac);
+        
         object.setLicense( new Integer(0));
         object.setAccountConnector( accm.get_selected_ac());
         set_object_disabled( de );
@@ -712,6 +733,11 @@ public class EditRole extends GenericEditPanel
         }
         return ret;
 
+    }
+
+    private void set_filter_preview( String _nice_filter_text )
+    {                   
+        TXT_ACCOUNTMATCH.setText(_nice_filter_text);
     }
     
    

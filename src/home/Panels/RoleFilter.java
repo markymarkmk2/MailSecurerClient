@@ -15,6 +15,7 @@ import com.thoughtworks.xstream.XStream;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.UserMain;
+import home.shared.Utilities.ZipUtilities;
 import home.shared.filter.ExprEntry;
 import home.shared.filter.ExprEntry.OPERATION;
 import home.shared.filter.GroupEntry;
@@ -24,9 +25,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.text.BadLocationException;
-
-
-
 
 
 
@@ -45,10 +43,9 @@ class CB_op_entry
     {
         return RoleFilter.get_op_nice_txt(op);
     }
-
-
-
 }
+
+
 class LogicEntryModel extends GroupEntry
 {
     LogicEntryModel(ArrayList<LogicEntry> list)
@@ -58,7 +55,6 @@ class LogicEntryModel extends GroupEntry
     LogicEntryModel()
     {
     }
-
 }
 
 
@@ -73,27 +69,16 @@ public class RoleFilter extends GlossDialogPanel
     private boolean okay;
 
     /** Creates new form RoleFilter */
-    public RoleFilter(ArrayList<String> var_names, String xml_list_str)
+    public RoleFilter(ArrayList<String> var_names, String compressed_list_str)
     {
         initComponents();
 
-        // READ XML DATA
-        XStream xstr = new XStream();
-        ArrayList<LogicEntry> list = null;
-
-        try
-        {
-            list = (ArrayList<LogicEntry>) xstr.fromXML(xml_list_str);
-        }
-        catch (Exception e)
-        {
-            UserMain.errm_ok(UserMain.Txt("Invalid_role_filter,_resetting_to_empty_list"));
-            list = new ArrayList<LogicEntry>();
-        }
+        // READ COMPRESSED FILTER XML DATA
+        ArrayList<LogicEntry> list = get_filter_list( compressed_list_str );
 
         model = new LogicEntryModel(list);
 
-
+        set_txta_display();
 
         COMBO_AND_OR.removeAllItems();
         COMBO_NAME.removeAllItems();
@@ -115,12 +100,22 @@ public class RoleFilter extends GlossDialogPanel
         }
     }
 
-    String get_xml_list_data()
+    String get_compressed_xml_list_data()
     {
         String xml = null;
         XStream xstr = new XStream();
         xml = xstr.toXML(model.getChildren());
-        return xml;
+        String compressed_list_str = null;
+        try
+        {
+            compressed_list_str = ZipUtilities.compress(xml);
+        }
+        catch (Exception e)
+        {
+            UserMain.errm_ok(UserMain.Txt("Invalid_role_filter,_resetting_to_empty_list"));
+            compressed_list_str = "";
+        }
+        return compressed_list_str;
     }
 
     static String get_op_nice_txt( ExprEntry.OPERATION operation )
@@ -135,9 +130,45 @@ public class RoleFilter extends GlossDialogPanel
         }
         return "???";
     }
-    String get_nice_txt( ExprEntry e)
+    static String get_nice_txt( ExprEntry e)
     {
         return (e.isNeg() ? UserMain.Txt("not") + " " : "") + UserMain.Txt(e.getName()) + " " + get_op_nice_txt( e.getOperation() ) + " " + e.getValue();
+    }
+
+    public static ArrayList<LogicEntry> get_filter_list( String compressed_list_str )
+    {
+        ArrayList<LogicEntry> list = null;
+        if (compressed_list_str.length() == 0)
+        {
+            list = new ArrayList<LogicEntry>();
+        }
+        else
+        {
+            try
+            {
+                String xml_list_str = ZipUtilities.uncompress(compressed_list_str);
+                XStream xstr = new XStream();
+
+                list = (ArrayList<LogicEntry>) xstr.fromXML(xml_list_str);
+            }
+            catch (Exception e)
+            {
+                UserMain.errm_ok(UserMain.Txt("Invalid_role_filter,_resetting_to_empty_list"));
+                list = new ArrayList<LogicEntry>();
+            }
+        }
+        return list;
+
+    }
+    static String get_nice_filter_text( String compressed_list_str )
+    {
+        ArrayList<LogicEntry> list = get_filter_list( compressed_list_str );
+
+        StringBuffer sb = new StringBuffer();
+
+        gather_nice_text( sb, list, 0 );
+
+        return sb.toString();
     }
 
 
@@ -221,7 +252,7 @@ public class RoleFilter extends GlossDialogPanel
       //  model.rebuild_list();
     }
 
-    void add_level_txt( StringBuffer sb, int level, String txt )
+    static void add_level_txt( StringBuffer sb, int level, String txt )
     {
         for (int i = 0; i < level; i++)
         {
@@ -232,7 +263,7 @@ public class RoleFilter extends GlossDialogPanel
 
     }
 
-    void gather_nice_text( StringBuffer sb, ArrayList<LogicEntry> list, int level )
+    static void gather_nice_text( StringBuffer sb, ArrayList<LogicEntry> list, int level )
     {
         for (int i = 0; i < list.size(); i++)
         {
@@ -382,6 +413,7 @@ public class RoleFilter extends GlossDialogPanel
         jLabel3 = new javax.swing.JLabel();
         BT_CLOSE = new GlossButton();
         BT_ABORT = new GlossButton();
+        jLabel4 = new javax.swing.JLabel();
 
         jLabel1.setText("Where");
 
@@ -398,11 +430,11 @@ public class RoleFilter extends GlossDialogPanel
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 511, Short.MAX_VALUE)
+            .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 552, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+            .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
         );
 
         COMBO_OPERATION.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -450,6 +482,9 @@ public class RoleFilter extends GlossDialogPanel
             }
         });
 
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel4.setText("Ugly and not ready!!!");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -457,44 +492,37 @@ public class RoleFilter extends GlossDialogPanel
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 333, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 374, Short.MAX_VALUE)
                         .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(BT_CLOSE, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
+                        .addComponent(BT_CLOSE, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(BT_ADD_EXPR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(BT_ADD_GROUP, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(BT_DEL_ELEM, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 155, Short.MAX_VALUE)
+                        .addComponent(jLabel4))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(COMBO_NAME, 0, 139, Short.MAX_VALUE)
+                            .addComponent(COMBO_AND_OR, 0, 139, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(COMBO_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(COMBO_OPERATION, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(TXT_VAR, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(BT_DEL_ELEM, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel3)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(COMBO_AND_OR, 0, 148, Short.MAX_VALUE)))
-                                .addGap(31, 31, 31)
-                                .addComponent(BT_NEG)
-                                .addGap(233, 233, 233)))
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(BT_ADD_GROUP, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
-                        .addGap(363, 363, 363))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(BT_ADD_EXPR, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(363, Short.MAX_VALUE))))
+                                .addComponent(TXT_VAR, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE))
+                            .addComponent(BT_NEG))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -502,17 +530,20 @@ public class RoleFilter extends GlossDialogPanel
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(BT_ADD_EXPR)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(BT_ADD_GROUP)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(BT_DEL_ELEM)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(COMBO_AND_OR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_NEG)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(BT_ADD_EXPR)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(BT_ADD_GROUP)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(BT_DEL_ELEM)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(COMBO_AND_OR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3)
+                            .addComponent(BT_NEG)))
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(COMBO_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -607,6 +638,7 @@ public class RoleFilter extends GlossDialogPanel
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 
