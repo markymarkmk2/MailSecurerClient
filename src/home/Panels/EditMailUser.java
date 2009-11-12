@@ -159,6 +159,17 @@ public class EditMailUser extends GenericEditPanel implements PropertyChangeList
             object.setMandant(UserMain.sqc().get_act_mandant());
             TXT_EMAIL.setText("");
         }
+        
+        // DISABLE PASSWORD IF WE HAVE A REMOTE USERACCOUNT (IMAP/SMTP/POP), PWD IS STORED THERE
+        if (object_overview.getAcct() != null)
+        {
+            String type = object_overview.getAcct().getType();
+            if (type.compareTo("dbs") != 0)
+            {
+                TXTP_PWD.setVisible(false);
+                LB_PWD.setVisible(false);
+            }
+        }
 
         add_table = new GlossTable();
         add_table.addMouseListener(this);
@@ -563,18 +574,20 @@ public class EditMailUser extends GenericEditPanel implements PropertyChangeList
             return false;
         }
 
-
         if (!Validator.is_valid_name(TXT_USERNAME.getText(), 80))
         {
             UserMain.errm_ok(UserMain.getString("Der_User_ist_nicht_okay"));
             return false;
         }
-        if (get_pwd().length() == 0 || get_pwd().length() > 80)
-        {
-            UserMain.errm_ok(UserMain.getString("Das_Passwort_ist_nicht_okay"));
-            return false;
-        }
 
+        if (TXTP_PWD.isVisible())
+        {
+            if (get_pwd().length() == 0 || get_pwd().length() > 80)
+            {
+                UserMain.errm_ok(UserMain.getString("Das_Passwort_ist_nicht_okay"));
+                return false;
+            }
+        }
         return true;
     }
 

@@ -69,12 +69,12 @@ public class RoleFilter extends GlossDialogPanel
     private boolean okay;
 
     /** Creates new form RoleFilter */
-    public RoleFilter(ArrayList<String> var_names, String compressed_list_str)
+    public RoleFilter(ArrayList<String> var_names, String compressed_list_str, boolean compressed)
     {
         initComponents();
 
         // READ COMPRESSED FILTER XML DATA
-        ArrayList<LogicEntry> list = get_filter_list( compressed_list_str );
+        ArrayList<LogicEntry> list = get_filter_list( compressed_list_str, compressed );
 
         model = new LogicEntryModel(list);
 
@@ -100,20 +100,23 @@ public class RoleFilter extends GlossDialogPanel
         }
     }
 
-    String get_compressed_xml_list_data()
+    String get_compressed_xml_list_data( boolean compressed)
     {
         String xml = null;
         XStream xstr = new XStream();
         xml = xstr.toXML(model.getChildren());
-        String compressed_list_str = null;
-        try
+        String compressed_list_str = xml;
+        if (compressed)
         {
-            compressed_list_str = ZipUtilities.compress(xml);
-        }
-        catch (Exception e)
-        {
-            UserMain.errm_ok(UserMain.Txt("Invalid_role_filter,_resetting_to_empty_list"));
-            compressed_list_str = "";
+            try
+            {
+                compressed_list_str = ZipUtilities.compress(xml);
+            }
+            catch (Exception e)
+            {
+                UserMain.errm_ok(UserMain.Txt("Invalid_role_filter,_resetting_to_empty_list"));
+                compressed_list_str = "";
+            }
         }
         return compressed_list_str;
     }
@@ -135,10 +138,10 @@ public class RoleFilter extends GlossDialogPanel
         return (e.isNeg() ? UserMain.Txt("not") + " " : "") + UserMain.Txt(e.getName()) + " " + get_op_nice_txt( e.getOperation() ) + " " + e.getValue();
     }
 
-    public static ArrayList<LogicEntry> get_filter_list( String compressed_list_str )
+    public static ArrayList<LogicEntry> get_filter_list( String list_str, boolean compressed )
     {
         ArrayList<LogicEntry> list = null;
-        if (compressed_list_str.length() == 0)
+        if (list_str == null || list_str.length() == 0)
         {
             list = new ArrayList<LogicEntry>();
         }
@@ -146,23 +149,27 @@ public class RoleFilter extends GlossDialogPanel
         {
             try
             {
-                String xml_list_str = ZipUtilities.uncompress(compressed_list_str);
+                String xml_list_str = list_str;
+
+                if (compressed)
+                    xml_list_str = ZipUtilities.uncompress(list_str);
+
                 XStream xstr = new XStream();
 
                 list = (ArrayList<LogicEntry>) xstr.fromXML(xml_list_str);
             }
             catch (Exception e)
             {
-                UserMain.errm_ok(UserMain.Txt("Invalid_role_filter,_resetting_to_empty_list"));
+                System.out.println("Invalid_role_filter,_resetting_to_empty_list");
                 list = new ArrayList<LogicEntry>();
             }
         }
         return list;
-
     }
-    static String get_nice_filter_text( String compressed_list_str )
+    
+    static String get_nice_filter_text( String compressed_list_str, boolean compressed )
     {
-        ArrayList<LogicEntry> list = get_filter_list( compressed_list_str );
+        ArrayList<LogicEntry> list = get_filter_list( compressed_list_str, compressed );
 
         StringBuffer sb = new StringBuffer();
 

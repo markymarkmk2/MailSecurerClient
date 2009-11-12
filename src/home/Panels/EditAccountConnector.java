@@ -103,7 +103,7 @@ public class EditAccountConnector extends GenericEditPanel
             object = new AccountConnector();
             object.setMandant(UserMain.sqc().get_act_mandant());
             TXT_SERVER1.setText("127.0.0.1");
-            TXT_PORT1.setText(Integer.toString(DFLT_LDAP_PORT));
+            TXT_PORT1.setText( Integer.toString( get_dflt_port(CS_Constants.get_ac(0).getType(), false) ) );
             RB_INSECURE.setSelected(true);
             CB_CERTIFICATE.setSelected(false);
         }
@@ -137,11 +137,11 @@ public class EditAccountConnector extends GenericEditPanel
         PN_ACTION = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         TXT_SERVER1 = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
+        LB_SERVER = new javax.swing.JLabel();
         BT_DISABLED = new javax.swing.JCheckBox();
         CB_TYPE = new javax.swing.JComboBox();
         TXT_PORT1 = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
+        LB_PORT = new javax.swing.JLabel();
         LB_USER = new javax.swing.JLabel();
         TXTP_PWD = new javax.swing.JPasswordField();
         LB_PWD = new javax.swing.JLabel();
@@ -180,7 +180,7 @@ public class EditAccountConnector extends GenericEditPanel
             }
         });
 
-        jLabel2.setText(UserMain.getString("Server")); // NOI18N
+        LB_SERVER.setText(UserMain.getString("Server")); // NOI18N
 
         BT_DISABLED.setText(UserMain.getString("Gesperrt")); // NOI18N
         BT_DISABLED.setFocusable(false);
@@ -204,7 +204,7 @@ public class EditAccountConnector extends GenericEditPanel
             }
         });
 
-        jLabel4.setText(UserMain.getString("Port")); // NOI18N
+        LB_PORT.setText(UserMain.getString("Port")); // NOI18N
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/MA_Properties"); // NOI18N
         LB_USER.setText(bundle.getString("User")); // NOI18N
@@ -307,30 +307,28 @@ public class EditAccountConnector extends GenericEditPanel
             .addGroup(PN_ACTIONLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addGap(85, 85, 85)
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(CB_TYPE, 0, 185, Short.MAX_VALUE)
-                            .addComponent(TXT_PORT1, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
-                            .addComponent(TXT_SERVER1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)))
-                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(280, 280, 280))
-                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(LB_USER)
-                            .addComponent(LB_PWD))
-                        .addGap(71, 71, 71)
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(TXTP_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
-                            .addComponent(TXT_USERNAME, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)))
-                    .addComponent(BT_DISABLED, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1)
+                    .addComponent(LB_SERVER)
+                    .addComponent(LB_USER)
+                    .addComponent(LB_PWD))
+                .addGap(63, 63, 63)
+                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(TXT_USERNAME, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                    .addComponent(TXTP_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                    .addComponent(TXT_PORT1, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                    .addComponent(TXT_SERVER1, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                    .addComponent(CB_TYPE, 0, 193, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(10, 10, 10))
+            .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(BT_DISABLED, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(400, 400, 400))
+            .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(LB_PORT)
+                .addContainerGap(495, Short.MAX_VALUE))
         );
         PN_ACTIONLayout.setVerticalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -343,11 +341,11 @@ public class EditAccountConnector extends GenericEditPanel
                             .addComponent(CB_TYPE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(4, 4, 4)
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
+                            .addComponent(LB_SERVER)
                             .addComponent(TXT_SERVER1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(6, 6, 6)
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
+                            .addComponent(LB_PORT)
                             .addComponent(TXT_PORT1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -605,7 +603,7 @@ public class EditAccountConnector extends GenericEditPanel
         String type = mte.getType();
         boolean user_visible = true;
 
-        if (type.compareTo("smtp") == 0 || type.compareTo("pop") == 0 || type.compareTo("imap") == 0 )
+        if (type.compareTo("smtp") == 0 || type.compareTo("pop") == 0 || type.compareTo("imap") == 0 || type.compareTo("dbs") == 0 )
         {
             user_visible = false;
         }
@@ -617,9 +615,18 @@ public class EditAccountConnector extends GenericEditPanel
         LB_USER.setVisible(user_visible);
         LB_PWD.setVisible(user_visible);
 
+        boolean server_visible = true;
+        if (type.compareTo("dbs") == 0)
+            server_visible = false;
+
+        TXT_SERVER1.setVisible(server_visible);
+        TXT_PORT1.setVisible(server_visible);
+        LB_SERVER.setVisible(server_visible);
+        LB_PORT.setVisible(server_visible);
+
+
         if (my_dlg != null)
             my_dlg.pack();
-
 
 
     }//GEN-LAST:event_CB_TYPEActionPerformed
@@ -690,7 +697,7 @@ public class EditAccountConnector extends GenericEditPanel
             row = size - 1;
         }
 
-        MailUserOverview dlg = new MailUserOverview(UserMain.self,  true);
+        MailUserOverview dlg = new MailUserOverview(UserMain.self, object, true);
         dlg.pack();
 
         dlg.setLocation(this.getLocationOnScreen().x + 30, this.getLocationOnScreen().y + 30);
@@ -709,7 +716,9 @@ public class EditAccountConnector extends GenericEditPanel
     private javax.swing.JButton BT_TEST;
     private javax.swing.JCheckBox CB_CERTIFICATE;
     private javax.swing.JComboBox CB_TYPE;
+    private javax.swing.JLabel LB_PORT;
     private javax.swing.JLabel LB_PWD;
+    private javax.swing.JLabel LB_SERVER;
     private javax.swing.JLabel LB_USER;
     private javax.swing.JPanel PN_ACTION;
     private javax.swing.JPanel PN_BUTTONS;
@@ -723,8 +732,6 @@ public class EditAccountConnector extends GenericEditPanel
     private javax.swing.JTextField TXT_USERNAME;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 

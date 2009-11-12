@@ -36,6 +36,7 @@ import dimm.home.ServerConnect.SQLConnect;
 import dimm.home.SwitchPanels.PanelTools;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -685,7 +686,7 @@ public class UserMain extends javax.swing.JFrame
     
     public static boolean errm( JDialog dlg, String str, final int mode, boolean with_cancel, Point p )
     {
-        GlossErrDialog errm_dlg;
+        final GlossErrDialog errm_dlg;
         /*if (!self.isVisible())
             return false;*/
        
@@ -728,14 +729,49 @@ public class UserMain extends javax.swing.JFrame
                 } 
             }
         } );
-        
-        errm_dlg.setVisible(true);
-        
-        boolean ret = errm_dlg.isOkay();
-        
-        errm_dlg = null;
-        
-        return ret;
+
+        if (SwingUtilities.isEventDispatchThread())
+        {
+            errm_dlg.setVisible(true);
+
+            boolean ret = errm_dlg.isOkay();
+
+            errm_dlg.dispose();
+
+            return ret;
+        }
+        else
+        {
+            final ArrayList<Boolean>  ret_list = new ArrayList<Boolean>();
+            try
+            {
+                SwingUtilities.invokeAndWait(new Runnable()
+                {
+
+                    @Override
+                    public void run()
+                    {
+                        errm_dlg.setVisible(true);
+
+                        boolean ret = errm_dlg.isOkay();
+                        ret_list.add( new Boolean(ret));
+
+                        errm_dlg.dispose();
+                    }
+                });
+            }
+            catch (InterruptedException interruptedException)
+            {
+            }
+            catch (InvocationTargetException invocationTargetException)
+            {
+            }
+
+            if (ret_list.size() > 0)
+                return ret_list.get(0).booleanValue();
+
+            return false;
+        }
     }
     
     GlossErrDialog busy_dlg; 

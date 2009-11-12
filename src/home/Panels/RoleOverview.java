@@ -70,7 +70,9 @@ class RoleTableModel extends OverviewModel
             case 2:
             {
                 RoleOverview rdlg = (RoleOverview)dlg;
-                return rdlg.get_account_match_descr( role.getAccountmatch() ); // ACCOUNTFILTER
+                int flags = sqlResult.getInt(rowIndex, "Flags");
+                boolean compressed = (flags & CS_Constants.ROLE_ACM_COMPRESSED) == CS_Constants.ROLE_ACM_COMPRESSED;
+                return rdlg.get_account_match_descr( role.getAccountmatch(), compressed ); // ACCOUNTFILTER
             }
             case 3:
                 int flags = sqlResult.getInt(rowIndex, "Flags");
@@ -127,9 +129,9 @@ public class RoleOverview extends SQLOverviewDialog implements PropertyChangeLis
     }
 
     // DECODE DB-STRING TO HUMAN READABLE 
-    String get_account_match_descr( String acm )
+    String get_account_match_descr( String acm, boolean compressed )
     {
-        return RoleFilter.get_nice_filter_text( acm );
+        return RoleFilter.get_nice_filter_text( acm, compressed );
     }
 
 

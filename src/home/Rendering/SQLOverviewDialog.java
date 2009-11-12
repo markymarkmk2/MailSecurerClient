@@ -76,9 +76,9 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
             {
                 try
                 {
-                    if ( !sql_worker.isDone() )
+                    while ( !sql_worker.isDone() )
                     {
-                        sql_worker.get();
+                        sql_worker.wait(100);
                     }
                     sql_worker = null;
                 } catch ( Exception ex )

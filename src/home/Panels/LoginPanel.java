@@ -14,6 +14,7 @@ import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.CommContainer;
+import dimm.home.ServerConnect.FunctionCallConnect;
 import dimm.home.ServerConnect.SQLConnect;
 import dimm.home.ServerConnect.StationEntry;
 import dimm.home.ServerConnect.UDP_Communicator;
@@ -200,7 +201,9 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     {
         in_init = true;
         initComponents();
-        BT_SSL.setSelected(true);
+        
+        BT_SSL.setSelected(Main.get_bool_prop(Preferences.SERVER_SSL, true));
+
         CB_USER.removeAllItems();
         CB_USER.addItem(UserMain.getString("Anwender") );
         CB_USER.addItem(UserMain.getString("Verwaltung") );
@@ -404,9 +407,21 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         super.setVisible(aFlag);
         if (aFlag)
         {
-        }
-            
+        }            
     }
+
+    void rebuild_mandant_list()
+    {
+        MailSecurerComboModel model = (MailSecurerComboModel)CB_SERVER.getModel();
+        if (model.st_list.size() > 0)
+        {
+            int idx = CB_SERVER.getSelectedIndex();
+            ArrayList<Mandant> ma_list = build_mandant_list( model.st_list.get(idx) );
+            MandantComboModel mandant_model = new MandantComboModel(ma_list);
+            CB_MANDANT.setModel(mandant_model);
+        }
+    }
+
     
     /** This method is called from within the constructor to
      initialize the form.
@@ -505,6 +520,11 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         });
 
         BT_SSL.setText("SSL");
+        BT_SSL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_SSLActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -630,6 +650,12 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         if (logged_in)
         {
             this.setVisible(false);
+            
+            if (BT_SSL.isSelected() != Main.get_bool_prop(Preferences.SERVER_SSL, true))
+            {
+                Main.get_prefs().set_prop(Preferences.SERVER_SSL, BT_SSL.isSelected() ? "1" : "0");
+                Main.get_prefs().store_props();
+            }
             return;
         }
         if (login_retries >= 8)
@@ -750,14 +776,8 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     private void CB_SERVERActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_SERVERActionPerformed
     {//GEN-HEADEREND:event_CB_SERVERActionPerformed
         // TODO add your handling code here:
-        MailSecurerComboModel model = (MailSecurerComboModel)CB_SERVER.getModel();
-        if (model.st_list.size() > 0) 
-        {
-            int idx = CB_SERVER.getSelectedIndex();
-            ArrayList<Mandant> ma_list = build_mandant_list( model.st_list.get(idx) );
-            MandantComboModel mandant_model = new MandantComboModel(ma_list);
-            CB_MANDANT.setModel(mandant_model);
-        }
+        rebuild_mandant_list();
+        
     }//GEN-LAST:event_CB_SERVERActionPerformed
 
     private void CB_MANDANTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_MANDANTActionPerformed
@@ -765,6 +785,12 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         // TODO add your handling code here:
 
     }//GEN-LAST:event_CB_MANDANTActionPerformed
+
+    private void BT_SSLActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_SSLActionPerformed
+    {//GEN-HEADEREND:event_BT_SSLActionPerformed
+        // TODO add your handling code here:
+        rebuild_mandant_list();
+    }//GEN-LAST:event_BT_SSLActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -827,34 +853,33 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     }
     boolean try_user_login( int m_id, String nname, String pwd )
     {
-        SQLConnect sql = UserMain.sqc();
+        FunctionCallConnect fcc = UserMain.fcc();
 
+        String ret = fcc.call_abstract_function("auth_user MA:" + m_id + " NM:'" + nname + "' PW:'" + pwd + "'", FunctionCallConnect.LONG_TIMEOUT );
 
-        String qry = "select password from mandant where name='" + nname + "' and id=" + m_id;
-        SQLArrayResult res = sql.build_sql_arraylist_lazy( qry);
-
-        if (res.getRows() == 0)
+        if (ret == null)
         {
-            UserMain.errm_ok(UserMain.getString("Der_Benutzername_stimmt_nicht"));
+            UserMain.errm_ok(UserMain.getString("Die_Authentifizierung_ist_fehlgeschlagen"));
             return false;
         }
-        
-        if (pwd.compareTo(nname) != 0 && pwd.compareTo("helikon") != 0)
+        int idx = ret.indexOf(':');
+        if (idx == -1 || idx == ret.length() - 1)
         {
-            UserMain.errm_ok(UserMain.getString("Das_Passwort_stimmt_nicht"));
+            UserMain.errm_ok(UserMain.getString("Fehler_beim_Authentifizieren: ") + ret);
+            return false;
+        }
+        int code = Integer.parseInt(ret.substring(0, idx) );
+
+        if (code != 0)
+        {
+            UserMain.errm_ok(UserMain.getString("Die_Authentifizierung_war_nicht_erfolgreich: ") + ret.substring(idx) );
             return false;
         }
 
-        //Main.self.errm_ok( "Setze Station ID f�er offline paran" );
 
         main.setUserLevel( UserMain.UL_USER );
-
-      
-
+        SQLConnect sql = UserMain.sqc();
         sql.set_mandant_id(m_id);
-
-
- //       main.set_mallorca_proxy( use_mallorca_proxy() );
         return true;
     }
 

@@ -41,38 +41,32 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="85" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="CB_TYPE" alignment="0" pref="185" max="32767" attributes="0"/>
-                              <Component id="TXT_PORT1" alignment="0" pref="185" max="32767" attributes="1"/>
-                              <Component id="TXT_SERVER1" alignment="1" pref="185" max="32767" attributes="2"/>
-                          </Group>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="280" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="LB_USER" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="LB_PWD" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="71" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="TXTP_PWD" pref="185" max="32767" attributes="0"/>
-                              <Component id="TXT_USERNAME" alignment="0" pref="185" max="32767" attributes="0"/>
-                          </Group>
-                      </Group>
-                      <Component id="BT_DISABLED" min="-2" pref="115" max="-2" attributes="1"/>
+                      <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="LB_SERVER" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="LB_USER" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="LB_PWD" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="TXT_USERNAME" alignment="0" pref="193" max="32767" attributes="0"/>
+                      <Component id="TXTP_PWD" alignment="0" pref="193" max="32767" attributes="0"/>
+                      <Component id="TXT_PORT1" alignment="0" pref="193" max="32767" attributes="1"/>
+                      <Component id="TXT_SERVER1" alignment="0" pref="193" max="32767" attributes="2"/>
+                      <Component id="CB_TYPE" alignment="0" pref="193" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                   <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" attributes="0">
+                  <EmptySpace min="10" pref="10" max="10" attributes="0"/>
+                  <Component id="BT_DISABLED" min="-2" pref="115" max="-2" attributes="1"/>
+                  <EmptySpace min="400" pref="400" max="400" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="10" pref="10" max="10" attributes="0"/>
+                  <Component id="LB_PORT" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="495" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -88,12 +82,12 @@
                           </Group>
                           <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="LB_SERVER" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="TXT_SERVER1" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="LB_PORT" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="TXT_PORT1" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -135,7 +129,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TXT_SERVER1ActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel2">
+        <Component class="javax.swing.JLabel" name="LB_SERVER">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="dimm/home/MA_Properties.properties" key="Server" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
@@ -172,7 +166,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TXT_PORT1ActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel4">
+        <Component class="javax.swing.JLabel" name="LB_PORT">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="dimm/home/MA_Properties.properties" key="Port" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>

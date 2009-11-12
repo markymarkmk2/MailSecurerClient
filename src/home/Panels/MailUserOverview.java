@@ -30,7 +30,8 @@ import home.shared.SQL.SQLArrayResult;
 
 class MailUserOverviewTableModel extends OverviewModel
 {
-    
+
+
     public MailUserOverviewTableModel(UserMain _main, MailUserOverview _dlg)
     {
         super( _main, _dlg );
@@ -86,14 +87,15 @@ class MailUserOverviewTableModel extends OverviewModel
 public class MailUserOverview extends SQLOverviewDialog implements PropertyChangeListener
 {
     
-
+    AccountConnector acct;
 
     /** Creates new form NewJDialog */
-    public MailUserOverview(UserMain parent, boolean modal)
+    public MailUserOverview(UserMain parent, AccountConnector acct, boolean modal)
     {
         super(parent, "ip", modal);
         initComponents();
 
+        this.acct = acct;
         main = parent;
 
         TitlePanel titlePanel = new TitlePanel(this);
@@ -115,6 +117,11 @@ public class MailUserOverview extends SQLOverviewDialog implements PropertyChang
         pack();
 
         create_sql_worker();
+    }
+
+    public AccountConnector getAcct()
+    {
+        return acct;
     }
 
     MailUserOverviewTableModel get_object_model()

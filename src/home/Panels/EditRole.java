@@ -71,9 +71,11 @@ public class EditRole extends GenericEditPanel
         {
             object = model.get_object(row);
 
-
             TXT_NAME.setText(object.getName());
-            TXT_ACCOUNTMATCH.setText( vbox_overview.get_account_match_descr(object.getAccountmatch()));
+            boolean compressed = (get_object_flags() & CS_Constants.ROLE_ACM_COMPRESSED) == CS_Constants.ROLE_ACM_COMPRESSED;
+            String acm_text = vbox_overview.get_account_match_descr(object.getAccountmatch(), compressed);
+            TXT_ACCOUNTMATCH.setText( acm_text );
+
             String opts = object.getOpts();
             read_opts_buttons( object.getId() );
             BT_DISABLED.setSelected( object_is_disabled() );
@@ -82,13 +84,14 @@ public class EditRole extends GenericEditPanel
 
             role_filter_save = object.getAccountmatch();
 
-            set_filter_preview( RoleFilter.get_nice_filter_text( role_filter_save ) );
+            set_filter_preview( RoleFilter.get_nice_filter_text( role_filter_save, compressed ) );
         }
         else
         {
             object = new Role();
             object.setMandant(UserMain.sqc().get_act_mandant());
             role_filter_save = "";
+            set_object_flag(CS_Constants.ROLE_ACM_COMPRESSED);
         }
 
         CB_ACCOUNT.setModel(accm);
@@ -401,16 +404,17 @@ public class EditRole extends GenericEditPanel
             var_names.add("Username");
             var_names.add("Email");
             var_names.add("Domain");
-            RoleFilter rf = new RoleFilter(var_names, object.getAccountmatch());
+            boolean compressed = (get_object_flags() & CS_Constants.ROLE_ACM_COMPRESSED) == CS_Constants.ROLE_ACM_COMPRESSED;
+            RoleFilter rf = new RoleFilter(var_names, object.getAccountmatch(), compressed );
 
             GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, rf);
             dlg.setVisible(true);
 
             if (rf.isOkay())
             {
-                 String role_filter_xml = rf.get_compressed_xml_list_data();
+                 String role_filter_xml = rf.get_compressed_xml_list_data(compressed);
                  object.setAccountmatch(role_filter_xml);
-                 set_filter_preview( RoleFilter.get_nice_filter_text( role_filter_xml ) );
+                 set_filter_preview( RoleFilter.get_nice_filter_text( role_filter_xml, compressed ) );
             }
         }
         catch (Exception exc)
@@ -508,11 +512,6 @@ public class EditRole extends GenericEditPanel
             return true;
 
       
-        String ac = object.getAccountmatch();
-
-        if (ac == null || TXT_ACCOUNTMATCH.getText().compareTo(ac) != 0)
-            return true;
-
         long ac_id = model.getSqlResult().getLong( row, "ac_id");
 
         if ( CB_ACCOUNT.getSelectedItem() != null)
@@ -575,6 +574,7 @@ public class EditRole extends GenericEditPanel
         
         object.setLicense( new Integer(0));
         object.setAccountConnector( accm.get_selected_ac());
+
         set_object_disabled( de );
     }
     public String get_option_qry(long role_id)
@@ -738,6 +738,8 @@ public class EditRole extends GenericEditPanel
     private void set_filter_preview( String _nice_filter_text )
     {                   
         TXT_ACCOUNTMATCH.setText(_nice_filter_text);
+        TXT_ACCOUNTMATCH.setCaretPosition(0);
+
     }
     
    

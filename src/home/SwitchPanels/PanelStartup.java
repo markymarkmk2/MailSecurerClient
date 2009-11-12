@@ -233,7 +233,7 @@ public class PanelStartup extends SwitchSpringPanel
         var_names.add("EMail");
         var_names.add("Domainname");
 
-        TimingTargetAdapter tt = make_spring_button_dlg( new RoleFilter(var_names, ""),  get_dlg_pos(),  UserMain.getString("Roles") );
+        TimingTargetAdapter tt = make_spring_button_dlg( new RoleFilter(var_names, "", true),  get_dlg_pos(),  UserMain.getString("Roles") );
         spring_button_action(evt.getSource(), tt);
 
     }//GEN-LAST:event_BT_TESTActionPerformed
