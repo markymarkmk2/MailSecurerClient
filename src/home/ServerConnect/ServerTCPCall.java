@@ -262,7 +262,7 @@ public class ServerTCPCall extends ServerCall
         return ret;
     }
 
-    void reopen( String ip, int port, int timeout ) throws SocketException, IOException
+    void reopen( String ip, int port, int timeout_s ) throws SocketException, IOException
     {
         if (last_ip != null)
         {
@@ -327,9 +327,9 @@ public class ServerTCPCall extends ServerCall
             // keep_s.setSendBufferSize( 6000 );
             // keep_s.setReceiveBufferSize( 60000 );
 
-            if (timeout > 0)
+            if (timeout_s > 0)
             {
-                keep_s.setSoTimeout(timeout * 1000);
+                keep_s.setSoTimeout(timeout_s * 1000);
             }
             else
             {
@@ -340,9 +340,9 @@ public class ServerTCPCall extends ServerCall
 
             if (!use_ssl)
             {
-                if (timeout > 0)
+                if (timeout_s > 0)
                 {
-                    keep_s.connect(saddr, timeout * 1000);
+                    keep_s.connect(saddr, timeout_s * 1000);
                 }
                 else
                 {
@@ -352,9 +352,9 @@ public class ServerTCPCall extends ServerCall
         }
         else
         {
-            if (timeout > 0)
+            if (timeout_s > 0)
             {
-                keep_s.setSoTimeout(timeout * 1000);
+                keep_s.setSoTimeout(timeout_s * 1000);
             }
             else
             {
@@ -363,11 +363,11 @@ public class ServerTCPCall extends ServerCall
         }
     }
 
-    public String tcp_send( String ip, int port, String str, long len, OutputStream outp, byte[] add_data, int timeout, String prefix )
+    public String tcp_send( String ip, int port, String str, long len, OutputStream outp, byte[] add_data, int timeout_s, String prefix )
     {
         try
         {
-            reopen(ip, port, timeout);
+            reopen(ip, port, timeout_s);
 
             Socket s = keep_s;
 
@@ -402,11 +402,11 @@ public class ServerTCPCall extends ServerCall
         return "--failed--";
     }
 
-    public String tcp_send( String ip, int port, String str, long len, InputStream inp, int timeout, String prefix )
+    public String tcp_send( String ip, int port, String str, long len, InputStream inp, int timeout_s, String prefix )
     {
         try
         {
-            reopen(ip, port, timeout);
+            reopen(ip, port, timeout_s);
 
             Socket s = keep_s;
 
@@ -460,9 +460,9 @@ public class ServerTCPCall extends ServerCall
     }
 
     @Override
-    public synchronized String send( String str, long len, OutputStream outp, int to )
+    public synchronized String send( String str, long len, OutputStream outp, int to_s )
     {
-        String a = tcp_send(server, port, str, len, outp, null, to, CALL_PREFIX);
+        String a = tcp_send(server, port, str, len, outp, null, to_s, CALL_PREFIX);
 
         if (get_last_err_code() == 0)
         {
@@ -472,9 +472,9 @@ public class ServerTCPCall extends ServerCall
         return null;
     }
 
-    public String send( String str, long len, InputStream is, int to )
+    public String send( String str, long len, InputStream is, int to_s )
     {
-        String a = tcp_send(server, port, str, len, is, to, CALL_PREFIX);
+        String a = tcp_send(server, port, str, len, is, to_s, CALL_PREFIX);
 
         return a;
     }
@@ -488,24 +488,24 @@ public class ServerTCPCall extends ServerCall
     }
 
     @Override
-    public String send( String str, int to )
+    public String send( String str, int to_s )
     {
-        String a = tcp_send(server, port, str, 0, null, null, to, CALL_PREFIX);
+        String a = tcp_send(server, port, str, 0, null, null, to_s, CALL_PREFIX);
 
         return a;
     }
 
     @Override
-    public String send_rmx( String str, int to )
+    public String send_rmx( String str, int to_s )
     {
-        String a = tcp_send(server, port, str, 0, null, null, to, RMX_PREFIX);
+        String a = tcp_send(server, port, str, 0, null, null, to_s, RMX_PREFIX);
 
         return a;
     }
 
-    private String send_rmx( String str, long len, OutputStream os, int to )
+    private String send_rmx( String str, long len, OutputStream os, int to_s )
     {
-        String a = tcp_send(server, port, str, len, os, null, to, RMX_PREFIX);
+        String a = tcp_send(server, port, str, len, os, null, to_s, RMX_PREFIX);
 
         if (get_last_err_code() == 0)
         {
@@ -516,9 +516,9 @@ public class ServerTCPCall extends ServerCall
     }
 
     @Override
-    public String send_rmx( String str, long len, InputStream is, int to )
+    public String send_rmx( String str, long len, InputStream is, int to_s )
     {
-        String a = tcp_send(server, port, str, len, is, to, RMX_PREFIX);
+        String a = tcp_send(server, port, str, len, is, to_s, RMX_PREFIX);
 
         return a;
     }

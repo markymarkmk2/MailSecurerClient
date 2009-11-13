@@ -341,7 +341,9 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         String user_type = CB_USER.getSelectedItem().toString();
                      
         SQLConnect sql = UserMain.sqc();
-        
+
+        main.reset_act_userdata();
+
         // USER
         if (user_type.compareTo(UserMain.getString("Anwender"))== 0 )
         {
@@ -855,7 +857,8 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     {
         FunctionCallConnect fcc = UserMain.fcc();
 
-        String ret = fcc.call_abstract_function("auth_user MA:" + m_id + " NM:'" + nname + "' PW:'" + pwd + "'", FunctionCallConnect.LONG_TIMEOUT );
+
+        String ret = fcc.call_abstract_function("auth_user CMD:login MA:" + m_id + " NM:'" + nname + "' PW:'" + pwd + "'", FunctionCallConnect.MEDIUM_TIMEOUT );
 
         if (ret == null)
         {
@@ -875,9 +878,18 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             UserMain.errm_ok(UserMain.getString("Die_Authentifizierung_war_nicht_erfolgreich: ") + ret.substring(idx) );
             return false;
         }
-
+        ParseToken pt = new ParseToken(ret);
+        String mail_list = pt.GetString("MA:");
+        String[] mail_array = mail_list.split(",");
+        ArrayList<String> mail_aliases = new ArrayList<String>();
+        for (int i = 0; i < mail_array.length; i++)
+        {
+            mail_aliases.add( mail_array[i] );
+        }
 
         main.setUserLevel( UserMain.UL_USER );
+        main.set_act_userdata( nname, pwd, mail_aliases );
+
         SQLConnect sql = UserMain.sqc();
         sql.set_mandant_id(m_id);
         return true;

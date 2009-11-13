@@ -67,6 +67,8 @@ public class RoleFilter extends GlossDialogPanel
     LogicEntryModel model;
 
     private boolean okay;
+    ArrayList<String> var_names;
+    ArrayList<String> var_nice_names;
 
     /** Creates new form RoleFilter */
     public RoleFilter(ArrayList<String> var_names, String compressed_list_str, boolean compressed)
@@ -93,14 +95,18 @@ public class RoleFilter extends GlossDialogPanel
         COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.EXACTLY ) );
         COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.REGEXP ) );
 
-        for (int i = 0; i < var_names.size(); i++)
+        this.var_names = var_names;
+        
+
+        // ADD TRANSLATIONS TO COMBO
+        for (int i = 0; i < this.var_names.size(); i++)
         {
-            String string = var_names.get(i);
-            COMBO_NAME.addItem(string);            
+            String string = this.var_names.get(i);
+            COMBO_NAME.addItem(UserMain.Txt(string));
         }
     }
 
-    String get_compressed_xml_list_data( boolean compressed)
+    public String get_compressed_xml_list_data( boolean compressed)
     {
         String xml = null;
         XStream xstr = new XStream();
@@ -167,7 +173,7 @@ public class RoleFilter extends GlossDialogPanel
         return list;
     }
     
-    static String get_nice_filter_text( String compressed_list_str, boolean compressed )
+    public static String get_nice_filter_text( String compressed_list_str, boolean compressed )
     {
         ArrayList<LogicEntry> list = get_filter_list( compressed_list_str, compressed );
 
@@ -568,7 +574,9 @@ public class RoleFilter extends GlossDialogPanel
     private void BT_ADD_EXPRActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_ADD_EXPRActionPerformed
     {//GEN-HEADEREND:event_BT_ADD_EXPRActionPerformed
         // TODO add your handling code here:
-        String name = COMBO_NAME.getSelectedItem().toString();
+        int name_idx = COMBO_NAME.getSelectedIndex();
+        // USE REAL NAME, COMBO CONTAINS TRANSLATION
+        String name = var_names.get( name_idx );
         String value = TXT_VAR.getText();
         CB_op_entry ope = (CB_op_entry) COMBO_OPERATION.getSelectedItem();
         boolean neg = BT_NEG.isSelected();

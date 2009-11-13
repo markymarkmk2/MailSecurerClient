@@ -62,7 +62,7 @@ public class EditRole extends GenericEditPanel
 
         SQLResult<AccountConnector> da_res = UserMain.sqc().get_account_result();
 
-        // COMBO-MODEL DISK ARCHIVE
+        // COMBO-MODEL 
         accm = new AccountConnectorComboModel(da_res );
                                 
         row = _row;
@@ -74,6 +74,7 @@ public class EditRole extends GenericEditPanel
             TXT_NAME.setText(object.getName());
             boolean compressed = (get_object_flags() & CS_Constants.ROLE_ACM_COMPRESSED) == CS_Constants.ROLE_ACM_COMPRESSED;
             String acm_text = vbox_overview.get_account_match_descr(object.getAccountmatch(), compressed);
+            
             TXT_ACCOUNTMATCH.setText( acm_text );
 
             String opts = object.getOpts();

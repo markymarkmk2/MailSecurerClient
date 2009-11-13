@@ -34,6 +34,7 @@ import  sun.audio.*;    //import the sun.audio package
 
 import dimm.home.ServerConnect.SQLConnect;
 import dimm.home.SwitchPanels.PanelTools;
+import home.shared.hibernate.Mandant;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -1001,6 +1002,10 @@ public class UserMain extends javax.swing.JFrame
     {
         return sqc.set_mandant_id(force_mandant);
     }
+    public Mandant get_act_mandant()
+    {
+        return sqc.get_act_mandant();
+    }
 
     boolean force_mandant_id( int parseInt )
     {
@@ -1017,6 +1022,35 @@ public class UserMain extends javax.swing.JFrame
     public void set_titel( String name )
     {
         titlePanel.setTitle(name);
+    }
+
+    String act_name;
+    String act_pwd;
+    ArrayList<String> act_mail_aliases;
+
+    public void set_act_userdata( String nname, String pwd, ArrayList<String> mail_aliases )
+    {
+        act_name = nname;
+        act_pwd = pwd;
+        act_mail_aliases = mail_aliases;
+    }
+    public void reset_act_userdata( )
+    {
+        act_name = null;
+        act_pwd = null;
+        act_mail_aliases = null;
+    }
+    public ArrayList<String> get_act_mailaliases()
+    {
+        return act_mail_aliases;
+    }
+    public String get_act_username()
+    {
+        return act_name;
+    }
+    public String get_act_pwd()
+    {
+        return act_pwd;
     }
 
 

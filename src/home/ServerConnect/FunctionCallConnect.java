@@ -14,8 +14,9 @@ package dimm.home.ServerConnect;
 public class FunctionCallConnect extends Connect
 {
 
-    public static final int SHORT_TIMEOUT = 3000;
-    public static final int LONG_TIMEOUT = 30000;
+    public static final int SHORT_TIMEOUT = 5;
+    public static final int MEDIUM_TIMEOUT = 30;
+    public static final int LONG_TIMEOUT = 600;
     public static final int NO_TIMEOUT = 0;
     
     public FunctionCallConnect()
@@ -27,14 +28,22 @@ public class FunctionCallConnect extends Connect
         super(ip, port, ssl);
     }
 
-    public String call_abstract_function( String cmd, int to )
+    public String call_abstract_function( String cmd )
     {
-        return sqc.send(cmd, to);
+        return call_abstract_function(cmd, SHORT_TIMEOUT);
+    }
+    public String call_abstract_function( String cmd, int to_s )
+    {
+        return sqc.send(cmd, to_s);
     }
 
-    public String call_rmx_function( String cmd, int to )
+    public String call_rmx_function( String cmd )
     {
-        return sqc.send_rmx(cmd, to);
+        return call_rmx_function(cmd, SHORT_TIMEOUT);
+    }
+    public String call_rmx_function( String cmd, int to_s )
+    {
+        return sqc.send_rmx(cmd, to_s);
     }
 
     public String get_last_err_txt()
