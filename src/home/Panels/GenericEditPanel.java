@@ -10,6 +10,7 @@ import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StatementID;
 import dimm.home.UserMain;
+import home.shared.CS_Constants.USERMODE;
 
 /**
  *
@@ -92,7 +93,7 @@ public abstract class GenericEditPanel extends GlossDialogPanel
 
         if (is_new())
         {
-            if (UserMain.self.getUserLevel() < UserMain.UL_ADMIN)
+            if (!UserMain.self.is_admin())
             {
                 UserMain.errm_ok( my_dlg, UserMain.Txt("Sie_duerfen_keine_Änderungen_vornehmen"));
                 return false;
@@ -105,7 +106,7 @@ public abstract class GenericEditPanel extends GlossDialogPanel
         {
             if (check_changed())
             {
-                if (UserMain.self.getUserLevel() < UserMain.UL_ADMIN)
+                if (!UserMain.self.is_admin())
                 {
                     UserMain.errm_ok( my_dlg, UserMain.Txt("Sie_duerfen_keine_Änderungen_vornehmen"));
                     return false;

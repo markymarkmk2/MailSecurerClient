@@ -21,6 +21,7 @@ import dimm.home.ServerConnect.UDP_Communicator;
 import dimm.home.UserMain;
 import dimm.home.Utilities.ParseToken;
 import dimm.home.Utilities.SwingWorker;
+import home.shared.CS_Constants.USERMODE;
 import home.shared.SQL.SQLArrayResult;
 import home.shared.hibernate.Mandant;
 import java.util.ArrayList;
@@ -389,7 +390,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             // TODO: SELCT MANDANT
             
             //int firmen_id = sql.get_sql_first_int_lazy(SQLListBuilder.OLD_PARA_DB, "select firmenid from customer_testings where id='" + main.get_station_id() + "'");
-            main.setUserLevel( UserMain.UL_SYSADMIN );
+            main.setUserLevel( USERMODE.UL_SYSADMIN );
             //sql.set_mandant_id(1);
             //main.set_mallorca_proxy( use_mallorca_proxy() );
             
@@ -521,7 +522,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             }
         });
 
-        BT_SSL.setText("SSL");
+        BT_SSL.setText(UserMain.Txt("SSL")); // NOI18N
         BT_SSL.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_SSLActionPerformed(evt);
@@ -536,11 +537,11 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(BT_CHANGE_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 99, Short.MAX_VALUE)
+                        .addComponent(BT_CHANGE_PWD)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(BT_OK, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(BT_ABORT)
+                            .addComponent(BT_OK, javax.swing.GroupLayout.Alignment.TRAILING)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(LB_USER)
@@ -565,6 +566,9 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                                 .addGap(88, 88, 88)))))
                 .addContainerGap())
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {BT_ABORT, BT_OK});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -588,7 +592,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(PF_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LB_PWD))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addComponent(BT_SSL)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -596,11 +600,11 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(BT_CHANGE_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BT_CHANGE_PWD)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(BT_ABORT)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(BT_OK)))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -700,7 +704,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         }
         
         SQLConnect sql = UserMain.sqc();
-        if ( main.getUserLevel() == UserMain.UL_ADMIN )
+        if ( main.getUserLevel() == USERMODE.UL_ADMIN )
         {    
             
             String qry;
@@ -844,7 +848,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
 
         //Main.self.errm_ok( "Setze Station ID f�er offline paran" );
 
-        main.setUserLevel( UserMain.UL_ADMIN );
+        main.setUserLevel( USERMODE.UL_ADMIN );
 
 
         sql.set_mandant_id(m_id);
@@ -887,7 +891,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             mail_aliases.add( mail_array[i] );
         }
 
-        main.setUserLevel( UserMain.UL_USER );
+        main.setUserLevel( USERMODE.UL_USER );
         main.set_act_userdata( nname, pwd, mail_aliases );
 
         SQLConnect sql = UserMain.sqc();

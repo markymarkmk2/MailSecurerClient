@@ -89,11 +89,11 @@ public abstract class OverviewModel extends AbstractTableModel
     public int getColumnCount()
     {           
         // EDIT IST 2.LAST ROW!!!!
-        if (UserMain.self.getUserLevel() < UserMain.UL_USER)
+        if (!UserMain.self.is_user() && !UserMain.self.is_admin())
             return col_names.length - 2;
 
         // EDIT IST 2.LAST ROW!!!!
-        if (UserMain.self.getUserLevel() < UserMain.UL_ADMIN)
+        if (!UserMain.self.is_admin())
             return col_names.length - 1;
         
         

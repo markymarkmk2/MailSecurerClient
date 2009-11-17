@@ -34,6 +34,7 @@ import  sun.audio.*;    //import the sun.audio package
 
 import dimm.home.ServerConnect.SQLConnect;
 import dimm.home.SwitchPanels.PanelTools;
+import home.shared.CS_Constants.USERMODE;
 import home.shared.hibernate.Mandant;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -70,10 +71,6 @@ public class UserMain extends javax.swing.JFrame
 
     // GLOBAL DEFINES
 
-    public static final int UL_DUMMY = 1;
-    public static final int UL_USER = 2;
-    public static final int UL_ADMIN = 3;
-    public static final int UL_SYSADMIN = 5;
 
  /*   public static final Color nice_white = new Color( 199,199,199);
     public static final Color nice_gray = new Color( 100,100,100);
@@ -107,7 +104,7 @@ public class UserMain extends javax.swing.JFrame
     public static Color ggradientBottom = Color.gray;
     public static UserMain self;
     
-    private int userLevel = UL_DUMMY;
+    private USERMODE userLevel = USERMODE.UL_DUMMY;
     boolean is_udp;
     String fixed_ip;
     boolean no_updater;
@@ -149,7 +146,7 @@ public class UserMain extends javax.swing.JFrame
         UserMain.errm_ok("Jeht noch nicht");
     }
 
-    public int getUserLevel()
+    public USERMODE getUserLevel()
     {
         return userLevel;
     }
@@ -214,10 +211,11 @@ public class UserMain extends javax.swing.JFrame
         {
         }
 
-        System.err.println("Missing translation resource: " + string);
+        
 
         if (!missing_transl_tokens.contains(string))
         {
+            System.err.println("Missing translation resource: " + string);
             missing_transl_tokens.add(string);
             try
             {
@@ -340,8 +338,15 @@ public class UserMain extends javax.swing.JFrame
         y_pos = (int)Main.get_long_prop( Preferences.Y_POS, y_pos, 40 );
 
 
-        
-        userLevel = (int)Main.get_long_prop( Preferences.DEFAULT_USER, (long)UL_DUMMY );
+        userLevel = USERMODE.UL_DUMMY;
+
+        try
+        {
+            userLevel = USERMODE.values()[(int) Main.get_long_prop(Preferences.DEFAULT_USER, (long) USERMODE.UL_DUMMY.ordinal())];
+        }
+        catch (Exception e)
+        {
+        }
         
         restart_gui();      
         
@@ -503,9 +508,9 @@ public class UserMain extends javax.swing.JFrame
 
     void update_panels()
     {
-        if (this.getUserLevel() != UL_DUMMY)
+        if (this.getUserLevel() != USERMODE.UL_DUMMY)
         {
-            if (this.getUserLevel() == UL_SYSADMIN)
+            if (this.getUserLevel() == USERMODE.UL_SYSADMIN)
             {
                 navPanel.enable_button(PBC_ADMIN, false);
                 navPanel.enable_button(PBC_TOOLS, false);
@@ -570,7 +575,7 @@ public class UserMain extends javax.swing.JFrame
    
     private void handle_logoff()
     {
-        userLevel = UL_DUMMY;
+        userLevel = USERMODE.UL_DUMMY;
         restart_gui();
 
     }        
@@ -993,10 +998,12 @@ public class UserMain extends javax.swing.JFrame
         return getString(key);
     }
 
-    public void setUserLevel( int ul )
+    public void setUserLevel( USERMODE ul )
     {
         userLevel = ul;
     }
+
+
 
     boolean set_mandant_id( int force_mandant )
     {
@@ -1013,7 +1020,7 @@ public class UserMain extends javax.swing.JFrame
         boolean ret = set_mandant_id(parseInt);
         if (ret)
         {
-            setUserLevel( UL_ADMIN );
+            setUserLevel( USERMODE.UL_ADMIN );
             update_panels();
         }
         return ret;
@@ -1051,6 +1058,30 @@ public class UserMain extends javax.swing.JFrame
     public String get_act_pwd()
     {
         return act_pwd;
+    }
+
+    public boolean is_sysadmin()
+    {
+        if (getUserLevel() == USERMODE.UL_SYSADMIN)
+            return true;
+
+        return false;
+    }
+    public boolean is_admin()
+    {
+        if (getUserLevel() == USERMODE.UL_ADMIN || getUserLevel() == USERMODE.UL_SYSADMIN)
+            return true;
+
+        return false;
+    }
+
+    public boolean is_user()
+    {
+       if (getUserLevel() == USERMODE.UL_USER)
+            return true;
+
+        return false;
+
     }
 
 

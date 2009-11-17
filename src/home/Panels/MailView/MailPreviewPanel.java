@@ -12,6 +12,7 @@ package dimm.home.Panels.MailView;
 
 import dimm.home.Main;
 import dimm.home.Preferences;
+import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.Rendering.GlossTable;
 import dimm.home.UserMain;
@@ -402,7 +403,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        BT_CLOSE = new javax.swing.JButton();
+        BT_CLOSE = new GlossButton();
         CB_HQ = new javax.swing.JCheckBox();
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
@@ -422,6 +423,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/MA_Properties"); // NOI18N
         CB_HQ.setText(bundle.getString("High-Quality")); // NOI18N
+        CB_HQ.setOpaque(false);
         CB_HQ.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CB_HQActionPerformed(evt);

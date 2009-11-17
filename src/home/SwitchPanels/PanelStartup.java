@@ -33,7 +33,7 @@ class MailDlg extends GenericGlossyDlg
         else
             this.setLocationRelativeTo(null);
 
-        this.setSize( 700, 600);
+        //this.setSize( 700, 600);
         
 
     }

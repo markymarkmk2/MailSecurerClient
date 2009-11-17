@@ -24,6 +24,7 @@ import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StatementID;
+import home.shared.CS_Constants.USERMODE;
 import home.shared.SQL.SQLArrayResult;
 
 
@@ -94,7 +95,7 @@ class MandantTableModel extends OverviewModel
     {
 
         // EDIT IST 2.LAST ROW!!!!
-        if (UserMain.self.getUserLevel() < UserMain.UL_SYSADMIN)
+        if (UserMain.self.getUserLevel() != USERMODE.UL_SYSADMIN)
             return col_names.length - 2;
 
 
@@ -171,7 +172,7 @@ public class MandantOverview extends SQLOverviewDialog implements PropertyChange
         // REGISTER TABLE TO SCROLLPANEL
         table.embed_to_scrollpanel( SCP_TABLE );
 
-        if (UserMain.self.getUserLevel() < UserMain.UL_SYSADMIN)
+        if (UserMain.self.getUserLevel() != USERMODE.UL_SYSADMIN)
             this.BT_NEW.setVisible(false);
 
         pack();

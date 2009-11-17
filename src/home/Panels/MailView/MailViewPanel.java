@@ -14,6 +14,7 @@ package dimm.home.Panels.MailView;
 import com.thoughtworks.xstream.XStream;
 import dimm.home.Panels.RoleFilter;
 import dimm.home.Rendering.GenericGlossyDlg;
+import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.Rendering.GlossTable;
 import dimm.home.ServerConnect.FunctionCallConnect;
@@ -30,17 +31,20 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
+
 
 class MailPreviewDlg extends GenericGlossyDlg
 {
@@ -60,11 +64,122 @@ class MailPreviewDlg extends GenericGlossyDlg
 }
 
 
+class MBoxFilterOutputStream extends OutputStream
+{
+    byte[] FROM = {0,'F', 'r', 'o', 'm', ' ' };
+    OutputStream os;
+
+    public MBoxFilterOutputStream( OutputStream os)
+    {
+        this.os = os;
+    }
+
+    @Override
+    public void write( byte[] b ) throws IOException
+    {
+        this.write(b, 0, b.length);
+    }
+
+    boolean detect_mode = false;
+    int detect_cnt = 0;
+    @Override
+    public void write( byte[] b, int off, int len ) throws IOException
+    {
+        for( int i = off; i < len && detect_mode; i++)
+        {
+            this.write(b[i]);
+            off++;
+        }
+        
+        int act_idx = 0;
+        for (act_idx = off; act_idx < len; act_idx++)
+        {
+            // DETECT NL
+            if (b[act_idx] == '\n' || b[act_idx] == '\r')
+            {
+                // SAVE IT
+                FROM[0] = b[act_idx];
+                break;
+            }
+        }
+        // WRITE CLEAN STUFF
+        os.write(b, off, act_idx - off);
+
+        // WRITE REST IF DETECTED TO SINGLE BYTE FUNC
+        if (act_idx < len)
+        {
+            detect_mode = true;
+            detect_cnt = 0;
+            for( int i = act_idx; i < len; i++)
+                this.write(b[i]);
+        }
+
+    }
+
+    @Override
+    public void write( int b ) throws IOException
+    {
+        if (!detect_mode)
+        {
+            // DETECT NL
+            if (b == '\n' || b == '\r')
+            {
+                // SAVE IT
+                FROM[0] = (byte)b;
+                detect_mode = true;
+                detect_cnt = 0;
+            }
+        }
+        // WE ARE IN PROGRESS OF DETECTION
+        if (b == FROM[detect_cnt])
+        {
+            if (detect_cnt == FROM.length - 1)
+            {
+                os.write(FROM[0]);
+                os.write((byte)'>');
+                os.write(FROM, 1, FROM.length - 1);
+                detect_mode = false;
+                detect_cnt = 0;
+                return;
+            }
+            detect_cnt++;
+        }
+        else
+        {
+            // OKAY; REST OF FAILED DETECTION TO STREAM ( Fro, F, "From" )
+            if (detect_mode)
+            {
+                os.write(FROM, 0, detect_cnt);
+                detect_mode = false;
+                detect_cnt = 0;
+            }
+            os.write(b);
+        }
+    }
+
+    @Override
+    public void flush() throws IOException
+    {
+        super.flush();
+    }
+
+    @Override
+    public void close() throws IOException
+    {
+
+        flush();
+        os.close();
+        super.close();
+    }
+
+    void write_direct( String string ) throws IOException
+    {
+        os.write(string.getBytes());
+    }
 
 
 
-
-
+}
 class FieldComboEntry
 {
     String field;
@@ -230,6 +345,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         initComponents();
 
         table = new GlossTable();
+        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         model = new MailTableModel(this, null);
         table.setModel(model);
@@ -376,11 +492,9 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         };
 
         sw.start();
-
-
     }
 
-    void export_mail( final File f, final int[] rows )
+    void export_mail( final File f, final int[] rows, final String format )
     {
         if (sw != null)
             return;
@@ -393,7 +507,14 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             {
                 UserMain.self.show_busy(my_dlg, UserMain.Txt("Exporting_mail") + "...");
 
-                run_export_mail(f, rows);
+                if (format.toLowerCase().startsWith("eml"))
+                {
+                    run_export_mail(f, rows);
+                }
+                if (format.toLowerCase().startsWith("m"))
+                {
+                    run_export_mbox(f, rows);
+                }
 
                 UserMain.self.hide_busy();
 
@@ -403,13 +524,51 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         };
 
         sw.start();
-
-
     }
+
+    private static final String forbidden_sj_chars = ":<>*?\\/'\"|$`´\t\r\n";
+    private String clean_fname( String name )
+    {
+
+        // FIRST 80 CHARS, NO CONTROLCODES, NO SPECIAL CHARS
+        StringBuffer sb = new StringBuffer();
+
+        char last_char = 0;
+        for (int i = 0; i < name.length(); i++)
+        {
+            char ch = name.charAt(i);
+            if (!Character.isISOControl(ch) && forbidden_sj_chars.indexOf(ch) == -1)
+            {
+                sb.append(ch);
+                last_char = ch;
+            }
+            else
+            {
+                if (last_char != ' ')
+                    sb.append(' ');
+                last_char = ' ';
+            }
+
+            if (i >= 79)
+                break;
+        }
+        return sb.toString();
+    }
+
+
     void run_export_mail( File dir, int[] rowi )
     {
+        int last_percent = -1;
+        UserMain.self.show_busy_val(0);
         for (int i = 0; i < rowi.length; i++)
         {
+            int percent = i * 100 / rowi.length;
+            if (percent != last_percent)
+            {
+                last_percent = percent;
+                UserMain.self.show_busy_val(percent);
+            }
+
             int row = rowi[i];
             String subject = table.getModel().getValueAt(row, MailTableModel.SUBJECT_COL).toString();
             subject = clean_fname(subject);
@@ -418,11 +577,110 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             while (f.exists() && idx < 100000)
             {
                 f = new File(dir, subject + "_" + idx + ".eml");
+                idx++;
             }
-            run_download_mail(i, f.getAbsolutePath());
+            run_download_mail(row, f.getAbsolutePath());
         }
     }
 
+
+
+    void run_export_mbox( File dir, int[] rowi )
+    {
+        int last_percent = -1;
+        UserMain.self.show_busy_val(0);
+        MBoxFilterOutputStream mbfos = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("E M HH:mm:ss y");
+        Date d = new Date();
+        try
+        {
+            String subject = "export";
+            File f = new File(dir, subject + ".mbx");
+            int idx = 1;
+            while (f.exists() && idx < 100000)
+            {
+                f = new File(dir, subject + "_" + idx + ".mbx");
+                idx++;
+            }
+            mbfos = new MBoxFilterOutputStream(new BufferedOutputStream(new FileOutputStream(f)));
+            for (int i = 0; i < rowi.length; i++)
+            {
+                int percent = i * 100 / rowi.length;
+                if (percent != last_percent)
+                {
+                    last_percent = percent;
+                    UserMain.self.show_busy_val(percent);
+                }
+
+                int row = rowi[i];
+                d.setTime(System.currentTimeMillis());
+                String timestamp = sdf.format( d );
+                mbfos.write_direct("From MailSecurer " + timestamp + "\n" );
+                run_download_mbox(row, mbfos);
+                mbfos.write_direct("\n" );
+            }
+        }
+        catch (Exception ex)
+        {
+            UserMain.errm_ok(my_dlg, UserMain.Txt("Fehler_beim_Schreiben_der_MBox-Daten") + ":\n" + ex.getMessage());
+        }
+        finally
+        {
+            try
+            {
+                mbfos.close();
+            }
+            catch (IOException ex)
+            {
+
+            }
+        }
+    }
+    void run_download_mbox( int row, MBoxFilterOutputStream mbfos )
+    {
+        ServerInputStream sis = null;
+        
+        try
+        {
+
+
+            FunctionCallConnect fcc = UserMain.fcc();
+            String ret = fcc.call_abstract_function("SearchMail CMD:open_mail ID:" + search_id + " ROW:" + row);
+            if (ret.charAt(0) != '0')
+            {
+                UserMain.errm_ok(my_dlg, "SearchMail open_mail gave " + ret);
+            }
+            String[] l = ret.split(" ");
+            String instream_id = l[1];
+            ParseToken pt = new ParseToken(l[2]);
+            long len = pt.GetLong("LEN:");
+
+            InStreamID id = new InStreamID(instream_id, len);
+
+            sis = new ServerInputStream(fcc.get_sqc(), id);
+            sis.read(mbfos);
+
+
+        }
+        catch (Exception iOException)
+        {
+            iOException.printStackTrace();
+            UserMain.errm_ok(my_dlg, "Fehler beim Abholen der Mail: " + iOException.getMessage() );
+        }
+        finally
+        {
+            try
+            {
+                if (sis != null)
+                {
+                    sis.close();
+                }
+            }
+            catch (IOException iOException)
+            {
+            }
+        }
+    }
 
 
     File run_download_mail( int row, String file_name )
@@ -553,18 +811,19 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         SCP_TABLE = new javax.swing.JScrollPane();
-        BT_CLOSE = new javax.swing.JButton();
-        BT_EXPORT = new javax.swing.JButton();
+        BT_CLOSE = new GlossButton();
+        BT_EXPORT = new GlossButton();
         TXT_MAIL = new javax.swing.JTextField();
         CB_FIELD = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         CB_ENTRIES = new javax.swing.JComboBox();
         jLabel4 = new javax.swing.JLabel();
-        BT_RESTORE = new javax.swing.JButton();
+        BT_RESTORE = new GlossButton();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         TXTA_FILTER = new javax.swing.JTextArea();
+        BT_TOGGLE_SELECTION = new GlossButton();
 
         jLabel1.setText(UserMain.getString("Suche")); // NOI18N
 
@@ -588,13 +847,13 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SCP_TABLE, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 769, Short.MAX_VALUE)
+            .addComponent(SCP_TABLE, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 732, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(SCP_TABLE, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE))
+                .addComponent(SCP_TABLE, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE))
         );
 
         BT_CLOSE.setText(UserMain.getString("Schliessen")); // NOI18N
@@ -629,7 +888,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             }
         });
 
-        jLabel5.setText("jLabel5");
+        jLabel5.setText("Filter");
 
         TXTA_FILTER.setColumns(20);
         TXTA_FILTER.setEditable(false);
@@ -642,6 +901,13 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         });
         jScrollPane1.setViewportView(TXTA_FILTER);
 
+        BT_TOGGLE_SELECTION.setText(UserMain.Txt("Select_onoff")); // NOI18N
+        BT_TOGGLE_SELECTION.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_TOGGLE_SELECTIONActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -650,10 +916,13 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(BT_EXPORT)
                         .addGap(10, 10, 10)
                         .addComponent(BT_RESTORE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 518, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 481, Short.MAX_VALUE)
                         .addComponent(BT_CLOSE)
                         .addGap(10, 10, 10))
                     .addGroup(layout.createSequentialGroup()
@@ -661,7 +930,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel5)
                                 .addGap(32, 32, 32)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE))
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -673,7 +942,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(TXT_SEARCH, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
+                        .addComponent(TXT_SEARCH, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
                         .addGap(44, 44, 44)
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
@@ -681,9 +950,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                         .addGap(18, 18, 18)
                         .addComponent(jButton1)
                         .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())))
+                    .addComponent(BT_TOGGLE_SELECTION)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -707,11 +974,11 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
                             .addComponent(CB_ENTRIES, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                    .addComponent(jButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(BT_TOGGLE_SELECTION)
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_CLOSE)
@@ -748,41 +1015,26 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
 
     }//GEN-LAST:event_TXT_SEARCHActionPerformed
 
-    private String clean_fname( String name )
-    {
-        StringBuffer sb = new StringBuffer();
 
-        for (int i = 0; i < name.length(); i++)
-        {
-            char ch = name.charAt(i);
-            if (Character.isLetter( ch ) || Character.isLetter(ch))
-            {
-                sb.append(ch);
-            }
-            else
-                sb.append('_');
-        }
-        return sb.toString();
-    }
-    static File last_dir;
     private void BT_EXPORTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_EXPORTActionPerformed
     {//GEN-HEADEREND:event_BT_EXPORTActionPerformed
         // TODO add your handling code here:
         // CHOOSE CERTFILE
-        JFileChooser chooser = new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setCurrentDirectory(last_dir);
-        if (JFileChooser.APPROVE_OPTION != chooser.showDialog(my_dlg, UserMain.Txt("Select_export_directory")))
-        {
-            return;
-        }
+        MailExportPanel pnl = new MailExportPanel(  );
+        GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
+        dlg.set_next_location( my_dlg );
 
-        File dir = chooser.getSelectedFile();
-        last_dir = dir;
+        dlg.setVisible(true);
+
+        if (!pnl.isOkay())
+            return;
+
+     
+
+        File dir = pnl.get_dir();
         int[] rowi = table.getSelectedRows();
 
-        export_mail( dir, rowi );
-
+        export_mail( dir, rowi, pnl.get_format() );
 
     }//GEN-LAST:event_BT_EXPORTActionPerformed
 
@@ -792,6 +1044,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         int[] rowi = table.getSelectedRows();
         GetMailAddressPanel pnl = new GetMailAddressPanel( UserMain.self.get_act_mailaliases() );
         GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
+        dlg.set_next_location( my_dlg );
 
         dlg.setVisible(true);
 
@@ -854,8 +1107,9 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                  last_filter = rf.get_compressed_xml_list_data(compressed);
                  int entries = get_entries();
 
-                 String cmd = "SearchMail CMD:open_filter MA:" + mandant + " US:'" + user + "' PW:'" + pwd + "' FL:'" + last_filter + "' CNT:'" + entries + "' ";
-
+                 String cmd = "SearchMail CMD:open_filter MA:" + mandant + " US:'" + user + "' PW:'" + pwd + "' UL:" + 
+                            UserMain.self.getUserLevel() + " FL:'" + last_filter + "' CNT:'" + entries + "' ";
+                 
                  fill_model_with_search(cmd);
 
                  String nice_txt = RoleFilter.get_nice_filter_text( last_filter, compressed );
@@ -870,11 +1124,21 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
 
     }//GEN-LAST:event_TXTA_FILTERMouseClicked
 
+    private void BT_TOGGLE_SELECTIONActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_TOGGLE_SELECTIONActionPerformed
+    {//GEN-HEADEREND:event_BT_TOGGLE_SELECTIONActionPerformed
+        // TODO add your handling code here:
+        if (table.getSelectedRowCount() == 0)
+            table.selectAll();
+        else
+            table.clearSelection();
+    }//GEN-LAST:event_BT_TOGGLE_SELECTIONActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_CLOSE;
     private javax.swing.JButton BT_EXPORT;
     private javax.swing.JButton BT_RESTORE;
+    private javax.swing.JButton BT_TOGGLE_SELECTION;
     private javax.swing.JComboBox CB_ENTRIES;
     private javax.swing.JComboBox CB_FIELD;
     private javax.swing.JScrollPane SCP_TABLE;
@@ -932,6 +1196,25 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     public JButton get_default_button()
     {
         return BT_CLOSE;
+    }
+    public static void main( String[] args )
+    {
+        try
+        {
+            String test = "BlahBla From blah blah\nFro m blah\nFrom sdfksjdf\nFr";
+            String test2 = "om From blah blah\nFro m blah\nFrom sdfksjdf\n";
+            ByteArrayOutputStream byos = new ByteArrayOutputStream();
+            MBoxFilterOutputStream mbfos = new MBoxFilterOutputStream(byos);
+            mbfos.write(test.getBytes());
+            mbfos.write(test2.getBytes());
+            String res = byos.toString();
+            System.out.println("In : " + test + test2);
+            System.out.println("Out: " + res);
+        }
+        catch (IOException iOException)
+        {
+        }
+
     }
 
 }

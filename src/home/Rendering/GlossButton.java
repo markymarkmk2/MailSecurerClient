@@ -65,6 +65,7 @@ public class GlossButton extends JXButton implements MouseListener
     private Rectangle clickable;
     private float ghostValue = 0.0f;
 
+    Insets ins;
     public GlossButton()
     {
         ResourceInjector.get().inject(this);
@@ -83,7 +84,7 @@ public class GlossButton extends JXButton implements MouseListener
         addMouseListener(new HiglightHandler());
         pressed = false;
 
-        setMargin(new Insets(0, 22, 0, 22));
+        ins = new Insets(5, 20, 6, 20);
 
         FontMetrics metrics = getFontMetrics(pathFont);
         textWidth = SwingUtilities.computeStringWidth(metrics, getText());
@@ -92,6 +93,17 @@ public class GlossButton extends JXButton implements MouseListener
         shadowOffsetX = (float) Math.cos(rads) * pathShadowDistance;
         shadowOffsetY = (float) Math.sin(rads) * pathShadowDistance;
     }
+
+  
+
+    @Override
+    public Insets getInsets()
+    {
+        return ins;
+    }
+
+
+
     
     @Override
     public void setText(String text)

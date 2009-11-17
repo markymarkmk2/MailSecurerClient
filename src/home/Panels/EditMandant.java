@@ -26,6 +26,7 @@ import home.shared.hibernate.Mandant;
 import dimm.home.Utilities.Validator;
 import home.shared.AccountConnectorTypeEntry;
 import home.shared.CS_Constants;
+import home.shared.CS_Constants.USERMODE;
 import home.shared.SQL.SQLArrayResult;
 import home.shared.hibernate.MailHeaderVariable;
 import java.awt.Component;
@@ -95,11 +96,10 @@ class HeaderModel extends OverviewModel
     {
 
         // EDIT IST 2.LAST ROW!!!!
-        if (UserMain.self.getUserLevel() < UserMain.UL_SYSADMIN)
+        if (UserMain.self.getUserLevel() != USERMODE.UL_SYSADMIN)
         {
             return col_names.length - 2;
         }
-
 
         return col_names.length;
     }

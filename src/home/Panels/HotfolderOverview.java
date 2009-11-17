@@ -114,7 +114,7 @@ public class HotfolderOverview extends SQLOverviewDialog implements PropertyChan
         // REGISTER TABLE TO SCROLLPANEL
         table.embed_to_scrollpanel( SCP_TABLE );
 
-        if (UserMain.self.getUserLevel() < UserMain.UL_ADMIN)
+        if (!UserMain.self.is_admin())
             this.BT_NEW.setVisible(false);
 
         pack();
@@ -172,6 +172,7 @@ public class HotfolderOverview extends SQLOverviewDialog implements PropertyChan
 
 
 
+    @Override
     protected GlossDialogPanel get_edit_panel( int row )
     {
         return new EditHotfolder( row, this );
@@ -243,6 +244,7 @@ public class HotfolderOverview extends SQLOverviewDialog implements PropertyChan
         BT_NEW.setContentAreaFilled(false);
         BT_NEW.setMargin(new java.awt.Insets(2, 20, 2, 20));
         BT_NEW.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_NEWActionPerformed(evt);
             }
@@ -253,6 +255,7 @@ public class HotfolderOverview extends SQLOverviewDialog implements PropertyChan
         BT_QUIT.setBorder(BT_NEW.getBorder());
         BT_QUIT.setContentAreaFilled(false);
         BT_QUIT.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_QUITActionPerformed(evt);
             }

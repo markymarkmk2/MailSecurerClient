@@ -25,9 +25,9 @@
                       <Component id="CB_MAILLIST" pref="232" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="BT_ABORT" linkSize="1" min="-2" max="-2" attributes="0"/>
+                      <Component id="BT_ABORT" linkSize="1" min="-2" pref="80" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="BT_OKAY" linkSize="1" min="-2" max="-2" attributes="0"/>
+                      <Component id="BT_OKAY" linkSize="1" min="-2" pref="80" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>

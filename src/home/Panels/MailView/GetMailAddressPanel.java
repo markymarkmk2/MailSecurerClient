@@ -34,9 +34,12 @@ public class GetMailAddressPanel extends GlossDialogPanel
         initComponents();
         CB_MAILLIST.removeAllItems();
 
-        for (int i = 0; i < list.size(); i++)
+        if (list != null)
         {
-            CB_MAILLIST.addItem( list.get(i) );
+            for (int i = 0; i < list.size(); i++)
+            {
+                CB_MAILLIST.addItem( list.get(i) );
+            }
         }
     }
 
@@ -95,9 +98,9 @@ public class GetMailAddressPanel extends GlossDialogPanel
                         .addGap(18, 18, 18)
                         .addComponent(CB_MAILLIST, 0, 232, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(BT_ABORT)
+                        .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(BT_OKAY)))
+                        .addComponent(BT_OKAY, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 

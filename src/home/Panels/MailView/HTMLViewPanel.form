@@ -73,7 +73,7 @@
         <Component class="javax.swing.JButton" name="BT_OK">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="sonicremote/NewGUI/SR_Properties.properties" key="CLOSE_DIALOG" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="OK" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
             </Property>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[100, 43]"/>
@@ -89,7 +89,10 @@
         <Component class="javax.swing.JButton" name="BT_ABORT">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="sonicremote/NewGUI/SR_Properties.properties" key="Abbruch" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Abort" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="actionCommand" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Abort" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -102,7 +105,7 @@
         <Component class="javax.swing.JButton" name="BT_WEB">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="sonicremote/NewGUI/SR_Properties.properties" key="SonicSense" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Website" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>

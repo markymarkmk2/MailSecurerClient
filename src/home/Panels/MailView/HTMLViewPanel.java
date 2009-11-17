@@ -176,7 +176,7 @@ public class HTMLViewPanel extends GlossDialogPanel {
         PN_BUTTONS.setDoubleBuffered(false);
         PN_BUTTONS.setOpaque(false);
 
-        BT_OK.setText(UserMain.Txt("CLOSE_DIALOG")); // NOI18N
+        BT_OK.setText(UserMain.Txt("OK")); // NOI18N
         BT_OK.setMaximumSize(new java.awt.Dimension(100, 43));
         BT_OK.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -184,14 +184,15 @@ public class HTMLViewPanel extends GlossDialogPanel {
             }
         });
 
-        BT_ABORT.setText(UserMain.Txt("Abbruch")); // NOI18N
+        BT_ABORT.setText(UserMain.Txt("Abort")); // NOI18N
+        BT_ABORT.setActionCommand(UserMain.Txt("Abort")); // NOI18N
         BT_ABORT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_ABORTActionPerformed(evt);
             }
         });
 
-        BT_WEB.setText(UserMain.Txt("SonicSense")); // NOI18N
+        BT_WEB.setText(UserMain.Txt("Website")); // NOI18N
         BT_WEB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_WEBActionPerformed(evt);

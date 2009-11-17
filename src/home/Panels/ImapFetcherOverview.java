@@ -154,7 +154,7 @@ public class ImapFetcherOverview extends SQLOverviewDialog implements PropertyCh
         // REGISTER TABLE TO SCROLLPANEL
         table.embed_to_scrollpanel( SCP_TABLE );
 
-        if (UserMain.self.getUserLevel() < UserMain.UL_ADMIN)
+        if (!UserMain.self.is_admin())
             this.BT_NEW.setVisible(false);
 
         pack();
