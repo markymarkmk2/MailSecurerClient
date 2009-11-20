@@ -234,6 +234,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         PN_BASE = new javax.swing.JPanel();
         PN_ACTION = new javax.swing.JPanel();
@@ -433,6 +434,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
 
         PN_SECURITY.setBorder(javax.swing.BorderFactory.createTitledBorder(UserMain.Txt("Security"))); // NOI18N
 
+        buttonGroup1.add(RB_INSECURE);
         RB_INSECURE.setText(UserMain.Txt("unsecure")); // NOI18N
         RB_INSECURE.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -440,6 +442,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             }
         });
 
+        buttonGroup1.add(RB_TLS_IV_AVAIL);
         RB_TLS_IV_AVAIL.setText(UserMain.Txt("TLS_if_available")); // NOI18N
         RB_TLS_IV_AVAIL.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -447,6 +450,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             }
         });
 
+        buttonGroup1.add(RB_TLS_FORCE);
         RB_TLS_FORCE.setText(UserMain.Txt("only_TLS")); // NOI18N
         RB_TLS_FORCE.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -454,6 +458,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             }
         });
 
+        buttonGroup1.add(RB_SSL);
         RB_SSL.setText(UserMain.Txt("SSL")); // NOI18N
         RB_SSL.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -867,8 +872,15 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         if (RB_TLS_IV_AVAIL.isSelected())
             flags |= CS_Constants.ACCT_USE_TLS_IF_AVAIL;
 
+        int m_id = object.getId();
+        if (m_id == -1)
+        {
+             UserMain.errm_ok(my_dlg, UserMain.Txt("Please_save_this_record_first"));
+             return;
+        }
 
-        final String cmd = "TestLogin CMD:test NM:'" + TXT_SMTP_USER.getText() + "' PW:'" + get_smtp_pwd() + "' HO:" +
+
+        final String cmd = "TestLogin CMD:test MA:" + m_id + " NM:'" + TXT_SMTP_USER.getText() + "' PW:'" + get_smtp_pwd() + "' HO:" +
                 TXT_SMTP_HOST.getText() + " PO:" + TXT_SMTP_PORT.getText() + " TY:smtp" +  " FL:" + flags;
 
         if (sw != null)
@@ -885,13 +897,13 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
                 UserMain.self.show_busy(my_dlg, UserMain.Txt("Checking_login") + "...");
                 String ret = UserMain.fcc().call_abstract_function(cmd, ServerCall.SHORT_CMD_TO);
                 UserMain.self.hide_busy();
-                if (ret.charAt(0) == '0')
+                if (ret != null && ret.charAt(0) == '0')
                 {
                     UserMain.info_ok(my_dlg, UserMain.Txt("Login_succeeded"));
                 }
                 else
                 {
-                    UserMain.errm_ok(my_dlg, UserMain.Txt("Login_failed") + ": " + ret.substring(3));
+                    UserMain.errm_ok(my_dlg, UserMain.Txt("Login_failed") + ": " + (ret != null ? ret.substring(3): ""));
                 }
                 sw = null;
                 return null;
@@ -931,6 +943,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
     private javax.swing.JTextField TXT_SMTP_PORT;
     private javax.swing.JTextField TXT_SMTP_USER;
     private javax.swing.JTextField TXT_USER;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1072,6 +1085,24 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
                 return true;
         }
 
+        int port = Integer.parseInt(TXT_SMTP_PORT.getText());
+        if (port != object.getSmtp_port())
+        {
+            return true;
+        }
+        if (TXT_SMTP_HOST.getText().compareTo( object.getSmtp_host()) != 0)
+            return true;
+
+        if (TXT_SMTP_USER.getText().compareTo( object.getSmtp_user()) != 0)
+            return true;
+
+        if (TXT_SMTP_HOST.getText().compareTo( object.getSmtp_host()) != 0)
+            return true;
+
+        if (get_smtp_pwd().compareTo( object.getSmtp_pwd()) != 0)
+            return true;
+
+       
 
         MandantOverview.MandantLicenseEntry mte = (MandantOverview.MandantLicenseEntry) CB_LICENSE.getSelectedItem();
         if (mte.type.compareTo(object.getLicense()) != 0)
@@ -1127,6 +1158,28 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             }
         }
 
+        if (!Validator.is_valid_name(TXT_SMTP_HOST.getText(), 255))
+        {
+            UserMain.errm_ok(UserMain.getString("Der_SMTP-Host_ist_nicht_okay"));
+            return false;
+        }
+        if (!Validator.is_valid_name(TXT_SMTP_USER.getText(), 255))
+        {
+            UserMain.errm_ok(UserMain.getString("Der_SMTP-User_ist_nicht_okay"));
+            return false;
+        }
+        if (!Validator.is_valid_port(TXT_SMTP_PORT.getText()))
+        {
+            UserMain.errm_ok(UserMain.getString("Der_SMTP-Port_ist_nicht_okay"));
+            return false;
+        }
+        if (get_smtp_pwd().length() == 0 || get_smtp_pwd().length() > 80)
+        {
+            UserMain.errm_ok(UserMain.getString("Das_SMTP-Passwort_ist_nicht_okay"));
+            return false;
+        }
+
+
         try
         {
             MandantOverview.MandantLicenseEntry mte = (MandantOverview.MandantLicenseEntry) CB_LICENSE.getSelectedItem();
@@ -1168,6 +1221,12 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
 
         object.setImap_port(imap_port);
         object.setImap_host(imap_host);
+        object.setSmtp_port(imap_port);
+        object.setSmtp_host(TXT_SMTP_HOST.getText());
+        object.setSmtp_user(TXT_SMTP_USER.getText());
+        object.setSmtp_port(Integer.parseInt(TXT_SMTP_PORT.getText()));
+        object.setSmtp_pwd(get_smtp_pwd());
+
 
     }
 

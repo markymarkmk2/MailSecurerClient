@@ -877,6 +877,11 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         jLabel3.setText("Mailadresse");
 
         CB_ENTRIES.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "10", "100", "1000" }));
+        CB_ENTRIES.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CB_ENTRIESActionPerformed(evt);
+            }
+        });
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/MA_Properties"); // NOI18N
         jLabel4.setText(bundle.getString("Entries")); // NOI18N
@@ -1095,9 +1100,6 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
            
             boolean compressed = true;
             RoleFilter rf = new RoleFilter(var_names, last_filter, compressed );
-            int mandant = UserMain.self.get_act_mandant().getId();
-            String user = UserMain.self.get_act_username();
-            String pwd = UserMain.self.get_act_pwd();
 
             GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, rf);
             dlg.setVisible(true);
@@ -1105,15 +1107,12 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             if (rf.isOkay())
             {
                  last_filter = rf.get_compressed_xml_list_data(compressed);
-                 int entries = get_entries();
-
-                 String cmd = "SearchMail CMD:open_filter MA:" + mandant + " US:'" + user + "' PW:'" + pwd + "' UL:" + 
-                            UserMain.self.getUserLevel() + " FL:'" + last_filter + "' CNT:'" + entries + "' ";
-                 
-                 fill_model_with_search(cmd);
 
                  String nice_txt = RoleFilter.get_nice_filter_text( last_filter, compressed );
                  TXTA_FILTER.setText(nice_txt);
+                 TXTA_FILTER.setCaretPosition(0);
+                 
+                 do_filter_search();
             }
         }
         catch (Exception exc)
@@ -1132,6 +1131,12 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         else
             table.clearSelection();
     }//GEN-LAST:event_BT_TOGGLE_SELECTIONActionPerformed
+
+    private void CB_ENTRIESActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_ENTRIESActionPerformed
+    {//GEN-HEADEREND:event_CB_ENTRIESActionPerformed
+        // TODO add your handling code here:
+        do_filter_search();
+    }//GEN-LAST:event_CB_ENTRIESActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1214,6 +1219,25 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         catch (IOException iOException)
         {
         }
+
+    }
+
+    private void do_filter_search()
+    {
+        if (last_filter == null)
+            return;
+
+        int mandant = UserMain.self.get_act_mandant().getId();
+        String user = UserMain.self.get_act_username();
+        String pwd = UserMain.self.get_act_pwd();
+
+         int entries = get_entries();
+
+         String cmd = "SearchMail CMD:open_filter MA:" + mandant + " US:'" + user + "' PW:'" + pwd + "' UL:" +
+                    UserMain.self.getUserLevel() + " FL:'" + last_filter + "' CNT:'" + entries + "' ";
+
+         fill_model_with_search(cmd);
+
 
     }
 

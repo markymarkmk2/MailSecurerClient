@@ -24,6 +24,7 @@ import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StatementID;
+import home.shared.CS_Constants;
 import home.shared.SQL.SQLArrayResult;
 
 
@@ -69,7 +70,7 @@ class HotfolderTableModel extends OverviewModel
                 return hf.getUsermailadress(); // LOGINNAME
             case 3:
                 int flags = sqlResult.getInt(rowIndex, "Flags");
-                return new Boolean((flags & HotfolderOverview.DISABLED) == HotfolderOverview.DISABLED); // DISABLED
+                return new Boolean((flags & CS_Constants.HF_FLAG_DISABLED) == CS_Constants.HF_FLAG_DISABLED); // DISABLED
             default:
                 return super.getValueAt(rowIndex, columnIndex);
         }
@@ -89,8 +90,7 @@ public class HotfolderOverview extends SQLOverviewDialog implements PropertyChan
 {
 
 
-    public static final int DISABLED =   0x01;
-
+    
 
 
     /** Creates new form NewJDialog */

@@ -16,6 +16,7 @@ import home.shared.hibernate.DiskArchive;
 import home.shared.hibernate.Hotfolder;
 import dimm.home.Models.DiskArchiveComboModel;
 import dimm.home.Utilities.Validator;
+import home.shared.CS_Constants;
 
 
 
@@ -315,19 +316,20 @@ public class EditHotfolder extends GenericEditPanel
 
         flags = get_object_flags();
 
-        return ((flags & HotfolderOverview.DISABLED) == HotfolderOverview.DISABLED);
+        return ((flags & CS_Constants.HF_FLAG_DISABLED) == CS_Constants.HF_FLAG_DISABLED);
     }
     void set_object_disabled( boolean f)
     {
         int flags = get_object_flags();
 
         if (f)
-            set_object_flag( HotfolderOverview.DISABLED );
+            set_object_flag( CS_Constants.HF_FLAG_DISABLED );
         else
-            clr_object_flag( HotfolderOverview.DISABLED );
+            clr_object_flag( CS_Constants.HF_FLAG_DISABLED );
     }
 
     
+    @Override
     protected boolean check_changed()
     {        
         if (model.is_new(row))
@@ -351,6 +353,7 @@ public class EditHotfolder extends GenericEditPanel
         return false;
     }
                         
+    @Override
     protected boolean is_plausible()
     {
         if (!Validator.is_valid_path( TXT_PATH.getText(), 255))
@@ -401,6 +404,7 @@ public class EditHotfolder extends GenericEditPanel
         return email;
     }
 
+    @Override
     protected void set_object_props()
     {
         String path = TXT_PATH.getText();

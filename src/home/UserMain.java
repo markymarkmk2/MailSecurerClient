@@ -1011,6 +1011,8 @@ public class UserMain extends javax.swing.JFrame
     }
     public Mandant get_act_mandant()
     {
+        if (sqc == null)
+            return null;
         return sqc.get_act_mandant();
     }
 

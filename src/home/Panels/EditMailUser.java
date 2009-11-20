@@ -237,8 +237,8 @@ public class EditMailUser extends GenericEditPanel implements PropertyChangeList
         SCP_ADD_MAIL = new javax.swing.JScrollPane();
         jPanel2 = new javax.swing.JPanel();
         SCP_VIEW_MAIL = new javax.swing.JScrollPane();
-        BT_NEW_ADD_MAIL = new javax.swing.JButton();
-        BT_ADD_VIEW_MAIL = new javax.swing.JButton();
+        BT_NEW_ADD_MAIL = new GlossButton();
+        BT_ADD_VIEW_MAIL = new GlossButton();
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
@@ -262,7 +262,7 @@ public class EditMailUser extends GenericEditPanel implements PropertyChangeList
             }
         });
 
-        jLabel2.setText(UserMain.getString("Server")); // NOI18N
+        jLabel2.setText(UserMain.getString("EMail")); // NOI18N
 
         BT_DISABLED.setText(UserMain.getString("Gesperrt")); // NOI18N
         BT_DISABLED.setFocusable(false);

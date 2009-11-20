@@ -217,23 +217,23 @@ public class RoleFilter extends GlossDialogPanel
         return parent_list;
     }
 
-    int get_append_idx(ArrayList<LogicEntry> parent_list)
+    int get_insert_idx(ArrayList<LogicEntry> parent_list)
     {
         LogicEntry last_entry = get_actual_entry();
-        int append_idx = -1;
+        int insert_idx = -1;
         if (!( last_entry instanceof GroupEntry))
         {
-            for (int i = 0; i < parent_list.size(); i++)
+            for (int i = 0; i < parent_list.size() - 1; i++)
             {
                 LogicEntry logicEntry = parent_list.get(i);
                 if (logicEntry == last_entry)
                 {
-                    append_idx = i;
+                    insert_idx = i + 1;
                     break;
                 }
             }
         }
-        return append_idx;
+        return insert_idx;
     }
 
 
@@ -241,10 +241,11 @@ public class RoleFilter extends GlossDialogPanel
     {
         ArrayList<LogicEntry> parent_list = get_act_parent_list();
 
-        int append_idx = get_append_idx(parent_list);
+        int insert_idx = get_insert_idx(parent_list);
 
-        if (append_idx != -1)
-            parent_list.add( append_idx, new GroupEntry( parent_list, neg, previous_is_or) );
+        // INSERT AT FIRST POS AFTER APPENDIDX
+        if (insert_idx != -1)
+            parent_list.add( insert_idx, new GroupEntry( parent_list, neg, previous_is_or) );
         else
             parent_list.add( new GroupEntry( parent_list, neg, previous_is_or) );
 
@@ -255,10 +256,10 @@ public class RoleFilter extends GlossDialogPanel
     {
         ArrayList<LogicEntry> parent_list = get_act_parent_list();
 
-        int append_idx = get_append_idx(parent_list);
+        int insert_idx = get_insert_idx(parent_list);
 
-        if (append_idx != -1)
-            parent_list.add( append_idx, new ExprEntry( parent_list, name, value, operation, neg, previous_is_or) );
+        if (insert_idx != -1)
+            parent_list.add( insert_idx, new ExprEntry( parent_list, name, value, operation, neg, previous_is_or) );
         else
             parent_list.add( new ExprEntry( parent_list, name, value, operation, neg, previous_is_or) );
 

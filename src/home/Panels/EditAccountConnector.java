@@ -11,6 +11,8 @@ import dimm.home.UserMain;
 import javax.swing.JButton;
 import home.shared.hibernate.AccountConnector;
 import dimm.home.Models.DiskArchiveComboModel;
+import dimm.home.Panels.MailView.GetUserMailPwdPanel;
+import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.Utilities.SwingWorker;
 import dimm.home.Utilities.Validator;
@@ -479,6 +481,25 @@ public class EditAccountConnector extends GenericEditPanel
 
         AccountConnectorTypeEntry mte = (AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
         String type = mte.getType();
+        String user_name = TXT_USERNAME.getText();
+        String pwd = get_pwd();
+
+        if (type.compareTo("ldap") != 0)
+        {
+            GetUserMailPwdPanel pnl = new GetUserMailPwdPanel(  );
+            pnl.enable_mail_list(false, null );
+            pnl.enable_user(true, UserMain.self.get_act_username());
+            pnl.enable_pwd(true, "");
+
+            GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
+            dlg.set_next_location( my_dlg );
+            dlg.setVisible(true);
+            if (!pnl.isOkay())
+                return;
+
+            user_name = pnl.get_user();
+            pwd = pnl.get_pwd();
+        }
 
         int flags = 0;
         if (RB_SSL.isSelected())
@@ -489,7 +510,7 @@ public class EditAccountConnector extends GenericEditPanel
             flags |= CS_Constants.ACCT_USE_TLS_IF_AVAIL;
 
         
-        final String cmd = "TestLogin CMD:test NM:'" + TXT_USERNAME.getText() + "' PW:'" + get_pwd() + "' HO:" +
+        final String cmd = "TestLogin CMD:test MA:" + UserMain.self.get_act_mandant().getId() + " NM:'" + user_name + "' PW:'" + pwd + "' HO:" +
                 TXT_SERVER1.getText() + " PO:" + TXT_PORT1.getText() + " TY:" + type + " FL:" + flags;
 
         if (sw != null)
@@ -506,13 +527,13 @@ public class EditAccountConnector extends GenericEditPanel
                 UserMain.self.show_busy(my_dlg, UserMain.Txt("Checking_login") + "...");
                 String ret = UserMain.fcc().call_abstract_function(cmd, ServerCall.SHORT_CMD_TO);
                 UserMain.self.hide_busy();
-                if (ret.charAt(0) == '0')
+                if (ret != null && ret.charAt(0) == '0')
                 {
                     UserMain.info_ok(my_dlg, UserMain.Txt("Login_succeeded"));
                 }
                 else
                 {
-                    UserMain.errm_ok(my_dlg, UserMain.Txt("Login_failed") + ": " + ret.substring(3));
+                    UserMain.errm_ok(my_dlg, UserMain.Txt("Login_failed") + ": " + ((ret != null) ?  ret.substring(3): ""));
                 }
                 sw = null;
                 return null;

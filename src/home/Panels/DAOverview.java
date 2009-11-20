@@ -23,6 +23,7 @@ import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StatementID;
+import home.shared.CS_Constants;
 import home.shared.SQL.SQLArrayResult;
 
 
@@ -79,7 +80,7 @@ class DATableModel extends OverviewModel
                 return da.getName();
             case 2:
                 int flags = sqlResult.getInt(rowIndex, "Flags");
-                return new Boolean((flags & DAOverview.DISABLED) == DAOverview.DISABLED); // DISABLED
+                return new Boolean((flags & CS_Constants.DA_DISABLED) == CS_Constants.DA_DISABLED); // DISABLED
             default:
                 return super.getValueAt(rowIndex, columnIndex);
         }
@@ -98,8 +99,7 @@ class DATableModel extends OverviewModel
 public class DAOverview extends SQLOverviewDialog
 {
 
-
-    public static final int DISABLED =   0x01;
+ public static final int DISABLED =   0x01;
 
     public class DATypeEntry
     {
@@ -210,6 +210,7 @@ public class DAOverview extends SQLOverviewDialog
 
 
 
+    @Override
     protected GlossDialogPanel get_edit_panel( int row )
     {
         return new EditDA( row, this );
@@ -282,6 +283,7 @@ public class DAOverview extends SQLOverviewDialog
         BT_NEW.setContentAreaFilled(false);
         BT_NEW.setMargin(new java.awt.Insets(2, 20, 2, 20));
         BT_NEW.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_NEWActionPerformed(evt);
             }
@@ -292,6 +294,7 @@ public class DAOverview extends SQLOverviewDialog
         BT_QUIT.setBorder(BT_NEW.getBorder());
         BT_QUIT.setContentAreaFilled(false);
         BT_QUIT.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_QUITActionPerformed(evt);
             }

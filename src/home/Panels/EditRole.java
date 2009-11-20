@@ -6,6 +6,7 @@
 
 package dimm.home.Panels;
 
+import com.thoughtworks.xstream.XStream;
 import dimm.general.SQL.SQLResult;
 import dimm.home.Models.AccountConnectorComboModel;
 import dimm.home.Rendering.GenericGlossyDlg;
@@ -15,6 +16,7 @@ import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StatementID;
 import dimm.home.UserMain;
+import dimm.home.Utilities.SwingWorker;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.GroupLayout.ParallelGroup;
@@ -24,8 +26,10 @@ import dimm.home.Utilities.Validator;
 import home.shared.CS_Constants;
 import home.shared.SQL.OptCBEntry;
 import home.shared.SQL.SQLArrayResult;
+import home.shared.Utilities.ZipUtilities;
 import home.shared.hibernate.AccountConnector;
 import home.shared.hibernate.RoleOption;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JCheckBox;
@@ -164,7 +168,6 @@ public class EditRole extends GenericEditPanel
         CP_OPT4 = new javax.swing.JCheckBox();
         CP_OPT5 = new javax.swing.JCheckBox();
         CP_OPT6 = new javax.swing.JCheckBox();
-        BT_EDIT_MATCH = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         CB_ACCOUNT = new javax.swing.JComboBox();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -172,6 +175,7 @@ public class EditRole extends GenericEditPanel
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
+        BT_MATCH_USERS = new GlossButton();
 
         setDoubleBuffered(false);
         setOpaque(false);
@@ -226,7 +230,7 @@ public class EditRole extends GenericEditPanel
                     .addComponent(CP_OPT4)
                     .addComponent(CP_OPT5)
                     .addComponent(CP_OPT6))
-                .addContainerGap(380, Short.MAX_VALUE))
+                .addContainerGap(334, Short.MAX_VALUE))
         );
         PN_OPTSLayout.setVerticalGroup(
             PN_OPTSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -245,23 +249,18 @@ public class EditRole extends GenericEditPanel
                 .addContainerGap(26, Short.MAX_VALUE))
         );
 
-        BT_EDIT_MATCH.setText("...");
-        BT_EDIT_MATCH.setMargin(new java.awt.Insets(2, 5, 2, 5));
-        BT_EDIT_MATCH.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_EDIT_MATCHActionPerformed(evt);
-            }
-        });
-
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/MA_Properties"); // NOI18N
         jLabel3.setText(bundle.getString("Realm")); // NOI18N
-
-        CB_ACCOUNT.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         TXT_ACCOUNTMATCH.setColumns(20);
         TXT_ACCOUNTMATCH.setEditable(false);
         TXT_ACCOUNTMATCH.setRows(2);
         TXT_ACCOUNTMATCH.setTabSize(4);
+        TXT_ACCOUNTMATCH.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TXT_ACCOUNTMATCHMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(TXT_ACCOUNTMATCH);
 
         javax.swing.GroupLayout PN_ACTIONLayout = new javax.swing.GroupLayout(PN_ACTION);
@@ -269,27 +268,26 @@ public class EditRole extends GenericEditPanel
         PN_ACTIONLayout.setHorizontalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TXT_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(CB_ACCOUNT, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 408, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(BT_EDIT_MATCH)
-                .addContainerGap())
-            .addGroup(PN_ACTIONLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addComponent(BT_DISABLED, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addComponent(BT_DISABLED, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(PN_ACTIONLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(PN_OPTS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(11, 11, 11))
+                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                        .addComponent(PN_OPTS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(TXT_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(CB_ACCOUNT, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
         PN_ACTIONLayout.setVerticalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -305,12 +303,10 @@ public class EditRole extends GenericEditPanel
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(PN_ACTIONLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(BT_EDIT_MATCH)))
+                        .addComponent(jLabel2))
                     .addGroup(PN_ACTIONLayout.createSequentialGroup()
                         .addGap(11, 11, 11)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(PN_OPTS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -341,12 +337,21 @@ public class EditRole extends GenericEditPanel
             }
         });
 
+        BT_MATCH_USERS.setText(UserMain.Txt("Show_matchig_users")); // NOI18N
+        BT_MATCH_USERS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_MATCH_USERSActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PN_BUTTONSLayout = new javax.swing.GroupLayout(PN_BUTTONS);
         PN_BUTTONS.setLayout(PN_BUTTONSLayout);
         PN_BUTTONSLayout.setHorizontalGroup(
             PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
-                .addContainerGap(312, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(BT_MATCH_USERS)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 120, Short.MAX_VALUE)
                 .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -358,7 +363,8 @@ public class EditRole extends GenericEditPanel
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BT_MATCH_USERS))
                 .addContainerGap())
         );
 
@@ -395,42 +401,83 @@ public class EditRole extends GenericEditPanel
         // TODO add your handling code here:
 }//GEN-LAST:event_TXT_NAMEActionPerformed
 
-    private void BT_EDIT_MATCHActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_EDIT_MATCHActionPerformed
-    {//GEN-HEADEREND:event_BT_EDIT_MATCHActionPerformed
+    SwingWorker sw = null;
+    private void BT_MATCH_USERSActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_MATCH_USERSActionPerformed
+    {//GEN-HEADEREND:event_BT_MATCH_USERSActionPerformed
         // TODO add your handling code here:
-       
-        try
+
+        String role_filter_compressed = object.getAccountmatch();
+        if (!is_plausible())
+            return;
+        
+
+        final String cmd = "ListUsers CMD:match_filter MA:" + UserMain.self.get_act_mandant().getId() + " AC:" + accm.get_act_id() + " FLC:'" + role_filter_compressed + "'";
+
+        if (sw != null)
         {
-            ArrayList<String> var_names = new ArrayList<String>();
-            var_names.add("Username");
-            var_names.add("Email");
-            var_names.add("Domain");
-            boolean compressed = (get_object_flags() & CS_Constants.ROLE_ACM_COMPRESSED) == CS_Constants.ROLE_ACM_COMPRESSED;
-            RoleFilter rf = new RoleFilter(var_names, object.getAccountmatch(), compressed );
+            return;
+        }
 
-            GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, rf);
-            dlg.setVisible(true);
+        sw = new SwingWorker()
+        {
 
-            if (rf.isOkay())
+            @Override
+            public Object construct()
             {
-                 String role_filter_xml = rf.get_compressed_xml_list_data(compressed);
-                 object.setAccountmatch(role_filter_xml);
-                 set_filter_preview( RoleFilter.get_nice_filter_text( role_filter_xml, compressed ) );
+                UserMain.self.show_busy(my_dlg, UserMain.Txt("Checking_userlist") + "...");
+                String ret = UserMain.fcc().call_abstract_function(cmd, ServerCall.SHORT_CMD_TO);
+                UserMain.self.hide_busy();
+                
+                if (ret != null && ret.charAt(0) == '0')
+                {
+                    String xml = null;
+                    try
+                    {
+                        xml = ZipUtilities.uncompress(ret.substring(3));
+                    }
+                    catch (Exception iOException)
+                    {
+                        UserMain.errm_ok(my_dlg, UserMain.Txt("Check_user_failed") + ": " + iOException.getMessage());
+                        sw = null;
+                        return null;
+                    }
+
+                    XStream xs = new XStream();
+                    Object o = xs.fromXML( xml );
+                    if (o instanceof ArrayList<?>)
+                    {
+                        ArrayList<String> list = (ArrayList<String>)o;
+                        UserListPanel pnl = new UserListPanel(list);
+                        GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
+                        dlg.set_next_location(my_dlg);
+                        dlg.setVisible(true);
+                    }
+                }
+                else
+                {
+                    UserMain.errm_ok(my_dlg, UserMain.Txt("Check_user_failed") + ": " + ((ret != null) ?  ret.substring(3): ""));
+                }
+                sw = null;
+                return null;
             }
-        }
-        catch (Exception exc)
-        {
-            exc.printStackTrace();
-        }
+        };
+
+        sw.start();
 
 
-    }//GEN-LAST:event_BT_EDIT_MATCHActionPerformed
+    }//GEN-LAST:event_BT_MATCH_USERSActionPerformed
+
+    private void TXT_ACCOUNTMATCHMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_TXT_ACCOUNTMATCHMouseClicked
+    {//GEN-HEADEREND:event_TXT_ACCOUNTMATCHMouseClicked
+        // TODO add your handling code here:
+        edit_user_filter();
+    }//GEN-LAST:event_TXT_ACCOUNTMATCHMouseClicked
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JCheckBox BT_DISABLED;
-    private javax.swing.JButton BT_EDIT_MATCH;
+    private javax.swing.JButton BT_MATCH_USERS;
     private javax.swing.JButton BT_OK;
     private javax.swing.JComboBox CB_ACCOUNT;
     private javax.swing.JCheckBox CP_OPT1;
@@ -548,7 +595,7 @@ public class EditRole extends GenericEditPanel
             UserMain.errm_ok(UserMain.getString("Realm_ist_nicht_okay"));
             return false;
         }
-        if (object.getAccountmatch().length() == 0)
+        if (object.getAccountmatch() == null || object.getAccountmatch().length() == 0)
         {
             UserMain.errm_ok(UserMain.getString("Benutzerfilter_ist_nicht_okay"));
             return false;
@@ -741,6 +788,33 @@ public class EditRole extends GenericEditPanel
         TXT_ACCOUNTMATCH.setText(_nice_filter_text);
         TXT_ACCOUNTMATCH.setCaretPosition(0);
 
+    }
+
+    private void edit_user_filter()
+    {
+        try
+        {
+            ArrayList<String> var_names = new ArrayList<String>();
+            var_names.add("Username");
+            var_names.add("Email");
+            var_names.add("Domain");
+            boolean compressed = (get_object_flags() & CS_Constants.ROLE_ACM_COMPRESSED) == CS_Constants.ROLE_ACM_COMPRESSED;
+            RoleFilter rf = new RoleFilter(var_names, object.getAccountmatch(), compressed );
+
+            GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, rf);
+            dlg.setVisible(true);
+
+            if (rf.isOkay())
+            {
+                 String role_filter_xml = rf.get_compressed_xml_list_data(compressed);
+                 object.setAccountmatch(role_filter_xml);
+                 set_filter_preview( RoleFilter.get_nice_filter_text( role_filter_xml, compressed ) );
+            }
+        }
+        catch (Exception exc)
+        {
+            exc.printStackTrace();
+        }
     }
     
    

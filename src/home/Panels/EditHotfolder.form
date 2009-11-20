@@ -50,12 +50,12 @@
                           </Group>
                           <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="CB_MAILACCOUNT" pref="240" max="32767" attributes="0"/>
-                              <Component id="CB_VAULT" alignment="0" pref="240" max="32767" attributes="0"/>
+                              <Component id="CB_MAILACCOUNT" pref="261" max="32767" attributes="0"/>
+                              <Component id="CB_VAULT" alignment="0" pref="261" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
-                          <Component id="TXT_PATH" pref="273" max="32767" attributes="2"/>
+                          <Component id="TXT_PATH" pref="294" max="32767" attributes="2"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="BT_SELECT_PATH" min="-2" pref="32" max="-2" attributes="0"/>
                       </Group>
