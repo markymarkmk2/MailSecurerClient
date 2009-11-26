@@ -6,6 +6,7 @@
 
 package dimm.home.Panels;
 
+import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.UserMain;
 import java.util.logging.Level;
@@ -50,7 +51,11 @@ public class EditDA extends GenericEditPanel
     public EditDA(int _row, DAOverview _overview)
     {
         initComponents();     
-        
+
+        if (!UserMain.self.is_admin())
+             BT_REINDEX.setVisible(false);
+
+
         object_overview = _overview;
         model = object_overview.get_object_model();
         
@@ -117,6 +122,7 @@ public class EditDA extends GenericEditPanel
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
+        BT_REINDEX = new javax.swing.JButton();
 
         setDoubleBuffered(false);
         setOpaque(false);
@@ -167,12 +173,12 @@ public class EditDA extends GenericEditPanel
                             .addComponent(jLabel1))
                         .addGap(22, 22, 22)
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(TXT_NAME, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
-                            .addComponent(CB_TYPE, 0, 254, Short.MAX_VALUE))
+                            .addComponent(TXT_NAME, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
+                            .addComponent(CB_TYPE, 0, 339, Short.MAX_VALUE))
                         .addGap(18, 18, 18))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_ACTIONLayout.createSequentialGroup()
                         .addComponent(BT_DISABLED)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 164, Short.MAX_VALUE)
                         .addComponent(BT_DISKSPACES, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())))
         );
@@ -187,7 +193,7 @@ public class EditDA extends GenericEditPanel
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(CB_TYPE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_DISKSPACES)
                     .addComponent(BT_DISABLED))
@@ -217,12 +223,21 @@ public class EditDA extends GenericEditPanel
             }
         });
 
+        BT_REINDEX.setText(UserMain.Txt("ReIndex")); // NOI18N
+        BT_REINDEX.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_REINDEXActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PN_BUTTONSLayout = new javax.swing.GroupLayout(PN_BUTTONS);
         PN_BUTTONS.setLayout(PN_BUTTONSLayout);
         PN_BUTTONSLayout.setHorizontalGroup(
             PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
-                .addContainerGap(143, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(BT_REINDEX)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 117, Short.MAX_VALUE)
                 .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -234,7 +249,8 @@ public class EditDA extends GenericEditPanel
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BT_REINDEX))
                 .addContainerGap())
         );
 
@@ -303,6 +319,20 @@ public class EditDA extends GenericEditPanel
         dlg.setTitle(UserMain.Txt("DiskSpaces"));
         dlg.setVisible(true);
     }//GEN-LAST:event_BT_DISKSPACESActionPerformed
+
+    private void BT_REINDEXActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_REINDEXActionPerformed
+    {//GEN-HEADEREND:event_BT_REINDEXActionPerformed
+        // TODO add your handling code here:
+        if (BT_DISABLED.isSelected())
+            return;
+
+
+        ReIndexPanel pnl = new ReIndexPanel(object.getId());
+        GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
+        dlg.set_next_location(my_dlg);
+        dlg.setVisible(true);
+
+    }//GEN-LAST:event_BT_REINDEXActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -310,6 +340,7 @@ public class EditDA extends GenericEditPanel
     private javax.swing.JCheckBox BT_DISABLED;
     private javax.swing.JButton BT_DISKSPACES;
     private javax.swing.JButton BT_OK;
+    private javax.swing.JButton BT_REINDEX;
     private javax.swing.JComboBox CB_TYPE;
     private javax.swing.JPanel PN_ACTION;
     private javax.swing.JPanel PN_BUTTONS;

@@ -1088,6 +1088,10 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         try
         {
             ArrayList<String> var_names = new ArrayList<String>();
+            var_names.add(CS_Constants.FLD_FROM);
+            var_names.add(CS_Constants.FLD_TO);
+            var_names.add(CS_Constants.FLD_CC);
+            var_names.add(CS_Constants.FLD_BCC);
             var_names.add(CS_Constants.FLD_SUBJECT);
             var_names.add(CS_Constants.FLD_BODY);
             var_names.add(CS_Constants.FLD_DATE);

@@ -6,6 +6,7 @@
 
 package dimm.home.Panels;
 
+import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.UserMain;
 import java.util.logging.Level;
@@ -50,7 +51,10 @@ public class EditDiskSpace extends GenericEditPanel
     public EditDiskSpace(DiskArchive da, int _row, DiskSpaceOverview _overview)
     {
         initComponents();     
-        
+
+        if (!UserMain.self.is_admin())
+             BT_REINDEX.setVisible(false);
+
         object_overview = _overview;
         model = object_overview.get_object_model();
         
@@ -182,6 +186,7 @@ public class EditDiskSpace extends GenericEditPanel
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
+        BT_REINDEX = new javax.swing.JButton();
 
         setDoubleBuffered(false);
         setOpaque(false);
@@ -233,7 +238,7 @@ public class EditDiskSpace extends GenericEditPanel
                     .addComponent(jLabel4))
                 .addGap(50, 50, 50)
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TXT_PATH, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
+                    .addComponent(TXT_PATH, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
                     .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(CB_STATUS, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(CB_MODE, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -263,7 +268,7 @@ public class EditDiskSpace extends GenericEditPanel
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel4)
                     .addComponent(CB_STATUS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
                 .addComponent(BT_DISABLED)
                 .addContainerGap())
         );
@@ -277,17 +282,24 @@ public class EditDiskSpace extends GenericEditPanel
         PN_BUTTONS.setDoubleBuffered(false);
         PN_BUTTONS.setOpaque(false);
 
-        BT_OK.setText(UserMain.Txt("Okay")); // NOI18N
+        BT_OK.setText(UserMain.Txt("OK")); // NOI18N
         BT_OK.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_OKActionPerformed(evt);
             }
         });
 
-        BT_ABORT.setText(UserMain.Txt("Abbruch")); // NOI18N
+        BT_ABORT.setText(UserMain.Txt("Abort")); // NOI18N
         BT_ABORT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_ABORTActionPerformed(evt);
+            }
+        });
+
+        BT_REINDEX.setText(UserMain.Txt("ReIndex")); // NOI18N
+        BT_REINDEX.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_REINDEXActionPerformed(evt);
             }
         });
 
@@ -296,7 +308,9 @@ public class EditDiskSpace extends GenericEditPanel
         PN_BUTTONSLayout.setHorizontalGroup(
             PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
-                .addContainerGap(187, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(BT_REINDEX)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 98, Short.MAX_VALUE)
                 .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -308,7 +322,8 @@ public class EditDiskSpace extends GenericEditPanel
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BT_REINDEX))
                 .addContainerGap())
         );
 
@@ -344,12 +359,31 @@ public class EditDiskSpace extends GenericEditPanel
     {//GEN-HEADEREND:event_TXT_PATHActionPerformed
         // TODO add your handling code here:
 }//GEN-LAST:event_TXT_PATHActionPerformed
+
+    private void BT_REINDEXActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_REINDEXActionPerformed
+    {//GEN-HEADEREND:event_BT_REINDEXActionPerformed
+        // TODO add your handling code here:
+        if (BT_DISABLED.isSelected())
+            return;
+
+        int mode_flags = ((DS_mode_entry)CB_MODE.getSelectedItem()).flags;
+        if (mode_flags == CS_Constants.DS_MODE_INDEX)
+        {
+            UserMain.errm_ok(UserMain.Txt("Sie_koennen_nur_DiskSpaces_mit_Daten_neu_indizieren"));
+            return;
+        }
+        ReIndexPanel pnl = new ReIndexPanel(object.getDiskArchive().getId(), object.getId());
+        GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
+        dlg.set_next_location(my_dlg);
+        dlg.setVisible(true);
+    }//GEN-LAST:event_BT_REINDEXActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JCheckBox BT_DISABLED;
     private javax.swing.JButton BT_OK;
+    private javax.swing.JButton BT_REINDEX;
     private javax.swing.JComboBox CB_CAP_DIM;
     private javax.swing.JComboBox CB_MODE;
     private javax.swing.JComboBox CB_STATUS;
