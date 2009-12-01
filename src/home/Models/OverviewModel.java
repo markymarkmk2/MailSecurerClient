@@ -5,6 +5,7 @@
 
 package dimm.home.Models;
 
+import home.shared.SQL.SQLResult;
 import dimm.home.Rendering.SQLOverviewDialog;
 import dimm.home.UserMain;
 import java.awt.Insets;
@@ -12,7 +13,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
-import dimm.general.SQL.*;
 
 /**
  *

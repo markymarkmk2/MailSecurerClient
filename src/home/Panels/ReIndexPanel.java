@@ -16,7 +16,7 @@ import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.Rendering.GlossTable;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.UserMain;
-import dimm.home.Utilities.ParseToken;
+import home.shared.Utilities.ParseToken;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
@@ -43,7 +43,7 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
         initComponents();
         this.da_idx = da_idx;
         this.ds_idx = ds_idx;
-        timer = new Timer(5000, this);
+        timer = new Timer(1000, this);
         timer.start();
 
     }

@@ -7,7 +7,7 @@
 package dimm.home.Panels;
 
 import com.thoughtworks.xstream.XStream;
-import dimm.general.SQL.SQLResult;
+import home.shared.SQL.SQLResult;
 import dimm.home.Models.AccountConnectorComboModel;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.JButton;
 import home.shared.hibernate.Role;
-import dimm.home.Utilities.Validator;
+import home.shared.Utilities.Validator;
 import home.shared.CS_Constants;
 import home.shared.SQL.OptCBEntry;
 import home.shared.SQL.SQLArrayResult;
@@ -659,7 +659,7 @@ public class EditRole extends GenericEditPanel
 
         SQLArrayResult resa = sql.get_sql_array_result(rid);
 
-        option_res = new SQLResult<RoleOption>(resa, new RoleOption().getClass());
+        option_res = new SQLResult<RoleOption>(UserMain.sqc(), resa, new RoleOption().getClass());
 
         for (int i = 0; i < OptCBEntry.opt_list.length; i++)
         {

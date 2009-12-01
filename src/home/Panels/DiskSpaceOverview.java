@@ -5,7 +5,7 @@
  */
 package dimm.home.Panels;
 
-import dimm.general.SQL.SQLResult;
+import home.shared.SQL.SQLResult;
 import dimm.home.Models.OverviewModel;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossPanel;
@@ -231,7 +231,7 @@ public class DiskSpaceOverview extends SQLOverviewDialog
         ResultSetID rid = sql.executeQuery(sid, qry);
         SQLArrayResult resa = sql.get_sql_array_result(rid);
 
-        SQLResult<DiskSpace>  res = new SQLResult<DiskSpace>(resa, new DiskSpace().getClass());
+        SQLResult<DiskSpace>  res = new SQLResult<DiskSpace>(UserMain.sqc(), resa, new DiskSpace().getClass());
 
         model.setSqlResult(res);
         table.tableChanged(new TableModelEvent(table.getModel()) );

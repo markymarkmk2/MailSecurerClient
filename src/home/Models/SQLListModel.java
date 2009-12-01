@@ -5,10 +5,10 @@
 
 package dimm.home.Models;
 
+import home.shared.SQL.SQLResult;
 import dimm.home.UserMain;
 import java.util.ArrayList;
 import javax.swing.AbstractListModel;
-import dimm.general.SQL.*;
 
 /**
  *

@@ -6,7 +6,7 @@
 
 package dimm.home.Panels;
 
-import dimm.general.SQL.SQLResult;
+import home.shared.SQL.SQLResult;
 import dimm.home.CheckPwdPanel;
 import dimm.home.Main;
 import dimm.home.Preferences;
@@ -19,7 +19,7 @@ import dimm.home.ServerConnect.SQLConnect;
 import dimm.home.ServerConnect.StationEntry;
 import dimm.home.ServerConnect.UDP_Communicator;
 import dimm.home.UserMain;
-import dimm.home.Utilities.ParseToken;
+import home.shared.Utilities.ParseToken;
 import dimm.home.Utilities.SwingWorker;
 import home.shared.CS_Constants.USERMODE;
 import home.shared.SQL.SQLArrayResult;

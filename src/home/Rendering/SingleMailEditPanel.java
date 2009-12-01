@@ -12,7 +12,7 @@
 package dimm.home.Rendering;
 
 import dimm.home.UserMain;
-import dimm.home.Utilities.Validator;
+import home.shared.Utilities.Validator;
 import javax.swing.JButton;
 
 /**

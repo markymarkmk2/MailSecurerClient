@@ -5,7 +5,7 @@
 
 package dimm.home.Models;
 
-import dimm.general.SQL.SQLResult;
+import home.shared.SQL.SQLResult;
 import home.shared.hibernate.AccountConnector;
 import javax.swing.ComboBoxModel;
 import javax.swing.event.ListDataListener;

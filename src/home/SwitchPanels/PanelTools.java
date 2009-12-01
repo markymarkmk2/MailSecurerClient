@@ -108,7 +108,7 @@ public class PanelTools extends SwitchSpringPanel
 
         BT_IMPORT_MBOX.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_IMPORT_MBOX.setForeground(new java.awt.Color(201, 201, 201));
-        BT_IMPORT_MBOX.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_einstellungen.png"))); // NOI18N
+        BT_IMPORT_MBOX.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_favs.png"))); // NOI18N
         BT_IMPORT_MBOX.setText(UserMain.Txt("Import")); // NOI18N
         BT_IMPORT_MBOX.setToolTipText(UserMain.Txt("Import_Mailboxen")); // NOI18N
         BT_IMPORT_MBOX.setBorderPainted(false);
@@ -123,7 +123,7 @@ public class PanelTools extends SwitchSpringPanel
                 BT_IMPORT_MBOXActionPerformed(evt);
             }
         });
-        PN_BUTTONS.add(BT_IMPORT_MBOX, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 320, 160, 50));
+        PN_BUTTONS.add(BT_IMPORT_MBOX, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 330, 160, 50));
 
         BT_INIT.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_INIT.setForeground(new java.awt.Color(201, 201, 201));
@@ -146,7 +146,7 @@ public class PanelTools extends SwitchSpringPanel
 
         BT_STATUS.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_STATUS.setForeground(new java.awt.Color(201, 201, 201));
-        BT_STATUS.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_einstellungen.png"))); // NOI18N
+        BT_STATUS.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/terminal_gruppen.png"))); // NOI18N
         BT_STATUS.setText(UserMain.Txt("Init")); // NOI18N
         BT_STATUS.setToolTipText(UserMain.Txt("Long_Init")); // NOI18N
         BT_STATUS.setBorderPainted(false);
@@ -165,7 +165,7 @@ public class PanelTools extends SwitchSpringPanel
 
         BT_LOG.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_LOG.setForeground(new java.awt.Color(201, 201, 201));
-        BT_LOG.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_einstellungen.png"))); // NOI18N
+        BT_LOG.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_clips.png"))); // NOI18N
         BT_LOG.setText(UserMain.Txt("Init")); // NOI18N
         BT_LOG.setToolTipText(UserMain.Txt("Long_Init")); // NOI18N
         BT_LOG.setBorderPainted(false);

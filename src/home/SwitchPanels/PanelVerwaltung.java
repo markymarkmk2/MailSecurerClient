@@ -5,7 +5,7 @@
  */
 package dimm.home.SwitchPanels;
 
-import dimm.general.SQL.SQLResult;
+import home.shared.SQL.SQLResult;
 import dimm.home.*;
 import dimm.home.Panels.AccountConnectorOverview;
 import dimm.home.Panels.DAOverview;

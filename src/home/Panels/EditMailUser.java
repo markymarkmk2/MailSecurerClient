@@ -5,7 +5,7 @@
  */
 package dimm.home.Panels;
 
-import dimm.general.SQL.SQLResult;
+import home.shared.SQL.SQLResult;
 import dimm.home.Models.OverviewModel;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
@@ -19,7 +19,7 @@ import dimm.home.ServerConnect.StatementID;
 import dimm.home.UserMain;
 import javax.swing.JButton;
 import dimm.home.Utilities.SwingWorker;
-import dimm.home.Utilities.Validator;
+import home.shared.Utilities.Validator;
 import home.shared.CS_Constants;
 import home.shared.SQL.SQLArrayResult;
 import home.shared.hibernate.MailAddress;
@@ -191,7 +191,7 @@ public class EditMailUser extends GenericEditPanel implements PropertyChangeList
 
         ResultSetID rid = sql.executeQuery(sid, qry);
         SQLArrayResult resa = sql.get_sql_array_result(rid);
-        SQLResult<MailHeaderVariable> add_res = new SQLResult<MailHeaderVariable>(resa, new MailAddress().getClass());
+        SQLResult<MailHeaderVariable> add_res = new SQLResult<MailHeaderVariable>( UserMain.sqc(), resa, new MailAddress().getClass());
 
 
         EMailModel mail_model = new EMailModel(UserMain.self, object_overview, link_table);

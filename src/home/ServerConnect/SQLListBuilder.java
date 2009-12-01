@@ -10,7 +10,7 @@
 package dimm.home.ServerConnect;
 
 
-import dimm.general.SQL.SQLResult;
+import home.shared.SQL.SQLResult;
 import dimm.home.UserMain;
 import home.shared.SQL.SQLArrayResult;
 import java.sql.Connection;

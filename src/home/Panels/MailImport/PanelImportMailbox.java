@@ -10,7 +10,7 @@
  */
 package dimm.home.Panels.MailImport;
 
-import dimm.general.SQL.SQLResult;
+import home.shared.SQL.SQLResult;
 import dimm.home.Main;
 import dimm.home.Models.DiskArchiveComboModel;
 import dimm.home.Rendering.GlossButton;

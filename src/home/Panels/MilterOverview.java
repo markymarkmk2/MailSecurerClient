@@ -5,7 +5,7 @@
  */
 package dimm.home.Panels;
 
-import dimm.general.SQL.SQLResult;
+import home.shared.SQL.SQLResult;
 import dimm.home.Models.OverviewModel;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossPanel;
@@ -198,7 +198,7 @@ public class MilterOverview extends SQLOverviewDialog implements PropertyChangeL
         ResultSetID rid = sql.executeQuery(sid, qry);
         SQLArrayResult resa = sql.get_sql_array_result(rid);
 
-        SQLResult<Milter>  res = new SQLResult<Milter>(resa, new Milter().getClass());
+        SQLResult<Milter>  res = new SQLResult<Milter>(UserMain.sqc(), resa, new Milter().getClass());
 
         model.setSqlResult(res);
         table.tableChanged(new TableModelEvent(table.getModel()) );

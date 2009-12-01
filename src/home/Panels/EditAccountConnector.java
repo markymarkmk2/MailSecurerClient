@@ -15,7 +15,7 @@ import dimm.home.Panels.MailView.GetUserMailPwdPanel;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.Utilities.SwingWorker;
-import dimm.home.Utilities.Validator;
+import home.shared.Utilities.Validator;
 import home.shared.CS_Constants;
 import java.io.File;
 import java.io.FileInputStream;

@@ -5,7 +5,7 @@
  */
 package dimm.home.Panels;
 
-import dimm.general.SQL.SQLResult;
+import home.shared.SQL.SQLResult;
 import dimm.home.Models.OverviewModel;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossPanel;
@@ -199,7 +199,7 @@ public class ImapFetcherOverview extends SQLOverviewDialog implements PropertyCh
         ResultSetID rid = sql.executeQuery(sid, qry);
         SQLArrayResult resa = sql.get_sql_array_result(rid);
 
-        SQLResult<ImapFetcher>  res = new SQLResult<ImapFetcher>(resa, new ImapFetcher().getClass());
+        SQLResult<ImapFetcher>  res = new SQLResult<ImapFetcher>(UserMain.sqc(), resa, new ImapFetcher().getClass());
 
         model.setSqlResult(res);
         table.tableChanged(new TableModelEvent(table.getModel()) );

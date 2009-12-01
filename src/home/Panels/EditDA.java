@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import home.shared.hibernate.DiskArchive;
-import dimm.home.Utilities.Validator;
+import home.shared.Utilities.Validator;
 
 
 

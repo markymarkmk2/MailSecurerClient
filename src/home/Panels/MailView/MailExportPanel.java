@@ -14,7 +14,7 @@ package dimm.home.Panels.MailView;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.UserMain;
-import dimm.home.Utilities.Validator;
+import home.shared.Utilities.Validator;
 import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;

@@ -5,9 +5,10 @@
 
 package dimm.home.ServerConnect;
 
-import dimm.general.SQL.SQLResult;
+import home.shared.SQL.SQLResult;
 import dimm.home.UserMain;
 import home.shared.SQL.SQLArrayResult;
+import home.shared.SQL.SQLObjectGetter;
 import home.shared.hibernate.AccountConnector;
 import home.shared.hibernate.DiskArchive;
 import home.shared.hibernate.Hotfolder;
@@ -23,7 +24,7 @@ import home.shared.hibernate.Role;
  *
  * @author mw
  */
-public class SQLConnect extends Connect
+public class SQLConnect extends Connect implements SQLObjectGetter
 {
 
     SQLResult<Mandant>  mandant_res;
@@ -63,7 +64,7 @@ public class SQLConnect extends Connect
         ResultSetID rs = sqc.executeQuery(sta, "select * from disk_archive where mid=" + m_id);
 
         SQLArrayResult resarr = sqc.get_sql_array_result(rs);
-        da_res = new SQLResult<DiskArchive>(resarr, new DiskArchive().getClass());
+        da_res = new SQLResult<DiskArchive>(this, resarr, new DiskArchive().getClass());
         
         sqc.close(rs);
 
@@ -155,7 +156,7 @@ public class SQLConnect extends Connect
         SQLArrayResult resarr = sqc.get_sql_array_result(rs);
         sqc.close(rs);
 
-        SQLResult<Mandant> ma_res = new SQLResult<Mandant>(resarr, new Mandant().getClass());
+        SQLResult<Mandant> ma_res = new SQLResult<Mandant>( this, resarr, new Mandant().getClass());
 
         return ma_res;
     }
@@ -177,7 +178,7 @@ public class SQLConnect extends Connect
         SQLArrayResult resarr = sqc.get_sql_array_result(rs);
         sqc.close(rs);
 
-        mandant_res = new SQLResult<Mandant>(resarr, new Mandant().getClass());
+        mandant_res = new SQLResult<Mandant>( this, resarr, new Mandant().getClass());
 
         // SELECT ACTUAL MANDANT
         long m_id = -1;
@@ -192,7 +193,7 @@ public class SQLConnect extends Connect
         resarr = sqc.get_sql_array_result(rs);
         sqc.close(rs);
 
-        da_res = new SQLResult<DiskArchive>(resarr, new DiskArchive().getClass());
+        da_res = new SQLResult<DiskArchive>( this, resarr, new DiskArchive().getClass());
 
         // HOTFOLDERS
         rs = sqc.executeQuery(sta, "select * from hotfolder where mid=" + m_id);
@@ -200,7 +201,7 @@ public class SQLConnect extends Connect
         resarr = sqc.get_sql_array_result(rs);
         sqc.close(rs);
 
-        hf_res = new SQLResult<Hotfolder>(resarr, new Hotfolder().getClass());
+        hf_res = new SQLResult<Hotfolder>( this, resarr, new Hotfolder().getClass());
 
         // IMAPFETCHER
         rs = sqc.executeQuery(sta, "select * from imap_fetcher where mid=" + m_id);
@@ -208,7 +209,7 @@ public class SQLConnect extends Connect
         resarr = sqc.get_sql_array_result(rs);
         sqc.close(rs);
 
-        if_res = new SQLResult<ImapFetcher>(resarr, new ImapFetcher().getClass());
+        if_res = new SQLResult<ImapFetcher>( this, resarr, new ImapFetcher().getClass());
 
         // MILTER
         rs = sqc.executeQuery(sta, "select * from milter where mid=" +m_id);
@@ -216,7 +217,7 @@ public class SQLConnect extends Connect
         resarr = sqc.get_sql_array_result(rs);
         sqc.close(rs);
 
-        milter_res = new SQLResult<Milter>(resarr, new Milter().getClass());
+        milter_res = new SQLResult<Milter>( this, resarr, new Milter().getClass());
 
         // PROXY
         rs = sqc.executeQuery(sta, "select * from proxy where mid=" + m_id);
@@ -224,7 +225,7 @@ public class SQLConnect extends Connect
         resarr = sqc.get_sql_array_result(rs);
         sqc.close(rs);
 
-        proxy_res = new SQLResult<Proxy>(resarr, new Proxy().getClass());
+        proxy_res = new SQLResult<Proxy>( this, resarr, new Proxy().getClass());
 
         // ROLE
         rs = sqc.executeQuery(sta, "select * from role where mid=" + m_id);
@@ -232,7 +233,7 @@ public class SQLConnect extends Connect
         resarr = sqc.get_sql_array_result(rs);
         sqc.close(rs);
 
-        role_res = new SQLResult<Role>(resarr, new Role().getClass());
+        role_res = new SQLResult<Role>( this, resarr, new Role().getClass());
 
         // ACCOUNT-CONNECTOR
         rs = sqc.executeQuery(sta, "select * from account_connector where mid=" + m_id);
@@ -240,7 +241,7 @@ public class SQLConnect extends Connect
         resarr = sqc.get_sql_array_result(rs);
         sqc.close(rs);
 
-        account_res = new SQLResult<AccountConnector>(resarr, new AccountConnector().getClass());
+        account_res = new SQLResult<AccountConnector>( this, resarr, new AccountConnector().getClass());
 
         // FINISH
         sqc.close(sta);
@@ -275,6 +276,7 @@ public class SQLConnect extends Connect
 
     }
 */
+    @Override
     public Mandant get_mandant( int id )
     {
         for (int i = 0; i < mandant_res.size(); i++)
@@ -285,6 +287,7 @@ public class SQLConnect extends Connect
         }
         return null;
     }
+    @Override
     public DiskArchive get_disk_archive( int id )
     {
         for (int i = 0; i < da_res.size(); i++)

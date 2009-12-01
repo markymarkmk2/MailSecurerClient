@@ -6,7 +6,7 @@
 package dimm.home.Panels;
 
 import com.thoughtworks.xstream.XStream;
-import dimm.general.SQL.SQLResult;
+import home.shared.SQL.SQLResult;
 import dimm.home.Models.OverviewModel;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
@@ -23,7 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import home.shared.hibernate.Mandant;
-import dimm.home.Utilities.Validator;
+import home.shared.Utilities.Validator;
 import home.shared.AccountConnectorTypeEntry;
 import home.shared.CS_Constants;
 import home.shared.CS_Constants.USERMODE;
@@ -1253,7 +1253,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
 
         ResultSetID rid = sql.executeQuery(sid, "select * from mail_header_variable where mid=" + m.getId());
         SQLArrayResult resa = sql.get_sql_array_result(rid);
-        SQLResult<MailHeaderVariable> res = new SQLResult<MailHeaderVariable>(resa, new MailHeaderVariable().getClass());
+        SQLResult<MailHeaderVariable> res = new SQLResult<MailHeaderVariable>(UserMain.sqc(), resa, new MailHeaderVariable().getClass());
 
               
         hmodel = new HeaderModel(UserMain.self, null);

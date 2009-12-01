@@ -21,7 +21,7 @@ import dimm.home.ServerConnect.FunctionCallConnect;
 import dimm.home.ServerConnect.InStreamID;
 import dimm.home.ServerConnect.ServerInputStream;
 import dimm.home.UserMain;
-import dimm.home.Utilities.ParseToken;
+import home.shared.Utilities.ParseToken;
 import dimm.home.Utilities.SizeStr;
 import dimm.home.Utilities.SwingWorker;
 import home.shared.CS_Constants;
@@ -54,10 +54,8 @@ class MailPreviewDlg extends GenericGlossyDlg
     {
         super( parent, true, new MailPreviewPanel(mail));
         main = parent;
-        if (parent.isVisible())
-            this.setLocation(parent.getLocationOnScreen().x + 30, parent.getLocationOnScreen().y + 30);
-        else
-            this.setLocationRelativeTo(null);
+
+        this.set_next_location(parent);
 
         this.setSize( 700, 600);
     }

@@ -5,6 +5,7 @@
  */
 package dimm.home.Panels;
 
+import home.shared.SQL.SQLResult;
 import dimm.home.Models.OverviewModel;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossPanel;
@@ -17,7 +18,6 @@ import javax.swing.JButton;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableColumnModel;
 
-import dimm.general.SQL.*;
 import home.shared.hibernate.*;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.ConnectionID;
@@ -170,7 +170,7 @@ public class RoleOverview extends SQLOverviewDialog implements PropertyChangeLis
         ResultSetID rid = sql.executeQuery(sid, qry);
         SQLArrayResult resa = sql.get_sql_array_result(rid);
 
-        SQLResult<Role>  res = new SQLResult<Role>(resa, new Role().getClass());
+        SQLResult<Role>  res = new SQLResult<Role>(UserMain.sqc(), resa, new Role().getClass());
 
         model.setSqlResult(res);
 

@@ -260,11 +260,7 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
         pnl.addPropertyChangeListener("REBUILD", this);
 
         GenericGlossyDlg dlg = new GenericGlossyDlg( null, true, pnl );
-        if (dlg.isVisible())
-            dlg.set_next_location(this);
-        else
-            dlg.setLocationRelativeTo(null);
-
+        dlg.set_next_location(this);
         dlg.setVisible( true );
     }
 

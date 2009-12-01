@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import javax.swing.JButton;
 import home.shared.hibernate.DiskArchive;
 import home.shared.hibernate.DiskSpace;
-import dimm.home.Utilities.Validator;
+import home.shared.Utilities.Validator;
 import home.shared.CS_Constants;
 
 

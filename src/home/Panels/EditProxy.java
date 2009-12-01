@@ -6,16 +6,16 @@
 
 package dimm.home.Panels;
 
+import home.shared.SQL.SQLResult;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.UserMain;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
-import dimm.general.SQL.*;
 import home.shared.hibernate.DiskArchive;
 import home.shared.hibernate.Proxy;
 import dimm.home.Models.DiskArchiveComboModel;
-import dimm.home.Utilities.Validator;
+import home.shared.Utilities.Validator;
 
 
 
