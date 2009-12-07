@@ -11,14 +11,19 @@
 
 package dimm.home.Panels;
 
+import dimm.home.Main;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.Rendering.GlossTable;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.UserMain;
+import dimm.home.Utilities.SizeStr;
 import home.shared.Utilities.ParseToken;
+import home.shared.hibernate.DiskArchive;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.Timer;
 
@@ -36,58 +41,67 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
     int da_idx;
     int ds_idx;
     Timer timer;
+    
+    ImageIcon ok_icn;
+    ImageIcon nok_icn;
+    ImageIcon empty_icn;
+
+    enum STATUS
+    {
+        NOT_STARTED,
+        ACTIVE,
+        PAUSED,
+        ABORTED,
+        FINISHED
+    }
+
+    STATUS status;
+    STATUS last_status;
+
+    String last_status_ret = "";
+    int last_da = -1;
+
 
     /** Creates new form GetMailAddressPanel */
     public ReIndexPanel( int da_idx, int ds_idx)
     {
         initComponents();
+        String  icn_ok = "/dimm/home/images/web_check.png";
+        String  icn_empty = "/dimm/home/images/ok_empty.png";
+        String  icn_warn = "/dimm/home/images/web_delete.png";
+
+        ok_icn = new ImageIcon(this.getClass().getResource(icn_ok));
+        nok_icn = new ImageIcon(this.getClass().getResource(icn_warn));
+        empty_icn = new ImageIcon(this.getClass().getResource(icn_empty));
+
+        status = STATUS.NOT_STARTED;
+        last_status = status;
+
+
         this.da_idx = da_idx;
         this.ds_idx = ds_idx;
-        timer = new Timer(1000, this);
-        timer.start();
 
+        read_status();
+        
+
+        timer = new Timer(500, this);
+        timer.start();
     }
     public ReIndexPanel( int da_idx)
     {
         this( da_idx, -1 );
     }
-/*
- * StringBuffer sb = new StringBuffer();
-        sb.append( "BS:");
-        sb.append( isBusy() ? "1":"0");
-        sb.append( " PA:");
-        sb.append( pause ? "1":"0");
-        sb.append( " AB:");
-        sb.append( abort ? "1":"0");
-        sb.append( " TCNT:" );
-        sb.append( getTotal_cnt() );
-        sb.append( " TSIZ:" );
-        sb.append( getTotal_size() );
-        sb.append( " ACNT:" );
-        sb.append( getAct_cnt() );
-        sb.append( " ASIZ:" );
-        sb.append( getAct_size() );
-        if (act_re_idx >= 0)
-        {
-            ReIndexDSHEntry reIndexDSHEntry = reindex_list.get(act_re_idx);
-            sb.append( " RPA:\"" );
-            sb.append( reIndexDSHEntry.getData_dsh().getDs().getPath() );
-            sb.append( "\"");
-            sb.append( " RDS:" );
-            sb.append( reIndexDSHEntry.getData_dsh().getDs().getId() );
-            sb.append( " TRCNT:" );
-            sb.append( getTotal_cnt() );
-            sb.append( " TRSIZ:" );
-            sb.append( getTotal_size() );
-            sb.append( " ARCNT:" );
-            sb.append( getAct_cnt() );
-            sb.append( " ARSIZ:" );
-            sb.append( getAct_size() );
-        }
-        sb.append( " MSG:\"" );
-        sb.append( getLast_msg() );
-        sb.append( "\"");*/
-    String last_status_ret = "";
+
+    void set_icon( JButton btn, ImageIcon icn )
+    {
+        btn.setIcon(icn);
+        btn.setContentAreaFilled(false);
+        btn.setOpaque(false);
+
+        btn.setMargin(new Insets(0, 0, 0, 0));
+        btn.setBorderPainted(false);
+    }
+
     void read_status()
     {
          String cmd = "reindex CMD:check MA:" + UserMain.self.get_act_mandant().getId();
@@ -106,66 +120,94 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
              String line = ret.substring(3);
              ParseToken pt = new ParseToken(line);
 
-             TBT_ACTIVE.setSelected( pt.GetBoolean("BS:"));
-             TBT_ABORT.setSelected( pt.GetBoolean("AB:"));
-             TBT_PAUSE.setSelected( pt.GetBoolean("PA:"));
-             PB_PERCENT.setValue( (int)pt.GetLongValue("PC:"));
-             
-             TXT_TCNT.setText( pt.GetString("TCNT:"));
-             TXT_ACNT.setText( pt.GetString("ACNT:"));
-             TXT_TRCNT.setText( pt.GetString("TRCNT:"));
-             TXT_ARCNT.setText( pt.GetString("ARCNT:"));
-
-             TXT_TSIZ.setText( pt.GetString("TSIZ:"));
-             TXT_ASIZ.setText( pt.GetString("ASIZ:"));
-             TXT_TRSIZ.setText( pt.GetString("TRSIZ:"));
-             TXT_ARSIZ.setText( pt.GetString("ARSIZ:"));
-
-             TXT_DS.setText( pt.GetString("RPA:"));
-
-             
-             TXT_STATUS.setText( pt.GetString("MSG:"));
-
-             if (!TBT_ABORT.isSelected() && TBT_ACTIVE.isSelected())
+             if (pt.GetBoolean("AB:"))
              {
-                 if ( TBT_PAUSE.isSelected())
+                 BT_STARTSTOP.setText(UserMain.Txt("Start"));
+                 status = STATUS.ABORTED;
+             }
+             else if (pt.GetBoolean("PA:"))
+             {
+                 BT_STARTSTOP.setText(UserMain.Txt("Resume"));
+                 status = STATUS.PAUSED;
+             }
+             else if (pt.GetBoolean("BS:"))
+             {
+                 BT_STARTSTOP.setText(UserMain.Txt("Pause"));
+                 status = STATUS.ACTIVE;
+             }
+             else
+             {
+                 if ((int)pt.GetLongValue("PC:") >= 99)
                  {
-                     BT_STARTSTOP.setText(UserMain.Txt("Resume"));
-                 }
-                 else
-                 {
-                     BT_STARTSTOP.setText(UserMain.Txt("Pause"));
+                     status = STATUS.FINISHED;
+                     BT_STARTSTOP.setText(UserMain.Txt("Start"));
                  }
              }
+
+             if (status != last_status)
+             {
+                 set_icon( BT_ACTIVE, pt.GetBoolean("BS:") ? ok_icn : empty_icn);
+                 set_icon( BT_RABORT, pt.GetBoolean("AB:") ? nok_icn : empty_icn);
+                 set_icon( BT_RPAUSE, pt.GetBoolean("PA:") ? ok_icn : empty_icn);
+                 last_status = status;
+             }
+             if (status != STATUS.NOT_STARTED)
+             {
+
+                 PB_PERCENT.setValue( (int)pt.GetLongValue("PC:"));
+
+                 TXT_TCNT.setText( pt.GetString("TCNT:"));
+                 TXT_ACNT.setText( pt.GetString("ACNT:"));
+                 TXT_TRCNT.setText( pt.GetString("TRCNT:"));
+                 TXT_ARCNT.setText( pt.GetString("ARCNT:"));
+
+
+                 TXT_TSIZ.setText( SizeStr.format( pt.GetString("TSIZ:")) );
+                 TXT_ASIZ.setText( SizeStr.format( pt.GetString("ASIZ:")) );
+                 TXT_TRSIZ.setText( SizeStr.format( pt.GetString("TRSIZ:")) );
+                 TXT_ARSIZ.setText( SizeStr.format( pt.GetString("ARSIZ:")) );
+
+                 TXT_DS.setText( pt.GetString("RPA:"));
+
+                 int act_da = (int)pt.GetLongValue("RDA:");
+                 if (act_da != last_da)
+                 {
+                     last_da = act_da;
+                     DiskArchive da = UserMain.sqc().get_disk_archive(act_da);
+                     TXT_DA.setText( da.getName() );
+                 }
+
+
+                 TXT_STATUS.setText( pt.GetString("MSG:"));
+             }
+
          }
          else
          {
              TXT_STATUS.setText( ret);
          }
     }
-    void start()
+
+    void handle_button()
     {
         String ret = null;
         
-        if (TBT_ACTIVE.isSelected())
+        if (status == STATUS.ACTIVE)
         {
-            if (TBT_ABORT.isSelected())
-            {
-                return;
-            }
-            if (TBT_PAUSE.isSelected())
-            {
-                String cmd = "reindex CMD:resume MA:" + UserMain.self.get_act_mandant().getId();
-                ret = UserMain.fcc().call_abstract_function(cmd, ServerCall.SHORT_CMD_TO);
-            }
-            else
-            {
-                String cmd = "reindex CMD:pause MA:" + UserMain.self.get_act_mandant().getId();
-                ret = UserMain.fcc().call_abstract_function(cmd, ServerCall.SHORT_CMD_TO);
-            }
+            String cmd = "reindex CMD:pause MA:" + UserMain.self.get_act_mandant().getId();
+            ret = UserMain.fcc().call_abstract_function(cmd, ServerCall.SHORT_CMD_TO);
+            BT_STARTSTOP.setText(UserMain.Txt("Resume") );
         }
-        else
+        if (status == STATUS.PAUSED)
         {
+            String cmd = "reindex CMD:resume MA:" + UserMain.self.get_act_mandant().getId();
+            ret = UserMain.fcc().call_abstract_function(cmd, ServerCall.SHORT_CMD_TO);
+            BT_STARTSTOP.setText(UserMain.Txt("Resume") );
+        }
+        if (status == STATUS.NOT_STARTED || status == STATUS.ABORTED || status == STATUS.FINISHED )
+        {
+            status = STATUS.ACTIVE;
+            BT_STARTSTOP.setText(UserMain.Txt("Pause"));
             String cmd = "reindex CMD:start MA:" + UserMain.self.get_act_mandant().getId() + " DA:" + da_idx;
             if (ds_idx == -1)
                 cmd += " TY:one_da";
@@ -173,14 +215,19 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
                 cmd += " DS:" + ds_idx + " TY:one_ds";
             ret = UserMain.fcc().call_abstract_function(cmd, ServerCall.SHORT_CMD_TO);
         }
+
+       
         if (ret == null || ret.length() == 0 || ret.charAt(0) != '0')
         {
             UserMain.errm_ok(my_dlg, UserMain.Txt("Error_while_calling_command") + " " + ret);
         }
+        
+        my_dlg.pack();
     }
+
     void abort()
     {
-        if (TBT_ACTIVE.isSelected())
+        if (status != STATUS.ABORTED)
         {
             String cmd = "reindex CMD:abort MA:" + UserMain.self.get_act_mandant().getId();
             UserMain.fcc().call_abstract_function(cmd, ServerCall.SHORT_CMD_TO);
@@ -220,10 +267,10 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
         TXT_DS = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         TXT_STATUS = new javax.swing.JTextField();
-        TBT_ACTIVE = new javax.swing.JToggleButton();
-        TBT_ABORT = new javax.swing.JToggleButton();
         jLabel9 = new javax.swing.JLabel();
-        TBT_PAUSE = new javax.swing.JToggleButton();
+        BT_ACTIVE = new javax.swing.JButton();
+        BT_RABORT = new javax.swing.JButton();
+        BT_RPAUSE = new javax.swing.JButton();
         BT_ABORT = new GlossButton();
 
         BT_OKAY.setText(UserMain.Txt("Close")); // NOI18N
@@ -233,10 +280,11 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
             }
         });
 
+        PB_PERCENT.setBackground(new java.awt.Color(0, 0, 0));
+        PB_PERCENT.setForeground(new java.awt.Color(0, 51, 153));
         PB_PERCENT.setStringPainted(true);
 
         TXT_DA.setEditable(false);
-        TXT_DA.setText("jTextField1");
         TXT_DA.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 TXT_DAActionPerformed(evt);
@@ -289,35 +337,24 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
         jLabel7.setText(UserMain.Txt("Path")); // NOI18N
 
         TXT_DS.setEditable(false);
-        TXT_DS.setText("jTextField1");
 
         jLabel8.setText(UserMain.Txt("Status")); // NOI18N
 
         TXT_STATUS.setEditable(false);
-        TXT_STATUS.setText("jTextField1");
-
-        TBT_ACTIVE.setText(UserMain.Txt("Active")); // NOI18N
-        TBT_ACTIVE.setBorder(null);
-        TBT_ACTIVE.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        TBT_ACTIVE.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
-        TBT_ACTIVE.setIconTextGap(10);
-        TBT_ACTIVE.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/ok_green.png"))); // NOI18N
-
-        TBT_ABORT.setText(UserMain.Txt("Abort")); // NOI18N
-        TBT_ABORT.setBorder(null);
-        TBT_ABORT.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        TBT_ABORT.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
-        TBT_ABORT.setIconTextGap(10);
-        TBT_ABORT.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/ok.png"))); // NOI18N
 
         jLabel9.setText(UserMain.Txt("Archiv")); // NOI18N
 
-        TBT_PAUSE.setText(UserMain.Txt("Pause")); // NOI18N
-        TBT_PAUSE.setBorder(null);
-        TBT_PAUSE.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        TBT_PAUSE.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
-        TBT_PAUSE.setIconTextGap(10);
-        TBT_PAUSE.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/ok.png"))); // NOI18N
+        BT_ACTIVE.setText(UserMain.getString("Active")); // NOI18N
+        BT_ACTIVE.setBorder(null);
+        BT_ACTIVE.setBorderPainted(false);
+
+        BT_RABORT.setText(UserMain.getString("Abort")); // NOI18N
+        BT_RABORT.setBorder(null);
+        BT_RABORT.setBorderPainted(false);
+
+        BT_RPAUSE.setText(UserMain.getString("Pause")); // NOI18N
+        BT_RPAUSE.setBorder(null);
+        BT_RPAUSE.setBorderPainted(false);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -337,43 +374,43 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(TXT_DA, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(BT_RABORT)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(TXT_DS, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(TXT_ARSIZ, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
-                                    .addComponent(TXT_ARCNT, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
-                                    .addComponent(TXT_ASIZ, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
-                                    .addComponent(TXT_ACNT, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE))
+                                    .addComponent(TXT_ARSIZ, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+                                    .addComponent(TXT_ARCNT, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+                                    .addComponent(TXT_ASIZ, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+                                    .addComponent(TXT_ACNT, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(TXT_TSIZ, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
-                                    .addComponent(TXT_TCNT, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
-                                    .addComponent(TXT_TRSIZ, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
-                                    .addComponent(TXT_TRCNT, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)))
-                            .addComponent(TXT_STATUS, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(TXT_TSIZ, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                                    .addComponent(TXT_TCNT, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                                    .addComponent(TXT_TRSIZ, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                                    .addComponent(TXT_TRCNT, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)))
+                            .addComponent(TXT_DS, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
+                            .addComponent(TXT_STATUS, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE))
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(PB_PERCENT, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
-                                .addGap(18, 18, 18))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(TBT_ACTIVE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 2, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(TBT_ABORT))
-                                .addGap(208, 208, 208)))
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(TBT_PAUSE)
-                            .addComponent(BT_STARTSTOP))
-                        .addGap(10, 10, 10))))
+                        .addComponent(BT_ACTIVE)
+                        .addGap(182, 182, 182)
+                        .addComponent(BT_RPAUSE)
+                        .addGap(64, 64, 64))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(PB_PERCENT, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(BT_STARTSTOP, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(TXT_DA, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
+
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {BT_ACTIVE, BT_RABORT, BT_RPAUSE});
+
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -419,14 +456,14 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
                     .addComponent(jLabel8))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(TBT_ACTIVE)
-                    .addComponent(TBT_PAUSE))
+                    .addComponent(BT_ACTIVE)
+                    .addComponent(BT_RPAUSE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(TBT_ABORT)
+                .addComponent(BT_RABORT)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(BT_STARTSTOP)
-                    .addComponent(PB_PERCENT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(PB_PERCENT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BT_STARTSTOP))
                 .addContainerGap())
         );
 
@@ -446,7 +483,7 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(BT_ABORT)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 213, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 234, Short.MAX_VALUE)
                         .addComponent(BT_OKAY, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -480,7 +517,7 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
     private void BT_STARTSTOPActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_STARTSTOPActionPerformed
     {//GEN-HEADEREND:event_BT_STARTSTOPActionPerformed
         // TODO add your handling code here:
-        start();
+        handle_button();
     }//GEN-LAST:event_BT_STARTSTOPActionPerformed
 
     private void BT_ABORTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_ABORTActionPerformed
@@ -492,12 +529,12 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
+    private javax.swing.JButton BT_ACTIVE;
     private javax.swing.JButton BT_OKAY;
+    private javax.swing.JButton BT_RABORT;
+    private javax.swing.JButton BT_RPAUSE;
     private javax.swing.JButton BT_STARTSTOP;
     private javax.swing.JProgressBar PB_PERCENT;
-    private javax.swing.JToggleButton TBT_ABORT;
-    private javax.swing.JToggleButton TBT_ACTIVE;
-    private javax.swing.JToggleButton TBT_PAUSE;
     private javax.swing.JTextField TXT_ACNT;
     private javax.swing.JTextField TXT_ARCNT;
     private javax.swing.JTextField TXT_ARSIZ;
@@ -546,7 +583,20 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
     @Override
     public void actionPerformed( ActionEvent e )
     {
-        read_status();
+        if (status == STATUS.NOT_STARTED)
+            return;
+
+        timer.stop();
+
+        try
+        {
+            read_status();
+        }
+        catch (Exception exc)
+        {
+            Main.err_log_warn("Caught exception in read_starus: " + exc.getMessage());
+        }
+        timer.start();
     }
 
 }

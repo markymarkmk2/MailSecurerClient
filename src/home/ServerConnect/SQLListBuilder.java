@@ -28,7 +28,7 @@ import java.util.Iterator;
  *
  * @author Administrator
  */
-public class SQLListBuilder
+ class __SQLListBuilder
 {
     Connection c;
     
@@ -51,7 +51,7 @@ public class SQLListBuilder
     static ArrayList<SQLArrayResult> cache_list;
     
     /** Creates a new instance of SQLBoxListBuilder */
-    public SQLListBuilder()
+    public __SQLListBuilder()
     {   
         if ( is_local)
         {

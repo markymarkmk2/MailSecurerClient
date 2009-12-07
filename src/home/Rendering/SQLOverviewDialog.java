@@ -227,6 +227,12 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
         ServerCall sql = UserMain.sqc().get_sqc();
         boolean okay = sql.DeleteObject( object);
 
+        if (okay)
+        {
+            UserMain.sqc().rebuild_result_array( object.getClass() );
+        }
+
+
         return okay;
     }
 

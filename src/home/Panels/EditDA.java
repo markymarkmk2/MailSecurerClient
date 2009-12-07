@@ -118,11 +118,11 @@ public class EditDA extends GenericEditPanel
         jLabel2 = new javax.swing.JLabel();
         BT_DISABLED = new javax.swing.JCheckBox();
         CB_TYPE = new javax.swing.JComboBox();
-        BT_DISKSPACES = new javax.swing.JButton();
+        BT_DISKSPACES = new GlossButton();
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
-        BT_REINDEX = new javax.swing.JButton();
+        BT_REINDEX = new GlossButton();
 
         setDoubleBuffered(false);
         setOpaque(false);
@@ -444,7 +444,7 @@ public class EditDA extends GenericEditPanel
         // IF SOMETHING HAS BEEN SAVED, WE REBUILD OUR GLOBAL DA-LIST
         if (ok)
         {
-            UserMain.sqc().rebuild_da_array(UserMain.sqc().get_act_mandant().getId());
+            UserMain.sqc().rebuild_da_array();
         }
         return ok;
     }

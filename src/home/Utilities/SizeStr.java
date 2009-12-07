@@ -53,12 +53,25 @@ public class SizeStr extends Object
         }
         return 0;
     }
-        
-    public String toString()
+    public static String format( String v )
+    {
+        double dv = 0;
+        try
+        {
+            dv = Double.parseDouble(v);
+            return format(dv);
+        }
+        catch (NumberFormatException numberFormatException)
+        {
+        }
+        return "";
+
+    }
+    public static String format( double v )
     {
         String postfix = "";
-        double v = size;
-        
+
+
         if (v > 1.2e12)
         {
             postfix = "T";
@@ -79,7 +92,7 @@ public class SizeStr extends Object
             postfix = "k";
             v /= KB_SIZE;
         }
-        
+
         long l = (long)(v + 0.5);
         v -= l;
         long m = 0;
@@ -93,16 +106,23 @@ public class SizeStr extends Object
             m = (long)(v*10 + 0.5);
             v = l + m / 10.0;
         }
-        
+
         if (m == 0)
         {
             if (l == 0)
                 return "-";
-            
+
             return new Long(l).toString() + " " + postfix;
         }
-                
+
         return new Double(v).toString() + " " + postfix;
+
+    }
+        
+    @Override
+    public String toString()
+    {
+        return format( size );
     }
     
     public String toString(int digits)
@@ -122,6 +142,10 @@ public class SizeStr extends Object
     public double get_size()
     {
         return size;
+    }
+    public void set_size( double s )
+    {
+        size = s;
     }
 }
             

@@ -21,7 +21,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="BT_ABORT" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="213" max="32767" attributes="0"/>
+                      <EmptySpace pref="234" max="32767" attributes="0"/>
                       <Component id="BT_OKAY" min="-2" pref="80" max="-2" attributes="0"/>
                   </Group>
                   <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
@@ -79,54 +79,47 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="TXT_DA" min="-2" pref="293" max="-2" attributes="0"/>
+                          <Component id="BT_RABORT" linkSize="1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="TXT_DS" alignment="0" min="-2" pref="294" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="TXT_ARSIZ" alignment="0" pref="131" max="32767" attributes="1"/>
-                                      <Component id="TXT_ARCNT" alignment="0" pref="131" max="32767" attributes="0"/>
-                                      <Component id="TXT_ASIZ" alignment="0" pref="131" max="32767" attributes="0"/>
-                                      <Component id="TXT_ACNT" alignment="0" pref="131" max="32767" attributes="0"/>
+                                      <Component id="TXT_ARSIZ" alignment="0" pref="142" max="32767" attributes="1"/>
+                                      <Component id="TXT_ARCNT" alignment="0" pref="142" max="32767" attributes="0"/>
+                                      <Component id="TXT_ASIZ" alignment="0" pref="142" max="32767" attributes="0"/>
+                                      <Component id="TXT_ACNT" alignment="0" pref="142" max="32767" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="jLabel6" alignment="1" min="-2" pref="157" max="-2" attributes="1"/>
-                                      <Component id="TXT_TSIZ" alignment="0" pref="157" max="32767" attributes="0"/>
-                                      <Component id="TXT_TCNT" alignment="0" pref="157" max="32767" attributes="0"/>
-                                      <Component id="TXT_TRSIZ" alignment="0" pref="157" max="32767" attributes="0"/>
-                                      <Component id="TXT_TRCNT" alignment="0" pref="157" max="32767" attributes="0"/>
+                                      <Component id="TXT_TSIZ" alignment="0" pref="167" max="32767" attributes="0"/>
+                                      <Component id="TXT_TCNT" alignment="0" pref="167" max="32767" attributes="0"/>
+                                      <Component id="TXT_TRSIZ" alignment="0" pref="167" max="32767" attributes="0"/>
+                                      <Component id="TXT_TRCNT" alignment="0" pref="167" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
-                              <Component id="TXT_STATUS" alignment="0" min="-2" pref="294" max="-2" attributes="0"/>
+                              <Component id="TXT_DS" alignment="0" pref="315" max="32767" attributes="0"/>
+                              <Component id="TXT_STATUS" alignment="0" pref="315" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Component id="PB_PERCENT" pref="217" max="32767" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="TBT_ACTIVE" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace pref="2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Component id="TBT_ABORT" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace min="-2" pref="208" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="TBT_PAUSE" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="BT_STARTSTOP" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                          <Component id="BT_ACTIVE" linkSize="1" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="182" max="-2" attributes="0"/>
+                          <Component id="BT_RPAUSE" linkSize="1" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Component id="PB_PERCENT" min="-2" pref="217" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="BT_STARTSTOP" min="-2" pref="80" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="TXT_DA" pref="315" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -188,15 +181,15 @@
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="TBT_ACTIVE" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="TBT_PAUSE" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="BT_ACTIVE" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="BT_RPAUSE" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="TBT_ABORT" min="-2" max="-2" attributes="0"/>
+                  <Component id="BT_RABORT" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="BT_STARTSTOP" min="-2" max="-2" attributes="0"/>
-                      <Component id="PB_PERCENT" min="-2" pref="25" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="PB_PERCENT" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                      <Component id="BT_STARTSTOP" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -206,13 +199,18 @@
       <SubComponents>
         <Component class="javax.swing.JProgressBar" name="PB_PERCENT">
           <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="0" green="0" red="0" type="rgb"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="99" green="33" red="0" type="rgb"/>
+            </Property>
             <Property name="stringPainted" type="boolean" value="true"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="TXT_DA">
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
-            <Property name="text" type="java.lang.String" value="jTextField1"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TXT_DAActionPerformed"/>
@@ -331,7 +329,6 @@
         <Component class="javax.swing.JTextField" name="TXT_DS">
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
-            <Property name="text" type="java.lang.String" value="jTextField1"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel8">
@@ -344,39 +341,6 @@
         <Component class="javax.swing.JTextField" name="TXT_STATUS">
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
-            <Property name="text" type="java.lang.String" value="jTextField1"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JToggleButton" name="TBT_ACTIVE">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Active" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
-            </Property>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="null"/>
-            </Property>
-            <Property name="horizontalAlignment" type="int" value="4"/>
-            <Property name="horizontalTextPosition" type="int" value="10"/>
-            <Property name="iconTextGap" type="int" value="10"/>
-            <Property name="pressedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/dimm/home/images/ok_green.png"/>
-            </Property>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JToggleButton" name="TBT_ABORT">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Abort" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
-            </Property>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="null"/>
-            </Property>
-            <Property name="horizontalAlignment" type="int" value="4"/>
-            <Property name="horizontalTextPosition" type="int" value="10"/>
-            <Property name="iconTextGap" type="int" value="10"/>
-            <Property name="pressedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/dimm/home/images/ok.png"/>
-            </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel9">
@@ -386,20 +350,37 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JToggleButton" name="TBT_PAUSE">
+        <Component class="javax.swing.JButton" name="BT_ACTIVE">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Pause" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Active" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>
-            <Property name="horizontalAlignment" type="int" value="4"/>
-            <Property name="horizontalTextPosition" type="int" value="10"/>
-            <Property name="iconTextGap" type="int" value="10"/>
-            <Property name="pressedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/dimm/home/images/ok.png"/>
+            <Property name="borderPainted" type="boolean" value="false"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="BT_RABORT">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Abort" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
             </Property>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="null"/>
+            </Property>
+            <Property name="borderPainted" type="boolean" value="false"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="BT_RPAUSE">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Pause" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="null"/>
+            </Property>
+            <Property name="borderPainted" type="boolean" value="false"/>
           </Properties>
         </Component>
       </SubComponents>

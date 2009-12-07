@@ -415,7 +415,7 @@ public class DAOverview extends SQLOverviewDialog
         // IF SOMETHING HAS BEEN DELETED, WE REBUILD OUR GLOBAL DA-LIST
         if (ok)
         {
-            UserMain.sqc().rebuild_da_array(UserMain.sqc().get_act_mandant().getId());
+            UserMain.sqc().rebuild_da_array();
         }
         return ok;
 

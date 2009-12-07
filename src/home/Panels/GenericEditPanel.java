@@ -118,6 +118,11 @@ public abstract class GenericEditPanel extends GlossDialogPanel
                 }
             }
         }
+        if (ok)
+        {
+            UserMain.sqc().rebuild_result_array(object.getClass());
+        }
+
         return ok;
 
     }
