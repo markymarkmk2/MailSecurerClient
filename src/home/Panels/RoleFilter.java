@@ -18,8 +18,10 @@ import dimm.home.UserMain;
 import home.shared.Utilities.ZipUtilities;
 import home.shared.filter.ExprEntry;
 import home.shared.filter.ExprEntry.OPERATION;
+import home.shared.filter.ExprEntry.TYPE;
 import home.shared.filter.GroupEntry;
 import home.shared.filter.LogicEntry;
+import home.shared.filter.VarTypeEntry;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,16 +34,18 @@ import javax.swing.text.BadLocationException;
 class CB_op_entry
 {
     ExprEntry.OPERATION op;
+    ExprEntry.TYPE type;
 
-    public CB_op_entry( OPERATION op )
+    public CB_op_entry( OPERATION op, TYPE type )
     {
         this.op = op;
+        this.type = type;
     }
 
     @Override
     public String toString()
     {
-        return RoleFilter.get_op_nice_txt(op);
+        return RoleFilter.get_op_nice_txt(op, type);
     }
 }
 
@@ -67,11 +71,11 @@ public class RoleFilter extends GlossDialogPanel
     LogicEntryModel model;
 
     private boolean okay;
-    ArrayList<String> var_names;
+    ArrayList<VarTypeEntry> var_names;
     ArrayList<String> var_nice_names;
-
+    
     /** Creates new form RoleFilter */
-    public RoleFilter(ArrayList<String> var_names, String compressed_list_str, boolean compressed)
+    public RoleFilter(ArrayList<VarTypeEntry> var_names, String compressed_list_str, boolean compressed)
     {
         initComponents();
 
@@ -89,20 +93,51 @@ public class RoleFilter extends GlossDialogPanel
         COMBO_AND_OR.addItem( UserMain.Txt("And"));
         COMBO_AND_OR.addItem( UserMain.Txt("Or"));
 
-        COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.CONTAINS ) );
-        COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.BEGINS_WITH ) );
-        COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.ENDS_WITH ) );
-        COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.CONTAINS_SUBSTR ) );
-        COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.REGEXP ) );
+        
 
         this.var_names = var_names;
+       
         
 
         // ADD TRANSLATIONS TO COMBO
         for (int i = 0; i < this.var_names.size(); i++)
         {
-            String string = this.var_names.get(i);
-            COMBO_NAME.addItem(UserMain.Txt(string));
+            String string = this.var_names.get(i).getVar();
+            COMBO_NAME.addItem(UserMain.Txt(string));            
+        }
+        COMBO_NAME.setSelectedIndex(0);
+        set_operation( 0);
+    }
+    void set_operation( int var_idx )
+    {
+        TYPE type = var_names.get( var_idx).getType();
+        switch (type)
+        {
+            case STRING:
+            {
+                COMBO_OPERATION.removeAllItems();
+                COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.CONTAINS, type ) );
+                COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.BEGINS_WITH, type ) );
+                COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.ENDS_WITH, type ) );
+                COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.CONTAINS_SUBSTR, type ) );
+                COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.REGEXP, type ) );
+                break;
+            }
+            case INT:
+            {
+                COMBO_OPERATION.removeAllItems();
+                COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.NUM_EQUAL, type ) );
+                COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.NUM_LT, type ) );
+                COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.NUM_GT, type ) );
+                COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.REGEXP, type ) );
+            }
+            case TIMESTAMP:
+            {
+                COMBO_OPERATION.removeAllItems();
+                COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.NUM_LT, type ) );
+                COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.NUM_GT, type ) );
+                COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.REGEXP, type ) );
+            }
         }
     }
 
@@ -127,7 +162,7 @@ public class RoleFilter extends GlossDialogPanel
         return compressed_list_str;
     }
 
-    static String get_op_nice_txt( ExprEntry.OPERATION operation )
+    static String get_op_nice_txt( ExprEntry.OPERATION operation, TYPE type )
     {
         switch( operation )
         {
@@ -136,12 +171,15 @@ public class RoleFilter extends GlossDialogPanel
             case CONTAINS_SUBSTR: return UserMain.Txt("Contains_substring");
             case CONTAINS: return UserMain.Txt("Contains");
             case REGEXP: return UserMain.Txt("Matches_regular_expression");
+            case NUM_EQUAL : return "=";
+            case NUM_LT : return type == TYPE.TIMESTAMP ? UserMain.Txt("Older_than") : "<";
+            case NUM_GT : return type == TYPE.TIMESTAMP ? UserMain.Txt("Newer_than") : "<";
         }
         return "???";
     }
     static String get_nice_txt( ExprEntry e)
     {
-        return (e.isNeg() ? UserMain.Txt("not") + " " : "") + UserMain.Txt(e.getName()) + " " + get_op_nice_txt( e.getOperation() ) + " " + e.getValue();
+        return (e.isNeg() ? UserMain.Txt("not") + " " : "") + UserMain.Txt(e.getName()) + " " + get_op_nice_txt( e.getOperation(), e.getType() ) + " " + e.getValue();
     }
 
     public static ArrayList<LogicEntry> get_filter_list( String list_str, boolean compressed )
@@ -252,16 +290,16 @@ public class RoleFilter extends GlossDialogPanel
    //     model.rebuild_list();
     }
     
-    void add_new_expression( String name, String value, ExprEntry.OPERATION operation, boolean neg, boolean previous_is_or )
+    void add_new_expression( String name, String value, ExprEntry.OPERATION operation, ExprEntry.TYPE type, boolean neg, boolean previous_is_or )
     {
         ArrayList<LogicEntry> parent_list = get_act_parent_list();
 
         int insert_idx = get_insert_idx(parent_list);
 
         if (insert_idx != -1)
-            parent_list.add( insert_idx, new ExprEntry( parent_list, name, value, operation, neg, previous_is_or) );
+            parent_list.add( insert_idx, new ExprEntry( parent_list, name, value, operation, type, neg, previous_is_or) );
         else
-            parent_list.add( new ExprEntry( parent_list, name, value, operation, neg, previous_is_or) );
+            parent_list.add( new ExprEntry( parent_list, name, value, operation, type, neg, previous_is_or) );
 
       //  model.rebuild_list();
     }
@@ -413,7 +451,6 @@ public class RoleFilter extends GlossDialogPanel
 
         jLabel1 = new javax.swing.JLabel();
         COMBO_NAME = new javax.swing.JComboBox();
-        jLabel2 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         SCP_LIST = new javax.swing.JScrollPane();
         TXTA_LIST = new javax.swing.JTextArea();
@@ -429,11 +466,14 @@ public class RoleFilter extends GlossDialogPanel
         BT_ABORT = new GlossButton();
         jLabel4 = new javax.swing.JLabel();
 
-        jLabel1.setText("Where");
+        jLabel1.setText(UserMain.getString("And/Or")); // NOI18N
 
         COMBO_NAME.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jLabel2.setText("op");
+        COMBO_NAME.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                COMBO_NAMEActionPerformed(evt);
+            }
+        });
 
         TXTA_LIST.setColumns(20);
         TXTA_LIST.setRows(5);
@@ -448,7 +488,7 @@ public class RoleFilter extends GlossDialogPanel
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
+            .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
         );
 
         COMBO_OPERATION.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -479,7 +519,7 @@ public class RoleFilter extends GlossDialogPanel
 
         COMBO_AND_OR.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jLabel3.setText("jLabel3");
+        jLabel3.setText(UserMain.getString("Field")); // NOI18N
 
         BT_CLOSE.setText(UserMain.Txt("OK")); // NOI18N
         BT_CLOSE.addActionListener(new java.awt.event.ActionListener() {
@@ -495,8 +535,7 @@ public class RoleFilter extends GlossDialogPanel
             }
         });
 
-        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 24));
-        jLabel4.setText("Ugly and not ready!!!");
+        jLabel4.setText(UserMain.getString("Word")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -518,22 +557,21 @@ public class RoleFilter extends GlossDialogPanel
                         .addComponent(BT_CLOSE, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
+                            .addComponent(jLabel4)
                             .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(COMBO_NAME, 0, 166, Short.MAX_VALUE)
-                            .addComponent(COMBO_AND_OR, 0, 166, Short.MAX_VALUE))
+                            .addComponent(TXT_VAR, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
+                            .addComponent(COMBO_NAME, 0, 122, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(COMBO_OPERATION, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(TXT_VAR, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE))
-                            .addComponent(BT_NEG)))
-                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(COMBO_AND_OR, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(COMBO_OPERATION, 0, 140, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(BT_NEG)
+                        .addGap(135, 135, 135)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -541,21 +579,19 @@ public class RoleFilter extends GlossDialogPanel
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(COMBO_AND_OR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(COMBO_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(COMBO_OPERATION, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
                     .addComponent(BT_NEG))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(COMBO_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(COMBO_OPERATION, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(TXT_VAR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel4)
                 .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(TXT_VAR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel1)
+                    .addComponent(COMBO_AND_OR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_CLOSE, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -571,7 +607,9 @@ public class RoleFilter extends GlossDialogPanel
         // TODO add your handling code here:
         int name_idx = COMBO_NAME.getSelectedIndex();
         // USE REAL NAME, COMBO CONTAINS TRANSLATION
-        String name = var_names.get( name_idx );
+        String name = var_names.get( name_idx ).getVar();
+        ExprEntry.TYPE type = var_names.get( name_idx ).getType();
+
         String value = TXT_VAR.getText();
         CB_op_entry ope = (CB_op_entry) COMBO_OPERATION.getSelectedItem();
         boolean neg = BT_NEG.isSelected();
@@ -579,7 +617,7 @@ public class RoleFilter extends GlossDialogPanel
         if (COMBO_AND_OR.getSelectedIndex() == 1)
             is_or = true;
         
-        add_new_expression( name, value, ope.op, neg, is_or);
+        add_new_expression( name, value, ope.op, type, neg, is_or);
 
         set_txta_display();
 
@@ -631,6 +669,12 @@ public class RoleFilter extends GlossDialogPanel
         this.setVisible(false);
     }//GEN-LAST:event_BT_ABORTActionPerformed
 
+    private void COMBO_NAMEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_COMBO_NAMEActionPerformed
+    {//GEN-HEADEREND:event_COMBO_NAMEActionPerformed
+        // TODO add your handling code here:
+        set_operation( COMBO_NAME.getSelectedIndex() );
+    }//GEN-LAST:event_COMBO_NAMEActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
@@ -646,7 +690,6 @@ public class RoleFilter extends GlossDialogPanel
     private javax.swing.JTextArea TXTA_LIST;
     private javax.swing.JTextField TXT_VAR;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;

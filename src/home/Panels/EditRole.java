@@ -27,6 +27,8 @@ import home.shared.CS_Constants;
 import home.shared.SQL.OptCBEntry;
 import home.shared.SQL.SQLArrayResult;
 import home.shared.Utilities.ZipUtilities;
+import home.shared.filter.ExprEntry;
+import home.shared.filter.VarTypeEntry;
 import home.shared.hibernate.AccountConnector;
 import home.shared.hibernate.RoleOption;
 import java.io.IOException;
@@ -794,10 +796,12 @@ public class EditRole extends GenericEditPanel
     {
         try
         {
-            ArrayList<String> var_names = new ArrayList<String>();
-            var_names.add("Username");
-            var_names.add("Email");
-            var_names.add("Domain");
+            ArrayList<VarTypeEntry> var_names = new ArrayList<VarTypeEntry>();
+            var_names.add(new VarTypeEntry("Username", ExprEntry.TYPE.STRING) );
+            var_names.add(new VarTypeEntry("Email", ExprEntry.TYPE.STRING) );
+            var_names.add(new VarTypeEntry("Domain", ExprEntry.TYPE.STRING) );
+            
+            
             boolean compressed = (get_object_flags() & CS_Constants.ROLE_ACM_COMPRESSED) == CS_Constants.ROLE_ACM_COMPRESSED;
             RoleFilter rf = new RoleFilter(var_names, object.getAccountmatch(), compressed );
 

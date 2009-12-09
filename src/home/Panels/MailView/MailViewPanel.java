@@ -25,6 +25,8 @@ import home.shared.Utilities.ParseToken;
 import dimm.home.Utilities.SizeStr;
 import dimm.home.Utilities.SwingWorker;
 import home.shared.CS_Constants;
+import home.shared.filter.ExprEntry;
+import home.shared.filter.VarTypeEntry;
 import home.shared.mail.RFCMimeMail;
 import java.awt.Insets;
 import java.awt.event.MouseEvent;
@@ -1085,20 +1087,22 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         // TODO add your handling code here:
         try
         {
-            ArrayList<String> var_names = new ArrayList<String>();
-            var_names.add(CS_Constants.FLD_FROM);
-            var_names.add(CS_Constants.FLD_TO);
-            var_names.add(CS_Constants.FLD_CC);
-            var_names.add(CS_Constants.FLD_BCC);
-            var_names.add(CS_Constants.FLD_SUBJECT);
-            var_names.add(CS_Constants.FLD_BODY);
-            var_names.add(CS_Constants.FLD_DATE);
-            var_names.add(CS_Constants.FLD_ATTACHMENT);
-            var_names.add(CS_Constants.FLD_ATTACHMENT_NAME);
-            var_names.add(CS_Constants.FLD_SIZE);
-            var_names.add(CS_Constants.FLD_HEADERVAR_NAME);
-            var_names.add(CS_Constants.FLD_HEADERVAR_VALUE);
-            var_names.add(CS_Constants.FLD_META_ADDRESS);
+            ArrayList<VarTypeEntry> var_names = new ArrayList<VarTypeEntry>();
+            var_names.add( new VarTypeEntry( CS_Constants.FLD_FROM, ExprEntry.TYPE.STRING) );
+            var_names.add( new VarTypeEntry( CS_Constants.FLD_TO, ExprEntry.TYPE.STRING) );
+            var_names.add( new VarTypeEntry( CS_Constants.FLD_CC, ExprEntry.TYPE.STRING) );
+            var_names.add( new VarTypeEntry( CS_Constants.FLD_BCC, ExprEntry.TYPE.STRING) );
+            var_names.add( new VarTypeEntry( CS_Constants.FLD_SUBJECT, ExprEntry.TYPE.STRING) );
+            var_names.add( new VarTypeEntry( CS_Constants.FLD_BODY, ExprEntry.TYPE.STRING) );
+            var_names.add( new VarTypeEntry( CS_Constants.FLD_DATE, ExprEntry.TYPE.STRING) );
+            var_names.add( new VarTypeEntry( CS_Constants.FLD_ATTACHMENT, ExprEntry.TYPE.STRING) );
+            var_names.add( new VarTypeEntry( CS_Constants.FLD_ATTACHMENT_NAME, ExprEntry.TYPE.STRING) );
+            var_names.add( new VarTypeEntry( CS_Constants.FLD_SIZE, ExprEntry.TYPE.STRING) );
+            var_names.add( new VarTypeEntry( CS_Constants.FLD_HEADERVAR_NAME, ExprEntry.TYPE.STRING) );
+            var_names.add( new VarTypeEntry( CS_Constants.FLD_HEADERVAR_VALUE, ExprEntry.TYPE.STRING) );
+            
+            //var_names.add(CS_Constants.FLD_META_ADDRESS);
+            
            
             boolean compressed = true;
             RoleFilter rf = new RoleFilter(var_names, last_filter, compressed );
