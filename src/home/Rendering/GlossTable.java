@@ -1,9 +1,12 @@
 package dimm.home.Rendering;
 
 import dimm.home.Main;
+import dimm.home.UserMain;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Insets;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -88,5 +91,26 @@ public class GlossTable extends JTable
         getTableHeader().setOpaque(true);
         getTableHeader().setBackground(Color.BLACK);        
         
+    }
+    
+    public static JButton create_table_button(String rsrc)
+    {
+        JButton bt;
+        if (rsrc != null)
+        {
+            ImageIcon icn = new ImageIcon(UserMain.self.getClass().getResource(rsrc));
+            bt = new JButton(icn);
+        }
+        else
+        {
+            bt = new JButton("");
+        }
+        //bt.addMouseListener(dlg);
+        bt.setBorderPainted(false);
+        bt.setOpaque(false);
+        bt.setMargin(new Insets(0, 0, 0, 0));
+        bt.setContentAreaFilled(false);
+
+        return bt;
     }
 }

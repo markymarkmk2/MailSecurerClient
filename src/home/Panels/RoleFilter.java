@@ -73,6 +73,7 @@ public class RoleFilter extends GlossDialogPanel
     private boolean okay;
     ArrayList<VarTypeEntry> var_names;
     ArrayList<String> var_nice_names;
+    boolean in_init;
     
     /** Creates new form RoleFilter */
     public RoleFilter(ArrayList<VarTypeEntry> var_names, String compressed_list_str, boolean compressed)
@@ -110,6 +111,10 @@ public class RoleFilter extends GlossDialogPanel
     }
     void set_operation( int var_idx )
     {
+        in_init = true;
+        if (var_idx <0 || var_idx >= var_names.size())
+            return;
+
         TYPE type = var_names.get( var_idx).getType();
         switch (type)
         {
@@ -139,6 +144,7 @@ public class RoleFilter extends GlossDialogPanel
                 COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.REGEXP, type ) );
             }
         }
+        in_init = false;
     }
 
     public String get_compressed_xml_list_data( boolean compressed)
@@ -162,7 +168,7 @@ public class RoleFilter extends GlossDialogPanel
         return compressed_list_str;
     }
 
-    static String get_op_nice_txt( ExprEntry.OPERATION operation, TYPE type )
+    public static String get_op_nice_txt( ExprEntry.OPERATION operation, TYPE type )
     {
         switch( operation )
         {
@@ -177,9 +183,17 @@ public class RoleFilter extends GlossDialogPanel
         }
         return "???";
     }
-    static String get_nice_txt( ExprEntry e)
+    public static String get_nice_txt( ExprEntry e)
     {
         return (e.isNeg() ? UserMain.Txt("not") + " " : "") + UserMain.Txt(e.getName()) + " " + get_op_nice_txt( e.getOperation(), e.getType() ) + " " + e.getValue();
+    }
+    public static String get_nice_txt( LogicEntry e)
+    {
+        if (e instanceof ExprEntry)
+        {
+            return get_nice_txt((ExprEntry)e);
+        }
+        return (e.isNeg() ? UserMain.Txt("not") + " " : "") ;
     }
 
     public static ArrayList<LogicEntry> get_filter_list( String list_str, boolean compressed )
@@ -672,7 +686,8 @@ public class RoleFilter extends GlossDialogPanel
     private void COMBO_NAMEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_COMBO_NAMEActionPerformed
     {//GEN-HEADEREND:event_COMBO_NAMEActionPerformed
         // TODO add your handling code here:
-        set_operation( COMBO_NAME.getSelectedIndex() );
+        if (!in_init)
+            set_operation( COMBO_NAME.getSelectedIndex() );
     }//GEN-LAST:event_COMBO_NAMEActionPerformed
 
 

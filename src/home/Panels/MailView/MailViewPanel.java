@@ -26,9 +26,13 @@ import dimm.home.Utilities.SizeStr;
 import dimm.home.Utilities.SwingWorker;
 import home.shared.CS_Constants;
 import home.shared.filter.ExprEntry;
+import home.shared.filter.ExprEntry.OPERATION;
+import home.shared.filter.ExprEntry.TYPE;
+import home.shared.filter.GroupEntry;
+import home.shared.filter.LogicEntry;
 import home.shared.filter.VarTypeEntry;
 import home.shared.mail.RFCMimeMail;
-import java.awt.Insets;
+import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedInputStream;
@@ -42,15 +46,21 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import javax.swing.ImageIcon;
+import java.util.EventObject;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.CellEditorListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellEditor;
+import org.columba.core.gui.util.CTextField;
 
 
 class MailPreviewDlg extends GenericGlossyDlg
 {
-
     UserMain main;
     MailPreviewDlg( UserMain parent, RFCMimeMail mail)
     {
@@ -222,8 +232,8 @@ class MailTableModel extends AbstractTableModel
 
         sdf = new SimpleDateFormat("dd.MM.yyyy  HH:mm");
 
-        ic_attachment = create_table_button("/dimm/home/images/ic_attachment.png");
-        ic_no_attachment = create_table_button(null);
+        ic_attachment = GlossTable.create_table_button("/dimm/home/images/ic_attachment.png");
+        ic_no_attachment = GlossTable.create_table_button(null);
 
         field_list = new ArrayList<String>();
 
@@ -282,26 +292,7 @@ class MailTableModel extends AbstractTableModel
         return field_list.size();
     }
 
-    public JButton create_table_button(String rsrc)
-    {
-        JButton bt;
-        if (rsrc != null)
-        {
-            ImageIcon icn = new ImageIcon(this.getClass().getResource(rsrc));
-            bt = new JButton(icn);
-        }
-        else
-        {
-            bt = new JButton("");
-        }
-        //bt.addMouseListener(dlg);
-        bt.setBorderPainted(false);
-        bt.setOpaque(false);
-        bt.setMargin(new Insets(0, 0, 0, 0));
-        bt.setContentAreaFilled(false);
-
-        return bt;
-    }
+    
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex)
@@ -329,6 +320,204 @@ class MailTableModel extends AbstractTableModel
         return val;
     }
 }
+
+class SearchEntryModel extends GroupEntry
+{
+    SearchEntryModel(ArrayList<LogicEntry> list)
+    {
+        if (list != null)
+            children = list;
+    }
+    
+}
+
+
+class ConditionCBEntry
+{
+    ExprEntry entry;
+
+    public ConditionCBEntry( ExprEntry entry )
+    {
+        this.entry = entry;
+    }
+
+    static String get_nice_txt( ExprEntry e )
+    {
+        return (e.isNeg() ? UserMain.Txt("not") + " " : "") + UserMain.Txt(e.getName()) + " " + RoleFilter.get_op_nice_txt( e.getOperation(), e.getType());
+    }
+    @Override
+    public String toString()
+    {
+        return get_nice_txt(entry);
+    }
+}
+class SearchTableModel extends AbstractTableModel implements MouseListener
+{
+    static int SUBJECT_COL = 2;
+
+    MailViewPanel pnl;
+    
+
+    SimpleDateFormat sdf;
+    JButton ic_delete;
+
+    SearchEntryModel model;
+
+    SearchTableModel(MailViewPanel _pnl,  SearchEntryModel _model)
+    {
+        super();
+
+        pnl = _pnl;
+        model = _model;
+
+        sdf = new SimpleDateFormat("dd.MM.yyyy  HH:mm");
+
+        ic_delete = GlossTable.create_table_button("/dimm/home/images/web_delete.png");     
+    }
+
+    @Override
+    public boolean isCellEditable( int row, int column )
+    {
+        if (column <= 1)
+            return true;
+        return false;
+        
+    }
+
+    @Override
+    public String getColumnName(int column)
+    {
+        switch( column )
+        {
+            case 0: return UserMain.Txt("Condition");
+            case 1: return UserMain.Txt("Value");
+        }
+        return "";
+    }
+
+    @Override
+    public Class<?> getColumnClass(int columnIndex)
+    {
+        if (columnIndex == 2)
+            return JButton.class;
+        
+        return String.class;
+    }
+
+    @Override
+    public int getRowCount()
+    {
+        if (model == null)
+            return 0;
+        return model.getChildren().size();
+    }
+
+    @Override
+    public int getColumnCount()
+    {
+        return 3;
+    }
+
+    
+
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex)
+    {
+        LogicEntry le = model.getChildren().get(rowIndex);
+        if (le instanceof ExprEntry)
+        {
+            ExprEntry ee = (ExprEntry) le;
+            if (columnIndex == 0)
+            {
+                String txt = ConditionCBEntry.get_nice_txt( ee );
+                return txt;
+            }
+            if (columnIndex == 1)
+            {
+                String txt = ee.getValue();
+                return txt;
+            }
+            if (columnIndex == 2)
+            {
+                return ic_delete;
+            }
+        }
+        return "";
+    }
+
+    @Override
+    public void setValueAt( Object aValue, int rowIndex, int columnIndex )
+    {
+        LogicEntry le = model.getChildren().get(rowIndex);
+        if (le instanceof ExprEntry)
+        {
+            ExprEntry ee = (ExprEntry) le;
+            if (columnIndex == 0 && aValue instanceof ConditionCBEntry)
+            {
+                ConditionCBEntry ccbe = (ConditionCBEntry)aValue;
+                ee.setOperation( ccbe.entry.getOperation() );
+                ee.setType( ccbe.entry.getType());
+                ee.setName( ccbe.entry.getName());
+                ee.setNeg( ccbe.entry.isNeg());
+                ee.setPrevious_is_or( ccbe.entry.isPrevious_is_or() );
+            }
+            if (columnIndex == 1)
+            {
+                ee.setValue(aValue.toString());
+            }
+        }
+    }
+
+
+    @Override
+    public void mouseClicked( MouseEvent e )
+    {
+        if (e.getClickCount() ==1 && e.getSource() instanceof JTable)
+        {
+            JTable tb = (JTable)e.getSource();
+            int row = tb.rowAtPoint(e.getPoint());
+            int col = tb.columnAtPoint(e.getPoint());
+            if (col == 2 && row >= 0 && row < model.getChildren().size())
+            {
+                model.getChildren().remove(row);
+                fireTableDataChanged();
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed( MouseEvent e )
+    {
+       
+    }
+
+    @Override
+    public void mouseReleased( MouseEvent e )
+    {
+       
+    }
+
+    @Override
+    public void mouseEntered( MouseEvent e )
+    {
+      
+    }
+
+    @Override
+    public void mouseExited( MouseEvent e )
+    {
+        
+    }
+}
+class SimpleSearchEditor extends  DefaultCellEditor
+{
+    public SimpleSearchEditor( JComboBox cb )
+    {
+        super( cb );
+    }
+
+}
 /**
  *
  * @author mw
@@ -338,6 +527,17 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     String search_id;
     GlossTable table;
     MailTableModel model;
+
+    GlossTable simple_search_list;
+    private static final int SIMPLE_SEARCH = 0;
+    private static final int COMPLEX_SEARCH = 1;
+    private static final int ADMIN_SEARCH = 2;
+    int search_mode = SIMPLE_SEARCH;
+
+    GlossTable simple_search_table;
+    SearchTableModel simple_search_tablemodel;
+    TableCellEditor simple_condition_editor;
+    TableCellEditor simple_val_editor;
 
     /** Creates new form MailViewPanel */
     public MailViewPanel()
@@ -361,7 +561,33 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         
 
         CB_FIELD.setSelectedIndex(0);
-       
+
+
+        simple_search_table = new GlossTable();
+        simple_search_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        simple_search_table.embed_to_scrollpanel( SCP_LIST );
+
+        simple_search_tablemodel = new SearchTableModel(this, new SearchEntryModel(null));
+        simple_search_table.setModel(simple_search_tablemodel);
+        simple_search_table.addMouseListener(simple_search_tablemodel);
+
+        JComboBox CB_CONDITION = new JComboBox();
+        CB_CONDITION.removeAllItems();
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_FROM, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_TO, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_SUBJECT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_BODY, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_ATTACHMENT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        JTextField TXT_VAL = new JTextField();
+        
+        simple_search_table.getColumnModel().getColumn(2).setMinWidth(30);
+        simple_search_table.getColumnModel().getColumn(2).setMaxWidth(30);
+        simple_search_table.getColumnModel().getColumn(0).setCellEditor( new DefaultCellEditor(  CB_CONDITION ) );
+        simple_search_table.getColumnModel().getColumn(1).setCellEditor(  new DefaultCellEditor( TXT_VAL) );
+
+
+        TBP_SEARCH.setSelectedIndex(SIMPLE_SEARCH);
+        
     }
 
     int get_entries()
@@ -806,42 +1032,32 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        TXT_SEARCH = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         SCP_TABLE = new javax.swing.JScrollPane();
         BT_CLOSE = new GlossButton();
         BT_EXPORT = new GlossButton();
-        TXT_MAIL = new javax.swing.JTextField();
-        CB_FIELD = new javax.swing.JComboBox();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         CB_ENTRIES = new javax.swing.JComboBox();
         jLabel4 = new javax.swing.JLabel();
         BT_RESTORE = new GlossButton();
+        BT_TOGGLE_SELECTION = new GlossButton();
+        TBP_SEARCH = new javax.swing.JTabbedPane();
+        PN_SIMPLE = new javax.swing.JPanel();
+        BT_ADD = new GlossButton();
+        BT_DEL = new GlossButton();
+        SCP_LIST = new javax.swing.JScrollPane();
+        BT_SEARCH = new GlossButton();
+        PN_COMPLEX = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         TXTA_FILTER = new javax.swing.JTextArea();
-        BT_TOGGLE_SELECTION = new GlossButton();
-
-        jLabel1.setText(UserMain.getString("Suche")); // NOI18N
-
-        TXT_SEARCH.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TXT_SEARCHActionPerformed(evt);
-            }
-        });
-
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_browse.png"))); // NOI18N
-        jButton1.setIconTextGap(0);
-        jButton1.setInheritsPopupMenu(true);
-        jButton1.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+        PN_ADMIN = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        TXT_SEARCH = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        CB_FIELD = new javax.swing.JComboBox();
+        jButton1 = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        TXT_MAIL = new javax.swing.JTextField();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -853,7 +1069,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(SCP_TABLE, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE))
+                .addComponent(SCP_TABLE, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE))
         );
 
         BT_CLOSE.setText(UserMain.getString("Schliessen")); // NOI18N
@@ -869,12 +1085,6 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                 BT_EXPORTActionPerformed(evt);
             }
         });
-
-        CB_FIELD.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jLabel2.setText(UserMain.getString("Filter")); // NOI18N
-
-        jLabel3.setText("Mailadresse");
 
         CB_ENTRIES.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "10", "100", "1000" }));
         CB_ENTRIES.addActionListener(new java.awt.event.ActionListener() {
@@ -893,6 +1103,79 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             }
         });
 
+        BT_TOGGLE_SELECTION.setText(UserMain.Txt("Select_onoff")); // NOI18N
+        BT_TOGGLE_SELECTION.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_TOGGLE_SELECTIONActionPerformed(evt);
+            }
+        });
+
+        PN_SIMPLE.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                PN_SIMPLEFocusGained(evt);
+            }
+        });
+
+        BT_ADD.setText("+");
+        BT_ADD.setMargin(new java.awt.Insets(2, 1, 2, 1));
+        BT_ADD.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_ADDActionPerformed(evt);
+            }
+        });
+
+        BT_DEL.setText("-");
+        BT_DEL.setMargin(new java.awt.Insets(2, 1, 2, 1));
+        BT_DEL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_DELActionPerformed(evt);
+            }
+        });
+
+        BT_SEARCH.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_browse.png"))); // NOI18N
+        BT_SEARCH.setText(UserMain.getString("Search")); // NOI18N
+        BT_SEARCH.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+
+        javax.swing.GroupLayout PN_SIMPLELayout = new javax.swing.GroupLayout(PN_SIMPLE);
+        PN_SIMPLE.setLayout(PN_SIMPLELayout);
+        PN_SIMPLELayout.setHorizontalGroup(
+            PN_SIMPLELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PN_SIMPLELayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(PN_SIMPLELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE)
+                    .addGroup(PN_SIMPLELayout.createSequentialGroup()
+                        .addComponent(BT_ADD, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(BT_DEL, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 534, Short.MAX_VALUE)
+                        .addComponent(BT_SEARCH)))
+                .addContainerGap())
+        );
+
+        PN_SIMPLELayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {BT_ADD, BT_DEL});
+
+        PN_SIMPLELayout.setVerticalGroup(
+            PN_SIMPLELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PN_SIMPLELayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(PN_SIMPLELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BT_ADD, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BT_DEL, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BT_SEARCH))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        TBP_SEARCH.addTab(UserMain.getString("Simple_Search"), PN_SIMPLE); // NOI18N
+
+        PN_COMPLEX.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                PN_COMPLEXFocusGained(evt);
+            }
+        });
+
         jLabel5.setText("Filter");
 
         TXTA_FILTER.setColumns(20);
@@ -906,12 +1189,102 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         });
         jScrollPane1.setViewportView(TXTA_FILTER);
 
-        BT_TOGGLE_SELECTION.setText(UserMain.Txt("Select_onoff")); // NOI18N
-        BT_TOGGLE_SELECTION.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_TOGGLE_SELECTIONActionPerformed(evt);
+        javax.swing.GroupLayout PN_COMPLEXLayout = new javax.swing.GroupLayout(PN_COMPLEX);
+        PN_COMPLEX.setLayout(PN_COMPLEXLayout);
+        PN_COMPLEXLayout.setHorizontalGroup(
+            PN_COMPLEXLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PN_COMPLEXLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel5)
+                .addGap(32, 32, 32)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 635, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        PN_COMPLEXLayout.setVerticalGroup(
+            PN_COMPLEXLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PN_COMPLEXLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(PN_COMPLEXLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(116, Short.MAX_VALUE))
+        );
+
+        TBP_SEARCH.addTab(UserMain.getString("Complex_Search"), PN_COMPLEX); // NOI18N
+
+        PN_ADMIN.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                PN_ADMINFocusGained(evt);
             }
         });
+
+        jLabel2.setText(UserMain.getString("Filter")); // NOI18N
+
+        TXT_SEARCH.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TXT_SEARCHActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText(UserMain.getString("Suche")); // NOI18N
+
+        CB_FIELD.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_browse.png"))); // NOI18N
+        jButton1.setIconTextGap(0);
+        jButton1.setInheritsPopupMenu(true);
+        jButton1.setMargin(new java.awt.Insets(1, 1, 1, 1));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Mailadresse");
+
+        javax.swing.GroupLayout PN_ADMINLayout = new javax.swing.GroupLayout(PN_ADMIN);
+        PN_ADMIN.setLayout(PN_ADMINLayout);
+        PN_ADMINLayout.setHorizontalGroup(
+            PN_ADMINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PN_ADMINLayout.createSequentialGroup()
+                .addGroup(PN_ADMINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(PN_ADMINLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel3))
+                    .addGroup(PN_ADMINLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel2)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(PN_ADMINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(TXT_SEARCH, javax.swing.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE)
+                    .addComponent(TXT_MAIL, javax.swing.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addComponent(CB_FIELD, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton1)
+                .addContainerGap())
+        );
+        PN_ADMINLayout.setVerticalGroup(
+            PN_ADMINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PN_ADMINLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(PN_ADMINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(PN_ADMINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(TXT_SEARCH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(CB_FIELD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2)
+                        .addComponent(jLabel1))
+                    .addComponent(jButton1))
+                .addGap(18, 18, 18)
+                .addGroup(PN_ADMINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(TXT_MAIL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(91, Short.MAX_VALUE))
+        );
+
+        TBP_SEARCH.addTab(UserMain.getString("Admin_Search"), PN_ADMIN); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -921,66 +1294,35 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TBP_SEARCH, javax.swing.GroupLayout.PREFERRED_SIZE, 716, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(BT_EXPORT)
-                        .addGap(10, 10, 10)
-                        .addComponent(BT_RESTORE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 481, Short.MAX_VALUE)
-                        .addComponent(BT_CLOSE)
-                        .addGap(10, 10, 10))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addGap(32, 32, 32)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(TXT_MAIL, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addGap(32, 32, 32)
-                                .addComponent(CB_ENTRIES, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(TXT_SEARCH, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
-                        .addGap(44, 44, 44)
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(CB_FIELD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton1)
-                        .addContainerGap())
-                    .addComponent(BT_TOGGLE_SELECTION)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addContainerGap())
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(BT_EXPORT)
+                            .addGap(10, 10, 10)
+                            .addComponent(BT_RESTORE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 481, Short.MAX_VALUE)
+                            .addComponent(BT_CLOSE)
+                            .addGap(10, 10, 10))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel4)
+                            .addGap(32, 32, 32)
+                            .addComponent(CB_ENTRIES, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(BT_TOGGLE_SELECTION))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(TXT_SEARCH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(CB_FIELD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel1)
-                                .addComponent(jLabel2)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(TXT_MAIL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(CB_ENTRIES, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(TBP_SEARCH, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(CB_ENTRIES, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(BT_TOGGLE_SELECTION)
@@ -1144,15 +1486,61 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         do_filter_search();
     }//GEN-LAST:event_CB_ENTRIESActionPerformed
 
+    private void PN_SIMPLEFocusGained(java.awt.event.FocusEvent evt)//GEN-FIRST:event_PN_SIMPLEFocusGained
+    {//GEN-HEADEREND:event_PN_SIMPLEFocusGained
+        // TODO add your handling code here:
+        search_mode = SIMPLE_SEARCH;
+    }//GEN-LAST:event_PN_SIMPLEFocusGained
+
+    private void PN_COMPLEXFocusGained(java.awt.event.FocusEvent evt)//GEN-FIRST:event_PN_COMPLEXFocusGained
+    {//GEN-HEADEREND:event_PN_COMPLEXFocusGained
+        // TODO add your handling code here:
+        search_mode = COMPLEX_SEARCH;
+
+    }//GEN-LAST:event_PN_COMPLEXFocusGained
+
+    private void PN_ADMINFocusGained(java.awt.event.FocusEvent evt)//GEN-FIRST:event_PN_ADMINFocusGained
+    {//GEN-HEADEREND:event_PN_ADMINFocusGained
+        // TODO add your handling code here:
+        search_mode = ADMIN_SEARCH;
+    }//GEN-LAST:event_PN_ADMINFocusGained
+
+    private void BT_ADDActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_ADDActionPerformed
+    {//GEN-HEADEREND:event_BT_ADDActionPerformed
+        // TODO add your handling code here:
+        simple_search_tablemodel.model.getChildren().add( new ExprEntry(null, "", "", ExprEntry.OPERATION.CONTAINS_SUBSTR, ExprEntry.TYPE.STRING, false, false));
+        simple_search_tablemodel.fireTableDataChanged();
+
+    }//GEN-LAST:event_BT_ADDActionPerformed
+
+    private void BT_DELActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_DELActionPerformed
+    {//GEN-HEADEREND:event_BT_DELActionPerformed
+        // TODO add your handling code here:
+        int row = simple_search_table.getSelectedRow();
+        if (row >= 0)
+        {
+            simple_search_tablemodel.model.getChildren().remove(row);
+            simple_search_tablemodel.fireTableDataChanged();
+        }
+    }//GEN-LAST:event_BT_DELActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BT_ADD;
     private javax.swing.JButton BT_CLOSE;
+    private javax.swing.JButton BT_DEL;
     private javax.swing.JButton BT_EXPORT;
     private javax.swing.JButton BT_RESTORE;
+    private javax.swing.JButton BT_SEARCH;
     private javax.swing.JButton BT_TOGGLE_SELECTION;
     private javax.swing.JComboBox CB_ENTRIES;
     private javax.swing.JComboBox CB_FIELD;
+    private javax.swing.JPanel PN_ADMIN;
+    private javax.swing.JPanel PN_COMPLEX;
+    private javax.swing.JPanel PN_SIMPLE;
+    private javax.swing.JScrollPane SCP_LIST;
     private javax.swing.JScrollPane SCP_TABLE;
+    private javax.swing.JTabbedPane TBP_SEARCH;
     private javax.swing.JTextArea TXTA_FILTER;
     private javax.swing.JTextField TXT_MAIL;
     private javax.swing.JTextField TXT_SEARCH;
