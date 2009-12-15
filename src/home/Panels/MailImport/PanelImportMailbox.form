@@ -257,7 +257,9 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="LB_PATH">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Folder"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="dimm/home/MA_Properties.properties" key="Folder" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="TXT_PATH">
@@ -303,7 +305,9 @@
             </Container>
             <Component class="javax.swing.JLabel" name="jLabel1">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Please select the Thunderbird-Profile folder"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="dimm/home/MA_Properties.properties" key="Please_select_the_Thunderbird-Profile_folder" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="CB_PROFILE">

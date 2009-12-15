@@ -395,7 +395,7 @@ public class ServerTCPCall extends ServerCall
         catch (Exception exc)
         {
             this.comm_close();
-            //exc.printStackTrace();
+            exc.printStackTrace();
             set_status("Kommunikation schlug fehl: " + exc.getMessage());
         }
 
@@ -674,6 +674,13 @@ public class ServerTCPCall extends ServerCall
         byte[] in_buff = new byte[TCP_LEN];
 
         int rlen = s.getInputStream().read(in_buff);
+        while (rlen > 0 && rlen < TCP_LEN)
+        {
+            int llen = s.getInputStream().read(in_buff, rlen, TCP_LEN - rlen);
+            if (llen < 0)
+                throw new Exception("Servernot responding");
+            rlen += llen;
+        }
 
         ping = (int) (System.currentTimeMillis() - start);
 
@@ -683,7 +690,7 @@ public class ServerTCPCall extends ServerCall
         {
             throw new Exception("Application not responding");
         }
-
+        
         //System.out.println("Ping is " + ping  + " ms <" + str + ">");
 
         // THIS IS THE FORMAT OF IT
@@ -717,6 +724,8 @@ public class ServerTCPCall extends ServerCall
                 while (rlen != alen)
                 {
                     int rrlen = s.getInputStream().read(res_data, rlen, (int) alen - rlen);
+                    if (rrlen < 0)
+                        throw new Exception("Server not responding");
                     rlen += rrlen;
                 }
                 ret += new String(res_data, "UTF-8");

@@ -148,11 +148,11 @@ public class PanelSystem extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_FREE3, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 350, 190, 50));
 
-        BT_MANDANTEN.setFont(new java.awt.Font("Arial", 0, 14));
+        BT_MANDANTEN.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_MANDANTEN.setForeground(new java.awt.Color(201, 201, 201));
         BT_MANDANTEN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_einstellungen.png"))); // NOI18N
         BT_MANDANTEN.setText(UserMain.Txt("Mandanten")); // NOI18N
-        BT_MANDANTEN.setToolTipText("null");
+        BT_MANDANTEN.setToolTipText(UserMain.Txt("Long_Companies")); // NOI18N
         BT_MANDANTEN.setBorderPainted(false);
         BT_MANDANTEN.setContentAreaFilled(false);
         BT_MANDANTEN.setFocusPainted(false);

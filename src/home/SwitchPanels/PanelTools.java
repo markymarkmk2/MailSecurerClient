@@ -6,13 +6,7 @@
 package dimm.home.SwitchPanels;
 
 import dimm.home.*;
-import dimm.home.Panels.DAOverview;
-import dimm.home.Panels.HotfolderOverview;
-import dimm.home.Panels.ImapFetcherOverview;
-import dimm.home.Panels.MilterOverview;
 import dimm.home.Panels.MailImport.PanelImportMailbox;
-import dimm.home.Panels.ProxyOverview;
-import dimm.home.Panels.RoleOverview;
 import dimm.home.Rendering.BackgroundTitle;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
@@ -40,8 +34,8 @@ public class PanelTools extends SwitchSpringPanel
         initComponents();
 
 
-        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Import" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 65, getWidth(), 60));
-        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Connectoren" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 285, getWidth(), 60));
+        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Tools" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 65, getWidth(), 60));
+        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Import" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 285, getWidth(), 60));
         
     }
 
@@ -56,8 +50,8 @@ public class PanelTools extends SwitchSpringPanel
         initComponents();
 
 
-        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Import" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 65, getWidth(), 60));
-        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Connectoren" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 285, getWidth(), 60));
+        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Tools" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 65, getWidth(), 60));
+        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Import" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 285, getWidth(), 60));
     }
 
 
@@ -68,12 +62,7 @@ public class PanelTools extends SwitchSpringPanel
     }
 
     
-    public void set_selected_station( int i, int _channels)
-    {
-         
-    }
-
-
+  
     
             
     Point get_dlg_pos()
@@ -123,7 +112,7 @@ public class PanelTools extends SwitchSpringPanel
                 BT_IMPORT_MBOXActionPerformed(evt);
             }
         });
-        PN_BUTTONS.add(BT_IMPORT_MBOX, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 330, 160, 50));
+        PN_BUTTONS.add(BT_IMPORT_MBOX, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 340, 160, 50));
 
         BT_INIT.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_INIT.setForeground(new java.awt.Color(201, 201, 201));
@@ -147,8 +136,8 @@ public class PanelTools extends SwitchSpringPanel
         BT_STATUS.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_STATUS.setForeground(new java.awt.Color(201, 201, 201));
         BT_STATUS.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/terminal_gruppen.png"))); // NOI18N
-        BT_STATUS.setText(UserMain.Txt("Init")); // NOI18N
-        BT_STATUS.setToolTipText(UserMain.Txt("Long_Init")); // NOI18N
+        BT_STATUS.setText(UserMain.Txt("Status")); // NOI18N
+        BT_STATUS.setToolTipText(UserMain.Txt("Long_Status")); // NOI18N
         BT_STATUS.setBorderPainted(false);
         BT_STATUS.setContentAreaFilled(false);
         BT_STATUS.setFocusPainted(false);
@@ -166,8 +155,8 @@ public class PanelTools extends SwitchSpringPanel
         BT_LOG.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_LOG.setForeground(new java.awt.Color(201, 201, 201));
         BT_LOG.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_clips.png"))); // NOI18N
-        BT_LOG.setText(UserMain.Txt("Init")); // NOI18N
-        BT_LOG.setToolTipText(UserMain.Txt("Long_Init")); // NOI18N
+        BT_LOG.setText(UserMain.Txt("Diag")); // NOI18N
+        BT_LOG.setToolTipText(UserMain.Txt("Long_Diag")); // NOI18N
         BT_LOG.setBorderPainted(false);
         BT_LOG.setContentAreaFilled(false);
         BT_LOG.setFocusPainted(false);
@@ -257,16 +246,5 @@ public class PanelTools extends SwitchSpringPanel
         
     }
 
-    /*
-     * 
-     Copying 175 files to J:\Develop\Java\JMailArchiv\Client\build\classes
-Copied 32 empty directories to 14 empty directories under J:\Develop\Java\JMailArchiv\Client\build\classes
-compile:
-Created dir: J:\Develop\Java\JMailArchiv\Client\dist
-Building jar: J:\Develop\Java\JMailArchiv\Client\dist\JMailClient.jar
-jnlp:
-jar:
-BUILD SUCCESSFUL (total time: 2 seconds)
-*
-     * */
+   
 }

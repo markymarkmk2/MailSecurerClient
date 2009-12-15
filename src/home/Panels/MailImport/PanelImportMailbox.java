@@ -788,7 +788,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
 
         TP_PANE.addTab(UserMain.getString("Source_type"), PN_SELECT); // NOI18N
 
-        LB_PATH.setText("Folder");
+        LB_PATH.setText(UserMain.getString("Folder")); // NOI18N
 
         BT_SET_PATH.setText("...");
         BT_SET_PATH.addActionListener(new java.awt.event.ActionListener() {
@@ -812,7 +812,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 .addContainerGap())
         );
 
-        jLabel1.setText("Please select the Thunderbird-Profile folder");
+        jLabel1.setText(UserMain.getString("Please_select_the_Thunderbird-Profile_folder")); // NOI18N
 
         CB_PROFILE.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         CB_PROFILE.addActionListener(new java.awt.event.ActionListener() {

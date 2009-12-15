@@ -159,7 +159,7 @@
               <ResourceString bundle="dimm/home/MA_Properties.properties" key="Mandanten" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/MA_Properties.properties" key="" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Long_Companies" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
             </Property>
             <Property name="borderPainted" type="boolean" value="false"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>

@@ -695,7 +695,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
 
     private void BT_OKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_OKActionPerformed
     {//GEN-HEADEREND:event_BT_OKActionPerformed
-        // TODO add your handling code here:        
+        // TODO add your handling code here:
         ok_action(object);
 
     }//GEN-LAST:event_BT_OKActionPerformed
@@ -1416,4 +1416,19 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
     public void mouseExited( MouseEvent e )
     {
     }
+
+    @Override
+    protected boolean save_action( Object o )
+    {
+        boolean ret =  super.save_action(o);
+
+        if (ret)
+        {
+            UserMain.fcc().call_abstract_function("restart_mandant MA:" + object.getId(), ServerCall.SHORT_CMD_TO);
+        }
+        return ret;
+
+    }
+
+
 }

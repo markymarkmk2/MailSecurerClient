@@ -164,7 +164,11 @@ public class PanelStartup extends SwitchSpringPanel
     private void BT_NETWORKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_NETWORKActionPerformed
     {//GEN-HEADEREND:event_BT_NETWORKActionPerformed
         // TODO add your handling code here:
-        
+        if (UserMain.self.is_dummy())
+        {
+            UserMain.errm_ok(UserMain.Txt("Bitte_melden_Sie_sich_zuerst_an"));
+            return;
+        }
             MailDlg dlg = new MailDlg(main);
             dlg.setModal(false);
             dlg.setVisible(true);

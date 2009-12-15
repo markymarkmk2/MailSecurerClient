@@ -1085,6 +1085,19 @@ public class UserMain extends javax.swing.JFrame
         return false;
 
     }
+    public boolean is_dummy()
+    {
+       if (getUserLevel() == USERMODE.UL_DUMMY)
+            return true;
+
+        return false;
+
+    }
+
+    public int get_act_mandant_id()
+    {
+        return get_act_mandant().getId();
+    }
 
 
 

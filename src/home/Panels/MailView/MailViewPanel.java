@@ -25,6 +25,7 @@ import home.shared.Utilities.ParseToken;
 import dimm.home.Utilities.SizeStr;
 import dimm.home.Utilities.SwingWorker;
 import home.shared.CS_Constants;
+import home.shared.Utilities.ZipUtilities;
 import home.shared.filter.ExprEntry;
 import home.shared.filter.ExprEntry.OPERATION;
 import home.shared.filter.ExprEntry.TYPE;
@@ -45,18 +46,22 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.EventObject;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.CellEditorListener;
+import javax.swing.RowSorter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
-import org.columba.core.gui.util.CTextField;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import sun.misc.Compare;
 
 
 class MailPreviewDlg extends GenericGlossyDlg
@@ -208,18 +213,74 @@ class FieldComboEntry
     public String getField()
     {
         return field;
-    }
-    
+    }    
 }
+
+class LongComparator implements Comparator<Long>
+{
+
+    @Override
+    public int compare( Long o1, Long o2 )
+    {
+        long l1 = o1.longValue();
+        long l2 = o2.longValue();
+        if (l1 > l2)
+            return -1;
+        if (l2 > l1)
+            return 1;
+        return 0;
+    }
+}
+class UnixTimeCellRenderer implements TableCellRenderer
+{
+    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy  HH:mm");
+    Date d = new Date(0);
+    JLabel label = new JLabel();
+
+    @Override
+    public Component getTableCellRendererComponent( JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column )
+    {
+        if (value instanceof Long)
+        {
+            Long l = (Long)value;
+            d.setTime(l.longValue());
+            label.setText( sdf.format(d) );
+            return label;
+        }
+        label.setText( value.toString());
+        return label;
+    }
+}
+class SizeStrCellRenderer implements TableCellRenderer
+{
+    JLabel label = new JLabel();
+
+    @Override
+    public Component getTableCellRendererComponent( JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column )
+    {
+        if (value instanceof Long)
+        {
+            Long l = (Long)value;
+            label.setText( SizeStr.format(l.doubleValue()) );
+            return label;
+        }
+        label.setText( value.toString());
+        return label;
+
+    }
+}
+
 class MailTableModel extends AbstractTableModel
 {
-    static int SUBJECT_COL = 2;
+    static final int DATE_COL = 0;
+    static final int ATTACH_COL = 1;
+    static final int SUBJECT_COL = 2;
+    static final int SIZE_COL = 3;
     
     MailViewPanel pnl;
     ArrayList<ArrayList<String>> result_array;
     ArrayList<String> field_list;
 
-    SimpleDateFormat sdf;
     JButton ic_attachment;
     JButton ic_no_attachment;
 
@@ -230,7 +291,6 @@ class MailTableModel extends AbstractTableModel
         pnl = _pnl;
         result_array = ret_arr;
 
-        sdf = new SimpleDateFormat("dd.MM.yyyy  HH:mm");
 
         ic_attachment = GlossTable.create_table_button("/dimm/home/images/ic_attachment.png");
         ic_no_attachment = GlossTable.create_table_button(null);
@@ -260,9 +320,9 @@ class MailTableModel extends AbstractTableModel
     {
         switch( column )
         {
-            case 0: return UserMain.Txt("Date");
-            case 2: return UserMain.Txt("Subject");
-            case 3: return UserMain.Txt("Size");
+            case DATE_COL: return UserMain.Txt("Date");
+            case SUBJECT_COL: return UserMain.Txt("Subject");
+            case SIZE_COL: return UserMain.Txt("Size");
         }
         return "";
     }
@@ -301,37 +361,34 @@ class MailTableModel extends AbstractTableModel
         if ( columnIndex == 0)
         {
             long time = Long.parseLong(val, 16);
-            Date d = new Date(time);
-            return sdf.format(d);
+            return new Long(time);
         }
-        else if (columnIndex == 1)
+        else if (columnIndex == ATTACH_COL)
         {
             if (val != null && val.length() > 0 && val.charAt(0) == '1')
                 return ic_attachment;
 
             return ic_no_attachment;
-        }
-        else if (columnIndex == 3)
-        {
+        }            
+        else if (columnIndex == SIZE_COL)
+        {            
             long size = Long.parseLong(val, 16);
-            SizeStr str = new SizeStr(size);
-            return str.toString();
+            return new Long(size);
         }
         return val;
     }
 }
 
-class SearchEntryModel extends GroupEntry
+
+
+class SimpleSearchEntryModel extends GroupEntry
 {
-    SearchEntryModel(ArrayList<LogicEntry> list)
+    SimpleSearchEntryModel(ArrayList<LogicEntry> list)
     {
         if (list != null)
             children = list;
-    }
-    
+    }    
 }
-
-
 class ConditionCBEntry
 {
     ExprEntry entry;
@@ -351,9 +408,33 @@ class ConditionCBEntry
         return get_nice_txt(entry);
     }
 }
-class SearchTableModel extends AbstractTableModel implements MouseListener
+class NegCBEntry
 {
-    static int SUBJECT_COL = 2;
+    boolean neg;
+
+    public NegCBEntry( boolean _neg )
+    {
+        this.neg = _neg;
+    }
+
+    public boolean isNeg()
+    {
+        return neg;
+    }
+
+    static String get_nice_txt( boolean n )
+    {
+        return n ? UserMain.Txt("not") + " " : "";
+    }
+    @Override
+    public String toString()
+    {
+        return get_nice_txt(neg);
+    }
+}
+class SimpleSearchTableModel extends AbstractTableModel implements MouseListener
+{
+    static int DELETE_COL = 3;
 
     MailViewPanel pnl;
     
@@ -361,9 +442,9 @@ class SearchTableModel extends AbstractTableModel implements MouseListener
     SimpleDateFormat sdf;
     JButton ic_delete;
 
-    SearchEntryModel model;
+    SimpleSearchEntryModel model;
 
-    SearchTableModel(MailViewPanel _pnl,  SearchEntryModel _model)
+    SimpleSearchTableModel(MailViewPanel _pnl,  SimpleSearchEntryModel _model)
     {
         super();
 
@@ -375,10 +456,49 @@ class SearchTableModel extends AbstractTableModel implements MouseListener
         ic_delete = GlossTable.create_table_button("/dimm/home/images/web_delete.png");     
     }
 
+    public String get_compressed_xml_list_data( boolean compressed)
+    {
+        String xml = null;
+        XStream xstr = new XStream();
+
+        ArrayList<LogicEntry> al = new ArrayList<LogicEntry>();
+
+        // ADD ONLY VALID ENTRIES
+        for (int i = 0; i < model.getChildren().size(); i++)
+        {
+            LogicEntry logicEntry = model.getChildren().get(i);
+            if (logicEntry instanceof ExprEntry)
+            {
+                ExprEntry e = (ExprEntry)logicEntry;
+                if (e.getValue().length() > 0)
+                {
+                    // ALL ARE ADDED AS "AND"
+                    al.add(logicEntry);
+                }
+            }
+        }
+        xml = xstr.toXML(al);
+        String compressed_list_str = xml;
+        if (compressed)
+        {
+            try
+            {
+                compressed_list_str = ZipUtilities.compress(xml);
+            }
+            catch (Exception e)
+            {
+                UserMain.errm_ok(UserMain.Txt("Invalid_filter,_resetting_to_empty_list"));
+                compressed_list_str = "";
+            }
+        }
+        return compressed_list_str;
+    }
+
+
     @Override
     public boolean isCellEditable( int row, int column )
     {
-        if (column <= 1)
+        if (column < DELETE_COL)
             return true;
         return false;
         
@@ -390,7 +510,8 @@ class SearchTableModel extends AbstractTableModel implements MouseListener
         switch( column )
         {
             case 0: return UserMain.Txt("Condition");
-            case 1: return UserMain.Txt("Value");
+            case 1: return "";
+            case 2: return UserMain.Txt("Value");
         }
         return "";
     }
@@ -398,7 +519,7 @@ class SearchTableModel extends AbstractTableModel implements MouseListener
     @Override
     public Class<?> getColumnClass(int columnIndex)
     {
-        if (columnIndex == 2)
+        if (columnIndex == DELETE_COL)
             return JButton.class;
         
         return String.class;
@@ -415,7 +536,7 @@ class SearchTableModel extends AbstractTableModel implements MouseListener
     @Override
     public int getColumnCount()
     {
-        return 3;
+        return 4;
     }
 
     
@@ -435,10 +556,15 @@ class SearchTableModel extends AbstractTableModel implements MouseListener
             }
             if (columnIndex == 1)
             {
-                String txt = ee.getValue();
+                String txt = NegCBEntry.get_nice_txt( ee.isNeg() );
                 return txt;
             }
             if (columnIndex == 2)
+            {
+                String txt = ee.getValue();
+                return txt;
+            }
+            if (columnIndex == DELETE_COL)
             {
                 return ic_delete;
             }
@@ -462,7 +588,12 @@ class SearchTableModel extends AbstractTableModel implements MouseListener
                 ee.setNeg( ccbe.entry.isNeg());
                 ee.setPrevious_is_or( ccbe.entry.isPrevious_is_or() );
             }
-            if (columnIndex == 1)
+            if (columnIndex == 1&& aValue instanceof NegCBEntry)
+            {
+                NegCBEntry ncb = (NegCBEntry)aValue;
+                ee.setNeg( ncb.isNeg() );
+            }
+            if (columnIndex == 2)
             {
                 ee.setValue(aValue.toString());
             }
@@ -473,12 +604,12 @@ class SearchTableModel extends AbstractTableModel implements MouseListener
     @Override
     public void mouseClicked( MouseEvent e )
     {
-        if (e.getClickCount() ==1 && e.getSource() instanceof JTable)
+        if (e.getClickCount() == 1 && e.getSource() instanceof JTable)
         {
             JTable tb = (JTable)e.getSource();
             int row = tb.rowAtPoint(e.getPoint());
             int col = tb.columnAtPoint(e.getPoint());
-            if (col == 2 && row >= 0 && row < model.getChildren().size())
+            if (col == DELETE_COL && row >= 0 && row < model.getChildren().size())
             {
                 model.getChildren().remove(row);
                 fireTableDataChanged();
@@ -488,26 +619,22 @@ class SearchTableModel extends AbstractTableModel implements MouseListener
 
     @Override
     public void mousePressed( MouseEvent e )
-    {
-       
+    {       
     }
 
     @Override
     public void mouseReleased( MouseEvent e )
-    {
-       
+    {       
     }
 
     @Override
     public void mouseEntered( MouseEvent e )
-    {
-      
+    {      
     }
 
     @Override
     public void mouseExited( MouseEvent e )
-    {
-        
+    {        
     }
 }
 class SimpleSearchEditor extends  DefaultCellEditor
@@ -515,6 +642,26 @@ class SimpleSearchEditor extends  DefaultCellEditor
     public SimpleSearchEditor( JComboBox cb )
     {
         super( cb );
+    }
+}
+
+
+class MailTableRowSorter extends TableRowSorter<MailTableModel>
+{
+
+    public MailTableRowSorter(MailTableModel m)
+    {
+        super(m);
+    }
+
+    LongComparator lc = new LongComparator();
+
+    @Override
+    public Comparator<?> getComparator( int column )
+    {
+        if (column == MailTableModel.DATE_COL || column == MailTableModel.SIZE_COL)
+            return lc;
+        return super.getComparator(column);
     }
 
 }
@@ -535,9 +682,10 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     int search_mode = SIMPLE_SEARCH;
 
     GlossTable simple_search_table;
-    SearchTableModel simple_search_tablemodel;
+    SimpleSearchTableModel simple_search_tablemodel;
     TableCellEditor simple_condition_editor;
     TableCellEditor simple_val_editor;
+    MailTableRowSorter sorter;
 
     /** Creates new form MailViewPanel */
     public MailViewPanel()
@@ -546,13 +694,17 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
 
         table = new GlossTable();
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        table.addMouseListener(this);
+        // REGISTER TABLE TO SCROLLPANEL
+        table.embed_to_scrollpanel( SCP_TABLE );
 
         model = new MailTableModel(this, null);
         table.setModel(model);
-        table.addMouseListener(this);
-
-        // REGISTER TABLE TO SCROLLPANEL
-        table.embed_to_scrollpanel( SCP_TABLE );
+        sorter = new MailTableRowSorter(model);
+        table.setRowSorter(sorter);
+        
+        table.getColumnModel().getColumn(MailTableModel.DATE_COL).setCellRenderer( new UnixTimeCellRenderer() );
+        table.getColumnModel().getColumn(MailTableModel.SIZE_COL).setCellRenderer( new SizeStrCellRenderer() );
 
         CB_FIELD.removeAllItems();
         CB_FIELD.addItem( new FieldComboEntry(CS_Constants.FLD_BODY));
@@ -567,27 +719,42 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         simple_search_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         simple_search_table.embed_to_scrollpanel( SCP_LIST );
 
-        simple_search_tablemodel = new SearchTableModel(this, new SearchEntryModel(null));
+        simple_search_tablemodel = new SimpleSearchTableModel(this, new SimpleSearchEntryModel(null));
         simple_search_table.setModel(simple_search_tablemodel);
         simple_search_table.addMouseListener(simple_search_tablemodel);
 
         JComboBox CB_CONDITION = new JComboBox();
         CB_CONDITION.removeAllItems();
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_FROM, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        /*CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_FROM, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_TO, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_SUBJECT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_BODY, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_ATTACHMENT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_ATTACHMENT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );*/
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_MAIL, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_MAIL, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_TXT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_TXT, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_ALL, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_ALL, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)) );
+
+        JComboBox CB_NEG = new JComboBox();
+        CB_NEG.addItem( new NegCBEntry(false));
+        CB_NEG.addItem( new NegCBEntry(true));
+
         JTextField TXT_VAL = new JTextField();
         
-        simple_search_table.getColumnModel().getColumn(2).setMinWidth(30);
-        simple_search_table.getColumnModel().getColumn(2).setMaxWidth(30);
+        simple_search_table.getColumnModel().getColumn(1).setMinWidth(30);
+        simple_search_table.getColumnModel().getColumn(1).setMaxWidth(30);
+        simple_search_table.getColumnModel().getColumn(3).setMinWidth(30);
+        simple_search_table.getColumnModel().getColumn(3).setMaxWidth(30);
         simple_search_table.getColumnModel().getColumn(0).setCellEditor( new DefaultCellEditor(  CB_CONDITION ) );
-        simple_search_table.getColumnModel().getColumn(1).setCellEditor(  new DefaultCellEditor( TXT_VAL) );
+        simple_search_table.getColumnModel().getColumn(1).setCellEditor( new DefaultCellEditor(  CB_NEG ) );
+        DefaultCellEditor txt_editor = new DefaultCellEditor( TXT_VAL);
+        txt_editor.setClickCountToStart(1);
+     
+        simple_search_table.getColumnModel().getColumn(2).setCellEditor( txt_editor  );
 
-
-        TBP_SEARCH.setSelectedIndex(SIMPLE_SEARCH);
-        
+        TBP_SEARCH.setSelectedIndex(SIMPLE_SEARCH);        
     }
 
     int get_entries()
@@ -618,7 +785,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         String field_name = fld_entry.getField();
 
         int entries = get_entries();
-        int mandant = UserMain.self.get_act_mandant().getId();
+        int mandant = UserMain.self.get_act_mandant_id();
 
         String cmd = "SearchMail CMD:open MA:" + mandant + " EM:'" + mail + "' FL:'" + field_name + "' VL:'" + search_val + "' CNT:'" + entries + "' ";
  
@@ -629,7 +796,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     void fill_model_with_search( String cmd )
     {
         FunctionCallConnect fcc = UserMain.fcc();
-        int mandant = UserMain.self.get_act_mandant().getId();
+        int mandant = UserMain.self.get_act_mandant_id();
  
         if (search_id != null)
         {
@@ -675,8 +842,14 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         {
             ArrayList<ArrayList<String>> ret_arr = (ArrayList<ArrayList<String>>)o;
 
-            model = new MailTableModel( this, ret_arr );
+            model = new MailTableModel(this, ret_arr);
+            sorter = new MailTableRowSorter(model);
+            table.setRowSorter(sorter);
             table.setModel(model);
+            table.getColumnModel().getColumn(MailTableModel.DATE_COL).setCellRenderer( new UnixTimeCellRenderer() );
+            table.getColumnModel().getColumn(MailTableModel.SIZE_COL).setCellRenderer( new SizeStrCellRenderer() );
+
+            model.fireTableDataChanged();
 
             table.getColumnModel().getColumn(0).setMinWidth(80);
             table.getColumnModel().getColumn(0).setPreferredWidth(120);
@@ -686,12 +859,20 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             table.getColumnModel().getColumn(2).setPreferredWidth(180);
             table.getColumnModel().getColumn(3).setMinWidth(30);
             table.getColumnModel().getColumn(3).setMaxWidth(50);
+
         }
     }
 
     SwingWorker sw;
     void open_mail( final int row )
     {
+        /*File tmp_file = run_download_mail(row, null);
+        if (tmp_file != null)
+                {
+                    run_open_mail( row, tmp_file );
+                    tmp_file.delete();
+                }*/
+        
         if (sw != null)
             return;
 
@@ -704,7 +885,9 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
 
                 File tmp_file = run_download_mail(row, null);
 
-                UserMain.self.hide_busy();
+                sw = null;
+
+                //UserMain.self.hide_busy();
 
                 if (tmp_file != null)
                 {
@@ -712,7 +895,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                     tmp_file.delete();
                 }
 
-                sw = null;
+                
                 return null;
             }
         };
@@ -796,6 +979,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             }
 
             int row = rowi[i];
+            row = sorter.convertRowIndexToModel(row);
             String subject = table.getModel().getValueAt(row, MailTableModel.SUBJECT_COL).toString();
             subject = clean_fname(subject);
             File f = new File(dir, subject + ".eml");
@@ -839,6 +1023,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                 }
 
                 int row = rowi[i];
+                row = sorter.convertRowIndexToModel(row);
+
                 d.setTime(System.currentTimeMillis());
                 String timestamp = sdf.format( d );
                 mbfos.write_direct("From MailSecurer " + timestamp + "\n" );
@@ -945,6 +1131,11 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             sis.read(baos);
 
             baos.close();
+            baos = null;
+
+            sis.close();
+            sis = null;
+
 
             return tmp_file;
         }
@@ -968,6 +1159,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             }
             catch (IOException iOException)
             {
+                UserMain.errm_ok(my_dlg, "Fehler beim Schließen der Mail: " + iOException.getMessage() );
             }
             
         }
@@ -1045,7 +1237,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         BT_ADD = new GlossButton();
         BT_DEL = new GlossButton();
         SCP_LIST = new javax.swing.JScrollPane();
-        BT_SEARCH = new GlossButton();
+        BT_SIMPLESEARCH = new GlossButton();
         PN_COMPLEX = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -1063,13 +1255,13 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SCP_TABLE, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 732, Short.MAX_VALUE)
+            .addComponent(SCP_TABLE, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 810, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(SCP_TABLE, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE))
+                .addComponent(SCP_TABLE, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE))
         );
 
         BT_CLOSE.setText(UserMain.getString("Schliessen")); // NOI18N
@@ -1087,6 +1279,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         });
 
         CB_ENTRIES.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "10", "100", "1000" }));
+        CB_ENTRIES.setSelectedIndex(1);
         CB_ENTRIES.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CB_ENTRIESActionPerformed(evt);
@@ -1132,9 +1325,14 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             }
         });
 
-        BT_SEARCH.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_browse.png"))); // NOI18N
-        BT_SEARCH.setText(UserMain.getString("Search")); // NOI18N
-        BT_SEARCH.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        BT_SIMPLESEARCH.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_browse.png"))); // NOI18N
+        BT_SIMPLESEARCH.setText(UserMain.getString("Search")); // NOI18N
+        BT_SIMPLESEARCH.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        BT_SIMPLESEARCH.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_SIMPLESEARCHActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout PN_SIMPLELayout = new javax.swing.GroupLayout(PN_SIMPLE);
         PN_SIMPLE.setLayout(PN_SIMPLELayout);
@@ -1149,7 +1347,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(BT_DEL, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 534, Short.MAX_VALUE)
-                        .addComponent(BT_SEARCH)))
+                        .addComponent(BT_SIMPLESEARCH)))
                 .addContainerGap())
         );
 
@@ -1162,7 +1360,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                 .addGroup(PN_SIMPLELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_ADD, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(BT_DEL, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_SEARCH))
+                    .addComponent(BT_SIMPLESEARCH))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
                 .addContainerGap())
@@ -1304,7 +1502,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                             .addComponent(BT_EXPORT)
                             .addGap(10, 10, 10)
                             .addComponent(BT_RESTORE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 481, Short.MAX_VALUE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 559, Short.MAX_VALUE)
                             .addComponent(BT_CLOSE)
                             .addGap(10, 10, 10))
                         .addGroup(layout.createSequentialGroup()
@@ -1348,7 +1546,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
 
         if (search_id != null)
         {
-            int mandant = UserMain.self.get_act_mandant().getId();
+            int mandant = UserMain.self.get_act_mandant_id();
             fcc.call_abstract_function("SearchMail CMD:close MA:" + mandant + " ID:" + search_id);
         }
 
@@ -1508,7 +1706,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     private void BT_ADDActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_ADDActionPerformed
     {//GEN-HEADEREND:event_BT_ADDActionPerformed
         // TODO add your handling code here:
-        simple_search_tablemodel.model.getChildren().add( new ExprEntry(null, "", "", ExprEntry.OPERATION.CONTAINS_SUBSTR, ExprEntry.TYPE.STRING, false, false));
+        // DEFAULT: ALL CONTAINS WORD
+        simple_search_tablemodel.model.getChildren().add( new ExprEntry(null, CS_Constants.VFLD_ALL, "", ExprEntry.OPERATION.CONTAINS, ExprEntry.TYPE.STRING, false, false));
         simple_search_tablemodel.fireTableDataChanged();
 
     }//GEN-LAST:event_BT_ADDActionPerformed
@@ -1524,6 +1723,17 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         }
     }//GEN-LAST:event_BT_DELActionPerformed
 
+    private void BT_SIMPLESEARCHActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_SIMPLESEARCHActionPerformed
+    {//GEN-HEADEREND:event_BT_SIMPLESEARCHActionPerformed
+        // TODO add your handling code here:
+        boolean b1 = simple_search_table.getColumnModel().getColumn(1).getCellEditor().stopCellEditing();
+        boolean b2 = BT_SIMPLESEARCH.requestFocusInWindow();
+        last_filter = simple_search_tablemodel.get_compressed_xml_list_data(/*compressed*/ true);
+        
+        do_filter_search();
+
+    }//GEN-LAST:event_BT_SIMPLESEARCHActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ADD;
@@ -1531,7 +1741,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     private javax.swing.JButton BT_DEL;
     private javax.swing.JButton BT_EXPORT;
     private javax.swing.JButton BT_RESTORE;
-    private javax.swing.JButton BT_SEARCH;
+    private javax.swing.JButton BT_SIMPLESEARCH;
     private javax.swing.JButton BT_TOGGLE_SELECTION;
     private javax.swing.JComboBox CB_ENTRIES;
     private javax.swing.JComboBox CB_FIELD;
@@ -1565,6 +1775,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             if (e.getSource() == table)
             {
                 int row = table.rowAtPoint(e.getPoint());
+                row = sorter.convertRowIndexToModel(row);
                 
                 open_mail( row );
             }
@@ -1621,7 +1832,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         if (last_filter == null)
             return;
 
-        int mandant = UserMain.self.get_act_mandant().getId();
+        int mandant = UserMain.self.get_act_mandant_id();
         String user = UserMain.self.get_act_username();
         String pwd = UserMain.self.get_act_pwd();
 
