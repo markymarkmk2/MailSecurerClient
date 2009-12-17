@@ -94,6 +94,11 @@ public class EditAccountConnector extends GenericEditPanel
                 {
                     BT_IMPORT_CERT.setVisible(true);
                 }
+                if (object.getSearchbase() != null && object.getSearchbase().length() > 0)
+                {
+                    TXT_LDAP_SB.setText(object.getSearchbase());
+                    CB_LDAP_SB.setSelected(true);
+                }
             }
             catch (Exception exc)
             {
@@ -155,6 +160,8 @@ public class EditAccountConnector extends GenericEditPanel
         RB_SSL = new javax.swing.JRadioButton();
         CB_CERTIFICATE = new javax.swing.JCheckBox();
         BT_IMPORT_CERT = new javax.swing.JButton();
+        TXT_LDAP_SB = new javax.swing.JTextField();
+        CB_LDAP_SB = new javax.swing.JCheckBox();
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
@@ -302,35 +309,46 @@ public class EditAccountConnector extends GenericEditPanel
                 .addContainerGap())
         );
 
+        CB_LDAP_SB.setText(UserMain.getString("LDAP-Searchbase")); // NOI18N
+        CB_LDAP_SB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CB_LDAP_SBActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PN_ACTIONLayout = new javax.swing.GroupLayout(PN_ACTION);
         PN_ACTION.setLayout(PN_ACTIONLayout);
         PN_ACTIONLayout.setHorizontalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PN_ACTIONLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(LB_SERVER)
-                    .addComponent(LB_USER)
-                    .addComponent(LB_PWD))
-                .addGap(63, 63, 63)
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TXT_USERNAME, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
-                    .addComponent(TXTP_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
-                    .addComponent(TXT_PORT1, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
-                    .addComponent(TXT_SERVER1, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
-                    .addComponent(CB_TYPE, 0, 193, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, PN_ACTIONLayout.createSequentialGroup()
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(LB_SERVER)
+                            .addComponent(LB_USER)
+                            .addComponent(LB_PWD))
+                        .addGap(49, 49, 49)
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(TXT_USERNAME, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
+                            .addComponent(TXTP_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
+                            .addComponent(TXT_PORT1, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
+                            .addComponent(TXT_SERVER1, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
+                            .addComponent(CB_TYPE, 0, 246, Short.MAX_VALUE)))
+                    .addComponent(CB_LDAP_SB, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(TXT_LDAP_SB, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10))
-            .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(BT_DISABLED, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(400, 400, 400))
+                .addGap(22, 22, 22))
             .addGroup(PN_ACTIONLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(LB_PORT)
-                .addContainerGap(495, Short.MAX_VALUE))
+                .addContainerGap(522, Short.MAX_VALUE))
+            .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(BT_DISABLED, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(431, Short.MAX_VALUE))
         );
         PN_ACTIONLayout.setVerticalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -357,10 +375,14 @@ public class EditAccountConnector extends GenericEditPanel
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(LB_PWD)
                             .addComponent(TXTP_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(CB_LDAP_SB)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(BT_DISABLED))
+                        .addComponent(TXT_LDAP_SB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addComponent(BT_DISABLED)
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -409,7 +431,7 @@ public class EditAccountConnector extends GenericEditPanel
                 .addComponent(BT_TEST)
                 .addGap(18, 18, 18)
                 .addComponent(BT_EDIT_USERS)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 101, Short.MAX_VALUE)
                 .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -511,7 +533,8 @@ public class EditAccountConnector extends GenericEditPanel
 
         
         final String cmd = "TestLogin CMD:test MA:" + UserMain.self.get_act_mandant().getId() + " NM:'" + user_name + "' PW:'" + pwd + "' HO:" +
-                TXT_SERVER1.getText() + " PO:" + TXT_PORT1.getText() + " TY:" + type + " FL:" + flags;
+                TXT_SERVER1.getText() + " PO:" + TXT_PORT1.getText() + " SB:" + TXT_LDAP_SB.getText() +
+                " TY:" + type + " FL:" + flags;
 
         if (sw != null)
         {
@@ -624,6 +647,17 @@ public class EditAccountConnector extends GenericEditPanel
         String type = mte.getType();
         boolean user_visible = true;
 
+        if (type.compareTo("ldap") == 0)
+        {
+            CB_LDAP_SB.setVisible(true);
+            TXT_LDAP_SB.setVisible(true);
+        }
+        else
+        {
+            CB_LDAP_SB.setVisible(true);
+            TXT_LDAP_SB.setVisible(true);
+        }
+
         if (type.compareTo("smtp") == 0 || type.compareTo("pop") == 0 || type.compareTo("imap") == 0 || type.compareTo("dbs") == 0 )
         {
             user_visible = false;
@@ -728,6 +762,21 @@ public class EditAccountConnector extends GenericEditPanel
 
     }//GEN-LAST:event_BT_EDIT_USERSActionPerformed
 
+    private void CB_LDAP_SBActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_LDAP_SBActionPerformed
+    {//GEN-HEADEREND:event_CB_LDAP_SBActionPerformed
+        // TODO add your handling code here:
+        if (!CB_LDAP_SB.isSelected())
+        {
+            TXT_LDAP_SB.setText("");
+            TXT_LDAP_SB.setEnabled(false);
+        }
+        else
+        {
+            TXT_LDAP_SB.setText(object.getSearchbase());
+            TXT_LDAP_SB.setEnabled(false);
+        }
+    }//GEN-LAST:event_CB_LDAP_SBActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JCheckBox BT_DISABLED;
@@ -736,6 +785,7 @@ public class EditAccountConnector extends GenericEditPanel
     private javax.swing.JButton BT_OK;
     private javax.swing.JButton BT_TEST;
     private javax.swing.JCheckBox CB_CERTIFICATE;
+    private javax.swing.JCheckBox CB_LDAP_SB;
     private javax.swing.JComboBox CB_TYPE;
     private javax.swing.JLabel LB_PORT;
     private javax.swing.JLabel LB_PWD;
@@ -748,6 +798,7 @@ public class EditAccountConnector extends GenericEditPanel
     private javax.swing.JRadioButton RB_TLS_FORCE;
     private javax.swing.JRadioButton RB_TLS_IV_AVAIL;
     private javax.swing.JPasswordField TXTP_PWD;
+    private javax.swing.JTextField TXT_LDAP_SB;
     private javax.swing.JTextField TXT_PORT1;
     private javax.swing.JTextField TXT_SERVER1;
     private javax.swing.JTextField TXT_USERNAME;
@@ -919,6 +970,12 @@ public class EditAccountConnector extends GenericEditPanel
                 UserMain.errm_ok(UserMain.getString("Das_Passwort_ist_nicht_okay"));
                 return false;
             }
+            if (CB_LDAP_SB.isSelected() && TXT_LDAP_SB.getText().length() == 0)
+            {
+                UserMain.errm_ok(UserMain.getString("Die_LDAP-Suchbasis_ist_nicht_okay"));
+                return false;
+            }
+
         }
         if (CB_CERTIFICATE.isSelected())
         {
@@ -957,7 +1014,18 @@ public class EditAccountConnector extends GenericEditPanel
         if (RB_SSL.isSelected())
             set_flag(true, CS_Constants.ACCT_USE_SSL);
 
-        
+        String ldap_sb_text = "";
+
+        if (type.compareTo("ldap") == 0)
+        {
+            if (CB_LDAP_SB.isSelected())
+            {
+                ldap_sb_text = TXT_LDAP_SB.getText();
+            }
+        }
+
+
+        object.setSearchbase(ldap_sb_text);
         object.setType(type);
         object.setUsername(name);
         object.setPwd(pwd);

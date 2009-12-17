@@ -31,7 +31,7 @@ import javax.swing.JButton;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataListener;
 
-
+// Preferences
 
 class MailSecurerComboModel implements ComboBoxModel
 {
@@ -903,6 +903,36 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     ArrayList<StationEntry> build_st_list()
     {
         ArrayList<StationEntry> st_list = new ArrayList<StationEntry>();
+
+        String default_station = Main.get_prop(Preferences.DEFAULT_STATION);
+        if (default_station != null && default_station.length() > 0)
+        {
+            try
+            {
+                ParseToken pt = new ParseToken(default_station);
+                //String version = pt.GetString("VER:");
+                //long station = pt.GetLongValue("STATION:");
+                long station = 1;
+                String version = "";
+                String name = pt.GetString("NAME:");
+                String ip = pt.GetString("IP:");
+                int port = (int) pt.GetLongValue("PO:");
+                boolean only_this = pt.GetBoolean("OT:");
+
+                StationEntry st = new StationEntry(name, station, version, ip, port);
+                st_list.add(st);
+                
+                // NO SCANNING
+                if (only_this)
+                    return st_list;
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                UserMain.errm_ok(my_dlg, UserMain.Txt("Error_parsing_station_entry_from_preferences"));
+            }
+        }
+
 
         try
         {

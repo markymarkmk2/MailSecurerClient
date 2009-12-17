@@ -174,39 +174,7 @@ public class PanelStartup extends SwitchSpringPanel
             dlg.setVisible(true);
      
          
-      /*  SwingWorker sw = new SwingWorker()
-        {
 
-            @Override
-            public Object construct()
-            {
-               UserMain.self.show_busy("Haloooooo");
-                UserMain.self.show_busy_val(0.0);
-                sleep(1000);
-                UserMain.self.show_busy_val(10.0);
-                sleep(1000);
-                UserMain.self.show_busy_val(11.0);
-                sleep(1000);
-                UserMain.self.show_busy_val(51.0);
-                sleep(1000);
-                UserMain.self.show_busy_val(60.0);
-                sleep(1000);
-                UserMain.self.show_busy_val(70.0);
-                sleep(1000);
-                UserMain.self.show_busy_val(98.0);
-                sleep(1000);
-                UserMain.self.show_busy_val(99.0);
-                sleep(1000);
-                UserMain.self.show_busy_val(100.0);
-                sleep(1000);
-
-                UserMain.self.hide_busy();
-
-                return null;
-            }
-        };
-        sw.start();
-*/
  
 }//GEN-LAST:event_BT_NETWORKActionPerformed
  private static void sleep(int millis)

@@ -57,6 +57,11 @@ public class UserMain extends javax.swing.JFrame
         return "DE";
     }
 
+    public static void close_search()
+    {
+        // THIS IS HOOK FOR CLOSING SEARCH WINDOW, NEEDED BY TB-PLUGIN
+    }
+
     // PANELS
     NavigationHeader navPanel ;
     PanelVerwaltung pn_verwaltung;

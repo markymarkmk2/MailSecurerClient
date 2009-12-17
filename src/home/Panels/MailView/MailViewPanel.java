@@ -472,8 +472,9 @@ class SimpleSearchTableModel extends AbstractTableModel implements MouseListener
                 ExprEntry e = (ExprEntry)logicEntry;
                 if (e.getValue().length() > 0)
                 {
+                    ExprEntry ee = new ExprEntry( al, e.getName(), e.getValue(), e.getOperation(), e.getType(), e.isNeg(), e.isPrevious_is_or() );
                     // ALL ARE ADDED AS "AND"
-                    al.add(logicEntry);
+                    al.add(ee);
                 }
             }
         }
@@ -730,12 +731,15 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_SUBJECT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_BODY, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_ATTACHMENT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );*/
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_ALL, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_ALL, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_SUBJECT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_SUBJECT, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_MAIL, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_MAIL, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_TXT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_TXT, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_ALL, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_ALL, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_ATTACHMENT_NAME, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
 
         JComboBox CB_NEG = new JComboBox();
         CB_NEG.addItem( new NegCBEntry(false));
@@ -1325,7 +1329,6 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             }
         });
 
-        BT_SIMPLESEARCH.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_browse.png"))); // NOI18N
         BT_SIMPLESEARCH.setText(UserMain.getString("Search")); // NOI18N
         BT_SIMPLESEARCH.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         BT_SIMPLESEARCH.addActionListener(new java.awt.event.ActionListener() {
@@ -1346,7 +1349,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                         .addComponent(BT_ADD, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(BT_DEL, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 534, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 568, Short.MAX_VALUE)
                         .addComponent(BT_SIMPLESEARCH)))
                 .addContainerGap())
         );
@@ -1362,7 +1365,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
                     .addComponent(BT_DEL, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(BT_SIMPLESEARCH))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+                .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1403,9 +1406,9 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             .addGroup(PN_COMPLEXLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(PN_COMPLEXLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(116, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                    .addComponent(jLabel5))
+                .addContainerGap())
         );
 
         TBP_SEARCH.addTab(UserMain.getString("Complex_Search"), PN_COMPLEX); // NOI18N
@@ -1551,6 +1554,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         }
 
         setVisible(false);
+
+        UserMain.close_search();
     }//GEN-LAST:event_BT_CLOSEActionPerformed
 
     private void TXT_SEARCHActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_TXT_SEARCHActionPerformed
@@ -1707,7 +1712,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     {//GEN-HEADEREND:event_BT_ADDActionPerformed
         // TODO add your handling code here:
         // DEFAULT: ALL CONTAINS WORD
-        simple_search_tablemodel.model.getChildren().add( new ExprEntry(null, CS_Constants.VFLD_ALL, "", ExprEntry.OPERATION.CONTAINS, ExprEntry.TYPE.STRING, false, false));
+        simple_search_tablemodel.model.getChildren().add( new ExprEntry(simple_search_tablemodel.model.getChildren(), CS_Constants.VFLD_ALL, "", ExprEntry.OPERATION.CONTAINS, ExprEntry.TYPE.STRING, false, false));
         simple_search_tablemodel.fireTableDataChanged();
 
     }//GEN-LAST:event_BT_ADDActionPerformed

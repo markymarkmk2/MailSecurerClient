@@ -30,7 +30,6 @@ import javax.swing.text.BadLocationException;
 
 
 
-
 class CB_op_entry
 {
     ExprEntry.OPERATION op;

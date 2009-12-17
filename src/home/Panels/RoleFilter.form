@@ -38,8 +38,8 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="TXT_VAR" pref="122" max="32767" attributes="0"/>
-                          <Component id="COMBO_NAME" pref="122" max="32767" attributes="1"/>
+                          <Component id="TXT_VAR" pref="131" max="32767" attributes="0"/>
+                          <Component id="COMBO_NAME" pref="131" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>

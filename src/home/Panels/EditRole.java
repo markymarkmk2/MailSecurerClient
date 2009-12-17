@@ -800,6 +800,7 @@ public class EditRole extends GenericEditPanel
             var_names.add(new VarTypeEntry("Username", ExprEntry.TYPE.STRING) );
             var_names.add(new VarTypeEntry("Email", ExprEntry.TYPE.STRING) );
             var_names.add(new VarTypeEntry("Domain", ExprEntry.TYPE.STRING) );
+            var_names.add(new VarTypeEntry("Group", ExprEntry.TYPE.STRING) );
             
             
             boolean compressed = (get_object_flags() & CS_Constants.ROLE_ACM_COMPRESSED) == CS_Constants.ROLE_ACM_COMPRESSED;

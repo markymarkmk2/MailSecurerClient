@@ -19,7 +19,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,0,-2,0,0,2,13"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,38,0,0,2,40"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
@@ -40,33 +40,39 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="LB_SERVER" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="LB_USER" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="LB_PWD" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="LB_SERVER" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="LB_USER" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="LB_PWD" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="TXT_USERNAME" alignment="0" pref="246" max="32767" attributes="0"/>
+                              <Component id="TXTP_PWD" alignment="0" pref="246" max="32767" attributes="0"/>
+                              <Component id="TXT_PORT1" alignment="0" pref="246" max="32767" attributes="1"/>
+                              <Component id="TXT_SERVER1" alignment="0" pref="246" max="32767" attributes="2"/>
+                              <Component id="CB_TYPE" alignment="0" pref="246" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <Component id="CB_LDAP_SB" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="TXT_LDAP_SB" alignment="1" min="-2" pref="247" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="TXT_USERNAME" alignment="0" pref="193" max="32767" attributes="0"/>
-                      <Component id="TXTP_PWD" alignment="0" pref="193" max="32767" attributes="0"/>
-                      <Component id="TXT_PORT1" alignment="0" pref="193" max="32767" attributes="1"/>
-                      <Component id="TXT_SERVER1" alignment="0" pref="193" max="32767" attributes="2"/>
-                      <Component id="CB_TYPE" alignment="0" pref="193" max="32767" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-              </Group>
-              <Group type="102" attributes="0">
-                  <EmptySpace min="10" pref="10" max="10" attributes="0"/>
-                  <Component id="BT_DISABLED" min="-2" pref="115" max="-2" attributes="1"/>
-                  <EmptySpace min="400" pref="400" max="400" attributes="0"/>
+                  <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
               </Group>
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                   <Component id="LB_PORT" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="495" max="32767" attributes="0"/>
+                  <EmptySpace pref="522" max="32767" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="BT_DISABLED" min="-2" pref="115" max="-2" attributes="1"/>
+                  <EmptySpace pref="431" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -100,12 +106,16 @@
                               <Component id="LB_PWD" min="-2" max="-2" attributes="0"/>
                               <Component id="TXTP_PWD" min="-2" max="-2" attributes="0"/>
                           </Group>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="CB_LDAP_SB" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
-                          <Component id="BT_DISABLED" min="-2" max="-2" attributes="0"/>
+                          <Component id="TXT_LDAP_SB" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="19" max="32767" attributes="0"/>
+                  <EmptySpace pref="29" max="32767" attributes="0"/>
+                  <Component id="BT_DISABLED" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -328,6 +338,18 @@
             </Component>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JTextField" name="TXT_LDAP_SB">
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="CB_LDAP_SB">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="LDAP-Searchbase" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CB_LDAP_SBActionPerformed"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="PN_BUTTONS">
@@ -349,7 +371,7 @@
                   <Component id="BT_TEST" linkSize="1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="BT_EDIT_USERS" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="74" max="32767" attributes="0"/>
+                  <EmptySpace pref="101" max="32767" attributes="0"/>
                   <Component id="BT_ABORT" linkSize="1" min="-2" pref="80" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="BT_OK" linkSize="1" min="-2" pref="80" max="-2" attributes="0"/>
