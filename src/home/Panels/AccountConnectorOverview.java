@@ -35,7 +35,7 @@ class AccountConnectorTableModel extends OverviewModel
     {
         super( _main, _dlg );
 
-        String[] _col_names = {"Id",UserMain.getString("Typ"), UserMain.getString("Server"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
+        String[] _col_names = {"Id",UserMain.getString("Server"), UserMain.getString("Typ"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
         Class[] _col_classes = {String.class,  String.class,  String.class,  Boolean.class, JButton.class, JButton.class};
         set_columns( _col_names, _col_classes );
 

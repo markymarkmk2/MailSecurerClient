@@ -30,9 +30,9 @@ public class FunctionCallConnect extends Connect
 
     public String call_abstract_function( String cmd )
     {
-        System.out.println("cab: " + cmd);
+        //System.out.println("cab: " + cmd);
         String ret = call_abstract_function(cmd, SHORT_TIMEOUT);
-        System.out.println("ret: " + ret);
+        //System.out.println("ret: " + ret);
         return ret;
     }
     public String call_abstract_function( String cmd, int to_s )

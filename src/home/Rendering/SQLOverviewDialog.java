@@ -231,6 +231,11 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
         {
             UserMain.sqc().rebuild_result_array( object.getClass() );
         }
+        else
+        {
+            String txt = UserMain.getString("Dieser_Eintrag_kann_nicht_geloescht_werden,_er_ist_noch_in_Benutzung");
+            UserMain.errm_ok( txt);
+        }
 
 
         return okay;
