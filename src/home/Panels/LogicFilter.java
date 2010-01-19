@@ -44,7 +44,7 @@ class CB_op_entry
     @Override
     public String toString()
     {
-        return RoleFilter.get_op_nice_txt(op, type);
+        return LogicFilter.get_op_nice_txt(op, type);
     }
 }
 
@@ -65,7 +65,7 @@ class LogicEntryModel extends GroupEntry
  *
  * @author mw
  */
-public class RoleFilter extends GlossDialogPanel
+public class LogicFilter extends GlossDialogPanel
 {
     LogicEntryModel model;
 
@@ -75,7 +75,7 @@ public class RoleFilter extends GlossDialogPanel
     boolean in_init;
     
     /** Creates new form RoleFilter */
-    public RoleFilter(ArrayList<VarTypeEntry> var_names, String compressed_list_str, boolean compressed)
+    public LogicFilter(ArrayList<VarTypeEntry> var_names, String compressed_list_str, boolean compressed)
     {
         initComponents();
 
@@ -160,7 +160,7 @@ public class RoleFilter extends GlossDialogPanel
             }
             catch (Exception e)
             {
-                UserMain.errm_ok(UserMain.Txt("Invalid_role_filter,_resetting_to_empty_list"));
+                UserMain.errm_ok(UserMain.Txt("Invalid_filter,_resetting_to_empty_list"));
                 compressed_list_str = "";
             }
         }
@@ -217,7 +217,7 @@ public class RoleFilter extends GlossDialogPanel
             }
             catch (Exception e)
             {
-                System.out.println("Invalid_role_filter,_resetting_to_empty_list");
+                System.out.println("Invalid_filter,_resetting_to_empty_list");
                 list = new ArrayList<LogicEntry>();
             }
         }
@@ -574,8 +574,8 @@ public class RoleFilter extends GlossDialogPanel
                             .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(TXT_VAR, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
-                            .addComponent(COMBO_NAME, 0, 122, Short.MAX_VALUE))
+                            .addComponent(TXT_VAR, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
+                            .addComponent(COMBO_NAME, 0, 131, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)

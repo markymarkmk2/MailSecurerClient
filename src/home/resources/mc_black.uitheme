@@ -194,3 +194,14 @@ BackgroundTitle.shadowDirection={Common.shadowDirection}
 BackgroundTitle.shadowDistance=3
 
 BackgroundTitle.preferredHeight=90
+
+################################################################################
+# FLAT BACKGROUND TITLE
+################################################################################
+
+FlatBackgroundTitle.titleFont=Arial-PLAIN-18
+FlatBackgroundTitle.titleColor=201,201,201
+FlatBackgroundTitle.titleOpacity=1.0
+
+FlatBackgroundTitle.preferredHeight=90
+FlatBackgroundTitle.lineWidth=1

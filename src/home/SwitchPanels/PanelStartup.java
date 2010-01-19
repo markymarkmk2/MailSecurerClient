@@ -7,8 +7,9 @@ package dimm.home.SwitchPanels;
 
 import dimm.home.*;
 import dimm.home.Panels.MailView.MailViewPanel;
-import dimm.home.Panels.RoleFilter;
+import dimm.home.Panels.LogicFilter;
 import dimm.home.Rendering.BackgroundTitle;
+import dimm.home.Rendering.FlatBackgroundTitle;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
@@ -61,10 +62,12 @@ public class PanelStartup extends SwitchSpringPanel
 
         initComponents();
 
+        add_titles();
+    }
 
-        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Aufgaben" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 65, getWidth(), 60));
-       // PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Werkzeuge" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 285, getWidth(), 60));
-        
+    void add_titles()
+    {
+        PN_BUTTONS.add(new FlatBackgroundTitle( UserMain.getString("Aufgaben" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 35, getWidth(), 60));
     }
 
     @Override
@@ -77,9 +80,8 @@ public class PanelStartup extends SwitchSpringPanel
 
         initComponents();
 
+        add_titles();
 
-        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Aufgaben" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 65, getWidth(), 60));
-        //PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Werkzeuge" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 285, getWidth(), 60));
     }
 
 
@@ -136,7 +138,7 @@ public class PanelStartup extends SwitchSpringPanel
                 BT_NETWORKActionPerformed(evt);
             }
         });
-        PN_BUTTONS.add(BT_NETWORK, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 120, 170, 50));
+        PN_BUTTONS.add(BT_NETWORK, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 80, 170, 50));
 
         PN_HEADER.setOpaque(false);
         PN_HEADER.setLayout(new javax.swing.BoxLayout(PN_HEADER, javax.swing.BoxLayout.LINE_AXIS));

@@ -91,7 +91,7 @@ public class EditRole extends GenericEditPanel
 
             role_filter_save = object.getAccountmatch();
 
-            set_filter_preview( RoleFilter.get_nice_filter_text( role_filter_save, compressed ) );
+            set_filter_preview( LogicFilter.get_nice_filter_text( role_filter_save, compressed ) );
         }
         else
         {
@@ -804,7 +804,7 @@ public class EditRole extends GenericEditPanel
             
             
             boolean compressed = (get_object_flags() & CS_Constants.ROLE_ACM_COMPRESSED) == CS_Constants.ROLE_ACM_COMPRESSED;
-            RoleFilter rf = new RoleFilter(var_names, object.getAccountmatch(), compressed );
+            LogicFilter rf = new LogicFilter(var_names, object.getAccountmatch(), compressed );
 
             GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, rf);
             dlg.setVisible(true);
@@ -813,7 +813,7 @@ public class EditRole extends GenericEditPanel
             {
                  String role_filter_xml = rf.get_compressed_xml_list_data(compressed);
                  object.setAccountmatch(role_filter_xml);
-                 set_filter_preview( RoleFilter.get_nice_filter_text( role_filter_xml, compressed ) );
+                 set_filter_preview( LogicFilter.get_nice_filter_text( role_filter_xml, compressed ) );
             }
         }
         catch (Exception exc)

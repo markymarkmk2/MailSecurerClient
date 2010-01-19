@@ -57,7 +57,7 @@
               <Color blue="c9" green="c9" red="c9" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/dimm/home/images/tr_favs.png"/>
+              <Image iconType="3" name="/dimm/home/images/import.png"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="dimm/home/MA_Properties.properties" key="Import" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
@@ -87,7 +87,7 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="60" y="340" width="160" height="50"/>
+              <AbsoluteConstraints x="60" y="200" width="170" height="50"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -100,7 +100,7 @@
               <Color blue="c9" green="c9" red="c9" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/dimm/home/images/tr_einstellungen.png"/>
+              <Image iconType="3" name="/dimm/home/images/diagnose.png"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="dimm/home/MA_Properties.properties" key="Init" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
@@ -130,7 +130,7 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="60" y="130" width="170" height="50"/>
+              <AbsoluteConstraints x="60" y="80" width="170" height="50"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -143,7 +143,7 @@
               <Color blue="c9" green="c9" red="c9" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/dimm/home/images/terminal_gruppen.png"/>
+              <Image iconType="3" name="/dimm/home/images/status.png"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="dimm/home/MA_Properties.properties" key="Status" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
@@ -173,7 +173,7 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="230" y="130" width="170" height="50"/>
+              <AbsoluteConstraints x="230" y="80" width="170" height="50"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -186,10 +186,10 @@
               <Color blue="c9" green="c9" red="c9" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/dimm/home/images/tr_clips.png"/>
+              <Image iconType="3" name="/dimm/home/images/diagnose.png"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Diag" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Log" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="dimm/home/MA_Properties.properties" key="Long_Diag" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
@@ -216,7 +216,7 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="400" y="130" width="170" height="50"/>
+              <AbsoluteConstraints x="400" y="80" width="170" height="50"/>
             </Constraint>
           </Constraints>
         </Component>

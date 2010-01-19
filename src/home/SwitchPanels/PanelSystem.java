@@ -8,6 +8,7 @@ package dimm.home.SwitchPanels;
 import dimm.home.*;
 import dimm.home.Panels.MandantOverview;
 import dimm.home.Rendering.BackgroundTitle;
+import dimm.home.Rendering.FlatBackgroundTitle;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
 import dimm.home.Rendering.TimingTargetAdapter;
@@ -33,10 +34,13 @@ public class PanelSystem extends SwitchSpringPanel
 
         initComponents();
 
+        add_titles();
 
-        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Mandanten" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 65, getWidth(), 60));
-        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Werkzeuge" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 285, getWidth(), 60));
-        
+    }
+    void add_titles()
+    {
+        PN_BUTTONS.add(new FlatBackgroundTitle( UserMain.getString("Mandanten" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 35, getWidth(), 60));
+        PN_BUTTONS.add(new FlatBackgroundTitle( UserMain.getString("Werkzeuge" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 165, getWidth(), 60));
     }
 
     @Override
@@ -49,9 +53,7 @@ public class PanelSystem extends SwitchSpringPanel
 
         initComponents();
 
-
-        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Mandanten" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 65, getWidth(), 60));
-        PN_BUTTONS.add(new BackgroundTitle( UserMain.getString("Werkzeuge" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 285, getWidth(), 60));
+        add_titles();
     }
 
 
@@ -114,7 +116,7 @@ public class PanelSystem extends SwitchSpringPanel
                 BT_FREE1ActionPerformed(evt);
             }
         });
-        PN_BUTTONS.add(BT_FREE1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 350, 190, 50));
+        PN_BUTTONS.add(BT_FREE1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, 190, 50));
 
         BT_FREE2.setFont(new java.awt.Font("Arial", 0, 14));
         BT_FREE2.setForeground(new java.awt.Color(201, 201, 201));
@@ -130,9 +132,9 @@ public class PanelSystem extends SwitchSpringPanel
                 BT_FREE2ActionPerformed(evt);
             }
         });
-        PN_BUTTONS.add(BT_FREE2, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 350, 170, 50));
+        PN_BUTTONS.add(BT_FREE2, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 200, 170, 50));
 
-        BT_FREE3.setFont(new java.awt.Font("Arial", 0, 14));
+        BT_FREE3.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_FREE3.setForeground(new java.awt.Color(201, 201, 201));
         BT_FREE3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
         BT_FREE3.setText(UserMain.Txt("???")); // NOI18N
@@ -146,11 +148,11 @@ public class PanelSystem extends SwitchSpringPanel
                 BT_FREE3ActionPerformed(evt);
             }
         });
-        PN_BUTTONS.add(BT_FREE3, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 350, 190, 50));
+        PN_BUTTONS.add(BT_FREE3, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 200, 190, 50));
 
         BT_MANDANTEN.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_MANDANTEN.setForeground(new java.awt.Color(201, 201, 201));
-        BT_MANDANTEN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_einstellungen.png"))); // NOI18N
+        BT_MANDANTEN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/rollen.png"))); // NOI18N
         BT_MANDANTEN.setText(UserMain.Txt("Mandanten")); // NOI18N
         BT_MANDANTEN.setToolTipText(UserMain.Txt("Long_Companies")); // NOI18N
         BT_MANDANTEN.setBorderPainted(false);
@@ -165,7 +167,7 @@ public class PanelSystem extends SwitchSpringPanel
                 BT_MANDANTENActionPerformed(evt);
             }
         });
-        PN_BUTTONS.add(BT_MANDANTEN, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, 160, 50));
+        PN_BUTTONS.add(BT_MANDANTEN, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 80, 150, 50));
 
         PN_HEADER.setOpaque(false);
         PN_HEADER.setLayout(new javax.swing.BoxLayout(PN_HEADER, javax.swing.BoxLayout.LINE_AXIS));

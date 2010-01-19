@@ -6,6 +6,7 @@
 
 package dimm.home.Panels;
 
+import com.thoughtworks.xstream.XStream;
 import home.shared.SQL.SQLResult;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.UserMain;
@@ -15,7 +16,17 @@ import javax.swing.JButton;
 import home.shared.hibernate.DiskArchive;
 import home.shared.hibernate.ImapFetcher;
 import dimm.home.Models.DiskArchiveComboModel;
+import dimm.home.Panels.MailView.GetUserMailPwdPanel;
+import dimm.home.Rendering.GenericGlossyDlg;
+import dimm.home.ServerConnect.ServerCall;
+import dimm.home.Utilities.SwingWorker;
+import home.shared.CS_Constants;
 import home.shared.Utilities.Validator;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import javax.swing.JFileChooser;
 
 
 
@@ -30,6 +41,7 @@ public class EditImapFetcher extends GenericEditPanel
     ImapFetcherTableModel model;
     ImapFetcher object;
     DiskArchiveComboModel dacm;
+    private File last_dir;
     
     
     /** Creates new form EditChannelPanel */
@@ -72,6 +84,25 @@ public class EditImapFetcher extends GenericEditPanel
                 }
             }
 
+            BT_DISABLED.setSelected(test_flag(CS_Constants.IMF_DISABLED));
+            BT_USE_IDLE.setSelected(test_flag(CS_Constants.IMF_USE_IDLE));
+
+            if (test_flag( CS_Constants.IMF_USE_SSL))
+                RB_SSL.setSelected(true);
+            else if (test_flag( CS_Constants.IMF_USE_TLS_IF_AVAIL))
+                RB_TLS_IV_AVAIL.setSelected(true);
+            else if (test_flag( CS_Constants.IMF_USE_TLS_FORCE))
+                RB_TLS_FORCE.setSelected(true);
+            else
+                RB_INSECURE.setSelected(true);
+
+
+            CB_CERTIFICATE.setSelected(test_flag(CS_Constants.IMF_HAS_TLS_CERT));
+            if (CB_CERTIFICATE.isSelected())
+            {
+                BT_IMPORT_CERT.setVisible(true);
+            }
+
 
             int da_id = model.getSqlResult().getInt( row, "da_id");
             dacm.set_act_id(da_id);
@@ -106,6 +137,7 @@ public class EditImapFetcher extends GenericEditPanel
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         PN_ACTION = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         TXT_SERVER1 = new javax.swing.JTextField();
@@ -120,9 +152,18 @@ public class EditImapFetcher extends GenericEditPanel
         TXT_USER = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         TXTP_PWD = new javax.swing.JPasswordField();
+        jPanel1 = new javax.swing.JPanel();
+        RB_INSECURE = new javax.swing.JRadioButton();
+        RB_TLS_IV_AVAIL = new javax.swing.JRadioButton();
+        RB_TLS_FORCE = new javax.swing.JRadioButton();
+        RB_SSL = new javax.swing.JRadioButton();
+        CB_CERTIFICATE = new javax.swing.JCheckBox();
+        BT_IMPORT_CERT = new javax.swing.JButton();
+        BT_USE_IDLE = new javax.swing.JCheckBox();
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
+        BT_TEST = new GlossButton();
 
         setDoubleBuffered(false);
         setOpaque(false);
@@ -185,6 +226,98 @@ public class EditImapFetcher extends GenericEditPanel
 
         jLabel6.setText(UserMain.getString("Password")); // NOI18N
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(UserMain.Txt("Security"))); // NOI18N
+
+        buttonGroup1.add(RB_INSECURE);
+        RB_INSECURE.setText(UserMain.Txt("unsecure")); // NOI18N
+        RB_INSECURE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RB_INSECUREActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(RB_TLS_IV_AVAIL);
+        RB_TLS_IV_AVAIL.setText(UserMain.Txt("TLS_if_available")); // NOI18N
+        RB_TLS_IV_AVAIL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RB_TLS_IV_AVAILActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(RB_TLS_FORCE);
+        RB_TLS_FORCE.setText(UserMain.Txt("only_TLS")); // NOI18N
+        RB_TLS_FORCE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RB_TLS_FORCEActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(RB_SSL);
+        RB_SSL.setText(UserMain.Txt("SSL")); // NOI18N
+        RB_SSL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RB_SSLActionPerformed(evt);
+            }
+        });
+
+        CB_CERTIFICATE.setText(UserMain.Txt("with_Certificate")); // NOI18N
+        CB_CERTIFICATE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CB_CERTIFICATEActionPerformed(evt);
+            }
+        });
+
+        BT_IMPORT_CERT.setText(UserMain.Txt("Import_certificate")); // NOI18N
+        BT_IMPORT_CERT.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_IMPORT_CERTActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(RB_TLS_IV_AVAIL)
+                                .addComponent(RB_INSECURE, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                                .addComponent(RB_TLS_FORCE))
+                            .addGap(63, 63, 63))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(RB_SSL)
+                            .addContainerGap(124, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(CB_CERTIFICATE)
+                            .addContainerGap(68, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(BT_IMPORT_CERT)
+                        .addContainerGap())))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(RB_INSECURE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(RB_TLS_IV_AVAIL)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(RB_TLS_FORCE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(RB_SSL)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(CB_CERTIFICATE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(BT_IMPORT_CERT)
+                .addContainerGap())
+        );
+
+        BT_USE_IDLE.setText(UserMain.getString("IMAP-Idle")); // NOI18N
+        BT_USE_IDLE.setOpaque(false);
+
         javax.swing.GroupLayout PN_ACTIONLayout = new javax.swing.GroupLayout(PN_ACTION);
         PN_ACTION.setLayout(PN_ACTIONLayout);
         PN_ACTIONLayout.setHorizontalGroup(
@@ -192,71 +325,71 @@ public class EditImapFetcher extends GenericEditPanel
             .addGroup(PN_ACTIONLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(BT_DISABLED, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_ACTIONLayout.createSequentialGroup()
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, PN_ACTIONLayout.createSequentialGroup()
-                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel2))
-                                .addGap(75, 75, 75)
-                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(CB_TYPE, javax.swing.GroupLayout.Alignment.TRAILING, 0, 393, Short.MAX_VALUE)
-                                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, PN_ACTIONLayout.createSequentialGroup()
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(TXT_USER, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE))
-                                            .addComponent(TXT_SERVER1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE))
-                                        .addGap(56, 56, 56)
-                                        .addComponent(jLabel4)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(TXT_PORT1, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))))
-                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addGap(8, 8, 8))
+                    .addComponent(BT_DISABLED, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(PN_ACTIONLayout.createSequentialGroup()
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel6))
-                        .addGap(61, 61, 61)
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(TXTP_PWD)
-                            .addComponent(CB_VAULT, 0, 130, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 258, Short.MAX_VALUE)))
+                            .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel4))
+                                .addGap(75, 75, 75)
+                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(TXT_PORT1, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
+                                    .addComponent(TXT_SERVER1, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
+                                    .addComponent(CB_TYPE, 0, 158, Short.MAX_VALUE)))
+                            .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                                        .addComponent(jLabel6)
+                                        .addGap(61, 61, 61))
+                                    .addComponent(jLabel3))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(TXTP_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
+                                    .addComponent(CB_VAULT, 0, 158, Short.MAX_VALUE)
+                                    .addComponent(TXT_USER, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)))
+                            .addComponent(jLabel5)
+                            .addComponent(BT_USE_IDLE, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
-
-        PN_ACTIONLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {TXTP_PWD, TXT_SERVER1, TXT_USER});
-
         PN_ACTIONLayout.setVerticalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PN_ACTIONLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(CB_TYPE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(4, 4, 4)
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(TXT_SERVER1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(TXT_PORT1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(TXT_USER, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
-                .addGap(8, 8, 8)
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel6)
-                    .addComponent(TXTP_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(CB_VAULT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(CB_TYPE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(TXT_SERVER1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(TXT_PORT1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(TXT_USER, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(TXTP_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(CB_VAULT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(BT_USE_IDLE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(BT_DISABLED)
-                .addContainerGap())
+                .addGap(34, 34, 34))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -282,12 +415,22 @@ public class EditImapFetcher extends GenericEditPanel
             }
         });
 
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/MA_Properties"); // NOI18N
+        BT_TEST.setText(bundle.getString("Test")); // NOI18N
+        BT_TEST.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_TESTActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PN_BUTTONSLayout = new javax.swing.GroupLayout(PN_BUTTONS);
         PN_BUTTONS.setLayout(PN_BUTTONSLayout);
         PN_BUTTONSLayout.setHorizontalGroup(
             PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
-                .addContainerGap(330, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(BT_TEST)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 223, Short.MAX_VALUE)
                 .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -299,7 +442,8 @@ public class EditImapFetcher extends GenericEditPanel
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BT_TEST, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -357,26 +501,214 @@ public class EditImapFetcher extends GenericEditPanel
     {//GEN-HEADEREND:event_TXT_USERActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_TXT_USERActionPerformed
+
+    private void RB_INSECUREActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_RB_INSECUREActionPerformed
+    {//GEN-HEADEREND:event_RB_INSECUREActionPerformed
+        // TODO add your handling code here:
+        ImapFetcherOverview.ImapFetcherTypeEntry mte = (ImapFetcherOverview.ImapFetcherTypeEntry) CB_TYPE.getSelectedItem();
+        String type = mte.getProtocol();
+        TXT_PORT1.setText( "" + EditAccountConnector.get_dflt_port( type, false ) );
+}//GEN-LAST:event_RB_INSECUREActionPerformed
+
+    private void RB_TLS_IV_AVAILActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_RB_TLS_IV_AVAILActionPerformed
+    {//GEN-HEADEREND:event_RB_TLS_IV_AVAILActionPerformed
+        // TODO add your handling code here:
+        ImapFetcherOverview.ImapFetcherTypeEntry mte = (ImapFetcherOverview.ImapFetcherTypeEntry) CB_TYPE.getSelectedItem();
+        String type = mte.getProtocol();
+        TXT_PORT1.setText( "" + EditAccountConnector.get_dflt_port( type, false ) );
+    }//GEN-LAST:event_RB_TLS_IV_AVAILActionPerformed
+
+    private void RB_TLS_FORCEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_RB_TLS_FORCEActionPerformed
+    {//GEN-HEADEREND:event_RB_TLS_FORCEActionPerformed
+        // TODO add your handling code here:
+        ImapFetcherOverview.ImapFetcherTypeEntry mte = (ImapFetcherOverview.ImapFetcherTypeEntry) CB_TYPE.getSelectedItem();
+        String type = mte.getProtocol();
+        TXT_PORT1.setText( "" + EditAccountConnector.get_dflt_port( type, false ) );
+    }//GEN-LAST:event_RB_TLS_FORCEActionPerformed
+
+    private void RB_SSLActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_RB_SSLActionPerformed
+    {//GEN-HEADEREND:event_RB_SSLActionPerformed
+        // TODO add your handling code here:
+        ImapFetcherOverview.ImapFetcherTypeEntry mte = (ImapFetcherOverview.ImapFetcherTypeEntry) CB_TYPE.getSelectedItem();
+        String type = mte.getProtocol();
+        TXT_PORT1.setText( "" + EditAccountConnector.get_dflt_port( type, true ) );
+    }//GEN-LAST:event_RB_SSLActionPerformed
+
+    private void CB_CERTIFICATEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_CERTIFICATEActionPerformed
+    {//GEN-HEADEREND:event_CB_CERTIFICATEActionPerformed
+        // TODO add your handling code here:
+        BT_IMPORT_CERT.setVisible(CB_CERTIFICATE.isSelected());
+}//GEN-LAST:event_CB_CERTIFICATEActionPerformed
+
+    SwingWorker sw = null;
+
+    private void BT_IMPORT_CERTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_IMPORT_CERTActionPerformed
+    {//GEN-HEADEREND:event_BT_IMPORT_CERTActionPerformed
+        // TODO add your handling code here:
+
+        // CHOOSE CERTFILE
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setCurrentDirectory(last_dir);
+        if (JFileChooser.APPROVE_OPTION != chooser.showDialog(my_dlg, UserMain.Txt("Select_certificate")))
+        {
+            return;
+        }
+        File dir = chooser.getSelectedFile();
+        last_dir = dir;
+
+        // READ TO CERTBUFF
+        ByteBuffer bb = ByteBuffer.allocate( (int)dir.length());
+        try
+        {
+            FileInputStream fr = new FileInputStream(dir);
+
+            fr.read(bb.array());
+            fr.close();
+        }
+        catch (IOException iOException)
+        {
+            UserMain.errm_ok(my_dlg, UserMain.Txt("Error_while_reading_certificate") + ": " + iOException.getMessage() );
+            return;
+        }
+        // BUILD IMPORT_COMMAND
+
+
+        XStream xs = new XStream();
+        String cert_xml = xs.toXML(bb);
+
+        final String cmd = "upload_certificate MA:" + object.getMandant().getId() + " TY:cacert + CERT:" + cert_xml;
+
+        if (sw != null)
+        {
+            return;
+        }
+
+        // AND SHOVE IT RIGHT OUT
+        sw = new SwingWorker()
+        {
+
+            @Override
+            public Object construct()
+            {
+                UserMain.self.show_busy(my_dlg, UserMain.Txt("Importing_certificate") + "...");
+                String ret = UserMain.fcc().call_abstract_function(cmd, ServerCall.SHORT_CMD_TO);
+                UserMain.self.hide_busy();
+                if (ret.charAt(0) == '0')
+                {
+                    UserMain.info_ok(my_dlg, UserMain.Txt("Certificate_was_imported_successful"));
+                }
+                else
+                {
+                    UserMain.errm_ok(my_dlg, UserMain.Txt("Importing_certificate_failed") + ": " + ret.substring(3));
+                }
+                sw = null;
+                return null;
+            }
+        };
+
+        sw.start();
+
+    }//GEN-LAST:event_BT_IMPORT_CERTActionPerformed
+
+    private void BT_TESTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_TESTActionPerformed
+    {//GEN-HEADEREND:event_BT_TESTActionPerformed
+        // TODO add your handling code here:
+
+        ImapFetcherOverview.ImapFetcherTypeEntry mte = (ImapFetcherOverview.ImapFetcherTypeEntry)  CB_TYPE.getSelectedItem();
+        String type = mte.getProtocol();
+        String user_name = TXT_USER.getText();
+        String pwd = get_pwd();
+
+        if (type.compareTo("ldap") != 0)
+        {
+            GetUserMailPwdPanel pnl = new GetUserMailPwdPanel(  );
+            pnl.enable_mail_list(false, null );
+            pnl.enable_user(true, UserMain.self.get_act_username());
+            pnl.enable_pwd(true, "");
+
+            GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
+            dlg.set_next_location( my_dlg );
+            dlg.setVisible(true);
+            if (!pnl.isOkay())
+                return;
+
+            user_name = pnl.get_user();
+            pwd = pnl.get_pwd();
+        }
+
+        int flags = 0;
+        if (RB_SSL.isSelected())
+            flags |= CS_Constants.ACCT_USE_SSL;
+        if (RB_TLS_FORCE.isSelected())
+            flags |= CS_Constants.ACCT_USE_TLS_FORCE;
+        if (RB_TLS_IV_AVAIL.isSelected())
+            flags |= CS_Constants.ACCT_USE_TLS_IF_AVAIL;
+
+
+        final String cmd = "TestLogin CMD:test MA:" + UserMain.self.get_act_mandant().getId() + " NM:'" + user_name + "' PW:'" + pwd + "' HO:" +
+                TXT_SERVER1.getText() + " PO:" + TXT_PORT1.getText() +
+                " TY:" + type + " FL:" + flags;
+
+        if (sw != null)
+        {
+            return;
+        }
+
+        sw = new SwingWorker()
+        {
+
+            @Override
+            public Object construct()
+            {
+                UserMain.self.show_busy(my_dlg, UserMain.Txt("Checking_login") + "...");
+                String ret = UserMain.fcc().call_abstract_function(cmd, ServerCall.SHORT_CMD_TO);
+                UserMain.self.hide_busy();
+                if (ret != null && ret.charAt(0) == '0')
+                {
+                    UserMain.info_ok(my_dlg, UserMain.Txt("Login_succeeded"));
+                }
+                else
+                {
+                    UserMain.errm_ok(my_dlg, UserMain.Txt("Login_failed") + ": " + ((ret != null) ?  ret.substring(3): ""));
+                }
+                sw = null;
+                return null;
+            }
+        };
+
+        sw.start();
+    }//GEN-LAST:event_BT_TESTActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JCheckBox BT_DISABLED;
+    private javax.swing.JButton BT_IMPORT_CERT;
     private javax.swing.JButton BT_OK;
+    private javax.swing.JButton BT_TEST;
+    private javax.swing.JCheckBox BT_USE_IDLE;
+    private javax.swing.JCheckBox CB_CERTIFICATE;
     private javax.swing.JComboBox CB_TYPE;
     private javax.swing.JComboBox CB_VAULT;
     private javax.swing.JPanel PN_ACTION;
     private javax.swing.JPanel PN_BUTTONS;
+    private javax.swing.JRadioButton RB_INSECURE;
+    private javax.swing.JRadioButton RB_SSL;
+    private javax.swing.JRadioButton RB_TLS_FORCE;
+    private javax.swing.JRadioButton RB_TLS_IV_AVAIL;
     private javax.swing.JPasswordField TXTP_PWD;
     private javax.swing.JTextField TXT_PORT1;
     private javax.swing.JTextField TXT_SERVER1;
     private javax.swing.JTextField TXT_USER;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 
     int get_object_flags()
@@ -416,19 +748,36 @@ public class EditImapFetcher extends GenericEditPanel
 
         flags = get_object_flags();
 
-        return ((flags & ImapFetcherOverview.DISABLED) == ImapFetcherOverview.DISABLED);
+        return ((flags & CS_Constants.IMF_DISABLED) == CS_Constants.IMF_DISABLED);
     }
     void set_object_disabled( boolean f)
     {
         int flags = get_object_flags();
 
         if (f)
-            set_object_flag( ImapFetcherOverview.DISABLED );
+            set_object_flag( CS_Constants.IMF_DISABLED );
         else
-            clr_object_flag( ImapFetcherOverview.DISABLED );
+            clr_object_flag( CS_Constants.IMF_DISABLED );
+    }
+    boolean test_flag( int test_flag )
+    {
+        int flags = get_object_flags();
+        return ((flags & test_flag) == test_flag);
+    }
+    void set_flag( boolean state, int flag )
+    {
+        if (state)
+        {
+            set_object_flag(flag);
+        }
+        else
+        {
+            clr_object_flag(flag);
+        }
     }
 
     
+    @Override
     protected boolean check_changed()
     {        
         if (model.is_new(row))
@@ -463,6 +812,32 @@ public class EditImapFetcher extends GenericEditPanel
         }
 
 
+        if (BT_DISABLED.isSelected() != test_flag(CS_Constants.IMF_DISABLED))
+        {
+            return true;
+        }
+        if (BT_USE_IDLE.isSelected() != test_flag(CS_Constants.IMF_USE_IDLE))
+        {
+            return true;
+        }
+
+        if (CB_CERTIFICATE.isSelected() != test_flag(CS_Constants.IMF_HAS_TLS_CERT))
+        {
+            return true;
+        }
+        if (RB_SSL.isSelected() != test_flag(CS_Constants.IMF_USE_SSL))
+        {
+            return true;
+        }
+        if (RB_TLS_FORCE.isSelected() != test_flag(CS_Constants.IMF_USE_TLS_FORCE))
+        {
+            return true;
+        }
+        if (RB_TLS_IV_AVAIL.isSelected() != test_flag(CS_Constants.IMF_USE_TLS_IF_AVAIL))
+        {
+            return true;
+        }
+
         ImapFetcherOverview.ImapFetcherTypeEntry mte = (ImapFetcherOverview.ImapFetcherTypeEntry)CB_TYPE.getSelectedItem();
         if (mte.type.compareTo( object.getType()) != 0)
                 return true;
@@ -476,6 +851,7 @@ public class EditImapFetcher extends GenericEditPanel
         return new String(pwd);
     }
                         
+    @Override
     protected boolean is_plausible()
     {
 
@@ -524,10 +900,21 @@ public class EditImapFetcher extends GenericEditPanel
             return false;
         }
 
+        if (CB_CERTIFICATE.isSelected())
+        {
+            if (RB_INSECURE.isSelected())
+            {
+                UserMain.errm_ok(UserMain.getString("Zertifikate_werden_nur_sicheren_Verbindungen_verwendet"));
+                return false;
+            }
+        }
+
+
         return true;
     }
 
 
+    @Override
     protected void set_object_props()
     {
         String server1 = TXT_SERVER1.getText();
@@ -535,13 +922,22 @@ public class EditImapFetcher extends GenericEditPanel
         String user = TXT_USER.getText();
         String pwd = get_pwd();
 
-        boolean de = BT_DISABLED.isSelected();
         ImapFetcherOverview.ImapFetcherTypeEntry mte = (ImapFetcherOverview.ImapFetcherTypeEntry)CB_TYPE.getSelectedItem();
         String typ = mte.type;
 
         object.setServer(server1);
         object.setPort(port1);
-        set_object_disabled( de );
+
+        object.setFlags("0");
+        set_flag( BT_DISABLED.isSelected(), CS_Constants.IMF_DISABLED);
+        set_flag( BT_USE_IDLE.isSelected(), CS_Constants.IMF_USE_IDLE);
+        if (RB_TLS_IV_AVAIL.isSelected())
+            set_flag(true, CS_Constants.IMF_USE_TLS_IF_AVAIL);
+        if (RB_TLS_FORCE.isSelected())
+            set_flag(true, CS_Constants.IMF_USE_TLS_FORCE);
+        if (RB_SSL.isSelected())
+            set_flag(true, CS_Constants.IMF_USE_SSL);
+
         object.setDiskArchive( dacm.get_selected_da());
         object.setUsername( user );
         object.setPassword(pwd);

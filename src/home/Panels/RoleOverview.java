@@ -131,7 +131,7 @@ public class RoleOverview extends SQLOverviewDialog implements PropertyChangeLis
     // DECODE DB-STRING TO HUMAN READABLE 
     String get_account_match_descr( String acm, boolean compressed )
     {
-        return RoleFilter.get_nice_filter_text( acm, compressed );
+        return LogicFilter.get_nice_filter_text( acm, compressed );
     }
 
 

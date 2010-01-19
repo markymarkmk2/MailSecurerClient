@@ -12,7 +12,7 @@
 package dimm.home.Panels.MailView;
 
 import com.thoughtworks.xstream.XStream;
-import dimm.home.Panels.RoleFilter;
+import dimm.home.Panels.LogicFilter;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
@@ -55,13 +55,10 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.RowSorter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import sun.misc.Compare;
 
 
 class MailPreviewDlg extends GenericGlossyDlg
@@ -400,7 +397,7 @@ class ConditionCBEntry
 
     static String get_nice_txt( ExprEntry e )
     {
-        return (e.isNeg() ? UserMain.Txt("not") + " " : "") + UserMain.Txt(e.getName()) + " " + RoleFilter.get_op_nice_txt( e.getOperation(), e.getType());
+        return (e.isNeg() ? UserMain.Txt("not") + " " : "") + UserMain.Txt(e.getName()) + " " + LogicFilter.get_op_nice_txt( e.getOperation(), e.getType());
     }
     @Override
     public String toString()
@@ -1650,7 +1647,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             
            
             boolean compressed = true;
-            RoleFilter rf = new RoleFilter(var_names, last_filter, compressed );
+            LogicFilter rf = new LogicFilter(var_names, last_filter, compressed );
 
             GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, rf);
             dlg.setVisible(true);
@@ -1659,7 +1656,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             {
                  last_filter = rf.get_compressed_xml_list_data(compressed);
 
-                 String nice_txt = RoleFilter.get_nice_filter_text( last_filter, compressed );
+                 String nice_txt = LogicFilter.get_nice_filter_text( last_filter, compressed );
                  TXTA_FILTER.setText(nice_txt);
                  TXTA_FILTER.setCaretPosition(0);
                  

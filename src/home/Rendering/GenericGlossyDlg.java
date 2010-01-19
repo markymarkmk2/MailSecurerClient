@@ -49,6 +49,7 @@ public class GenericGlossyDlg extends JDialog
     public void setChildPanel( GlossDialogPanel _child )
     {
         child = _child;
+        child.setDlg(this);
         PN_PANELS.removeAll();
         PN_PANELS.add( child);
         

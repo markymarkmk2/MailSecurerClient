@@ -76,7 +76,7 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="60" y="350" width="190" height="50"/>
+              <AbsoluteConstraints x="60" y="200" width="190" height="50"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -108,7 +108,7 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="260" y="350" width="170" height="50"/>
+              <AbsoluteConstraints x="260" y="200" width="170" height="50"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -140,7 +140,7 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="440" y="350" width="190" height="50"/>
+              <AbsoluteConstraints x="440" y="200" width="190" height="50"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -153,7 +153,7 @@
               <Color blue="c9" green="c9" red="c9" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/dimm/home/images/tr_einstellungen.png"/>
+              <Image iconType="3" name="/dimm/home/images/rollen.png"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="dimm/home/MA_Properties.properties" key="Mandanten" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
@@ -183,7 +183,7 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="60" y="130" width="160" height="50"/>
+              <AbsoluteConstraints x="60" y="80" width="150" height="50"/>
             </Constraint>
           </Constraints>
         </Component>

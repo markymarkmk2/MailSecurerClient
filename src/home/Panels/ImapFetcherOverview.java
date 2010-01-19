@@ -83,7 +83,7 @@ class ImapFetcherTableModel extends OverviewModel
                 return imapfetcher.getServer() + ":" + imapfetcher.getPort();
             case 3:
                 int flags = sqlResult.getInt(rowIndex, "Flags");
-                return new Boolean((flags & ImapFetcherOverview.DISABLED) == ImapFetcherOverview.DISABLED); // DISABLED
+                return new Boolean((flags & CS_Constants.IMF_DISABLED) == CS_Constants.IMF_DISABLED); // DISABLED
             default:
                 return super.getValueAt(rowIndex, columnIndex);
         }
@@ -102,7 +102,7 @@ class ImapFetcherTableModel extends OverviewModel
 public class ImapFetcherOverview extends SQLOverviewDialog implements PropertyChangeListener
 {
     
-    public static final int DISABLED =   0x01;
+    
 
     public class ImapFetcherTypeEntry
     {
@@ -119,6 +119,11 @@ public class ImapFetcherOverview extends SQLOverviewDialog implements PropertyCh
         public String toString()
         {
             return name;
+        }
+
+        String getProtocol()
+        {
+            return "imap";
         }
     }
 
