@@ -122,6 +122,7 @@
                           <Component id="RD_OUTLOOKXPRESS" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="RD_OUTLOOK" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="RD_EML" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="RD_MBOX" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace pref="340" max="32767" attributes="0"/>
                   </Group>
@@ -138,7 +139,9 @@
                       <Component id="RD_OUTLOOK" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="RD_EML" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="269" max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="RD_MBOX" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="243" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -187,6 +190,16 @@
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="dimm/home/MA_Properties.properties" key="EML_Files" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JRadioButton" name="RD_MBOX">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="buttonGroup1"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="dimm/home/MA_Properties.properties" key="MBOX_Files" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>

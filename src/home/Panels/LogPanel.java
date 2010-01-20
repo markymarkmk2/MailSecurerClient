@@ -19,6 +19,7 @@ import dimm.home.ServerConnect.FunctionCallConnect;
 import dimm.home.ServerConnect.InStreamID;
 import dimm.home.ServerConnect.ServerInputStream;
 import dimm.home.UserMain;
+import dimm.home.Utilities.SwingWorker;
 import home.shared.Utilities.ParseToken;
 import java.awt.Color;
 import java.awt.FileDialog;
@@ -95,6 +96,7 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
 
     private Timer timer;
     String fixed_log_type;
+    boolean logdump_active = false;
 
 
     public LogPanel()
@@ -233,10 +235,12 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
                 offset += ret.length() + 1;
                 return ret;
             }
-            else
+            if (ret.startsWith("42:"))
+                            end_was_reached = true;
+         /*   else
             {
-                LOG_TEXT.setText(ret);
-            }
+                //LOG_TEXT.setText(ret);
+            }*/
 
         }
         return null;
@@ -268,8 +272,8 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
             {
                 if (ret.startsWith("42:"))
                             end_was_reached = true;
-                else
-                    LOG_TEXT.setText(ret);
+/*                else
+                    LOG_TEXT.setText(ret);*/
             }
 
         }
@@ -287,6 +291,10 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
 
         String last_top = LOG_TEXT.getText().substring(0, line_len ).trim();
 
+
+        if (line_len == 0)
+            return 0;
+
         long get_line_cnt = 1;
         while(!found_last_top)
         {
@@ -296,7 +304,7 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
 
             // GET LINES UNTIL WE REACH LAST TOP
             String new_top = read_nlines_block( get_line_cnt, local_offset);
-            if (new_top == null)
+            if (new_top == null || new_top.length() == 0)
                 break;
 
             // IS LAST LINE IDENTICAL TO THIS LINE?
@@ -332,6 +340,104 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
 
         return 1;
     }
+    void get_log_dump( final File file )
+    {
+        if (logdump_active)
+            return;
+        logdump_active = true;
+
+
+        SwingWorker log_sw = new SwingWorker() {
+
+            @Override
+            public Object construct()
+            {
+                UserMain.self.show_busy(my_dlg, UserMain.Txt("Creating_Logdump..."));
+
+                run_get_log_dump( file );
+
+                UserMain.self.hide_busy();
+
+                logdump_active = false;
+
+                return null;
+            }
+
+            @Override
+            public boolean finished()
+            {
+                logdump_active = false;
+                return super.finished();
+            }
+
+        };
+
+        log_sw.start();
+    }
+
+    void run_get_log_dump( File file )
+    {
+
+        BufferedOutputStream baos = null;
+        ServerInputStream sis = null;
+
+
+        try
+        {
+            FileOutputStream fos = new FileOutputStream(file);
+            baos = new BufferedOutputStream(fos);
+
+
+            FunctionCallConnect fcc = UserMain.fcc();
+            String ret = fcc.call_abstract_function("dump_log MA:" + UserMain.sqc().get_act_mandant_id(), FunctionCallConnect.LONG_TIMEOUT);
+            if (ret == null || ret.charAt(0) != '0')
+            {
+                UserMain.errm_ok(my_dlg, "DumpMail gave error " + ret);
+                return;
+            }
+            UserMain.self.show_busy(my_dlg, UserMain.Txt("Downloading_Logdump..."));
+
+            String[] l = ret.split(" ");
+            String instream_id = l[1];
+            ParseToken pt = new ParseToken(l[2]);
+            long len = pt.GetLong("LEN:");
+
+            InStreamID id = new InStreamID(instream_id, len);
+
+            sis = new ServerInputStream(fcc.get_sqc(), id);
+            sis.read(baos);
+
+            baos.close();
+            baos = null;
+
+            sis.close();
+            sis = null;
+        }
+        catch (IOException iOException)
+        {
+            UserMain.errm_ok(my_dlg, "Error while reading DumpMail: " + iOException.getLocalizedMessage());
+        }
+        finally
+        {
+            try
+            {
+                if (baos != null)
+                {
+                    baos.close();
+
+                }
+                if (sis != null)
+                {
+                    sis.close();
+
+                }
+            }
+            catch (IOException iOException)
+            {
+            }
+        }
+
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -348,10 +454,12 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         jLabel1 = new javax.swing.JLabel();
         BT_DUMP = new GlossButton();
 
+        CB_LOG_SOURCE.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "default" }));
+
         LOG_PANEL.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         LOG_PANEL.setMinimumSize(new java.awt.Dimension(600, 200));
         LOG_PANEL.setPreferredSize(new java.awt.Dimension(600, 200));
-        LOG_PANEL.setLayout(new java.awt.GridLayout());
+        LOG_PANEL.setLayout(new java.awt.GridLayout(1, 0));
 
         BT_OK.setText(UserMain.getString("OK")); // NOI18N
         BT_OK.addActionListener(new java.awt.event.ActionListener() {
@@ -376,14 +484,14 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(LOG_PANEL, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 395, Short.MAX_VALUE)
+                    .addComponent(LOG_PANEL, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
                         .addComponent(CB_LOG_SOURCE, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(BT_DUMP)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 247, Short.MAX_VALUE)
                         .addComponent(BT_OK)))
                 .addContainerGap())
         );
@@ -391,7 +499,7 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(LOG_PANEL, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
+                .addComponent(LOG_PANEL, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK)
@@ -433,7 +541,6 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
             fd.setFile("logdump.zip");
         }
 
-
         fd.setVisible(true);
 
         String f_name = fd.getFile();
@@ -444,72 +551,7 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
 
         last_dir = last_file.getParentFile();
 
-        if (last_file.exists())
-        {
-            if (!UserMain.errm_ok_cancel(my_dlg, UserMain.Txt("Do_you_want_to_overwrite_this_file")))
-                return;
-        }
-
-
-        BufferedOutputStream baos = null;
-        ServerInputStream sis = null;
-
-
-        try
-        {
-            FileOutputStream fos = new FileOutputStream(last_file);
-            baos = new BufferedOutputStream(fos);
-
-
-            FunctionCallConnect fcc = UserMain.fcc();
-            String ret = fcc.call_abstract_function("show_log CMD:dump");
-            if (ret.charAt(0) != '0')
-            {
-                UserMain.errm_ok(my_dlg, "DumpMail gave error " + ret);
-                return;
-            }
-            String[] l = ret.split(" ");
-            String instream_id = l[1];
-            ParseToken pt = new ParseToken(l[2]);
-            long len = pt.GetLong("LEN:");
-
-            InStreamID id = new InStreamID(instream_id, len);
-
-            sis = new ServerInputStream(fcc.get_sqc(), id);
-            sis.read(baos);
-
-            baos.close();
-            baos = null;
-
-            sis.close();
-            sis = null;
-        }
-        catch (IOException iOException)
-        {
-            UserMain.errm_ok(my_dlg, "Error while reading DumpMail: " + iOException.getLocalizedMessage());
-        }
-        finally
-        {
-            try
-            {
-                if (baos != null)
-                {
-                    baos.close();
-
-                }
-                if (sis != null)
-                {
-                    sis.close();
-
-                }
-            }
-            catch (IOException iOException)
-            {
-            }
-        }
-
-
-
+        get_log_dump( last_file );
 
     }//GEN-LAST:event_BT_DUMPActionPerformed
 
@@ -588,6 +630,9 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
     @Override
     public void actionPerformed(java.awt.event.ActionEvent actionEvent)
     {
+        if (logdump_active)
+            return;
+
         timer.stop();
         update_log();
         timer.restart();

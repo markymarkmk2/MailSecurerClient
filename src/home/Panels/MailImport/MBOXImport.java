@@ -11,7 +11,6 @@ import dimm.home.Utilities.SizeStr;
 import home.shared.CS_Constants;
 import java.awt.Component;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Vector;
 import javax.swing.JCheckBox;
@@ -29,36 +28,6 @@ import javax.swing.tree.TreeCellRenderer;
  *
  * @author mw
  */
-class EMLFilenameFilter implements FilenameFilter
-{
-    static String extension = ".eml";
-    boolean recursive;
-
-    EMLFilenameFilter()
-    {
-        recursive = true;
-    }
-    @Override
-    public boolean accept( File dir, String name )
-    {
-        if (name.toLowerCase().endsWith(extension))
-        {
-            return true;
-        }
-
-        if (recursive)
-        {
-            File fdir = new File( dir, name );
-            if (fdir.isDirectory())
-            {
-                 return true;
-            }
-        }
-
-
-        return false;
-    }
-}
 
 
 
@@ -66,7 +35,7 @@ class EMLFilenameFilter implements FilenameFilter
 
 
 
-class EMLRootNode extends DefaultMutableTreeNode implements SwitchableNode
+class MBOXRootNode extends DefaultMutableTreeNode implements SwitchableNode
 {
     NamePathEntry root;
     boolean is_selected;
@@ -74,23 +43,23 @@ class EMLRootNode extends DefaultMutableTreeNode implements SwitchableNode
     DefaultTreeModel model;
 
     // ABS PATH
-    EMLRootNode( DefaultTreeModel _model, String _path )
+    MBOXRootNode( DefaultTreeModel _model, String _path )
     {
        path = _path;
        File f = new File(path);
        model = _model;
 
-       children = new Vector<EMLFileNode>();
+       children = new Vector<MBOXFileNode>();
 
        if (f.exists() && f.isDirectory())
        {
-            File[] dbx_files = f.listFiles(new EMLFilenameFilter());
+            File[] dbx_files = f.listFiles();
 
             for (int i = 0; i < dbx_files.length; i++)
             {
                 File file = dbx_files[i];
 
-                children.add(new EMLFileNode( model, file ) );
+                children.add(new MBOXFileNode( model, file ) );
             }
        }
        if (this.getChildCount() > 0)
@@ -135,23 +104,23 @@ class EMLRootNode extends DefaultMutableTreeNode implements SwitchableNode
         return false;
     }
 }
-class EMLFileNode  extends FileNode
+class MBOXFileNode  extends FileNode
 {
-    EMLFileNode( DefaultTreeModel _model, File f )
+    MBOXFileNode( DefaultTreeModel _model, File f )
     {
         super(_model, f);
 
-       children = new Vector<EMLFileNode>();
+       children = new Vector<MBOXFileNode>();
 
        if (f.exists() && f.isDirectory())
        {
-            File[] dbx_files = f.listFiles(new EMLFilenameFilter());
+            File[] dbx_files = f.listFiles();
 
             for (int i = 0; i < dbx_files.length; i++)
             {
                 File file = dbx_files[i];
 
-                children.add(new EMLFileNode( model, file ) );
+                children.add(new MBOXFileNode( model, file ) );
             }
        }
        
@@ -163,14 +132,9 @@ class EMLFileNode  extends FileNode
     @Override
     String get_mbox_name()
     {
-        if (node.isDirectory())
-            return node.getName();
+        
+        return node.getName();
 
-        if (node.getName().toLowerCase().endsWith(EMLFilenameFilter.extension))
-        {
-            return node.getName().substring(0, node.getName().length() - EMLFilenameFilter.extension.length());
-        }
-        return "?";
     }
 
     @Override
@@ -179,20 +143,20 @@ class EMLFileNode  extends FileNode
         return node.isFile();
     }
 }
-class EMLTreeModel extends DefaultTreeModel
+class MBOXTreeModel extends DefaultTreeModel
 {
-    EMLTreeModel( )
+    MBOXTreeModel( )
     {
         super(null);
     }
 }
-class EMLTreeCellRenderer implements TreeCellRenderer
+class MBOXTreeCellRenderer implements TreeCellRenderer
 {
 
     JCheckBox jcb;
     JLabel jlb;
 
-    EMLTreeCellRenderer()
+    MBOXTreeCellRenderer()
     {
         jcb = new JCheckBox();
         jlb = new JLabel();
@@ -203,9 +167,9 @@ class EMLTreeCellRenderer implements TreeCellRenderer
     @Override
     public Component getTreeCellRendererComponent( JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus )
     {
-        if (value instanceof EMLRootNode)
+        if (value instanceof MBOXRootNode)
         {
-            EMLRootNode node = (EMLRootNode) value;
+            MBOXRootNode node = (MBOXRootNode) value;
             if (node.root != null)
             {
                 jcb.setText(node.root.name);
@@ -214,9 +178,9 @@ class EMLTreeCellRenderer implements TreeCellRenderer
             }
         }
 
-        if (value instanceof EMLFileNode)
+        if (value instanceof MBOXFileNode)
         {
-            EMLFileNode node = (EMLFileNode) value;
+            MBOXFileNode node = (MBOXFileNode) value;
 
             String text = node.get_mbox_name();
             String len_text = "  (" + new SizeStr( node.node.length() ).toString() + ")";
@@ -234,7 +198,7 @@ class EMLTreeCellRenderer implements TreeCellRenderer
 
 
 
-class EMLProfileManager extends ProfileManager
+class MBOXProfileManager extends ProfileManager
 {
    
     @Override
@@ -250,18 +214,18 @@ class EMLProfileManager extends ProfileManager
     @Override
     String get_type()
     {
-        return CS_Constants.TYPE_EML;
+        return CS_Constants.TYPE_MBOX;
     }
 
     @Override
     void handle_build_tree(String path, JTree tree) throws IOException
     {
-        EMLRootNode node = null;
-        DefaultTreeModel model = new EMLTreeModel();
-        node = new EMLRootNode( model, path );
+        MBOXRootNode node = null;
+        DefaultTreeModel model = new MBOXTreeModel();
+        node = new MBOXRootNode( model, path );
         model.setRoot(node);
         tree.setModel(model);
-        tree.setCellRenderer( new EMLTreeCellRenderer() );
+        tree.setCellRenderer( new MBOXTreeCellRenderer() );
         tree.setRootVisible(true);
     }
 
@@ -270,5 +234,8 @@ class EMLProfileManager extends ProfileManager
     {
         
     }
+
+
+
   
 }

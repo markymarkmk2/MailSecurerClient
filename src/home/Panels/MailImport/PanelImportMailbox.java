@@ -80,6 +80,10 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 {
                     manager = new EMLProfileManager();
                 }
+                if (RD_MBOX.isSelected())
+                {
+                    manager = new MBOXProfileManager();
+                }
 
                 if (manager != null)
                 {
@@ -699,6 +703,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         RD_OUTLOOKXPRESS = new javax.swing.JRadioButton();
         RD_OUTLOOK = new javax.swing.JRadioButton();
         RD_EML = new javax.swing.JRadioButton();
+        RD_MBOX = new javax.swing.JRadioButton();
         PN_THUNDERBIRD = new javax.swing.JPanel();
         LB_PATH = new javax.swing.JLabel();
         TXT_PATH = new javax.swing.JTextField();
@@ -759,6 +764,9 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         buttonGroup1.add(RD_EML);
         RD_EML.setText(UserMain.getString("EML_Files")); // NOI18N
 
+        buttonGroup1.add(RD_MBOX);
+        RD_MBOX.setText(UserMain.getString("MBOX_Files")); // NOI18N
+
         javax.swing.GroupLayout PN_SELECTLayout = new javax.swing.GroupLayout(PN_SELECT);
         PN_SELECT.setLayout(PN_SELECTLayout);
         PN_SELECTLayout.setHorizontalGroup(
@@ -769,7 +777,8 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                     .addComponent(RD_FIREFOX)
                     .addComponent(RD_OUTLOOKXPRESS)
                     .addComponent(RD_OUTLOOK)
-                    .addComponent(RD_EML))
+                    .addComponent(RD_EML)
+                    .addComponent(RD_MBOX))
                 .addContainerGap(340, Short.MAX_VALUE))
         );
         PN_SELECTLayout.setVerticalGroup(
@@ -783,7 +792,9 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 .addComponent(RD_OUTLOOK)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(RD_EML)
-                .addContainerGap(269, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(RD_MBOX)
+                .addContainerGap(243, Short.MAX_VALUE))
         );
 
         TP_PANE.addTab(UserMain.getString("Source_type"), PN_SELECT); // NOI18N
@@ -1062,6 +1073,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
     private javax.swing.JPanel PN_THUNDERBIRD;
     private javax.swing.JRadioButton RD_EML;
     private javax.swing.JRadioButton RD_FIREFOX;
+    private javax.swing.JRadioButton RD_MBOX;
     private javax.swing.JRadioButton RD_OUTLOOK;
     private javax.swing.JRadioButton RD_OUTLOOKXPRESS;
     private javax.swing.JTabbedPane TP_PANE;
