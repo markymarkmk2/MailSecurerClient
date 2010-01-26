@@ -89,7 +89,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="TXT_DOMAINLIST" alignment="0" pref="457" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="LB_DOMAINSUFFX" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="TXT_USERDOMAIN" pref="391" max="32767" attributes="0"/>
                               </Group>
@@ -154,7 +154,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="TXT_USERDOMAIN" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="CB_USER_IS_EMAIL" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="LB_DOMAINSUFFX" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -469,7 +469,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JLabel" name="jLabel3">
+        <Component class="javax.swing.JLabel" name="LB_DOMAINSUFFX">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="dimm/home/MA_Properties.properties" key="Domainsuffix" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>

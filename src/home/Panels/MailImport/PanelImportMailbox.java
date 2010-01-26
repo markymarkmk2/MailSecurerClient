@@ -630,6 +630,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
     {
         initComponents();
 
+        JT_DIR.setModel(new DefaultTreeModel(null));
 
         JT_DIR.setForeground(Main.ui.get_nice_white());
         JT_DIR.setBackground(Main.ui.get_appl_dgray());
