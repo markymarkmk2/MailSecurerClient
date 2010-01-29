@@ -253,7 +253,7 @@ public class RoleOverview extends SQLOverviewDialog implements PropertyChangeLis
         PN_BUTTONS.setOpaque(false);
 
         BT_NEW.setForeground(new java.awt.Color(204, 204, 204));
-        BT_NEW.setText(UserMain.Txt("Neuen_Role_hinzufuegen")); // NOI18N
+        BT_NEW.setText(UserMain.Txt("Neue_Rolle_hinzufuegen")); // NOI18N
         BT_NEW.setActionCommand("        ");
         BT_NEW.setBorder(null);
         BT_NEW.setContentAreaFilled(false);

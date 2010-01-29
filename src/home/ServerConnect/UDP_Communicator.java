@@ -60,7 +60,7 @@ public class UDP_Communicator
         }
         if (answer.indexOf(UNKNOWN_CMD) >= 0)
         {
-            return "Sorry, dieser Befehl wird von der Sonicbox nicht unterst�tzt";
+            return "Sorry, dieser Befehl wird von der Box nicht unterst�tzt";
         }
 
         return answer;
@@ -237,7 +237,7 @@ public class UDP_Communicator
             answer =  "Kommunikation fehlgeschlagen!";
             return false;
         }
-        String magic = "SONICBOX:";
+        String magic = "MAILSECURER:";
         if (answer.length() < magic.length() || answer.substring( 0, magic.length() ).compareTo( magic ) != 0)
         {
             answer =  "Unbekannter Kommunikationspartner!";
@@ -365,7 +365,7 @@ public class UDP_Communicator
 
                     // MULTI DATAGRAM MESSAGE?
                     int follow_frames_idx = result.indexOf(":CONTINUE:");
-                    if (follow_frames_idx > 0 && follow_frames_idx < 20) // MUST BE SONICBOX:ID:CONTINUE:NNNNNN
+                    if (follow_frames_idx > 0 && follow_frames_idx < 20) // MUST BE MAILSECURER:ID:CONTINUE:NNNNNN
                     {
                         long data_cnt = Long.parseLong(result.substring( follow_frames_idx + 10 ));
 

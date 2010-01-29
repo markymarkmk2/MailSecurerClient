@@ -25,7 +25,7 @@ public class OpaqueTextCellRenderer extends JXLabel implements TableCellRenderer
         setOpaque(opaque);
         setForeground(Main.ui.get_nice_white());
         this.setLineWrap(true);
-        this.setVerticalAlignment(TOP);       
+        this.setVerticalAlignment(CENTER);
     }
 
 

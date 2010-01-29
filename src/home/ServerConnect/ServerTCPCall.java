@@ -126,7 +126,7 @@ public class ServerTCPCall extends ServerCall
         }
         if (answer.indexOf(UNKNOWN_CMD) >= 0)
         {
-            return "Sorry, dieser Befehl wird von der Sonicbox nicht unterstützt";
+            return "Dieser Befehl wird von der Box nicht unterstützt";
         }
 
         return answer;
@@ -137,20 +137,33 @@ public class ServerTCPCall extends ServerCall
         boolean ok = false;
         if (a == null || a.length() == 0)
         {
-            answer = "Kommunikation fehlgeschlagen!";
+            answer = "Communication broken";
+            last_err_code = -1;
+            last_err_txt = answer;
             return false;
         }
 
 
         if (a.compareTo("--failed--") == 0)
         {
-            answer = "Kommunikation fehlgeschlagen!";
+            answer = "Communication failed";
+            last_err_code = -2;
+            last_err_txt = answer;
+            return false;
+        }
+        if (a.compareTo("--timeout--") == 0)
+        {
+            answer = "Communication timeout";
+            last_err_code = -2;
+            last_err_txt = answer;
             return false;
         }
 
         if (a.compareTo("UNKNOWN_COMMAND") == 0)
         {
-            answer = "Oha, dieser Befehl wird von der Box nicht unterstützt!";
+            answer = "Unsupported Command";
+            last_err_code = -3;
+            last_err_txt = answer;
             return false;
         }
 

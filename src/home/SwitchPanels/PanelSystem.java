@@ -6,6 +6,7 @@
 package dimm.home.SwitchPanels;
 
 import dimm.home.*;
+import dimm.home.Panels.LicensePanel;
 import dimm.home.Panels.MandantOverview;
 import dimm.home.Rendering.BackgroundTitle;
 import dimm.home.Rendering.FlatBackgroundTitle;
@@ -40,7 +41,7 @@ public class PanelSystem extends SwitchSpringPanel
     void add_titles()
     {
         PN_BUTTONS.add(new FlatBackgroundTitle( UserMain.getString("Mandanten" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 35, getWidth(), 60));
-        PN_BUTTONS.add(new FlatBackgroundTitle( UserMain.getString("Werkzeuge" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 165, getWidth(), 60));
+        PN_BUTTONS.add(new FlatBackgroundTitle( UserMain.getString("Werkzeuge" ) ), new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 155, getWidth(), 60));
     }
 
     @Override
@@ -91,9 +92,7 @@ public class PanelSystem extends SwitchSpringPanel
     private void initComponents() {
 
         PN_BUTTONS = new javax.swing.JPanel();
-        BT_FREE1 = new GhostButton();
-        BT_FREE2 = new GhostButton();
-        BT_FREE3 = new GhostButton();
+        BT_LICENSE = new GhostButton();
         BT_MANDANTEN = new GhostButton();
         PN_HEADER = new javax.swing.JPanel();
 
@@ -102,53 +101,21 @@ public class PanelSystem extends SwitchSpringPanel
         PN_BUTTONS.setOpaque(false);
         PN_BUTTONS.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        BT_FREE1.setFont(new java.awt.Font("Arial", 0, 14));
-        BT_FREE1.setForeground(new java.awt.Color(201, 201, 201));
-        BT_FREE1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/turntable_33x48.png"))); // NOI18N
-        BT_FREE1.setText(UserMain.Txt("???")); // NOI18N
-        BT_FREE1.setToolTipText("");
-        BT_FREE1.setBorderPainted(false);
-        BT_FREE1.setContentAreaFilled(false);
-        BT_FREE1.setFocusPainted(false);
-        BT_FREE1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        BT_FREE1.addActionListener(new java.awt.event.ActionListener() {
+        BT_LICENSE.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_LICENSE.setForeground(new java.awt.Color(201, 201, 201));
+        BT_LICENSE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
+        BT_LICENSE.setText(UserMain.Txt("Lizenzen")); // NOI18N
+        BT_LICENSE.setToolTipText(UserMain.getString("Create_or_replace_your_licenses")); // NOI18N
+        BT_LICENSE.setBorderPainted(false);
+        BT_LICENSE.setContentAreaFilled(false);
+        BT_LICENSE.setFocusPainted(false);
+        BT_LICENSE.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        BT_LICENSE.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_FREE1ActionPerformed(evt);
+                BT_LICENSEActionPerformed(evt);
             }
         });
-        PN_BUTTONS.add(BT_FREE1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, 190, 50));
-
-        BT_FREE2.setFont(new java.awt.Font("Arial", 0, 14));
-        BT_FREE2.setForeground(new java.awt.Color(201, 201, 201));
-        BT_FREE2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_schedule.png"))); // NOI18N
-        BT_FREE2.setText(UserMain.Txt("???")); // NOI18N
-        BT_FREE2.setToolTipText("");
-        BT_FREE2.setBorderPainted(false);
-        BT_FREE2.setContentAreaFilled(false);
-        BT_FREE2.setFocusPainted(false);
-        BT_FREE2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        BT_FREE2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_FREE2ActionPerformed(evt);
-            }
-        });
-        PN_BUTTONS.add(BT_FREE2, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 200, 170, 50));
-
-        BT_FREE3.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        BT_FREE3.setForeground(new java.awt.Color(201, 201, 201));
-        BT_FREE3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
-        BT_FREE3.setText(UserMain.Txt("???")); // NOI18N
-        BT_FREE3.setToolTipText("");
-        BT_FREE3.setBorderPainted(false);
-        BT_FREE3.setContentAreaFilled(false);
-        BT_FREE3.setFocusPainted(false);
-        BT_FREE3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        BT_FREE3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_FREE3ActionPerformed(evt);
-            }
-        });
-        PN_BUTTONS.add(BT_FREE3, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 200, 190, 50));
+        PN_BUTTONS.add(BT_LICENSE, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, 190, 50));
 
         BT_MANDANTEN.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_MANDANTEN.setForeground(new java.awt.Color(201, 201, 201));
@@ -193,71 +160,16 @@ public class PanelSystem extends SwitchSpringPanel
    
 
     
-    private void BT_FREE1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_FREE1ActionPerformed
-    {//GEN-HEADEREND:event_BT_FREE1ActionPerformed
+    private void BT_LICENSEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_LICENSEActionPerformed
+    {//GEN-HEADEREND:event_BT_LICENSEActionPerformed
         // TODO add your handling code here:
-        if (check_selected())
+       if (check_selected())
         {
-            UserMain.self.show_busy("Kuckst Du hier, machst Du stop wenn Du willst", true);
-
-            SwingWorker sw = new SwingWorker()
-            {
-
-                @Override
-                public Object construct()
-                {
-                    boolean aborted = false;
-                   try
-                    {
-                       int i = 50;
-                       while (i-- > 0)
-                       {
-                            Thread.sleep(100);
-                            if (UserMain.self.is_busy_aborted())
-                            {
-                                aborted = true;
-                                UserMain.self.show_busy("Wiedergesehen...");
-                                break;
-                            }
-                       }
-                    }
-                    catch (InterruptedException interruptedException)
-                    {
-                    }
-                   if (aborted)
-                   {
-                       try
-                       {
-                           Thread.sleep(1000);
-                       }
-                       catch (InterruptedException interruptedException)
-                       {
-                       }
-                   }
-
-
-                    UserMain.self.hide_busy();
-                    return null;
-
-                }
-            };
-
-            sw.start();
-         }
+            TimingTargetAdapter tt = make_spring_button_dlg( new LicensePanel(),  get_dlg_pos(),  UserMain.getString("Licenses") );
+            spring_button_action(evt.getSource(), tt);
+        }
         
-
-}//GEN-LAST:event_BT_FREE1ActionPerformed
-
-    private void BT_FREE2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_FREE2ActionPerformed
-    {//GEN-HEADEREND:event_BT_FREE2ActionPerformed
-        // TODO add your handling code here:
-}//GEN-LAST:event_BT_FREE2ActionPerformed
-
-    private void BT_FREE3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_FREE3ActionPerformed
-    {//GEN-HEADEREND:event_BT_FREE3ActionPerformed
-        // TODO add your handling code here:
-        
-}//GEN-LAST:event_BT_FREE3ActionPerformed
+}//GEN-LAST:event_BT_LICENSEActionPerformed
 
     private void BT_MANDANTENActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_MANDANTENActionPerformed
     {//GEN-HEADEREND:event_BT_MANDANTENActionPerformed
@@ -271,9 +183,7 @@ public class PanelSystem extends SwitchSpringPanel
 }//GEN-LAST:event_BT_MANDANTENActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton BT_FREE1;
-    private javax.swing.JButton BT_FREE2;
-    private javax.swing.JButton BT_FREE3;
+    private javax.swing.JButton BT_LICENSE;
     private javax.swing.JButton BT_MANDANTEN;
     private javax.swing.JPanel PN_BUTTONS;
     private javax.swing.JPanel PN_HEADER;

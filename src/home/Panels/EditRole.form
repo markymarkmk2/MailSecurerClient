@@ -107,7 +107,7 @@
         <Component class="javax.swing.JTextField" name="TXT_NAME">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Neuer_Pfad" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Neuer_Rolle" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
