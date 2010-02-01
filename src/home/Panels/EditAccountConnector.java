@@ -70,6 +70,7 @@ public class EditAccountConnector extends GenericEditPanel
                 TXT_PORT.setText(object.getPort().toString());
                 TXT_USERNAME.setText(object.getUsername());
                 TXTP_PWD.setText(object.getPwd());
+                TXTP_PWD1.setText(object.getPwd());
                 BT_DISABLED.setSelected(test_flag(CS_Constants.ACCT_DISABLED));
 
                 if (test_flag( CS_Constants.ACCT_USE_SSL))

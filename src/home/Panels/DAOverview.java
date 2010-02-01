@@ -203,8 +203,6 @@ public class DAOverview extends SQLOverviewDialog
 
         sql.close(cid);
 
-
-
     }
 
 

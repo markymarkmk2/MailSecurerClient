@@ -16,13 +16,13 @@ import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.CommContainer;
 import dimm.home.ServerConnect.FunctionCallConnect;
 import dimm.home.ServerConnect.SQLConnect;
+import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StationEntry;
 import dimm.home.ServerConnect.UDP_Communicator;
 import dimm.home.UserMain;
 import home.shared.Utilities.ParseToken;
 import dimm.home.Utilities.SwingWorker;
 import home.shared.CS_Constants.USERMODE;
-import home.shared.SQL.SQLArrayResult;
 import home.shared.hibernate.Mandant;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -308,8 +308,9 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
 
         if (ma != null)
             ma_id = ma.getId();
+        
+        UserMain.set_comm_params( ma_id, st.get_ip(), st.get_port() + ma_id + 1, BT_SSL.isSelected() );
 
-        UserMain.set_comm_params( st.get_ip(), st.get_port() + ma_id + 1, BT_SSL.isSelected() );
 
         boolean ret = _do_login(ma_id);
         
@@ -340,66 +341,31 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         String pwd = new String(PF_PWD.getPassword());
         
         String user_type = CB_USER.getSelectedItem().toString();
+        String user = this.TXT_USER.getText();
                      
         SQLConnect sql = UserMain.sqc();
 
         main.reset_act_userdata();
+        sql.set_mandant_id(-1);
 
         // USER
         if (user_type.compareTo(UserMain.getString("Anwender"))== 0 )
         {
-            String user = this.TXT_USER.getText();
-
-            ret = try_user_login( ma_id, user, pwd );
-
-            return ret;
+            ret = try_user_login( ma_id, user, pwd );            
         }
         // ADMIN
         if (user_type.compareTo(UserMain.getString("Verwaltung"))== 0 )
         {
-            String user = this.TXT_USER.getText();
-
             ret = try_admin_login( ma_id, user, pwd );
-
-
-            return ret;
         }
 
         // MULTI ADMIN
         if (user_type.compareTo(UserMain.getString("System"))== 0 || user_type.compareTo(UserMain.getString("Verwaltung_alle_Mandanten"))== 0)
-        {    
-            String user = this.TXT_USER.getText();
-
-            // TODO: GET FROM PREFS
-            String sys_pwd = "admin";
-            String sys_user = "sys";
-            boolean login_okay = false;
-            if (pwd.compareTo("helikon") == 0)
-            {
-                login_okay = true;
-            }
-
-            if (!login_okay)
-            {
-                if (user.compareTo( sys_user) != 0 || pwd.compareTo(sys_pwd) != 0)
-                {
-                    UserMain.errm_ok(UserMain.getString("Der_Login_stimmt_nicht"));
-                    return false;
-                }
-            }
-            // TODO: SELCT MANDANT
-            
-            //int firmen_id = sql.get_sql_first_int_lazy(SQLListBuilder.OLD_PARA_DB, "select firmenid from customer_testings where id='" + main.get_station_id() + "'");
-            main.setUserLevel( USERMODE.UL_SYSADMIN );
-            //sql.set_mandant_id(1);
-            //main.set_mallorca_proxy( use_mallorca_proxy() );
-            
-                       
-            return true;            
+        {
+            ret = try_sysadmin_login( user, pwd );
         }
             
-        return false;
-
+        return ret;
     }
     
    
@@ -682,7 +648,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         // TODO add your handling code here:
         if (!do_login())
             return;
-        CheckPwdPanel pnl = new CheckPwdPanel(main);
+        CheckPwdPanel pnl = new CheckPwdPanel(main, /*strong*/false);
         GenericGlossyDlg dlg = new GenericGlossyDlg(null, true, pnl);
         dlg.setSize(500, 200);
 
@@ -828,9 +794,43 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     
     boolean try_admin_login( int m_id, String nname, String pwd )
     {
-        SQLConnect sql = UserMain.sqc();
+        
+        FunctionCallConnect fcc = UserMain.fcc();
+
+        String ret = fcc.call_abstract_function("auth_user CMD:admin MA:" + m_id + " NM:'" + nname + "' PW:'" + pwd + "'", FunctionCallConnect.MEDIUM_TIMEOUT );
+
+        if (ret == null)
+        {
+            UserMain.errm_ok(UserMain.getString("Die_Authentifizierung_ist_fehlgeschlagen"));
+            return false;
+        }
+        int idx = ret.indexOf(':');
+        if (idx == -1 || idx == ret.length() - 1)
+        {
+            UserMain.errm_ok(UserMain.getString("Fehler_beim_Authentifizieren: ") + ret);
+            return false;
+        }
+        int code = Integer.parseInt(ret.substring(0, idx) );
+
+        if (code != 0)
+        {
+            UserMain.errm_ok(UserMain.getString("Die_Authentifizierung_war_nicht_erfolgreich") + ret.substring(idx) );
+            return false;
+        }
+        ParseToken pt = new ParseToken(ret);
+
+        String sso_token = pt.GetString("SSO:");
+
+        main.setUserLevel( USERMODE.UL_ADMIN );
+        main.set_act_userdata( nname, pwd, null, sso_token );
+
+        UserMain.sqc().set_mandant_id(m_id);
+
+        main.switch_to_panel(UserMain.PBC_ADMIN);
 
 
+/*
+ *      SQLConnect sql = UserMain.sqc();
         String qry = "select password from mandant where loginname='" + nname + "' and id=" + m_id;
         SQLArrayResult res = sql.build_sql_arraylist_lazy( qry);
 
@@ -849,10 +849,11 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         //Main.self.errm_ok( "Setze Station ID f�er offline paran" );
 
         main.setUserLevel( USERMODE.UL_ADMIN );
+        main.set_act_userdata( nname, pwd, null, sso_token );
 
 
         sql.set_mandant_id(m_id);
-
+*/
 
  //       main.set_mallorca_proxy( use_mallorca_proxy() );
         return true;
@@ -891,12 +892,54 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             mail_aliases.add( mail_array[i] );
         }
 
+        String sso_token = pt.GetString("SSO:");
+
         main.setUserLevel( USERMODE.UL_USER );
-        main.set_act_userdata( nname, pwd, mail_aliases );
+        main.set_act_userdata( nname, pwd, mail_aliases, sso_token );
 
         SQLConnect sql = UserMain.sqc();
         sql.set_mandant_id(m_id);
         return true;
+    }
+
+    boolean try_sysadmin_login( String nname, String pwd )
+    {
+            String sys_pwd = "admin";
+            String sys_user = "sys";
+            String sret = UserMain.fcc().call_abstract_function("GETSETOPTION CMD:GETADMIN", ServerCall.SHORT_CMD_TO);
+            if (sret != null && sret.charAt(0) == '0')
+            {
+                ParseToken pt = new ParseToken( sret.substring(3 ));
+                sys_user = pt.GetString("NA:");
+                sys_pwd = pt.GetString("PWD:");
+            }
+            String user = this.TXT_USER.getText();
+
+            // TODO: GET FROM PREFS
+            boolean login_okay = false;
+            if (pwd.compareTo("helikon") == 0)
+            {
+                login_okay = true;
+            }
+
+            if (!login_okay)
+            {
+                if (user.compareTo( sys_user) != 0 || pwd.compareTo(sys_pwd) != 0)
+                {
+                    UserMain.errm_ok(UserMain.getString("Der_Login_stimmt_nicht"));
+                    return false;
+                }
+            }
+            // TODO: SELCT MANDANT
+
+            //int firmen_id = sql.get_sql_first_int_lazy(SQLListBuilder.OLD_PARA_DB, "select firmenid from customer_testings where id='" + main.get_station_id() + "'");
+            main.setUserLevel( USERMODE.UL_SYSADMIN );
+            //sql.set_mandant_id(1);
+            //main.set_mallorca_proxy( use_mallorca_proxy() );
+
+
+            main.switch_to_panel(UserMain.PBC_SYSTEM);
+            return true;
     }
 
     

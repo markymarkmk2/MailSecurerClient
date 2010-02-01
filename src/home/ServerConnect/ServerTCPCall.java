@@ -10,13 +10,13 @@ import home.shared.hibernate.DiskSpace;
 import home.shared.hibernate.Mandant;
 import com.thoughtworks.xstream.XStream;
 
+import dimm.home.UserMain;
 import home.shared.CS_Constants;
 import home.shared.SQL.SQLArrayResult;
 import home.shared.hibernate.AccountConnector;
 import home.shared.hibernate.Role;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -614,6 +614,13 @@ public class ServerTCPCall extends ServerCall
 
             sb.append(stream_len);
         }
+        int sso_len = 0;
+        String sso_token = UserMain.self.get_act_sso_token();
+        if (sso_token != null && sso_token.length() > 0)
+        {
+            sso_token = "SSO:" + sso_token + "|";
+            sso_len = sso_token.length();
+        }
 
         sb.append(" PLEN:");
         int opt_len = 0;
@@ -630,7 +637,7 @@ public class ServerTCPCall extends ServerCall
             add_data_len += add_data.length;
         }
 
-        sb.append((opt_len + add_data_len));
+        sb.append(( sso_len + opt_len + add_data_len));
 
         // PAD FIRST BLOCK TO 32 BYTE
         while (sb.length() < TCP_LEN)
@@ -651,7 +658,11 @@ public class ServerTCPCall extends ServerCall
 
         sock_os.write(data, 0, TCP_LEN);
 
-        // AND PUT OPT DATA IN NEXT BLOCK
+        // AND PUT SSO_TOKEN, OPT_DATA AND ADD_DATA IN NEXT BLOCK
+        if (sso_len > 0)
+        {
+            sock_os.write(sso_token.getBytes());
+        }
         if (opt_len > 0)
         {
             sock_os.write(opt_data);
@@ -823,7 +834,7 @@ public class ServerTCPCall extends ServerCall
             }
             last_err_code = retcode;
         }
-        catch (NumberFormatException numberFormatException)
+        catch (Exception numberFormatException)
         {
             last_ex = numberFormatException;
         }

@@ -8,12 +8,11 @@ package dimm.home.SwitchPanels;
 import dimm.home.*;
 import dimm.home.Panels.LicensePanel;
 import dimm.home.Panels.MandantOverview;
-import dimm.home.Rendering.BackgroundTitle;
+import dimm.home.Panels.SetAdminLoginPanel;
 import dimm.home.Rendering.FlatBackgroundTitle;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
 import dimm.home.Rendering.TimingTargetAdapter;
-import dimm.home.Utilities.SwingWorker;
 import java.awt.Dimension;
 import java.awt.Point;
 import org.jdesktop.fuse.ResourceInjector;
@@ -92,8 +91,9 @@ public class PanelSystem extends SwitchSpringPanel
     private void initComponents() {
 
         PN_BUTTONS = new javax.swing.JPanel();
-        BT_LICENSE = new GhostButton();
+        BT_SET_ADMIN_LOGIN = new GhostButton();
         BT_MANDANTEN = new GhostButton();
+        BT_LICENSE = new GhostButton();
         PN_HEADER = new javax.swing.JPanel();
 
         setOpaque(false);
@@ -101,23 +101,23 @@ public class PanelSystem extends SwitchSpringPanel
         PN_BUTTONS.setOpaque(false);
         PN_BUTTONS.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        BT_LICENSE.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        BT_LICENSE.setForeground(new java.awt.Color(201, 201, 201));
-        BT_LICENSE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
-        BT_LICENSE.setText(UserMain.Txt("Lizenzen")); // NOI18N
-        BT_LICENSE.setToolTipText(UserMain.getString("Create_or_replace_your_licenses")); // NOI18N
-        BT_LICENSE.setBorderPainted(false);
-        BT_LICENSE.setContentAreaFilled(false);
-        BT_LICENSE.setFocusPainted(false);
-        BT_LICENSE.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        BT_LICENSE.addActionListener(new java.awt.event.ActionListener() {
+        BT_SET_ADMIN_LOGIN.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_SET_ADMIN_LOGIN.setForeground(new java.awt.Color(201, 201, 201));
+        BT_SET_ADMIN_LOGIN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/login-register.png"))); // NOI18N
+        BT_SET_ADMIN_LOGIN.setText(UserMain.Txt("Lizenzen")); // NOI18N
+        BT_SET_ADMIN_LOGIN.setToolTipText(UserMain.getString("Create_or_replace_your_licenses")); // NOI18N
+        BT_SET_ADMIN_LOGIN.setBorderPainted(false);
+        BT_SET_ADMIN_LOGIN.setContentAreaFilled(false);
+        BT_SET_ADMIN_LOGIN.setFocusPainted(false);
+        BT_SET_ADMIN_LOGIN.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        BT_SET_ADMIN_LOGIN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_LICENSEActionPerformed(evt);
+                BT_SET_ADMIN_LOGINActionPerformed(evt);
             }
         });
-        PN_BUTTONS.add(BT_LICENSE, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, 190, 50));
+        PN_BUTTONS.add(BT_SET_ADMIN_LOGIN, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 200, 190, 50));
 
-        BT_MANDANTEN.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_MANDANTEN.setFont(new java.awt.Font("Arial", 0, 14));
         BT_MANDANTEN.setForeground(new java.awt.Color(201, 201, 201));
         BT_MANDANTEN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/rollen.png"))); // NOI18N
         BT_MANDANTEN.setText(UserMain.Txt("Mandanten")); // NOI18N
@@ -135,6 +135,22 @@ public class PanelSystem extends SwitchSpringPanel
             }
         });
         PN_BUTTONS.add(BT_MANDANTEN, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 80, 150, 50));
+
+        BT_LICENSE.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_LICENSE.setForeground(new java.awt.Color(201, 201, 201));
+        BT_LICENSE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
+        BT_LICENSE.setText(UserMain.Txt("Lizenzen")); // NOI18N
+        BT_LICENSE.setToolTipText(UserMain.getString("Create_or_replace_your_licenses")); // NOI18N
+        BT_LICENSE.setBorderPainted(false);
+        BT_LICENSE.setContentAreaFilled(false);
+        BT_LICENSE.setFocusPainted(false);
+        BT_LICENSE.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        BT_LICENSE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_LICENSEActionPerformed(evt);
+            }
+        });
+        PN_BUTTONS.add(BT_LICENSE, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, 190, 50));
 
         PN_HEADER.setOpaque(false);
         PN_HEADER.setLayout(new javax.swing.BoxLayout(PN_HEADER, javax.swing.BoxLayout.LINE_AXIS));
@@ -160,16 +176,16 @@ public class PanelSystem extends SwitchSpringPanel
    
 
     
-    private void BT_LICENSEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_LICENSEActionPerformed
-    {//GEN-HEADEREND:event_BT_LICENSEActionPerformed
+    private void BT_SET_ADMIN_LOGINActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_SET_ADMIN_LOGINActionPerformed
+    {//GEN-HEADEREND:event_BT_SET_ADMIN_LOGINActionPerformed
         // TODO add your handling code here:
        if (check_selected())
         {
-            TimingTargetAdapter tt = make_spring_button_dlg( new LicensePanel(),  get_dlg_pos(),  UserMain.getString("Licenses") );
+            TimingTargetAdapter tt = make_spring_button_dlg( new SetAdminLoginPanel(),  get_dlg_pos(),  UserMain.getString("Sysadmin_login") );
             spring_button_action(evt.getSource(), tt);
         }
         
-}//GEN-LAST:event_BT_LICENSEActionPerformed
+}//GEN-LAST:event_BT_SET_ADMIN_LOGINActionPerformed
 
     private void BT_MANDANTENActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_MANDANTENActionPerformed
     {//GEN-HEADEREND:event_BT_MANDANTENActionPerformed
@@ -182,9 +198,21 @@ public class PanelSystem extends SwitchSpringPanel
 
 }//GEN-LAST:event_BT_MANDANTENActionPerformed
 
+    private void BT_LICENSEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_LICENSEActionPerformed
+    {//GEN-HEADEREND:event_BT_LICENSEActionPerformed
+        // TODO add your handling code here:
+       if (check_selected())
+        {
+            TimingTargetAdapter tt = make_spring_button_dlg( new LicensePanel(),  get_dlg_pos(),  UserMain.getString("Licenses") );
+            spring_button_action(evt.getSource(), tt);
+        }
+
+    }//GEN-LAST:event_BT_LICENSEActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_LICENSE;
     private javax.swing.JButton BT_MANDANTEN;
+    private javax.swing.JButton BT_SET_ADMIN_LOGIN;
     private javax.swing.JPanel PN_BUTTONS;
     private javax.swing.JPanel PN_HEADER;
     // End of variables declaration//GEN-END:variables

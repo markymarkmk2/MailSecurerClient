@@ -8,7 +8,9 @@ package dimm.home;
 
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
+import home.shared.Utilities.Validator;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 
 /**
  
@@ -18,13 +20,15 @@ public class CheckPwdPanel extends GlossDialogPanel
 {
     UserMain main;
     private boolean  okay;
+    private boolean strong;
     
     /** Creates new form LoginPanel */
-    public CheckPwdPanel(UserMain _main)
+    public CheckPwdPanel(UserMain _main, boolean _strong)
     {
         initComponents();
         main = _main;
         okay = false;
+        strong = _strong;
     }
     
     /** This method is called from within the constructor to
@@ -116,26 +120,10 @@ public class CheckPwdPanel extends GlossDialogPanel
     {//GEN-HEADEREND:event_BT_OKActionPerformed
         // TODO add your handling code here:
         String pwd = new String(PF_PWD.getPassword());
-        if (pwd.length() == 0)
-        {
-            UserMain.errm_ok(UserMain.getString("Bitte_geben_Sie_ein_Passwort_ein"));
-            return;
-        }
         String pwd1 = new String(PF_PWD1.getPassword());
-        
 
-        if (pwd.compareTo(pwd1) != 0)
-        {
-            UserMain.errm_ok(UserMain.getString("Die_Passworte_stimmen_nicht_ueberein,_bitte_noch_einmal_versuchen"));
+        if (!check_passwords( my_dlg, pwd, pwd1, strong))
             return;
-        }
-        
-        if (pwd.length() < 4)
-        {
-            UserMain.errm_ok(UserMain.getString("Sorry,_das_Passwort_muss_mindestens_4_Zeichen_lang_sein"));
-            return;
-        }
-            
         
         setOkay(true);
         this.setVisible(false);
@@ -179,6 +167,54 @@ public class CheckPwdPanel extends GlossDialogPanel
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
+
+
+    public static boolean check_passwords( JDialog dlg, String pwd, String pwd1, boolean strong)
+    {
+
+        if (pwd.length() == 0)
+        {
+            UserMain.errm_ok(UserMain.getString("Bitte_geben_Sie_ein_Passwort_ein"));
+            return false;
+        }
+
+
+        if (pwd.compareTo(pwd1) != 0)
+        {
+            UserMain.errm_ok(dlg, UserMain.getString("Die_Passworte_stimmen_nicht_ueberein,_bitte_noch_einmal_versuchen"));
+            return false;
+        }
+
+        if (!strong)
+        {
+            if (pwd.length() < 4)
+            {
+                UserMain.errm_ok(dlg, UserMain.getString("Sorry,_das_Passwort_muss_mindestens_4_Zeichen_lang_sein"));
+                return false;
+            }
+        }
+        else
+        {
+            StringBuffer sb = new StringBuffer();
+            if (!Validator.is_valid_strong_pwd(pwd, sb ))
+            {
+                StringBuffer msg = new StringBuffer(UserMain.getString("Das_Passwort_ist_ungültig" + ":\n") );
+
+                if (sb.toString().contains(Validator.PWD_TOO_SHORT))
+                    msg.append(UserMain.getString(Validator.PWD_TOO_SHORT) + "\n");
+                if (sb.toString().contains(Validator.PWD_NO_DIGITS))
+                    msg.append(UserMain.getString(Validator.PWD_NO_DIGITS) + "\n");
+                if (sb.toString().contains(Validator.PWD_NO_LETTERS))
+                    msg.append(UserMain.getString(Validator.PWD_NO_LETTERS) + "\n");
+                if (sb.toString().contains(Validator.PWD_NO_SPECIALS))
+                    msg.append(UserMain.getString(Validator.PWD_NO_SPECIALS) + " \"" + Validator.PWD_SPECIAL_CHARS + "\"");
+
+                UserMain.errm_ok(dlg, msg.toString());
+                return false;
+            }
+        }
+        return true;
+    }
 
     @Override
     public JButton get_default_button()

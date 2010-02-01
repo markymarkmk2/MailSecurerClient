@@ -35,8 +35,8 @@ class MandantTableModel extends OverviewModel
     {
         super( _main, _dlg );
 
-        String[] _col_names = {"Id",UserMain.getString("Name"), UserMain.getString("Lizenz"), UserMain.getString("IMAP"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
-        Class[] _col_classes = {String.class,  String.class,  String.class,  Boolean.class,  Boolean.class, JButton.class, JButton.class};
+        String[] _col_names = {"Id",UserMain.getString("Name"), /*UserMain.getString("Lizenz"),*/ UserMain.getString("IMAP"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
+        Class[] _col_classes = {String.class,  String.class,  /*String.class, */ Boolean.class,  Boolean.class, JButton.class, JButton.class};
         set_columns( _col_names, _col_classes );
 
     }
@@ -48,7 +48,7 @@ class MandantTableModel extends OverviewModel
         return qry;
     }
 
-    String get_license_str( String type)
+ /*   String get_license_str( String type)
     {
         MandantOverview mo_dlg = (MandantOverview)dlg;
 
@@ -63,7 +63,7 @@ class MandantTableModel extends OverviewModel
         return "unknown";
     }
 
-
+*/
     @Override
     public Object getValueAt(int rowIndex, int columnIndex)
     {
@@ -79,11 +79,11 @@ class MandantTableModel extends OverviewModel
                 return mandant.getId(); // ID
             case 1:
                 return mandant.getName();
+            /*case 2:
+                return get_license_str( mandant.getLicense());*/
             case 2:
-                return get_license_str( mandant.getLicense());
-            case 3:
                 return new Boolean(mandant.getImap_port() != 0);
-            case 4:
+            case 3:
                 int flags = sqlResult.getInt(rowIndex, "Flags");
                 return new Boolean((flags & MandantOverview.DISABLED) == MandantOverview.DISABLED); // DISABLED
             default:
@@ -135,18 +135,6 @@ public class MandantOverview extends SQLOverviewDialog implements PropertyChange
         }
     }
 
-    MandantLicenseEntry[] ml_entry_list =
-    {
-        new MandantLicenseEntry("Aldi","Aldi"),
-        new MandantLicenseEntry("Lidl","Lidl"),
-        new MandantLicenseEntry("Edeka","Edeka"),
-        new MandantLicenseEntry("Tante Emma","Tante Emma"),
-        new MandantLicenseEntry("Tiffany","Tiffany"),
-    };
-    public MandantLicenseEntry[] get_ml_entry_list()
-    {
-        return ml_entry_list;
-    }
 
 
 

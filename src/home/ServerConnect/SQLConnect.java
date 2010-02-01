@@ -240,8 +240,9 @@ public class SQLConnect extends Connect implements SQLObjectGetter
     
 
 
-    public void init_structs()
-    {        
+    public void init_structs(int _mandant_id)
+    {
+        mandant_id = _mandant_id;
         for (int i = 0; i < sql_res_list.size(); i++)
         {
             SQLListContainer slc = sql_res_list.get(i);
@@ -342,29 +343,32 @@ public class SQLConnect extends Connect implements SQLObjectGetter
 
     public synchronized boolean set_mandant_id( int _mandant_id )
     {
-        mandant_id = -1;
+        mandant_id = _mandant_id;
+        if (mandant_id == -1)
+            return false;
 
-        ConnectionID c = sqc.open("");
+      /*  ConnectionID c = sqc.open("");
         if (c == null)
         {
             UserMain.errm_ok( UserMain.Txt("Cannot_connect_to_database"));
             return false;
         }
-
+*/
         SQLListContainer<Mandant> slc = get_sql_list_container(Mandant.class);
         slc.fill(this,mandant_id);
+        
         for (int i = 0; i < slc.list.size(); i++)
         {
             Mandant mandant = slc.list.get(i);
             if (mandant.getId() == _mandant_id)
             {
                 mandant_id = _mandant_id;
-                init_structs();
+                init_structs(mandant_id);
                 return true;
             }
         }
     
-        sqc.close(c);
+  //      sqc.close(c);
         return false;
     }
 

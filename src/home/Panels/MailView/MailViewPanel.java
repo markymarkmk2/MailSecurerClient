@@ -704,13 +704,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         table.getColumnModel().getColumn(MailTableModel.DATE_COL).setCellRenderer( new UnixTimeCellRenderer() );
         table.getColumnModel().getColumn(MailTableModel.SIZE_COL).setCellRenderer( new SizeStrCellRenderer() );
 
-        CB_FIELD.removeAllItems();
-        CB_FIELD.addItem( new FieldComboEntry(CS_Constants.FLD_BODY));
-        CB_FIELD.addItem( new FieldComboEntry(CS_Constants.FLD_ATTACHMENT));
-        CB_FIELD.addItem( new FieldComboEntry(CS_Constants.FLD_SUBJECT));
-        
-
-        CB_FIELD.setSelectedIndex(0);
+       
 
 
         simple_search_table = new GlossTable();
@@ -776,7 +770,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
 
         return entries;
     }
-    void search_mail()
+  /*  void search_mail()
     {
 
 
@@ -792,7 +786,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
  
 
         fill_model_with_search( cmd );
-    }
+    }*/
 
     void fill_model_with_search( String cmd )
     {
@@ -1243,14 +1237,6 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         TXTA_FILTER = new javax.swing.JTextArea();
-        PN_ADMIN = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        TXT_SEARCH = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        CB_FIELD = new javax.swing.JComboBox();
-        jButton1 = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
-        TXT_MAIL = new javax.swing.JTextField();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -1410,80 +1396,6 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
 
         TBP_SEARCH.addTab(UserMain.getString("Complex_Search"), PN_COMPLEX); // NOI18N
 
-        PN_ADMIN.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                PN_ADMINFocusGained(evt);
-            }
-        });
-
-        jLabel2.setText(UserMain.getString("Filter")); // NOI18N
-
-        TXT_SEARCH.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TXT_SEARCHActionPerformed(evt);
-            }
-        });
-
-        jLabel1.setText(UserMain.getString("Suche")); // NOI18N
-
-        CB_FIELD.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_browse.png"))); // NOI18N
-        jButton1.setIconTextGap(0);
-        jButton1.setInheritsPopupMenu(true);
-        jButton1.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        jLabel3.setText("Mailadresse");
-
-        javax.swing.GroupLayout PN_ADMINLayout = new javax.swing.GroupLayout(PN_ADMIN);
-        PN_ADMIN.setLayout(PN_ADMINLayout);
-        PN_ADMINLayout.setHorizontalGroup(
-            PN_ADMINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(PN_ADMINLayout.createSequentialGroup()
-                .addGroup(PN_ADMINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(PN_ADMINLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel3))
-                    .addGroup(PN_ADMINLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jLabel2)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(PN_ADMINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TXT_SEARCH, javax.swing.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE)
-                    .addComponent(TXT_MAIL, javax.swing.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(CB_FIELD, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton1)
-                .addContainerGap())
-        );
-        PN_ADMINLayout.setVerticalGroup(
-            PN_ADMINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(PN_ADMINLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(PN_ADMINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(PN_ADMINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(TXT_SEARCH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(CB_FIELD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel2)
-                        .addComponent(jLabel1))
-                    .addComponent(jButton1))
-                .addGap(18, 18, 18)
-                .addGroup(PN_ADMINLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(TXT_MAIL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(91, Short.MAX_VALUE))
-        );
-
-        TBP_SEARCH.addTab(UserMain.getString("Admin_Search"), PN_ADMIN); // NOI18N
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -1533,12 +1445,6 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
-    {//GEN-HEADEREND:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        search_mail();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     private void BT_CLOSEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_CLOSEActionPerformed
     {//GEN-HEADEREND:event_BT_CLOSEActionPerformed
         // TODO add your handling code here:
@@ -1554,13 +1460,6 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
 
         UserMain.close_search();
     }//GEN-LAST:event_BT_CLOSEActionPerformed
-
-    private void TXT_SEARCHActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_TXT_SEARCHActionPerformed
-    {//GEN-HEADEREND:event_TXT_SEARCHActionPerformed
-        // TODO add your handling code here:
-        search_mail();
-
-    }//GEN-LAST:event_TXT_SEARCHActionPerformed
 
 
     private void BT_EXPORTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_EXPORTActionPerformed
@@ -1699,12 +1598,6 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
 
     }//GEN-LAST:event_PN_COMPLEXFocusGained
 
-    private void PN_ADMINFocusGained(java.awt.event.FocusEvent evt)//GEN-FIRST:event_PN_ADMINFocusGained
-    {//GEN-HEADEREND:event_PN_ADMINFocusGained
-        // TODO add your handling code here:
-        search_mode = ADMIN_SEARCH;
-    }//GEN-LAST:event_PN_ADMINFocusGained
-
     private void BT_ADDActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_ADDActionPerformed
     {//GEN-HEADEREND:event_BT_ADDActionPerformed
         // TODO add your handling code here:
@@ -1746,20 +1639,12 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     private javax.swing.JButton BT_SIMPLESEARCH;
     private javax.swing.JButton BT_TOGGLE_SELECTION;
     private javax.swing.JComboBox CB_ENTRIES;
-    private javax.swing.JComboBox CB_FIELD;
-    private javax.swing.JPanel PN_ADMIN;
     private javax.swing.JPanel PN_COMPLEX;
     private javax.swing.JPanel PN_SIMPLE;
     private javax.swing.JScrollPane SCP_LIST;
     private javax.swing.JScrollPane SCP_TABLE;
     private javax.swing.JTabbedPane TBP_SEARCH;
     private javax.swing.JTextArea TXTA_FILTER;
-    private javax.swing.JTextField TXT_MAIL;
-    private javax.swing.JTextField TXT_SEARCH;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;

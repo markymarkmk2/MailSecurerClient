@@ -478,13 +478,13 @@ public class UserMain extends javax.swing.JFrame
         this.repaint();
         
     }
-    public static void set_comm_params( String ip, int port, boolean ssl )
+    public static void set_comm_params( int mandant_id, String ip, int port, boolean ssl )
     {
         if (sqc != null)
             sqc.close();
 
         sqc = new SQLConnect( ip, port, ssl);
-        sqc.init_structs();
+        sqc.init_structs(mandant_id);
 
         fcc = new FunctionCallConnect(ip, port, ssl);
     }
@@ -546,7 +546,7 @@ public class UserMain extends javax.swing.JFrame
 
 
 
-    private void switch_to_panel( int id)
+    public void switch_to_panel( int id)
     {
         navPanel.switch_to_panel( id);
         this.repaint();
@@ -1023,7 +1023,7 @@ public class UserMain extends javax.swing.JFrame
 
     boolean force_mandant_id( int parseInt )
     {
-        sqc.init_structs();
+        sqc.init_structs(parseInt);
         boolean ret = set_mandant_id(parseInt);
         if (ret)
         {
@@ -1041,19 +1041,23 @@ public class UserMain extends javax.swing.JFrame
     String act_name;
     String act_pwd;
     ArrayList<String> act_mail_aliases;
+    String act_sso_token;
 
-    public void set_act_userdata( String nname, String pwd, ArrayList<String> mail_aliases )
+    public void set_act_userdata( String nname, String pwd, ArrayList<String> mail_aliases, String _sso_token )
     {
         act_name = nname;
         act_pwd = pwd;
         act_mail_aliases = mail_aliases;
+        act_sso_token = _sso_token;
     }
     public void reset_act_userdata( )
     {
         act_name = null;
         act_pwd = null;
         act_mail_aliases = null;
+        act_sso_token = null;
     }
+
     public ArrayList<String> get_act_mailaliases()
     {
         return act_mail_aliases;
@@ -1065,6 +1069,10 @@ public class UserMain extends javax.swing.JFrame
     public String get_act_pwd()
     {
         return act_pwd;
+    }
+    public String get_act_sso_token()
+    {
+        return act_sso_token;
     }
 
     public boolean is_sysadmin()
