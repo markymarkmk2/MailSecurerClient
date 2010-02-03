@@ -115,6 +115,8 @@ public class EditAccountConnector extends GenericEditPanel
                         break;
                     }
                 }
+                CB_TYPEActionPerformed(null);
+                
                 TXT_DOMAINLIST.setText(object.getDomainlist());
 
                 exclude_filter_save = object.getExcludefilter();
@@ -139,9 +141,9 @@ public class EditAccountConnector extends GenericEditPanel
             TXT_PORT.setText( Integer.toString( get_dflt_port(CS_Constants.get_ac(0).getType(), false) ) );
             RB_INSECURE.setSelected(true);
             CB_CERTIFICATE.setSelected(false);
+            CB_TYPE.setSelectedIndex(0);
+            CB_TYPEActionPerformed(null);
         }
-
-
     }
 
     public static int get_dflt_port( String type, boolean secure )
@@ -165,7 +167,7 @@ public class EditAccountConnector extends GenericEditPanel
     }
     boolean needs_user_auth(String type)
     {
-        return (type.compareTo("ldap") != 0 && type.compareTo("ad") != 0);
+        return (type.compareTo("ldap") != 0 && type.compareTo("ad") != 0 && type.compareTo("dbs") != 0 );
     }
 
     /** This method is called from within the constructor to
@@ -881,6 +883,7 @@ public class EditAccountConnector extends GenericEditPanel
         boolean user_db_visible = needs_user_db(type);
         boolean user_is_mail = needs_user_is_mail(type);
 
+         TXT_PORT.setText( "" + get_dflt_port( type, RB_SSL.isSelected() ) );
 
 
         CB_LDAP_SB.setVisible(search_attr_visible);
@@ -1242,16 +1245,6 @@ public class EditAccountConnector extends GenericEditPanel
     @Override
     protected boolean is_plausible()
     {
-        if (!Validator.is_valid_name(TXT_SERVER.getText(), 255))
-        {
-            UserMain.errm_ok(UserMain.getString("Der_Server_ist_nicht_okay"));
-            return false;
-        }
-        if (!Validator.is_valid_port(TXT_PORT.getText()))
-        {
-            UserMain.errm_ok(UserMain.getString("Port_ist_nicht_okay"));
-            return false;
-        }
         AccountConnectorTypeEntry mte;
 
         try
@@ -1264,9 +1257,23 @@ public class EditAccountConnector extends GenericEditPanel
             UserMain.errm_ok(UserMain.getString("Typ_ist_nicht_okay"));
             return false;
         }
+        String type = mte.getType();
+
+        if (needs_server_param(type))
+        {
+            if (!Validator.is_valid_name(TXT_SERVER.getText(), 255))
+            {
+                UserMain.errm_ok(UserMain.getString("Der_Server_ist_nicht_okay"));
+                return false;
+            }
+            if (!Validator.is_valid_port(TXT_PORT.getText()))
+            {
+                UserMain.errm_ok(UserMain.getString("Port_ist_nicht_okay"));
+                return false;
+            }
+        }
 
         
-        String type = mte.getType();
         if (needs_user_auth(type))
         {
 

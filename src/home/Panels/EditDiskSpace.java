@@ -6,6 +6,7 @@
 
 package dimm.home.Panels;
 
+import dimm.home.Panels.FileSystem.GlossFileChooser;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.ServerConnect.RMXFileSystemView;
@@ -18,7 +19,6 @@ import home.shared.hibernate.DiskArchive;
 import home.shared.hibernate.DiskSpace;
 import home.shared.Utilities.Validator;
 import home.shared.CS_Constants;
-import javax.swing.JFileChooser;
 
 
 
@@ -398,22 +398,18 @@ public class EditDiskSpace extends GenericEditPanel
 
     private void BT_PATHSELECTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_PATHSELECTActionPerformed
     {//GEN-HEADEREND:event_BT_PATHSELECTActionPerformed
-        // TODO add your handling code here:
-        // THIS FILESYSTEMVIEWER GOES REMOTE!
-        RMXFileSystemView fsv = new RMXFileSystemView();
-        JFileChooser chooser = new JFileChooser( fsv );
-        chooser.setFileView(fsv.getFileView());
         
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setCurrentDirectory( new File(object.getPath()));
+        RMXFileSystemView fsv = new RMXFileSystemView(UserMain.fcc());
+        GlossFileChooser gfc = new GlossFileChooser(fsv, object.getPath(), null, true);
+        GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, gfc);
+        dlg.setVisible(true);
 
-        if (JFileChooser.APPROVE_OPTION != chooser.showDialog(my_dlg, UserMain.Txt("Select_directory")))
+        if ( gfc.get_act_file() == null)
         {
             return;
         }
 
-        File dir = chooser.getSelectedFile();
-        TXT_PATH.setText(dir.getAbsolutePath());
+        TXT_PATH.setText(gfc.get_act_file().getAbsolutePath());
 
     }//GEN-LAST:event_BT_PATHSELECTActionPerformed
     

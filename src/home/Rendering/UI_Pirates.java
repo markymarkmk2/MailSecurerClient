@@ -8,15 +8,74 @@ package dimm.home.Rendering;
 import dimm.home.UserMain;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.plaf.ColorUIResource;
+import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.FontUIResource;
+import javax.swing.plaf.basic.BasicButtonUI;
 import org.jdesktop.fuse.ResourceInjector;
 import org.jdesktop.fuse.swing.SwingModule;
 
+
+class MyButtonUI extends BasicButtonUI
+{
+    ComponentUI default_ui;
+    GlossButton bt;
+
+    public MyButtonUI()
+    {
+        this.default_ui = UIManager.getUI(new JButton());
+        bt = new GlossButton();
+        bt.setFont(UI_Pirates.small_font);
+        bt.setBorderPainted(false);
+        bt.setContentAreaFilled(false);
+        bt.setFocusPainted(false);
+        bt.setBorder(null);
+        bt.setOpaque( false );
+    }
+
+    @Override
+    public void installUI( JComponent c )
+    {
+        super.installUI(c);
+    }
+
+    @Override
+    public void update( Graphics g, JComponent c )
+    {
+        super.update(g, c);
+    }
+
+
+    @Override
+    public void paint( Graphics g, JComponent c )
+    {
+        if (c instanceof JButton)
+        {
+            JButton jbt = (JButton)c;
+            bt.setText( jbt.getText() );
+            bt.setSize( jbt.getSize() );
+            bt.setFont(UI_Pirates.small_font);
+            bt.setBorderPainted(false);
+            bt.setContentAreaFilled(false);
+            bt.setFocusPainted(false);
+            bt.setBorder(null);
+            bt.setOpaque( false );
+        }
+
+        //default_ui.paint(g, bt);
+        bt.paint(g);
+    }
+
+
+
+}
 /**
  *
  * @author Administrator
@@ -82,16 +141,25 @@ public class UI_Pirates extends UI_Generic
             ResourceInjector.get().load(UserMain.class, "/dimm/home/resources/mc_black.uitheme");
             
             //EtchedBorder b = (EtchedBorder)BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
-            EtchedBorder b = (EtchedBorder)BorderFactory.createEtchedBorder( new Color( 0x44, 0x44, 0x44 ), new Color( 0x26, 0x26, 0x26 ));
+            EtchedBorder etched_border = (EtchedBorder)BorderFactory.createEtchedBorder( new Color( 0x44, 0x44, 0x44 ), new Color( 0x26, 0x26, 0x26 ));
             
             Border empty_border = BorderFactory.createEmptyBorder();
+
+            MyButtonUI bt_ui = new MyButtonUI();
+
             
             UIManager.put("Button.background", new ColorUIResource(appl_dgray) );
             UIManager.put("Button.foreground", new ColorUIResource(nice_white) );
             UIManager.put("Button.light", new ColorUIResource(nice_gray) );
             UIManager.put("Button.highlight", new ColorUIResource(nice_gray) );
-            UIManager.put("Button.border", b );
-            
+  /*          UIManager.put("Button.border", etched_border );
+            UIManager.put("Button.foreground", new ColorUIResource(Color.black) );
+            UIManager.put("Button.font", new FontUIResource(small_font));
+*/
+            Object o = UIManager.get( "ButtonUI");
+            UIManager.put( "ButtonUI", bt_ui.getClass().getName() );
+
+
 
             UIManager.put("Label.font", new FontUIResource(small_font));
             UIManager.put("Label.background", new ColorUIResource(appl_dgray) );
@@ -102,14 +170,14 @@ public class UI_Pirates extends UI_Generic
             UIManager.put("List.foreground", new ColorUIResource(nice_white) );
             UIManager.put("List.selectionBackground", new ColorUIResource(appl_dgray));
             UIManager.put("List.selectionForeground", new ColorUIResource(appl_selected_color));
-            UIManager.put("List.border", b );
+            UIManager.put("List.border", etched_border );
            
 
             UIManager.put("PasswordField.background", new ColorUIResource(appl_dgray) );
             UIManager.put("PasswordField.foreground", new ColorUIResource(nice_white) );
             UIManager.put("PasswordField.selectionForeground", new ColorUIResource(appl_selected_color));
             UIManager.put("PasswordField.caretForeground", new ColorUIResource(appl_selected_color));
-            UIManager.put("PasswordField.border", b);        
+            UIManager.put("PasswordField.border", etched_border);
             
             UIManager.put("TextField.background", new ColorUIResource(appl_dgray) );
             UIManager.put("TextField.foreground", new ColorUIResource(nice_white) );
@@ -120,7 +188,7 @@ public class UI_Pirates extends UI_Generic
             UIManager.put("TextField.selectionForeground", new ColorUIResource(appl_selected_color));
             UIManager.put("TextField.caretForeground", new ColorUIResource(appl_selected_color));
             UIManager.put("TextField.font", new FontUIResource(small_font));
-            UIManager.put("TextField.border", b);     
+            UIManager.put("TextField.border", etched_border);
             
             UIManager.put("TextArea.background", new ColorUIResource(appl_dgray) );
             UIManager.put("TextArea.foreground", new ColorUIResource(nice_white) );
@@ -131,11 +199,11 @@ public class UI_Pirates extends UI_Generic
             UIManager.put("TextArea.selectionForeground", new ColorUIResource(appl_selected_color));
             UIManager.put("TextArea.caretForeground", new ColorUIResource(appl_selected_color));
             UIManager.put("TextArea.font", new FontUIResource(small_font));
-            UIManager.put("TextArea.border", b);     
+            UIManager.put("TextArea.border", etched_border);
 
             UIManager.put("TabbedPane.background", new ColorUIResource(appl_dgray) );
             UIManager.put("TabbedPane.foreground", new ColorUIResource(nice_white) );
-            UIManager.put("TabbedPane.highlight", new ColorUIResource(nice_white) );
+            UIManager.put("TabbedPane.highlight", new ColorUIResource(nice_gray) );
             UIManager.put("TabbedPane.shadow", new ColorUIResource(appl_dgray) );
             UIManager.put("TabbedPane.contentOpaque", false );
             UIManager.put("TabbedPane.tabsOpaque", false );
@@ -157,7 +225,7 @@ public class UI_Pirates extends UI_Generic
             UIManager.put("ComboBox.buttonDarkShadow", new ColorUIResource(nice_gray)); 
             
          
-            UIManager.put("ComboBox.border", b);        
+            UIManager.put("ComboBox.border", etched_border);
 
             UIManager.put("ScrollBar.background", appl_dgray);
             UIManager.put("ScrollBar.foreground", nice_gray);
@@ -177,9 +245,9 @@ public class UI_Pirates extends UI_Generic
             
             UIManager.put("Spinner.background", appl_dgray);
             UIManager.put("Spinner.foreground", nice_gray);
-            UIManager.put("Spinner.border", b);        
+            UIManager.put("Spinner.border", etched_border);
             
-            UIManager.put("Table.border", b );
+            UIManager.put("Table.border", etched_border );
             
             UIManager.put("CheckBoxMenuItem.background", new ColorUIResource(appl_dgray) );     
             

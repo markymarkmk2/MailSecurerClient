@@ -30,7 +30,7 @@ public class Main
     public static final String PREFS_PATH = "";
     public static final String UPDATE_PATH = "update/";
     public static final String LOG_PATH = "logs/";
-    public static String version_str = "0.1.1";
+    public static String version_str = "0.1.2";
     public static boolean enable_distributor;
 
     // public static final String SERVER_UPDATEWORKER_PATH = "/websense/v5/update/";

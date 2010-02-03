@@ -504,6 +504,7 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
     private void BT_OKAYActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_OKAYActionPerformed
     {//GEN-HEADEREND:event_BT_OKAYActionPerformed
         // TODO add your handling code here:
+        timer.stop();
         setOkay(true);
         my_dlg.setVisible(false);
 
@@ -597,6 +598,12 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
             Main.err_log_warn("Caught exception in read_starus: " + exc.getMessage());
         }
         timer.start();
+    }
+
+    @Override
+    public void deactivate()
+    {
+        timer.stop();
     }
 
 }

@@ -12,6 +12,7 @@
 package dimm.home.Panels.MailView;
 
 import com.thoughtworks.xstream.XStream;
+import dimm.home.Main;
 import dimm.home.Panels.LogicFilter;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
@@ -25,6 +26,7 @@ import home.shared.Utilities.ParseToken;
 import dimm.home.Utilities.SizeStr;
 import dimm.home.Utilities.SwingWorker;
 import home.shared.CS_Constants;
+import home.shared.SQL.OptCBEntry;
 import home.shared.Utilities.ZipUtilities;
 import home.shared.filter.ExprEntry;
 import home.shared.filter.ExprEntry.OPERATION;
@@ -55,6 +57,8 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -234,9 +238,27 @@ class UnixTimeCellRenderer implements TableCellRenderer
     Date d = new Date(0);
     JLabel label = new JLabel();
 
+    boolean alt_colors;
+
+    public UnixTimeCellRenderer( boolean alt_colors )
+    {
+        this.alt_colors = alt_colors;
+    }
+
+
     @Override
     public Component getTableCellRendererComponent( JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column )
     {
+        label.setText( value.toString());
+        if (alt_colors && (row & 1) != 0)
+        {
+            label.setOpaque(true);
+            label.setBackground(Main.ui.get_nice_gray());
+        }
+        else
+        {
+            label.setOpaque(false);
+        }
         if (value instanceof Long)
         {
             Long l = (Long)value;
@@ -244,17 +266,34 @@ class UnixTimeCellRenderer implements TableCellRenderer
             label.setText( sdf.format(d) );
             return label;
         }
-        label.setText( value.toString());
+
         return label;
     }
 }
+
 class SizeStrCellRenderer implements TableCellRenderer
 {
     JLabel label = new JLabel();
+    boolean alt_colors;
+
+    public SizeStrCellRenderer( boolean alt_colors )
+    {
+        this.alt_colors = alt_colors;
+    }
 
     @Override
     public Component getTableCellRendererComponent( JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column )
     {
+        if (alt_colors && (row & 1) != 0)
+        {
+            label.setOpaque(true);
+            label.setBackground(Main.ui.get_nice_gray());
+        }
+        else
+        {
+            label.setOpaque(false);
+        }
+
         if (value instanceof Long)
         {
             Long l = (Long)value;
@@ -262,18 +301,21 @@ class SizeStrCellRenderer implements TableCellRenderer
             return label;
         }
         label.setText( value.toString());
+
+
         return label;
 
     }
 }
-
 class MailTableModel extends AbstractTableModel
 {
     static final int DATE_COL = 0;
-    static final int ATTACH_COL = 1;
-    static final int SUBJECT_COL = 2;
-    static final int SIZE_COL = 3;
-    
+    static final int FROM_COL = 1;
+    static final int TO_COL = 2;
+    static final int ATTACH_COL = 3;
+    static final int SUBJECT_COL = 4;
+    static final int SIZE_COL = 5;
+
     MailViewPanel pnl;
     ArrayList<ArrayList<String>> result_array;
     ArrayList<String> field_list;
@@ -295,6 +337,8 @@ class MailTableModel extends AbstractTableModel
         field_list = new ArrayList<String>();
 
         field_list.add(CS_Constants.FLD_DATE);
+        field_list.add(CS_Constants.FLD_FROM);
+        field_list.add(CS_Constants.FLD_TO);
         field_list.add(CS_Constants.FLD_HAS_ATTACHMENT);
         field_list.add(CS_Constants.FLD_SUBJECT);
         field_list.add(CS_Constants.FLD_SIZE);
@@ -318,6 +362,8 @@ class MailTableModel extends AbstractTableModel
         switch( column )
         {
             case DATE_COL: return UserMain.Txt("Date");
+            case FROM_COL: return UserMain.Txt("From");
+            case TO_COL: return UserMain.Txt("To");
             case SUBJECT_COL: return UserMain.Txt("Subject");
             case SIZE_COL: return UserMain.Txt("Size");
         }
@@ -327,7 +373,7 @@ class MailTableModel extends AbstractTableModel
     @Override
     public Class<?> getColumnClass(int columnIndex)
     {
-        if (columnIndex == 1)
+        if (columnIndex == ATTACH_COL)
             return JButton.class;
 
         return String.class;
@@ -667,7 +713,7 @@ class MailTableRowSorter extends TableRowSorter<MailTableModel>
  *
  * @author mw
  */
-public class MailViewPanel extends GlossDialogPanel implements MouseListener
+public class MailViewPanel extends GlossDialogPanel implements MouseListener, CellEditorListener
 {
     String search_id;
     GlossTable table;
@@ -676,7 +722,6 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     GlossTable simple_search_list;
     private static final int SIMPLE_SEARCH = 0;
     private static final int COMPLEX_SEARCH = 1;
-    private static final int ADMIN_SEARCH = 2;
     int search_mode = SIMPLE_SEARCH;
 
     GlossTable simple_search_table;
@@ -690,7 +735,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     {
         initComponents();
 
-        table = new GlossTable();
+        table = new GlossTable(true);
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         table.addMouseListener(this);
         // REGISTER TABLE TO SCROLLPANEL
@@ -700,14 +745,15 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         table.setModel(model);
         sorter = new MailTableRowSorter(model);
         table.setRowSorter(sorter);
+        table.setShowGrid(false);
         
-        table.getColumnModel().getColumn(MailTableModel.DATE_COL).setCellRenderer( new UnixTimeCellRenderer() );
-        table.getColumnModel().getColumn(MailTableModel.SIZE_COL).setCellRenderer( new SizeStrCellRenderer() );
+        table.getColumnModel().getColumn(MailTableModel.DATE_COL).setCellRenderer( new UnixTimeCellRenderer(true) );
+        table.getColumnModel().getColumn(MailTableModel.SIZE_COL).setCellRenderer( new SizeStrCellRenderer(true) );
 
        
 
 
-        simple_search_table = new GlossTable();
+        simple_search_table = new GlossTable(true);
         simple_search_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         simple_search_table.embed_to_scrollpanel( SCP_LIST );
 
@@ -746,6 +792,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
         simple_search_table.getColumnModel().getColumn(1).setCellEditor( new DefaultCellEditor(  CB_NEG ) );
         DefaultCellEditor txt_editor = new DefaultCellEditor( TXT_VAL);
         txt_editor.setClickCountToStart(1);
+        txt_editor.addCellEditorListener(this);
      
         simple_search_table.getColumnModel().getColumn(2).setCellEditor( txt_editor  );
 
@@ -841,33 +888,33 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
             sorter = new MailTableRowSorter(model);
             table.setRowSorter(sorter);
             table.setModel(model);
-            table.getColumnModel().getColumn(MailTableModel.DATE_COL).setCellRenderer( new UnixTimeCellRenderer() );
-            table.getColumnModel().getColumn(MailTableModel.SIZE_COL).setCellRenderer( new SizeStrCellRenderer() );
+            table.getColumnModel().getColumn(MailTableModel.DATE_COL).setCellRenderer( new UnixTimeCellRenderer(true) );
+            table.getColumnModel().getColumn(MailTableModel.SIZE_COL).setCellRenderer( new SizeStrCellRenderer(true) );
 
             model.fireTableDataChanged();
 
-            table.getColumnModel().getColumn(0).setMinWidth(80);
-            table.getColumnModel().getColumn(0).setPreferredWidth(120);
-            table.getColumnModel().getColumn(0).setMaxWidth(180);
-            table.getColumnModel().getColumn(1).setMinWidth(20);
-            table.getColumnModel().getColumn(1).setMaxWidth(20);
-            table.getColumnModel().getColumn(2).setPreferredWidth(180);
-            table.getColumnModel().getColumn(3).setMinWidth(30);
-            table.getColumnModel().getColumn(3).setMaxWidth(50);
+            table.getColumnModel().getColumn(MailTableModel.DATE_COL).setMinWidth(80);
+            table.getColumnModel().getColumn(MailTableModel.DATE_COL).setPreferredWidth(120);
+            table.getColumnModel().getColumn(MailTableModel.DATE_COL).setMaxWidth(180);
+            table.getColumnModel().getColumn(MailTableModel.FROM_COL).setPreferredWidth(60);
+            table.getColumnModel().getColumn(MailTableModel.TO_COL).setPreferredWidth(60);
 
+            table.getColumnModel().getColumn(MailTableModel.ATTACH_COL).setMinWidth(20);
+            table.getColumnModel().getColumn(MailTableModel.ATTACH_COL).setMaxWidth(20);
+            table.getColumnModel().getColumn(MailTableModel.SUBJECT_COL).setPreferredWidth(180);
+            table.getColumnModel().getColumn(MailTableModel.SIZE_COL).setMinWidth(30);
+            table.getColumnModel().getColumn(MailTableModel.SIZE_COL).setMaxWidth(50);
         }
     }
 
     SwingWorker sw;
     void open_mail( final int row )
     {
-        /*File tmp_file = run_download_mail(row, null);
-        if (tmp_file != null)
-                {
-                    run_open_mail( row, tmp_file );
-                    tmp_file.delete();
-                }*/
-        
+        if (!UserMain.self.check_for_role_option( my_dlg, OptCBEntry.READ))
+        {
+            return;
+        }
+
         if (sw != null)
             return;
 
@@ -900,7 +947,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
 
     void export_mail( final File f, final int[] rows, final String format )
     {
-        if (sw != null)
+         if (sw != null)
             return;
 
         sw = new SwingWorker()
@@ -1466,6 +1513,12 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     {//GEN-HEADEREND:event_BT_EXPORTActionPerformed
         // TODO add your handling code here:
         // CHOOSE CERTFILE
+
+        if (!UserMain.self.check_for_role_option( my_dlg, OptCBEntry.EXPORT))
+        {
+            return;
+        }
+
         MailExportPanel pnl = new MailExportPanel(  );
         GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
         dlg.set_next_location( my_dlg );
@@ -1487,6 +1540,12 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
     private void BT_RESTOREActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_RESTOREActionPerformed
     {//GEN-HEADEREND:event_BT_RESTOREActionPerformed
         // TODO add your handling code here:
+
+        if (!UserMain.self.check_for_role_option( my_dlg, OptCBEntry.RESTORE))
+        {
+            return;
+        }
+
         int[] rowi = table.getSelectedRows();
         GetMailAddressPanel pnl = new GetMailAddressPanel( UserMain.self.get_act_mailaliases() );
         GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
@@ -1510,7 +1569,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
 
         UserMain.self.show_busy(my_dlg, UserMain.Txt("Sende_Mail...") );
 
-        String ret = fcc.call_abstract_function("SearchMail CMD:send_mail ID:" + search_id + " TO:" + mail + " ROWLIST:" + sb.toString(), 30);
+        String ret = fcc.call_abstract_function("SearchMail CMD:send_mail ID:" + search_id + " TO:" + mail + " ROWLIST:" + sb.toString(), FunctionCallConnect.LONG_TIMEOUT);
 
         UserMain.self.hide_busy();
 
@@ -1731,6 +1790,17 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener
          fill_model_with_search(cmd);
 
 
+    }
+
+    @Override
+    public void editingStopped( ChangeEvent e )
+    {
+        this.BT_SIMPLESEARCHActionPerformed(null);
+    }
+
+    @Override
+    public void editingCanceled( ChangeEvent e )
+    {       
     }
 
 }

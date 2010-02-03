@@ -18,14 +18,21 @@ import org.jdesktop.swingx.JXLabel;
  */
 public class OpaqueTextCellRenderer extends JXLabel implements TableCellRenderer
 {
-   
 
-    public OpaqueTextCellRenderer(boolean opaque)
+    boolean alt_colors;
+
+    public OpaqueTextCellRenderer(boolean opaque, boolean alt_colors)
     {
         setOpaque(opaque);
         setForeground(Main.ui.get_nice_white());
+        this.alt_colors = alt_colors;
         this.setLineWrap(true);
         this.setVerticalAlignment(CENTER);
+        
+    }
+    public OpaqueTextCellRenderer(boolean opaque)
+    {
+        this(opaque, false );
     }
 
 
@@ -46,6 +53,16 @@ public class OpaqueTextCellRenderer extends JXLabel implements TableCellRenderer
             setForeground(Main.ui.get_appl_selected_color());
         else
             setForeground(Main.ui.get_nice_white());
+
+        if (alt_colors && (row & 1) != 0)
+        {
+            setOpaque(true);
+            setBackground(Main.ui.get_nice_gray());
+        }
+        else
+        {
+            setOpaque(false);
+        }
 
         return this;
     }

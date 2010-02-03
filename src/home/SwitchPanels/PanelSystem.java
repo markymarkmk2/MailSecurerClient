@@ -104,8 +104,8 @@ public class PanelSystem extends SwitchSpringPanel
         BT_SET_ADMIN_LOGIN.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_SET_ADMIN_LOGIN.setForeground(new java.awt.Color(201, 201, 201));
         BT_SET_ADMIN_LOGIN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/login-register.png"))); // NOI18N
-        BT_SET_ADMIN_LOGIN.setText(UserMain.Txt("Lizenzen")); // NOI18N
-        BT_SET_ADMIN_LOGIN.setToolTipText(UserMain.getString("Create_or_replace_your_licenses")); // NOI18N
+        BT_SET_ADMIN_LOGIN.setText(UserMain.Txt("Sysadmin")); // NOI18N
+        BT_SET_ADMIN_LOGIN.setToolTipText(UserMain.getString("Set_Master_User_login_and_password")); // NOI18N
         BT_SET_ADMIN_LOGIN.setBorderPainted(false);
         BT_SET_ADMIN_LOGIN.setContentAreaFilled(false);
         BT_SET_ADMIN_LOGIN.setFocusPainted(false);

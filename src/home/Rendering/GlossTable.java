@@ -5,6 +5,7 @@ import dimm.home.UserMain;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Insets;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -17,6 +18,10 @@ import javax.swing.table.JTableHeader;
 public class GlossTable extends JTable
 {
 
+    public static Color get_highlight_rowcolor()
+    {
+        return Main.ui.get_nice_gray();
+    }
  
     public void embed_to_scrollpanel(JScrollPane SCP_TABLE)
     {        
@@ -53,8 +58,12 @@ public class GlossTable extends JTable
         }
         return false;
     }
-
     public GlossTable()
+    {
+        this(false);
+    }
+
+    public GlossTable(boolean alt_colors)
     {
         super();
        
@@ -65,19 +74,20 @@ public class GlossTable extends JTable
         //setCellSelectionEnabled(false);
         setColumnSelectionAllowed(false);
         setRowSelectionAllowed(true);
+        
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JTableHeader thd = this.getTableHeader();
         thd.setPreferredSize(new Dimension(thd.getPreferredSize().width, 25));
         
-        setDefaultRenderer(JButton.class, new ButtonCellRenderer());
-        setDefaultRenderer(String.class, new OpaqueTextCellRenderer(false));
-        setDefaultRenderer(Integer.class, new OpaqueTextCellRenderer(false));
-        setDefaultRenderer(Long.class, new OpaqueTextCellRenderer(false));
-        setDefaultRenderer(Boolean.class, new BoolButtonCellRenderer(
+        setDefaultRenderer(JButton.class, new ButtonCellRenderer(alt_colors));
+        setDefaultRenderer(String.class, new OpaqueTextCellRenderer(false, alt_colors));
+        setDefaultRenderer(Integer.class, new OpaqueTextCellRenderer(false, alt_colors));
+        setDefaultRenderer(Long.class, new OpaqueTextCellRenderer(false, alt_colors));
+        setDefaultRenderer(Boolean.class, new BoolButtonCellRenderer(alt_colors,
                 "/dimm/home/images/web_check.png",
                 "/dimm/home/images/ok_empty.png"));
    
-        getTableHeader().setDefaultRenderer(new HeaderCellRenderer());
+        getTableHeader().setDefaultRenderer(new HeaderCellRenderer(alt_colors));
         setOpaque(false);
         setRowHeight(20);
 
@@ -92,6 +102,9 @@ public class GlossTable extends JTable
         getTableHeader().setBackground(Color.BLACK);        
         
     }
+
+
+
     
     public static JButton create_table_button(String rsrc)
     {

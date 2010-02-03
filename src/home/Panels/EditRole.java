@@ -31,7 +31,6 @@ import home.shared.filter.ExprEntry;
 import home.shared.filter.VarTypeEntry;
 import home.shared.hibernate.AccountConnector;
 import home.shared.hibernate.RoleOption;
-import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JCheckBox;
@@ -83,7 +82,7 @@ public class EditRole extends GenericEditPanel
             
             TXT_ACCOUNTMATCH.setText( acm_text );
 
-            String opts = object.getOpts();
+            
             read_opts_buttons( object.getId() );
             BT_DISABLED.setSelected( object_is_disabled() );
             int ac_id = model.getSqlResult().getInt( row, "ac_id");

@@ -372,6 +372,21 @@ public class SQLConnect extends Connect implements SQLObjectGetter
         return false;
     }
 
+    @Override
+    public Role get_role( int id )
+    {
+        SQLResult<Role>role_res = get_sql_list_container(Role.class).list;
+
+
+        for (int i = 0; i < role_res.size(); i++)
+        {
+            Role ro = role_res.get(i);
+            if (ro.getId() == id)
+                return ro;
+        }
+        return null;
+    }
+
 
 
 }

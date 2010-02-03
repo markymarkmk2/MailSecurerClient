@@ -64,11 +64,12 @@ public class GenericGlossyDlg extends JDialog
     @Override
     public void setVisible(boolean b)
     {
-        super.setVisible(b);
         if (b)
             child.activate();
         else
             child.deactivate();
+        
+        super.setVisible(b);
 
     }
 

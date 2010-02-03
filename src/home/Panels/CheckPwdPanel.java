@@ -4,8 +4,9 @@
  * Created on 22. Mai 2008, 15:05
  */
 
-package dimm.home;
+package dimm.home.Panels;
 
+import dimm.home.*;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import home.shared.Utilities.Validator;
@@ -20,15 +21,15 @@ public class CheckPwdPanel extends GlossDialogPanel
 {
     UserMain main;
     private boolean  okay;
-    private boolean strong;
     
     /** Creates new form LoginPanel */
-    public CheckPwdPanel(UserMain _main, boolean _strong)
+    public CheckPwdPanel(UserMain _main, boolean strong)
     {
         initComponents();
         main = _main;
         okay = false;
-        strong = _strong;
+        
+        CB_WEAK_PWD.setSelected(strong);
     }
     
     /** This method is called from within the constructor to
@@ -45,6 +46,7 @@ public class CheckPwdPanel extends GlossDialogPanel
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
         PF_PWD1 = new javax.swing.JPasswordField();
+        CB_WEAK_PWD = new javax.swing.JCheckBox();
 
         PF_PWD.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -76,6 +78,8 @@ public class CheckPwdPanel extends GlossDialogPanel
             }
         });
 
+        CB_WEAK_PWD.setText(UserMain.getString("Allow_weak_password")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -83,6 +87,7 @@ public class CheckPwdPanel extends GlossDialogPanel
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(CB_WEAK_PWD)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -93,8 +98,8 @@ public class CheckPwdPanel extends GlossDialogPanel
                             .addComponent(jLabel1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(PF_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
-                            .addComponent(PF_PWD1, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE))))
+                            .addComponent(PF_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                            .addComponent(PF_PWD1, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -108,7 +113,9 @@ public class CheckPwdPanel extends GlossDialogPanel
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(PF_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(CB_WEAK_PWD)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -122,6 +129,7 @@ public class CheckPwdPanel extends GlossDialogPanel
         String pwd = new String(PF_PWD.getPassword());
         String pwd1 = new String(PF_PWD1.getPassword());
 
+        boolean strong = CB_WEAK_PWD.isSelected();
         if (!check_passwords( my_dlg, pwd, pwd1, strong))
             return;
         
@@ -162,6 +170,7 @@ public class CheckPwdPanel extends GlossDialogPanel
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JButton BT_OK;
+    private javax.swing.JCheckBox CB_WEAK_PWD;
     private javax.swing.JPasswordField PF_PWD;
     private javax.swing.JPasswordField PF_PWD1;
     private javax.swing.JLabel jLabel1;

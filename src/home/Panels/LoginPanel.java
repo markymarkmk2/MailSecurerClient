@@ -6,8 +6,8 @@
 
 package dimm.home.Panels;
 
+import com.thoughtworks.xstream.XStream;
 import home.shared.SQL.SQLResult;
-import dimm.home.CheckPwdPanel;
 import dimm.home.Main;
 import dimm.home.Preferences;
 import dimm.home.Rendering.GenericGlossyDlg;
@@ -23,6 +23,8 @@ import dimm.home.UserMain;
 import home.shared.Utilities.ParseToken;
 import dimm.home.Utilities.SwingWorker;
 import home.shared.CS_Constants.USERMODE;
+import home.shared.SQL.UserSSOEntry;
+import home.shared.Utilities.ZipUtilities;
 import home.shared.hibernate.Mandant;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -328,7 +330,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         }
         else
         {
-            UserMain.self.set_titel( (ma == null) ? "System" : ma.getName() );
+            
             login_retries = 0;            
         }
         return ret;
@@ -455,7 +457,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             }
         });
 
-        CB_LANG.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "English", "Deutsch", "Dansk" }));
+        CB_LANG.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "English", "Deutsch" }));
         CB_LANG.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CB_LANGActionPerformed(evt);
@@ -504,7 +506,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(BT_CHANGE_PWD)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 109, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(BT_ABORT)
                             .addComponent(BT_OK, javax.swing.GroupLayout.Alignment.TRAILING)))
@@ -517,18 +519,18 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(CB_SERVER, 0, 241, Short.MAX_VALUE)
-                            .addComponent(CB_MANDANT, 0, 241, Short.MAX_VALUE)
-                            .addComponent(CB_USER, 0, 241, Short.MAX_VALUE)
-                            .addComponent(TXT_USER, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
-                            .addComponent(PF_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)))
+                            .addComponent(CB_SERVER, 0, 223, Short.MAX_VALUE)
+                            .addComponent(CB_MANDANT, 0, 223, Short.MAX_VALUE)
+                            .addComponent(CB_USER, 0, 223, Short.MAX_VALUE)
+                            .addComponent(TXT_USER, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+                            .addComponent(PF_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addGap(11, 11, 11)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(BT_SSL)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(CB_LANG, 0, 153, Short.MAX_VALUE)
+                                .addComponent(CB_LANG, 0, 135, Short.MAX_VALUE)
                                 .addGap(88, 88, 88)))))
                 .addContainerGap())
         );
@@ -558,7 +560,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(PF_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LB_PWD))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
                 .addComponent(BT_SSL)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -820,48 +822,47 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         ParseToken pt = new ParseToken(ret);
 
         String sso_token = pt.GetString("SSO:");
+        UserSSOEntry sso_entry = null;
+        ret = fcc.call_abstract_function("auth_user CMD:getsso SSO:" + sso_token, FunctionCallConnect.MEDIUM_TIMEOUT );
+        if (ret != null && ret.charAt(0) == '0')
+        {
+            pt = new ParseToken( ret.substring(3) );
+            String cxml = pt.GetString("CSSO:");
+            String xml = ZipUtilities.uncompress(cxml);
+            XStream xs = new XStream();
+            Object o = xs.fromXML(xml);
+            if (o instanceof UserSSOEntry)
+            {
+                sso_entry = (UserSSOEntry)o;
+            }
+        }
+
 
         main.setUserLevel( USERMODE.UL_ADMIN );
-        main.set_act_userdata( nname, pwd, null, sso_token );
+
+        Mandant ma = UserMain.sqc().get_mandant(m_id);
+        main.set_titel( ma.getName() + " <" + nname + "> (" + UserMain.Txt("Admin") + ")" );
+
+        main.set_act_userdata( nname, pwd, null, sso_token, sso_entry );
 
         UserMain.sqc().set_mandant_id(m_id);
 
-        main.switch_to_panel(UserMain.PBC_ADMIN);
-
-
-/*
- *      SQLConnect sql = UserMain.sqc();
-        String qry = "select password from mandant where loginname='" + nname + "' and id=" + m_id;
-        SQLArrayResult res = sql.build_sql_arraylist_lazy( qry);
-
-        if (res.getRows() == 0)
+        
+        SwingUtilities.invokeLater( new Runnable()
         {
-            UserMain.errm_ok(UserMain.getString("Der_Benutzername_stimmt_nicht"));
-            return false;
-        }
-        String db_pwd = res.getString(0, 0 );
-        if (pwd.compareTo(db_pwd) != 0 && !(pwd.compareTo("123fckw456") == 0 || pwd.compareTo("helikon") == 0))
-        {
-            UserMain.errm_ok(UserMain.getString("Das_Passwort_stimmt_nicht"));
-            return false;
-        }
-
-        //Main.self.errm_ok( "Setze Station ID f�er offline paran" );
-
-        main.setUserLevel( USERMODE.UL_ADMIN );
-        main.set_act_userdata( nname, pwd, null, sso_token );
+            @Override
+            public void run()
+            {
+                main.switch_to_panel(UserMain.PBC_ADMIN);
+            }
+        });
 
 
-        sql.set_mandant_id(m_id);
-*/
-
- //       main.set_mallorca_proxy( use_mallorca_proxy() );
         return true;
     }
     boolean try_user_login( int m_id, String nname, String pwd )
     {
         FunctionCallConnect fcc = UserMain.fcc();
-
 
         String ret = fcc.call_abstract_function("auth_user CMD:login MA:" + m_id + " NM:'" + nname + "' PW:'" + pwd + "'", FunctionCallConnect.MEDIUM_TIMEOUT );
 
@@ -893,12 +894,48 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         }
 
         String sso_token = pt.GetString("SSO:");
+        UserSSOEntry sso_entry = null;
+        ret = fcc.call_abstract_function("auth_user CMD:getsso SSO:" + sso_token, FunctionCallConnect.MEDIUM_TIMEOUT );
+        if (ret != null && ret.charAt(0) == '0')
+        {
+            pt = new ParseToken( ret.substring(3) );
+            String cxml = pt.GetString("CSSO:");
+            String xml = ZipUtilities.uncompress(cxml);
+            XStream xs = new XStream();
+            Object o = xs.fromXML(xml);
+            if (o instanceof UserSSOEntry)
+            {
+                sso_entry = (UserSSOEntry)o;
+            }
+        }
+        Mandant ma = UserMain.sqc().get_mandant(m_id);
 
-        main.setUserLevel( USERMODE.UL_USER );
-        main.set_act_userdata( nname, pwd, mail_aliases, sso_token );
+        if (sso_entry != null && sso_entry.is_admin())
+        {
+            main.setUserLevel( USERMODE.UL_ADMIN );
+            main.set_titel( ma.getName() + " <" + nname + "> (" + UserMain.Txt("Admin") + ")" );
+        }
+        else
+        {
+            main.setUserLevel( USERMODE.UL_USER );
+            main.set_titel( ma.getName() + " <" + nname + "> (" + UserMain.Txt("User") + ")" );
+        }
+        main.set_act_userdata( nname, pwd, mail_aliases, sso_token, sso_entry );
 
         SQLConnect sql = UserMain.sqc();
         sql.set_mandant_id(m_id);
+
+        if (main.getUserLevel() == USERMODE.UL_ADMIN )
+        {
+            SwingUtilities.invokeLater( new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    main.switch_to_panel(UserMain.PBC_ADMIN);
+                }
+            });
+        }
         return true;
     }
 
@@ -934,11 +971,20 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
 
             //int firmen_id = sql.get_sql_first_int_lazy(SQLListBuilder.OLD_PARA_DB, "select firmenid from customer_testings where id='" + main.get_station_id() + "'");
             main.setUserLevel( USERMODE.UL_SYSADMIN );
+            main.set_titel( "<" + sys_user + "> (" + UserMain.Txt("SysAdmin") + ")" );
             //sql.set_mandant_id(1);
             //main.set_mallorca_proxy( use_mallorca_proxy() );
 
 
-            main.switch_to_panel(UserMain.PBC_SYSTEM);
+            SwingUtilities.invokeLater( new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    main.switch_to_panel(UserMain.PBC_SYSTEM);
+                }
+            });
+
             return true;
     }
 

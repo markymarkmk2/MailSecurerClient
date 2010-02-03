@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package dimm.home.Rendering;
 
+import dimm.home.Main;
 import java.awt.Component;
 import java.awt.Insets;
 import javax.swing.ImageIcon;
@@ -21,11 +21,14 @@ public class BoolButtonCellRenderer implements TableCellRenderer
 
     JButton ok_btn;
     JButton nok_btn;
+    boolean alt_colors;
 
-    public BoolButtonCellRenderer(String icn_ok, String icn_nok)
+    public BoolButtonCellRenderer( boolean alt_colors, String icn_ok, String icn_nok )
     {
         ImageIcon ok_icn = new ImageIcon(this.getClass().getResource(icn_ok));
         ImageIcon nok_icn = new ImageIcon(this.getClass().getResource(icn_nok));
+        this.alt_colors = alt_colors;
+
         ok_btn = new JButton(ok_icn);
         nok_btn = new JButton(nok_icn);
         nok_btn.setContentAreaFilled(false);
@@ -40,12 +43,24 @@ public class BoolButtonCellRenderer implements TableCellRenderer
 
     }
 
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+    public Component getTableCellRendererComponent( JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column )
     {
         if (value instanceof Boolean)
         {
             Boolean b = (Boolean) value;
-            return (b.booleanValue()) ? ok_btn : nok_btn;
+            JButton label = (b.booleanValue()) ? ok_btn : nok_btn;
+
+            if (alt_colors && (row & 1) != 0)
+            {
+                label.setOpaque(true);
+                label.setBackground(Main.ui.get_nice_gray());
+            }
+            else
+            {
+                label.setOpaque(false);
+            }
+            return label;
+
         }
         return null;
     }

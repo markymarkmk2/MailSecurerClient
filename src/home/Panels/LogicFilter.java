@@ -124,6 +124,7 @@ public class LogicFilter extends GlossDialogPanel
                 COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.BEGINS_WITH, type ) );
                 COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.ENDS_WITH, type ) );
                 COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.CONTAINS_SUBSTR, type ) );
+                COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.EXACT, type ) );
                 COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.REGEXP, type ) );
                 break;
             }
@@ -133,6 +134,7 @@ public class LogicFilter extends GlossDialogPanel
                 COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.NUM_EQUAL, type ) );
                 COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.NUM_LT, type ) );
                 COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.NUM_GT, type ) );
+                COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.EXACT, type ) );
                 COMBO_OPERATION.addItem( new CB_op_entry( OPERATION.REGEXP, type ) );
             }
             case TIMESTAMP:
@@ -176,6 +178,7 @@ public class LogicFilter extends GlossDialogPanel
             case CONTAINS_SUBSTR: return UserMain.Txt("Contains_substring");
             case CONTAINS: return UserMain.Txt("Contains");
             case REGEXP: return UserMain.Txt("Matches_regular_expression");
+            case EXACT: return "=";
             case NUM_EQUAL : return "=";
             case NUM_LT : return type == TYPE.TIMESTAMP ? UserMain.Txt("Older_than") : "<";
             case NUM_GT : return type == TYPE.TIMESTAMP ? UserMain.Txt("Newer_than") : "<";

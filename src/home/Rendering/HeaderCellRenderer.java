@@ -59,15 +59,20 @@ public class HeaderCellRenderer implements TableCellRenderer
 {
 
     HeaderLabel label;
+    boolean alt_colors;
 
-    public HeaderCellRenderer()
+    public HeaderCellRenderer( boolean alt_colors)
     {
         label = new HeaderLabel();
         label.setForeground(Main.ui.get_appl_base_color());
         label.setOpaque(false);
         label.setHorizontalAlignment(JLabel.LEFT);
-        
-
+        this.alt_colors = alt_colors;        
+    }
+    
+    public HeaderCellRenderer()
+    {
+        this(false);
     }
 
     @Override
@@ -75,6 +80,17 @@ public class HeaderCellRenderer implements TableCellRenderer
     {
         label.setText(value.toString());
         label.setCol(column);
+
+        if (alt_colors && (row & 1) != 0)
+        {
+            label.setOpaque(true);
+            label.setBackground(Main.ui.get_nice_gray());
+        }
+        else
+        {
+            label.setOpaque(false);
+        }
+
         return label;
     }
 }

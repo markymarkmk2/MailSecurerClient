@@ -171,6 +171,7 @@ public class GetUserMailPwdPanel extends GlossDialogPanel
     {//GEN-HEADEREND:event_BT_ABORTActionPerformed
         // TODO add your handling code here:
         setOkay(false);
+        my_dlg.setVisible(false);
     }//GEN-LAST:event_BT_ABORTActionPerformed
 
     private void BT_OKAYActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_OKAYActionPerformed

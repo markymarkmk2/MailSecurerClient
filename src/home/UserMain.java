@@ -35,12 +35,19 @@ import  sun.audio.*;    //import the sun.audio package
 import dimm.home.ServerConnect.SQLConnect;
 import dimm.home.SwitchPanels.PanelTools;
 import home.shared.CS_Constants.USERMODE;
+import home.shared.SQL.UserSSOEntry;
+import home.shared.Utilities.LogListener;
+import home.shared.hibernate.AccountConnector;
 import home.shared.hibernate.Mandant;
+import home.shared.hibernate.Role;
+import home.shared.hibernate.RoleOption;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 
 
@@ -49,7 +56,7 @@ import java.util.ResourceBundle;
  *
  * @author  Administrator
  */
-public class UserMain extends javax.swing.JFrame
+public class UserMain extends javax.swing.JFrame implements LogListener
 {
 
     public static String get_default_lang()
@@ -199,6 +206,7 @@ public class UserMain extends javax.swing.JFrame
     {
         System.out.println(message);
     }
+
     
 
 
@@ -581,8 +589,10 @@ public class UserMain extends javax.swing.JFrame
     private void handle_logoff()
     {
         userLevel = USERMODE.UL_DUMMY;
+        UserMain.fcc.close();
+        UserMain.sqc.close();
         restart_gui();
-
+        reset_act_userdata();
     }        
 
 
@@ -1042,13 +1052,15 @@ public class UserMain extends javax.swing.JFrame
     String act_pwd;
     ArrayList<String> act_mail_aliases;
     String act_sso_token;
+    UserSSOEntry sso_entry;
 
-    public void set_act_userdata( String nname, String pwd, ArrayList<String> mail_aliases, String _sso_token )
+    public void set_act_userdata( String nname, String pwd, ArrayList<String> mail_aliases, String _sso_token, UserSSOEntry _sso_entry )
     {
         act_name = nname;
         act_pwd = pwd;
         act_mail_aliases = mail_aliases;
         act_sso_token = _sso_token;
+        sso_entry = _sso_entry;
     }
     public void reset_act_userdata( )
     {
@@ -1057,6 +1069,40 @@ public class UserMain extends javax.swing.JFrame
         act_mail_aliases = null;
         act_sso_token = null;
     }
+    public boolean user_has_role_option( String opt_token )
+    {
+        if (sso_entry == null)
+            return false;
+
+        Role role = sso_entry.getRole();
+        AccountConnector acct = sso_entry.getAcct();
+
+        // SPECIAL CASE, ADMIN LOGIN
+        if (role == null && acct == null)
+            return true;
+
+        if (role == null)
+            return false;
+
+        Set<RoleOption> ros = role.getRoleOptions();
+        for (Iterator<RoleOption> it = ros.iterator(); it.hasNext();)
+        {
+            RoleOption roleOption = it.next();
+            if (roleOption.getToken().equals(opt_token))
+                return true;
+        }
+        return false;
+    }
+    public boolean check_for_role_option( JDialog dlg, String s )
+    {
+        if (!user_has_role_option(s))
+        {
+            errm_ok(dlg, Txt("You_do_not_have_admission_for_this"));
+            return false;
+        }
+        return true;
+    }
+
 
     public ArrayList<String> get_act_mailaliases()
     {
@@ -1111,6 +1157,43 @@ public class UserMain extends javax.swing.JFrame
     {
         return get_act_mandant().getId();
     }
+
+    @Override
+    public void error_log( String txt )
+    {
+        err_log(txt);
+    }
+
+    @Override
+    public void error_log( String txt, Exception ex )
+    {
+        err_log(txt + ": " + ex.getLocalizedMessage());
+    }
+
+    @Override
+    public void warn_log( String txt )
+    {
+        err_log(txt);
+    }
+
+    @Override
+    public void info_log( String txt )
+    {
+        System.out.println(txt);
+    }
+
+    @Override
+    public void debug_log( String txt )
+    {
+        System.out.println(txt);
+    }
+
+    @Override
+    public boolean is_debug()
+    {
+        return false;
+    }
+
 
 
 

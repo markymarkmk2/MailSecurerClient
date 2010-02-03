@@ -6,7 +6,6 @@
 
 package dimm.home.Panels;
 
-import dimm.home.CheckPwdPanel;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.ServerCall;

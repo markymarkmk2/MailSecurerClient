@@ -210,9 +210,9 @@ public class EditMailUser extends GenericEditPanel implements PropertyChangeList
 
     private void build_header_list( MailUser m )
     {
-        add_model = build_header_list("mu_add_link", add_table, SCP_ADD_MAIL);
+        add_model = build_header_list("mailuser_add_link", add_table, SCP_ADD_MAIL);
 
-        view_model = build_header_list("mu_view_link", view_table, SCP_VIEW_MAIL);
+        view_model = build_header_list("mailuser_view_link", view_table, SCP_VIEW_MAIL);
     }
 
     /** This method is called from within the constructor to

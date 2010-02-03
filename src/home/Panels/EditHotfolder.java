@@ -15,8 +15,13 @@ import javax.swing.JButton;
 import home.shared.hibernate.DiskArchive;
 import home.shared.hibernate.Hotfolder;
 import dimm.home.Models.DiskArchiveComboModel;
+import dimm.home.Panels.FileSystem.GlossFileChooser;
+import dimm.home.Rendering.GenericGlossyDlg;
+import dimm.home.ServerConnect.RMXFileSystemView;
 import home.shared.Utilities.Validator;
 import home.shared.CS_Constants;
+import java.io.File;
+import javax.swing.JFileChooser;
 
 
 
@@ -135,6 +140,11 @@ public class EditHotfolder extends GenericEditPanel
         CB_MAILACCOUNT.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         BT_SELECT_PATH.setText("...");
+        BT_SELECT_PATH.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_SELECT_PATHActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout PN_ACTIONLayout = new javax.swing.GroupLayout(PN_ACTION);
         PN_ACTION.setLayout(PN_ACTIONLayout);
@@ -154,10 +164,10 @@ public class EditHotfolder extends GenericEditPanel
                             .addComponent(BT_DISABLED, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(10, 10, 10)
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(CB_MAILACCOUNT, 0, 240, Short.MAX_VALUE)
-                            .addComponent(CB_VAULT, 0, 240, Short.MAX_VALUE)))
+                            .addComponent(CB_MAILACCOUNT, 0, 261, Short.MAX_VALUE)
+                            .addComponent(CB_VAULT, 0, 261, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_ACTIONLayout.createSequentialGroup()
-                        .addComponent(TXT_PATH, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+                        .addComponent(TXT_PATH, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(BT_SELECT_PATH, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -262,6 +272,22 @@ public class EditHotfolder extends GenericEditPanel
     {//GEN-HEADEREND:event_TXT_PATHActionPerformed
         // TODO add your handling code here:
 }//GEN-LAST:event_TXT_PATHActionPerformed
+
+    private void BT_SELECT_PATHActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_SELECT_PATHActionPerformed
+    {//GEN-HEADEREND:event_BT_SELECT_PATHActionPerformed
+        // TODO add your handling code here:
+        RMXFileSystemView fsv = new RMXFileSystemView(UserMain.fcc());
+        GlossFileChooser gfc = new GlossFileChooser(fsv, object.getPath(), null, true);
+        GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, gfc);
+        dlg.setVisible(true);
+
+
+        if (gfc.get_act_file() != null)
+        {
+            TXT_PATH.setText(gfc.get_act_file().getAbsolutePath());
+        }
+
+    }//GEN-LAST:event_BT_SELECT_PATHActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
