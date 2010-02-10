@@ -11,6 +11,7 @@
 package dimm.home.Rendering;
 
 import dimm.home.UserMain;
+import home.shared.Utilities.Validator;
 import javax.swing.JButton;
 
 /**
@@ -23,6 +24,13 @@ public class EditTextList extends GlossDialogPanel
     String delim;
     String val;
     private boolean okay;
+    boolean email;
+
+    public void setEmail( boolean email )
+    {
+        this.email = email;
+    }
+
 
     /** Creates new form EditTextList */
     public EditTextList( String val, String delim )
@@ -41,6 +49,20 @@ public class EditTextList extends GlossDialogPanel
     public String get_text()
     {
         return from_txta();
+    }
+    boolean check()
+    {
+        if (email)
+        {
+            String [] list = from_txta().split(delim);
+            for (int i = 0; i < list.length; i++)
+            {
+                String string = list[i];
+                if (!Validator.is_valid_email(string))
+                    return false;
+            }
+        }
+        return true;
     }
 
     /** This method is called from within the constructor to
@@ -108,6 +130,11 @@ public class EditTextList extends GlossDialogPanel
     private void BT_OKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_OKActionPerformed
     {//GEN-HEADEREND:event_BT_OKActionPerformed
         // TODO add your handling code here:
+        if (!check())
+        {
+            UserMain.errm_ok(my_dlg, UserMain.Txt("Please_check_your_input"));
+            return;
+        }
         setOkay(true);
         my_dlg.setVisible(false);
 

@@ -80,6 +80,7 @@ public class EditProxy extends GenericEditPanel
             TXT_SERVER2.setText( object.getRemoteServer());
             TXT_PORT1.setText( object.getLocalPort().toString());
             TXT_PORT2.setText( object.getRemotePort().toString());
+            BT_DISABLED.setSelected( object_is_disabled() );
             
         }
         else

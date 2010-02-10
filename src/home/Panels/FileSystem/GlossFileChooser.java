@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -97,7 +98,8 @@ class FileSystemTableModel extends AbstractTableModel
     {
         this.detailed_view = detailed_view;
         fileIcon = GlossTable.create_table_button(null);
-        fileIcon.setIcon( UIManager.getIcon("FileView.fileIcon"));
+        ImageIcon file_icn = new ImageIcon(this.getClass().getResource("/dimm/home/images/fileicon.png"));
+        fileIcon.setIcon( file_icn );
         directoryIcon = GlossTable.create_table_button(null);
         directoryIcon.setIcon( UIManager.getIcon("FileView.directoryIcon"));
         fileList = new ArrayList<RMXFile>();

@@ -30,7 +30,7 @@
                       <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                       <Component id="PN_BUTTONS" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="jTabbedPane1" alignment="1" pref="491" max="32767" attributes="0"/>
+                  <Component id="jTabbedPane1" alignment="1" pref="571" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -39,7 +39,7 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <Component id="jTabbedPane1" pref="252" max="32767" attributes="0"/>
+              <Component id="jTabbedPane1" pref="353" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="PN_BUTTONS" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -98,12 +98,12 @@
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
                           <Component id="TXT_NAME" min="-2" pref="145" max="-2" attributes="1"/>
-                          <EmptySpace min="-2" pref="252" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="303" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                           <Component id="BT_DISABLED" min="-2" pref="76" max="-2" attributes="1"/>
-                          <EmptySpace pref="380" max="32767" attributes="0"/>
+                          <EmptySpace pref="460" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
@@ -118,7 +118,7 @@
                               <Component id="TXTP_PWD" linkSize="2" alignment="0" min="-2" pref="145" max="-2" attributes="1"/>
                               <Component id="TXT_USER" linkSize="2" alignment="0" pref="145" max="32767" attributes="1"/>
                           </Group>
-                          <EmptySpace min="-2" pref="252" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="303" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -145,7 +145,7 @@
                               <Component id="TXTP_PWD1" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="51" max="32767" attributes="0"/>
+                          <EmptySpace pref="152" max="32767" attributes="0"/>
                           <Component id="BT_DISABLED" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -238,16 +238,20 @@
                                   <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel11" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel14" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="TXT_SMTP_HOST" alignment="0" pref="194" max="32767" attributes="1"/>
-                                  <Component id="TXTP_SMTP_PWD1" alignment="0" pref="194" max="32767" attributes="1"/>
-                                  <Component id="TXTP_SMTP_PWD" alignment="0" pref="194" max="32767" attributes="1"/>
-                                  <Component id="TXT_SMTP_USER" alignment="0" pref="194" max="32767" attributes="1"/>
-                                  <Component id="TXT_SMTP_PORT" alignment="0" pref="194" max="32767" attributes="1"/>
+                                  <Component id="TXT_MAILFROM" alignment="1" pref="274" max="32767" attributes="1"/>
+                                  <Component id="TXT_SMTP_HOST" alignment="0" pref="274" max="32767" attributes="1"/>
+                                  <Component id="TXTP_SMTP_PWD1" alignment="0" pref="274" max="32767" attributes="1"/>
+                                  <Component id="TXTP_SMTP_PWD" alignment="0" pref="274" max="32767" attributes="1"/>
+                                  <Component id="TXT_SMTP_USER" alignment="0" pref="274" max="32767" attributes="1"/>
+                                  <Component id="TXT_SMTP_PORT" alignment="0" pref="274" max="32767" attributes="1"/>
+                                  <Component id="TXT_MAILTO" alignment="1" pref="274" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Component id="PN_SECURITY" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="BT_TEST" alignment="0" min="-2" pref="85" max="-2" attributes="0"/>
@@ -286,13 +290,23 @@
                                   <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="TXTP_SMTP_PWD1" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="36" max="32767" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="TXT_MAILFROM" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel14" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="TXT_MAILTO" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace pref="68" max="32767" attributes="0"/>
                               <Component id="BT_TEST" min="-2" pref="25" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="PN_SECURITY" max="32767" attributes="0"/>
-                              <EmptySpace pref="34" max="32767" attributes="0"/>
+                              <EmptySpace pref="85" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -392,7 +406,7 @@
                           <Component id="CB_CERTIFICATE" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="BT_IMPORT_CERT" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace pref="61" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -496,6 +510,30 @@
             </Component>
             <Component class="javax.swing.JPasswordField" name="TXTP_SMTP_PWD1">
             </Component>
+            <Component class="javax.swing.JLabel" name="jLabel7">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="dimm/home/MA_Properties.properties" key="Sender" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="TXT_MAILFROM">
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel14">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="dimm/home/MA_Properties.properties" key="To_List" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="TXT_MAILTO">
+              <Properties>
+                <Property name="editable" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="TXT_MAILTOMouseClicked"/>
+              </Events>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="PN_INDEX">
@@ -519,7 +557,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="SCP_TABLE" pref="350" max="32767" attributes="0"/>
+                              <Component id="SCP_TABLE" pref="430" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -536,7 +574,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="BT_ADD_HEADER" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="58" max="32767" attributes="0"/>
+                      <EmptySpace pref="159" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -619,7 +657,7 @@
                           <Component id="TXT_IMAP_HOST" max="32767" attributes="1"/>
                           <Component id="TXT_IMAP_PORT" alignment="0" pref="143" max="32767" attributes="1"/>
                       </Group>
-                      <EmptySpace pref="191" max="32767" attributes="0"/>
+                      <EmptySpace pref="271" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -642,7 +680,7 @@
                               </Group>
                           </Group>
                       </Group>
-                      <EmptySpace pref="145" max="32767" attributes="0"/>
+                      <EmptySpace pref="246" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -690,7 +728,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="293" max="32767" attributes="0"/>
+                  <EmptySpace pref="373" max="32767" attributes="0"/>
                   <Component id="BT_ABORT" min="-2" pref="80" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="BT_OK" min="-2" pref="80" max="-2" attributes="0"/>
