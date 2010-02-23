@@ -23,7 +23,7 @@ import dimm.home.ServerConnect.InStreamID;
 import dimm.home.ServerConnect.ServerInputStream;
 import dimm.home.UserMain;
 import home.shared.Utilities.ParseToken;
-import dimm.home.Utilities.SizeStr;
+import home.shared.Utilities.SizeStr;
 import dimm.home.Utilities.SwingWorker;
 import home.shared.CS_Constants;
 import home.shared.SQL.OptCBEntry;

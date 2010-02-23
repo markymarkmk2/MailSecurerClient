@@ -581,10 +581,6 @@ public class UserMain extends javax.swing.JFrame implements LogListener
     }
 
     
-    
-    
-    
-     
    
     private void handle_logoff()
     {

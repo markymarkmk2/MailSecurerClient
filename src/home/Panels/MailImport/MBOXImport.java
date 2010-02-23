@@ -7,7 +7,7 @@ package dimm.home.Panels.MailImport;
 
 import dimm.home.Main;
 import dimm.home.UserMain;
-import dimm.home.Utilities.SizeStr;
+import home.shared.Utilities.SizeStr;
 import home.shared.CS_Constants;
 import java.awt.Component;
 import java.io.File;

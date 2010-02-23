@@ -10,7 +10,7 @@ import com.ice.jni.registry.RegistryException;
 import com.ice.jni.registry.RegistryKey;
 import dimm.home.Main;
 import dimm.home.UserMain;
-import dimm.home.Utilities.SizeStr;
+import home.shared.Utilities.SizeStr;
 import dimm.home.native_libs.NativeLoader;
 import home.shared.CS_Constants;
 import java.awt.Component;

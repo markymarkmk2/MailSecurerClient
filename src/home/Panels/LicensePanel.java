@@ -150,7 +150,7 @@ class LicenseTableModel extends AbstractTableModel
             case 2:
                 return Integer.toString( ticket.getUnits() );
             case 3:
-                return Integer.toHexString( ticket.getUnits() );
+                return Long.toHexString( ticket.getModules() );
             case 4:
                 return new Boolean( tck.isValid() );
             case 5:

@@ -19,7 +19,7 @@ import dimm.home.Rendering.SingleTextEditPanel;
 import dimm.home.ServerConnect.RMXFileSystemView;
 import dimm.home.UserMain;
 import dimm.home.Utilities.DateStr;
-import dimm.home.Utilities.SizeStr;
+import home.shared.Utilities.SizeStr;
 import home.shared.SQL.RMXFile;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;

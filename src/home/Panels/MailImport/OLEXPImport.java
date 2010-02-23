@@ -8,7 +8,7 @@ package dimm.home.Panels.MailImport;
 import com.ice.jni.registry.Registry;
 import com.ice.jni.registry.RegistryKey;
 import dimm.home.Main;
-import dimm.home.Utilities.SizeStr;
+import home.shared.Utilities.SizeStr;
 import dimm.home.native_libs.NativeLoader;
 import java.awt.Component;
 import java.io.File;

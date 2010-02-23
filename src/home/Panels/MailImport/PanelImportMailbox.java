@@ -17,7 +17,7 @@ import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.OutStreamID;
 import dimm.home.UserMain;
-import dimm.home.Utilities.SizeStr;
+import home.shared.Utilities.SizeStr;
 import dimm.home.Utilities.SwingWorker;
 import home.shared.hibernate.DiskArchive;
 import java.awt.event.ActionEvent;

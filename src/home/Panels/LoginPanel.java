@@ -1027,12 +1027,12 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         {
             UDP_Communicator comm = new UDP_Communicator(this);
 
-            String answer_remote = comm.udp_send("HELLO", /*scan*/ true, /*local*/false, /*retries*/ 2, null, 200);
+            String answer_remote = comm.udp_send("HELLO", /*scan*/ true, /*local*/null, /*retries*/ 2, null, 200);
             if (answer_remote == null)
-                answer_remote = comm.udp_send("HELLO", /*scan*/ true, /*local*/false, /*retries*/ 2, null, 1000);
+                answer_remote = comm.udp_send("HELLO", /*scan*/ true, /*local*/null, /*retries*/ 2, null, 1000);
 
             if (answer_remote == null || answer_remote.length() == 0)
-                answer_remote = comm.udp_send("HELLO", /*scan*/ true, /*local*/true, /*retries*/ 2, null, 500);
+                answer_remote = comm.udp_send("HELLO", /*scan*/ true, /*local*/"localhost", /*retries*/ 2, null, 500);
 
             StringTokenizer str = new StringTokenizer(answer_remote, "\n");
 

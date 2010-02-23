@@ -8,7 +8,7 @@ package dimm.home.Panels.MailImport;
 import dimm.home.Main;
 import dimm.home.UserMain;
 import dimm.home.Utilities.INIFile;
-import dimm.home.Utilities.SizeStr;
+import home.shared.Utilities.SizeStr;
 import dimm.home.Utilities.demork.Demork;
 import dimm.home.Utilities.demork.MorkUtils;
 import dimm.home.Utilities.demork.database.MorkCell;

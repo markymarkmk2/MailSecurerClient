@@ -9,7 +9,6 @@ package dimm.home.Rendering;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.datatransfer.*;
 
 /**
  *
@@ -21,7 +20,7 @@ public class CustomScrollPane extends JPanel
 {
     protected JScrollBar m_vertSB;
     protected JScrollBar m_horzSB;
-    protected CustomViewport m_viewport;
+    private CustomViewport m_viewport;
     protected JComponent m_comp;
 
     CustomScrollPaneDialog dialog;
@@ -51,6 +50,7 @@ public class CustomScrollPane extends JPanel
 
         AdjustmentListener lst = new AdjustmentListener()
         {
+            @Override
             public void adjustmentValueChanged(AdjustmentEvent e)
             {
                 if (e.getSource() == m_vertSB)
@@ -77,6 +77,15 @@ public class CustomScrollPane extends JPanel
         m_vertSB.addAdjustmentListener(lst);
         m_horzSB.addAdjustmentListener(lst);
     }
+    @Override
+    public void setBackground( Color c )
+    {
+        super.setBackground(c);
+        if (m_viewport != null)
+        {
+            m_viewport.setBackground(c);
+        }
+    }
 
     public void reset_scroll()
     {
@@ -85,6 +94,7 @@ public class CustomScrollPane extends JPanel
         doLayout();
     }
 
+    @Override
     public void doLayout()
     {
         Dimension d_frame = getSize();

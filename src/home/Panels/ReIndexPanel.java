@@ -17,7 +17,7 @@ import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.Rendering.GlossTable;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.UserMain;
-import dimm.home.Utilities.SizeStr;
+import home.shared.Utilities.SizeStr;
 import home.shared.Utilities.ParseToken;
 import home.shared.hibernate.DiskArchive;
 import java.awt.Insets;
