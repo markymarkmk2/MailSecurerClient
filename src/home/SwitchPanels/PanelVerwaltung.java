@@ -8,18 +8,17 @@ package dimm.home.SwitchPanels;
 import home.shared.SQL.SQLResult;
 import dimm.home.*;
 import dimm.home.Panels.AccountConnectorOverview;
+import dimm.home.Panels.BackupOverview;
 import dimm.home.Panels.DAOverview;
 import dimm.home.Panels.HotfolderOverview;
 import dimm.home.Panels.ImapFetcherOverview;
 import dimm.home.Panels.MilterOverview;
 import dimm.home.Panels.ProxyOverview;
 import dimm.home.Panels.RoleOverview;
-import dimm.home.Rendering.BackgroundTitle;
 import dimm.home.Rendering.FlatBackgroundTitle;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
 import dimm.home.Rendering.TimingTargetAdapter;
-import dimm.home.ServerConnect.ServerCall;
 import home.shared.hibernate.AccountConnector;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -107,6 +106,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         BT_MILTER = new GhostButton();
         BT_PROXY = new GhostButton();
         BT_HOTFOLDER = new GhostButton();
+        BT_BACKUP = new GhostButton();
         PN_HEADER = new javax.swing.JPanel();
 
         setOpaque(false);
@@ -114,7 +114,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         PN_BUTTONS.setOpaque(false);
         PN_BUTTONS.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        BT_DISKARCHIVES.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_DISKARCHIVES.setFont(new java.awt.Font("Arial", 0, 14));
         BT_DISKARCHIVES.setForeground(new java.awt.Color(201, 201, 201));
         BT_DISKARCHIVES.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/archiv.png"))); // NOI18N
         BT_DISKARCHIVES.setText(UserMain.Txt("Archive")); // NOI18N
@@ -133,7 +133,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_DISKARCHIVES, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 80, 140, 50));
 
-        BT_ROLE.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_ROLE.setFont(new java.awt.Font("Arial", 0, 14));
         BT_ROLE.setForeground(new java.awt.Color(201, 201, 201));
         BT_ROLE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/rollen.png"))); // NOI18N
         BT_ROLE.setText(UserMain.Txt("Roles")); // NOI18N
@@ -149,7 +149,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_ROLE, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 80, 190, 50));
 
-        BT_ACCOUNTCONN.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_ACCOUNTCONN.setFont(new java.awt.Font("Arial", 0, 14));
         BT_ACCOUNTCONN.setForeground(new java.awt.Color(201, 201, 201));
         BT_ACCOUNTCONN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/authentifizierer.png"))); // NOI18N
         BT_ACCOUNTCONN.setText(UserMain.Txt("Realms")); // NOI18N
@@ -165,7 +165,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_ACCOUNTCONN, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 80, 190, 50));
 
-        BT_IMAPFETCHER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_IMAPFETCHER.setFont(new java.awt.Font("Arial", 0, 14));
         BT_IMAPFETCHER.setForeground(new java.awt.Color(201, 201, 201));
         BT_IMAPFETCHER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/imap.png"))); // NOI18N
         BT_IMAPFETCHER.setText(UserMain.Txt("IMAP-Connect")); // NOI18N
@@ -184,7 +184,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_IMAPFETCHER, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, 170, 50));
 
-        BT_MILTER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_MILTER.setFont(new java.awt.Font("Arial", 0, 14));
         BT_MILTER.setForeground(new java.awt.Color(201, 201, 201));
         BT_MILTER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/smtp.png"))); // NOI18N
         BT_MILTER.setText(UserMain.Txt("Milter")); // NOI18N
@@ -200,7 +200,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_MILTER, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 200, 170, 50));
 
-        BT_PROXY.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_PROXY.setFont(new java.awt.Font("Arial", 0, 14));
         BT_PROXY.setForeground(new java.awt.Color(201, 201, 201));
         BT_PROXY.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/proxy.png"))); // NOI18N
         BT_PROXY.setText(UserMain.Txt("Mail_Proxy")); // NOI18N
@@ -231,6 +231,22 @@ public class PanelVerwaltung extends SwitchSpringPanel
             }
         });
         PN_BUTTONS.add(BT_HOTFOLDER, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 320, 170, 50));
+
+        BT_BACKUP.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_BACKUP.setForeground(new java.awt.Color(201, 201, 201));
+        BT_BACKUP.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/archiv.png"))); // NOI18N
+        BT_BACKUP.setText(UserMain.Txt("Backup")); // NOI18N
+        BT_BACKUP.setToolTipText(UserMain.Txt("Create_backup_scripts")); // NOI18N
+        BT_BACKUP.setBorderPainted(false);
+        BT_BACKUP.setContentAreaFilled(false);
+        BT_BACKUP.setFocusPainted(false);
+        BT_BACKUP.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        BT_BACKUP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_BACKUPActionPerformed(evt);
+            }
+        });
+        PN_BUTTONS.add(BT_BACKUP, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 320, 170, 50));
 
         PN_HEADER.setOpaque(false);
         PN_HEADER.setLayout(new javax.swing.BoxLayout(PN_HEADER, javax.swing.BoxLayout.LINE_AXIS));
@@ -339,8 +355,20 @@ public class PanelVerwaltung extends SwitchSpringPanel
         }
     }//GEN-LAST:event_BT_IMAPFETCHERActionPerformed
 
+    private void BT_BACKUPActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_BACKUPActionPerformed
+    {//GEN-HEADEREND:event_BT_BACKUPActionPerformed
+        // TODO add your handling code here:
+        if (check_selected())
+        {
+            TimingTargetAdapter tt = make_spring_button_dlg( new BackupOverview(main, true),  get_dlg_pos(),  UserMain.getString("IMAP-Connect") );
+            spring_button_action(evt.getSource(), tt);
+        }
+
+    }//GEN-LAST:event_BT_BACKUPActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ACCOUNTCONN;
+    private javax.swing.JButton BT_BACKUP;
     private javax.swing.JButton BT_DISKARCHIVES;
     private javax.swing.JButton BT_HOTFOLDER;
     private javax.swing.JButton BT_IMAPFETCHER;

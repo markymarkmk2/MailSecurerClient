@@ -167,7 +167,7 @@ public class EditAccountConnector extends GenericEditPanel
     }
     boolean needs_user_auth(String type)
     {
-        return (type.compareTo("ldap") != 0 && type.compareTo("ad") != 0 && type.compareTo("dbs") != 0 );
+        return (type.compareTo("ldap") == 0 || type.compareTo("ad") == 0);
     }
 
     /** This method is called from within the constructor to
@@ -876,6 +876,7 @@ public class EditAccountConnector extends GenericEditPanel
         AccountConnectorTypeEntry mte = (AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
         if (mte == null)
             return;
+
         String type = mte.getType();
         boolean user_visible = needs_user_auth(type);
         boolean server_visible = needs_server_param(type);
@@ -883,7 +884,7 @@ public class EditAccountConnector extends GenericEditPanel
         boolean user_db_visible = needs_user_db(type);
         boolean user_is_mail = needs_user_is_mail(type);
 
-         TXT_PORT.setText( "" + get_dflt_port( type, RB_SSL.isSelected() ) );
+        TXT_PORT.setText( "" + get_dflt_port( type, RB_SSL.isSelected() ) );
 
 
         CB_LDAP_SB.setVisible(search_attr_visible);

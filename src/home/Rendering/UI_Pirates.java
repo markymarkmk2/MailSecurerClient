@@ -189,7 +189,18 @@ public class UI_Pirates extends UI_Generic
             UIManager.put("TextField.caretForeground", new ColorUIResource(appl_selected_color));
             UIManager.put("TextField.font", new FontUIResource(small_font));
             UIManager.put("TextField.border", etched_border);
-            
+
+            UIManager.put("FormattedTextField.background", new ColorUIResource(appl_dgray) );
+            UIManager.put("FormattedTextField.foreground", new ColorUIResource(nice_white) );
+            UIManager.put("FormattedTextField.inactiveBackground", new ColorUIResource(appl_dgray) );
+            UIManager.put("FormattedTextField.disabledBackground",new ColorUIResource(appl_dgray) );
+            UIManager.put("FormattedTextField.inactiveForeground", new ColorUIResource(nice_white) );
+            UIManager.put("FormattedTextField.selectionBackground", new ColorUIResource(appl_dgray));
+            UIManager.put("FormattedTextField.selectionForeground", new ColorUIResource(appl_selected_color));
+            UIManager.put("FormattedTextField.caretForeground", new ColorUIResource(appl_selected_color));
+            UIManager.put("FormattedTextField.font", new FontUIResource(small_font));
+            UIManager.put("FormattedTextField.border", etched_border);
+
             UIManager.put("TextArea.background", new ColorUIResource(appl_dgray) );
             UIManager.put("TextArea.foreground", new ColorUIResource(nice_white) );
             UIManager.put("TextArea.inactiveBackground", new ColorUIResource(appl_dgray) );
