@@ -11,6 +11,7 @@ import dimm.home.UserMain;
 import home.shared.SQL.SQLArrayResult;
 import home.shared.SQL.SQLObjectGetter;
 import home.shared.hibernate.AccountConnector;
+import home.shared.hibernate.Backup;
 import home.shared.hibernate.DiskArchive;
 import home.shared.hibernate.DiskSpace;
 import home.shared.hibernate.Hotfolder;
@@ -109,6 +110,7 @@ public class SQLConnect extends Connect implements SQLObjectGetter
         sql_res_list.add( new SQLListContainer<AccountConnector>(AccountConnector.class, "account_connector") );
         sql_res_list.add( new SQLListContainer<Role>(Role.class, "role") );
         sql_res_list.add( new SQLListContainer<Role>(MailUser.class, "mail_user") );
+        sql_res_list.add( new SQLListContainer<Backup>(Backup.class, "backup") );
     }
 
     

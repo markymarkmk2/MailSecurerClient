@@ -12,6 +12,8 @@
 package dimm.home.Panels;
 
 import dimm.home.Models.DiskArchiveComboModel;
+import dimm.home.Panels.Diagnose.BackupStatus;
+import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.UserMain;
 import home.shared.CS_Constants;
@@ -222,7 +224,7 @@ public class EditBackup  extends GenericEditPanel
                 {
                     String day = day_list[i];
                     String[] time = day.split(":");
-                    hm_time = String.format("%02d:%02d", time[0], time[1]);
+                    hm_time = String.format("%02d:%02d", Integer.parseInt(time[0]), Integer.parseInt(time[1]));
                     time_list[i].setText( hm_time );
                 }
                 catch (Exception e)
@@ -313,7 +315,7 @@ public class EditBackup  extends GenericEditPanel
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         TXT_PATH = new javax.swing.JTextField();
-        BT_PATH = new javax.swing.JButton();
+        BT_PATH = new GlossButton();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
         PN_CYCLE = new javax.swing.JPanel();
@@ -328,10 +330,11 @@ public class EditBackup  extends GenericEditPanel
         TXT_AGENT = new javax.swing.JTextField();
         TXT_AGENT_PORT = new javax.swing.JFormattedTextField();
         CB_BACKUP_SYS = new javax.swing.JCheckBox();
-        BT_TEST_AGENT = new javax.swing.JButton();
+        BT_TEST_AGENT = new GlossButton();
         jLabel6 = new javax.swing.JLabel();
         TXTF_VALID_FROM = new javax.swing.JFormattedTextField();
         jSeparator1 = new javax.swing.JSeparator();
+        BT_START = new GlossButton();
 
         PN_SCHEDULE.setOpaque(false);
 
@@ -685,6 +688,13 @@ public class EditBackup  extends GenericEditPanel
 
         TXTF_VALID_FROM.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
 
+        BT_START.setText(UserMain.Txt("Test_Backup")); // NOI18N
+        BT_START.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_STARTActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -697,25 +707,30 @@ public class EditBackup  extends GenericEditPanel
                     .addComponent(CB_BACKUP_SYS)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel2)
-                                    .addGap(7, 7, 7))
-                                .addComponent(jLabel1))
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(CB_MODE, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(TXT_AGENT, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
-                                .addGap(18, 18, 18)
-                                .addComponent(TXT_AGENT_PORT, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(CB_VAULT, 0, 221, Short.MAX_VALUE)
-                            .addComponent(TXTF_VALID_FROM, javax.swing.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE)
-                            .addComponent(TXT_PATH, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(jLabel2)
+                                            .addGap(7, 7, 7))
+                                        .addComponent(jLabel1))
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel6))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(CB_MODE, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(TXT_AGENT, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(TXT_AGENT_PORT, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(CB_VAULT, 0, 221, Short.MAX_VALUE)
+                                    .addComponent(TXTF_VALID_FROM, javax.swing.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE)
+                                    .addComponent(TXT_PATH, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(BT_START, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(layout.createSequentialGroup()
@@ -772,7 +787,8 @@ public class EditBackup  extends GenericEditPanel
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK)
-                    .addComponent(BT_ABORT))
+                    .addComponent(BT_ABORT)
+                    .addComponent(BT_START))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -804,7 +820,7 @@ public class EditBackup  extends GenericEditPanel
     private void BT_TEST_AGENTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_TEST_AGENTActionPerformed
     {//GEN-HEADEREND:event_BT_TEST_AGENTActionPerformed
         // TODO add your handling code here:
-        String ret = call_syncserver( "list_agent_features",  "AG:" + TXT_AGENT.getText() + " PO:" + TXT_AGENT_PORT.getText() );
+        String ret = UserMain.fcc().call_abstract_function( "backup CMD:test AG:" + TXT_AGENT.getText() + " PO:" + TXT_AGENT_PORT.getText() );
         if ( ret == null)
         {
             UserMain.errm_ok(my_dlg, UserMain.Txt("Cannot_connect_BackupServer"));
@@ -820,11 +836,30 @@ public class EditBackup  extends GenericEditPanel
 
     }//GEN-LAST:event_BT_TEST_AGENTActionPerformed
 
+    private void BT_STARTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_STARTActionPerformed
+    {//GEN-HEADEREND:event_BT_STARTActionPerformed
+        // TODO add your handling code here:
+        if (!save_action(object))
+        {
+            return;
+        }
+        
+        BackupStatus bst = new BackupStatus(object);
+
+        GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, bst);
+
+        dlg.set_next_location(BT_START);
+
+        dlg.setVisible(true);
+        //UserMain.fcc().call_abstract_function("backup CMD:start MA:" + object.getMandant().getId() + " DA:" + object.getDiskArchive().getId() + " BS:" + object.getId());
+    }//GEN-LAST:event_BT_STARTActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JButton BT_OK;
     private javax.swing.JButton BT_PATH;
+    private javax.swing.JButton BT_START;
     private javax.swing.JButton BT_TEST_AGENT;
     private javax.swing.JCheckBox CB_BACKUP_SYS;
     private javax.swing.JCheckBox CB_DAY1;
@@ -919,6 +954,9 @@ public class EditBackup  extends GenericEditPanel
         if (CB_DISABLED.isSelected() != object_is_disabled())
             return true;
 
+        if (CB_BACKUP_SYS.isSelected() != test_flag(CS_Constants.BACK_SYS))
+            return true;
+
         // VAULT
         long da_id = model.getSqlResult().getLong( row, "da_id");
         if ( CB_VAULT.getSelectedItem() != null)
@@ -945,7 +983,7 @@ public class EditBackup  extends GenericEditPanel
         {
             if (!SP_CYCLE_CNT.getValue().toString().equals(object.getCycleval().toString()))
                 return true;
-            if (!CB_MODE.getSelectedItem().toString().equals(UserMain.Txt(object.getCycleunit())))
+            if (!COMBO_CYCLE_UNITS.getSelectedItem().toString().equals(UserMain.Txt(object.getCycleunit())))
                 return true;
         }
 
@@ -1016,7 +1054,7 @@ public class EditBackup  extends GenericEditPanel
         try
         {
             SimpleDateFormat sdf = new SimpleDateFormat(CS_Constants.BACK_STARTDATE_FORMAT);
-            Date d = sdf.parse(TXTF_VALID_FROM.getText(SimpleDa));
+            Date d = sdf.parse(TXTF_VALID_FROM.getText());
         }
         catch (Exception parseException)
         {
@@ -1093,16 +1131,7 @@ public class EditBackup  extends GenericEditPanel
         return model.is_new(row);
     }
 
-    private String call_syncserver( String cmd, String args )
-    {
-        String scmd = "sync CMD:" + cmd;
-        if (args != null && args.length() > 0)
-            scmd += " " + args;
 
-        String ret = UserMain.fcc().call_abstract_function(scmd);
-
-        return ret;
-    }
 
 
 
