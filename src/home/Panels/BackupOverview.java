@@ -101,7 +101,7 @@ public class BackupOverview extends SQLOverviewDialog implements PropertyChangeL
     /** Creates new form NewJDialog */
     public BackupOverview(UserMain parent, boolean modal)
     {
-        super(parent, "ip", modal);
+        super(parent, "agentip", modal);
         initComponents();
 
         main = parent;

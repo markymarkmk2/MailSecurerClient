@@ -35,6 +35,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JPopupMenu;
@@ -88,7 +89,7 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
     long offset;
     boolean end_was_reached;
 
-    static final long LINES_PER_CALL = 500;
+    static final long LINES_PER_CALL = 1000;
     JTextArea LOG_TEXT;
 
 
@@ -227,7 +228,7 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         String ret = fcc.call_abstract_function("show_log CMD:read LG:" + log_type + " LI:" + LINES_PER_CALL + " OF:" + offset , FunctionCallConnect.MEDIUM_TIMEOUT );
 
 
-        if (ret != null && fcc.get_last_err_code() == 0)
+        if (ret != null )
         {
             if (ret.charAt(0) == '0')
             {
@@ -260,7 +261,7 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
 
         String ret = fcc.call_abstract_function("show_log CMD:read LG:" + log_type + " LI:" + lines + " OF:" + loffset , FunctionCallConnect.MEDIUM_TIMEOUT );
 
-        if (ret != null && fcc.get_last_err_code() == 0)
+        if (ret != null)
         {
             if (ret.charAt(0) == '0')
             {
@@ -277,12 +278,16 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
             }
 
         }
+        else
+        {
+            offset = 0;
+        }
         return null;
     }
 
     int update_log()
     {
-        long local_offset = 0;
+        
         boolean found_last_top = false;
         int insert_index = 0;
         int line_len = LOG_TEXT.getText().indexOf('\n');
@@ -295,15 +300,15 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         if (line_len == 0)
             return 0;
 
-        long get_line_cnt = 1;
+        long get_line_cnt = 5;
         while(!found_last_top)
         {
             // UPPER LIMIT
             if (get_line_cnt > LINES_PER_CALL)
-                get_line_cnt = LINES_PER_CALL;
+                break; 
 
             // GET LINES UNTIL WE REACH LAST TOP
-            String new_top = read_nlines_block( get_line_cnt, local_offset);
+            String new_top = read_nlines_block( get_line_cnt, 0);
             if (new_top == null || new_top.length() == 0)
                 break;
 
@@ -315,24 +320,32 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
                     return 0;
             }
 
-            get_line_cnt += 50;
-            local_offset += new_top.length() + 1;
+            get_line_cnt += 250;
+            
 
             stok = new java.util.StringTokenizer( new_top, "\n\r" );
+
+            ArrayList<String> new_lines = new ArrayList<String>();
 
             while( stok.hasMoreElements() )
             {
                 String tk = stok.nextToken().trim();
+                new_lines.add(tk);
                 if (last_top.compareTo( tk ) == 0)
                 {
+
                     found_last_top = true;
+                    for (int i = 0; i < new_lines.size(); i++)
+                    {
+                        String string = new_lines.get(i);
+                        LOG_TEXT.insert( string, insert_index );
+                        insert_index += string.length();
+                        LOG_TEXT.insert( "\n", insert_index );
+                        insert_index ++;
+                    }
+
                     break;
                 }
-
-                LOG_TEXT.insert( tk, insert_index );
-                insert_index += tk.length();
-                LOG_TEXT.insert( "\n", insert_index );
-                insert_index ++;
             }
         }
         if (found_last_top)
@@ -637,6 +650,16 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         update_log();
         timer.restart();
     }
+
+    @Override
+    public void deactivate()
+    {
+        super.deactivate();
+        timer.stop();
+    }
+
+
+
 
 
 }
