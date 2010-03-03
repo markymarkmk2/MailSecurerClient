@@ -94,6 +94,9 @@ public class EditBackup  extends GenericEditPanel
         {
             COMBO_CYCLE_UNITS.addItem( UserMain.Txt(CS_Constants.BY_CYCLE_UNITS[i]));
         }
+
+        // IS NOT WORKING YET
+        BT_PATH.setVisible(false);
         
 
         SQLResult<DiskArchive> da_res = UserMain.sqc().get_da_result();
@@ -1100,16 +1103,10 @@ public class EditBackup  extends GenericEditPanel
         object.setDiskArchive( dacm.get_selected_da());
         object.setAgentpath(TXT_PATH.getText());
 
-        if (CB_MODE.getSelectedIndex() == MD_CYCLE)
-        {
-            object.setCycleunit(CS_Constants.BY_CYCLE_UNITS[COMBO_CYCLE_UNITS.getSelectedIndex()]);
-            object.setCycleval(new Integer(SP_CYCLE_CNT.getValue().toString()));
-        }
-        if (CB_MODE.getSelectedIndex() == MD_SCHEDULE)
-        {
-            object.setSchedenable(enablestr_from_gui());
-            object.setSchedtime(timestr_from_gui());
-        }
+        object.setCycleunit(CS_Constants.BY_CYCLE_UNITS[COMBO_CYCLE_UNITS.getSelectedIndex()]);
+        object.setCycleval(new Integer(SP_CYCLE_CNT.getValue().toString()));
+        object.setSchedenable(enablestr_from_gui());
+        object.setSchedtime(timestr_from_gui());
         
         object.setAgentip( TXT_AGENT.getText() );
         object.setAgentport(get_agent_port() );

@@ -450,7 +450,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
         titlePanel.installListeners();
         
         
-        navPanel.add_button(getString("Suchen"), PBC_SEARCH, pn_startup);
+        navPanel.add_button(getString("Aufgaben"), PBC_SEARCH, pn_startup);
         navPanel.add_button(getString("Verwaltung"), PBC_ADMIN, pn_verwaltung);
         navPanel.add_button(getString("Tools"), PBC_TOOLS, pn_tools);
 

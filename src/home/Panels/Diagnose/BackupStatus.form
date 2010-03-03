@@ -24,7 +24,7 @@
                       <Component id="BT_START" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="BT_ABORT" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="191" max="32767" attributes="0"/>
+                      <EmptySpace pref="177" max="32767" attributes="0"/>
                       <Component id="BT_CLOSE" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>

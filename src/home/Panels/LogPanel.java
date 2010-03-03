@@ -139,8 +139,12 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         LOG_TEXT.setBackground(Color.black);
 
         custom_scroll_pane = new CustomScrollPane( this, LOG_TEXT );
+        custom_scroll_pane.setBackground(Color.black);
+        
         LOG_PANEL.add(custom_scroll_pane);
 
+        add_log_entry("System", "L4J" );
+        add_log_entry("Backup", "SYNC" );
 
         reset_text_pos();
 
@@ -152,22 +156,15 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         timer.start();
     }
 
-    public void CB_LOG_SOURCEActionPerformed(java.awt.event.ActionEvent evt)
-    {
-        // SET NEW TEXT
-        reset_text_pos();
-
-        set_text( read_next_block() );
-
-        custom_scroll_pane.reset_scroll();
-    }
+   
 
 
     void reset_text_pos()
     {
         offset = 0;
         end_was_reached = false;
-        LOG_TEXT.setText(null);
+        if (LOG_TEXT != null)
+            LOG_TEXT.setText("");
     }
     boolean inside_add_text = false;
     @Override
@@ -186,13 +183,15 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         if (text == null)
             return;
 
-        LOG_TEXT.append(text );
+        if (LOG_TEXT != null)
+            LOG_TEXT.append(text );
 
         custom_scroll_pane.doLayout();
     }
     void set_text( String text )
     {
-        LOG_TEXT.setText(text );
+        if (LOG_TEXT != null)
+            LOG_TEXT.setText(text );
 
     }
 
@@ -468,7 +467,13 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         BT_DUMP = new GlossButton();
 
         CB_LOG_SOURCE.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "default" }));
+        CB_LOG_SOURCE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CB_LOG_SOURCEActionPerformed(evt);
+            }
+        });
 
+        LOG_PANEL.setBackground(new java.awt.Color(0, 0, 0));
         LOG_PANEL.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         LOG_PANEL.setMinimumSize(new java.awt.Dimension(600, 200));
         LOG_PANEL.setPreferredSize(new java.awt.Dimension(600, 200));
@@ -504,7 +509,7 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
                         .addComponent(CB_LOG_SOURCE, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(BT_DUMP)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 247, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 257, Short.MAX_VALUE)
                         .addComponent(BT_OK)))
                 .addContainerGap())
         );
@@ -567,6 +572,23 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         get_log_dump( last_file );
 
     }//GEN-LAST:event_BT_DUMPActionPerformed
+
+    private void CB_LOG_SOURCEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_LOG_SOURCEActionPerformed
+    {//GEN-HEADEREND:event_CB_LOG_SOURCEActionPerformed
+        // TODO add your handling code here:
+                // SET NEW TEXT
+        if (LOG_TEXT == null)
+            return;
+        
+
+        reset_text_pos();
+
+        set_text( read_next_block() );
+
+        custom_scroll_pane.reset_scroll();
+
+
+    }//GEN-LAST:event_CB_LOG_SOURCEActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

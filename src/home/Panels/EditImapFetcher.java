@@ -620,12 +620,12 @@ public class EditImapFetcher extends GenericEditPanel
         String user_name = TXT_USER.getText();
         String pwd = get_pwd();
 
-        if (type.compareTo("ldap") != 0)
+        if (type.compareTo("ldap") != 0 && type.compareTo("ad") != 0)
         {
             GetUserMailPwdPanel pnl = new GetUserMailPwdPanel(  );
             pnl.enable_mail_list(false, null );
-            pnl.enable_user(true, UserMain.self.get_act_username());
-            pnl.enable_pwd(true, "");
+            pnl.enable_user(true, user_name);
+            pnl.enable_pwd(true, pwd);
 
             GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
             dlg.set_next_location( my_dlg );

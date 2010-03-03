@@ -360,7 +360,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         // TODO add your handling code here:
         if (check_selected())
         {
-            TimingTargetAdapter tt = make_spring_button_dlg( new BackupOverview(main, true),  get_dlg_pos(),  UserMain.getString("IMAP-Connect") );
+            TimingTargetAdapter tt = make_spring_button_dlg( new BackupOverview(main, true),  get_dlg_pos(),  UserMain.getString("Backupscripts") );
             spring_button_action(evt.getSource(), tt);
         }
 

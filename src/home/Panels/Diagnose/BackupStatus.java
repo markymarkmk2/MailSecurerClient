@@ -287,7 +287,7 @@ public class BackupStatus extends GlossDialogPanel implements ActionListener
                         .addComponent(BT_START)
                         .addGap(18, 18, 18)
                         .addComponent(BT_ABORT)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 191, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 177, Short.MAX_VALUE)
                         .addComponent(BT_CLOSE)))
                 .addContainerGap())
         );
@@ -403,12 +403,18 @@ public class BackupStatus extends GlossDialogPanel implements ActionListener
         ParseToken pt = new ParseToken(ret);
         if (pt.GetLong("ID:") != 9999)
         {
-            long next_start = pt.GetLong("NS:");
-            if (next_start > 0)
+            try
             {
-                Date d = new Date(next_start * 1000);
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss  dd.MM.yyyy");
-                TXT_NEXT_START.setText( sdf.format(d));
+                long next_start = pt.GetLong("NS:");
+                if (next_start > 0)
+                {
+                    Date d = new Date(next_start * 1000);
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss  dd.MM.yyyy");
+                    TXT_NEXT_START.setText(sdf.format(d));
+                }
+            }
+            catch (Exception e)
+            {
             }
             
             boolean last_result_ok = pt.GetBoolean("LOK:");

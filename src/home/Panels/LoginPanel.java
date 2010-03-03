@@ -967,15 +967,10 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                     return false;
                 }
             }
-            // TODO: SELCT MANDANT
 
-            //int firmen_id = sql.get_sql_first_int_lazy(SQLListBuilder.OLD_PARA_DB, "select firmenid from customer_testings where id='" + main.get_station_id() + "'");
             main.setUserLevel( USERMODE.UL_SYSADMIN );
             main.set_titel( "<" + sys_user + "> (" + UserMain.Txt("SysAdmin") + ")" );
-            //sql.set_mandant_id(1);
-            //main.set_mallorca_proxy( use_mallorca_proxy() );
-
-
+            
             SwingUtilities.invokeLater( new Runnable()
             {
                 @Override
@@ -1082,7 +1077,6 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         {
             UserMain.errm_ok(my_dlg, UserMain.Txt("No_Stations_could_be_found"));
         }
-
         return st_list;
 
     }

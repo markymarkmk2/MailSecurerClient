@@ -43,44 +43,32 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="70" max="-2" attributes="0"/>
-                                  <Component id="CB_TYPE" min="-2" pref="115" max="-2" attributes="1"/>
-                              </Group>
+                              <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="LB_PWD" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="LB_SERVER" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="LB_USER" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="LB_PWD1" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="CB_TYPE" alignment="0" min="-2" pref="122" max="-2" attributes="1"/>
+                              <Component id="TXT_DOMAINLIST" alignment="1" pref="325" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="103" alignment="0" groupAlignment="0" attributes="0">
-                                          <Component id="LB_PWD1" alignment="1" min="-2" max="-2" attributes="0"/>
-                                          <Group type="102" alignment="1" attributes="0">
-                                              <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
-                                          </Group>
-                                      </Group>
-                                      <Component id="LB_PWD" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="LB_SERVER" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="LB_USER" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="1" attributes="0">
-                                      <Component id="TXT_DOMAINLIST" alignment="1" pref="319" max="32767" attributes="0"/>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Group type="103" groupAlignment="1" attributes="0">
-                                              <Component id="TXTP_PWD1" alignment="0" pref="183" max="32767" attributes="1"/>
-                                              <Component id="TXTP_PWD" alignment="0" pref="183" max="32767" attributes="1"/>
-                                              <Component id="TXT_USERNAME" alignment="0" pref="183" max="32767" attributes="1"/>
-                                              <Component id="TXT_SERVER" alignment="0" pref="183" max="32767" attributes="3"/>
-                                          </Group>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Group type="102" attributes="0">
-                                                  <Component id="LB_PORT" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                                                  <Component id="TXT_PORT" min="-2" pref="86" max="-2" attributes="1"/>
-                                              </Group>
-                                              <Component id="BT_DISABLED" alignment="0" min="-2" pref="115" max="-2" attributes="1"/>
-                                          </Group>
+                                      <Component id="TXTP_PWD1" alignment="0" pref="189" max="32767" attributes="1"/>
+                                      <Component id="TXTP_PWD" alignment="0" pref="189" max="32767" attributes="1"/>
+                                      <Component id="TXT_USERNAME" alignment="0" pref="189" max="32767" attributes="1"/>
+                                      <Component id="TXT_SERVER" alignment="0" pref="189" max="32767" attributes="3"/>
+                                  </Group>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" attributes="0">
+                                          <Component id="LB_PORT" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                          <Component id="TXT_PORT" min="-2" pref="86" max="-2" attributes="1"/>
                                       </Group>
+                                      <Component id="BT_DISABLED" alignment="0" min="-2" pref="115" max="-2" attributes="1"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -90,7 +78,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jPanel3" min="-2" max="-2" attributes="1"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="jPanel2" max="32767" attributes="0"/>
+                          <Component id="PN_LDAPOPT" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -146,7 +134,7 @@
                   </Group>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+                      <Component id="PN_LDAPOPT" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -234,6 +222,7 @@
                 </TitledBorder>
               </Border>
             </Property>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
 
           <Layout>
@@ -296,6 +285,7 @@
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="dimm/home/MA_Properties.properties" key="unsecure" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RB_INSECUREActionPerformed"/>
@@ -309,6 +299,7 @@
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="dimm/home/MA_Properties.properties" key="TLS_if_available" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RB_TLS_IV_AVAILActionPerformed"/>
@@ -322,6 +313,7 @@
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="dimm/home/MA_Properties.properties" key="only_TLS" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RB_TLS_FORCEActionPerformed"/>
@@ -335,6 +327,7 @@
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="dimm/home/MA_Properties.properties" key="SSL" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RB_SSLActionPerformed"/>
@@ -345,6 +338,7 @@
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="dimm/home/MA_Properties.properties" key="with_Certificate" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
                 </Property>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CB_CERTIFICATEActionPerformed"/>
@@ -380,7 +374,7 @@
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="TXT_DOMAINLISTMouseClicked"/>
           </Events>
         </Component>
-        <Container class="javax.swing.JPanel" name="jPanel2">
+        <Container class="javax.swing.JPanel" name="PN_LDAPOPT">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -389,6 +383,7 @@
                 </TitledBorder>
               </Border>
             </Property>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
 
           <Layout>
@@ -397,22 +392,15 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="CB_LDAP_SB" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="TXT_LDAP_SB" pref="104" max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="LB_MAILFIELDS" min="-2" max="-2" attributes="0"/>
-                                  <Component id="LB_SEARCHFIELD" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="TXT_SEARCHFIELD" pref="104" max="32767" attributes="0"/>
-                                  <Component id="TXT_MAILFIELDS" alignment="0" pref="104" max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
+                          <Component id="CB_LDAP_SB" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="LB_MAILFIELDS" min="-2" max="-2" attributes="0"/>
+                          <Component id="LB_SEARCHFIELD" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="TXT_LDAP_SB" alignment="0" pref="104" max="32767" attributes="0"/>
+                          <Component id="TXT_MAILFIELDS" alignment="0" pref="104" max="32767" attributes="0"/>
+                          <Component id="TXT_SEARCHFIELD" alignment="0" pref="104" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -489,6 +477,7 @@
                 </TitledBorder>
               </Border>
             </Property>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
 
           <Layout>
