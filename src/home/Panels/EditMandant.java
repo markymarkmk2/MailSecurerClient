@@ -54,11 +54,11 @@ class HeaderModel extends OverviewModel
 
         String[] _col_names =
         {
-            "Id", UserMain.getString("Name"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")
+            "Id", UserMain.getString("Name"), UserMain.getString("eMail"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")
         };
         Class[] _col_classes =
         {
-            String.class, String.class, JButton.class, JButton.class
+            String.class, String.class, Boolean.class,  JButton.class, JButton.class
         };
         set_columns(_col_names, _col_classes);
 
@@ -87,6 +87,9 @@ class HeaderModel extends OverviewModel
                 return mhv.getId(); // ID
             case 1:
                 return mhv.getVarName();
+            case 2:
+                boolean f = (mhv.getFlags() & CS_Constants.MHV_CONTAINS_EMAIL) == CS_Constants.MHV_CONTAINS_EMAIL;
+                return new Boolean(f);
             default:
                 return super.getValueAt(rowIndex, columnIndex);
         }
@@ -1239,6 +1242,10 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         }
 
         String pwd = object.getPassword();
+        String dec_passwd = CryptTools.crypt_internal( pwd, UserMain.self, CryptTools.ENC_MODE.DECRYPT);
+        if (dec_passwd != null)
+            pwd = dec_passwd;
+        
         if (pwd == null || get_pwd().compareTo(pwd) != 0)
         {
             return true;
@@ -1461,14 +1468,15 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         cm.getColumn(0).setMinWidth(40);
         cm.getColumn(0).setMaxWidth(40);
         cm.getColumn(1).setPreferredWidth(150);
+        cm.getColumn(2).setMinWidth(60);
+        cm.getColumn(2).setMaxWidth(60);
         hmodel.set_table_header(cm);
     }
     
     void edit_hmv_row( int row )
-    {
-        String name = hmodel.get_object(row).getVarName();
-        SingleTextEditPanel pnl = new SingleTextEditPanel( "MailHeader" );
-        pnl.setText(name);
+    {        
+        EditHeaderMailVariable pnl = new EditHeaderMailVariable( "MailHeader" );
+        pnl.setObject(hmodel.get_object(row));
         pnl.setLabel(UserMain.Txt("Header_Variable"));
         GenericGlossyDlg dlg = new GenericGlossyDlg(null, true, pnl);
 
@@ -1479,6 +1487,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         if (pnl.isOkay())
         {
             hmodel.get_object(row).setVarName( pnl.getText() );
+            hmodel.get_object(row).setFlags( pnl.getFlags() );
 
             ServerCall sql = UserMain.sqc().get_sqc();
             ConnectionID cid = sql.open();
@@ -1528,6 +1537,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             object_overview.gather_sql_result();
             model = object_overview.get_object_model();
             row = model.get_row_by_id( object.getId() );
+            object = model.get_object(row);
         }
         int id = object.getId();
 

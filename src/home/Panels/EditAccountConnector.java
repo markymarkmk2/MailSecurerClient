@@ -1012,7 +1012,7 @@ public class EditAccountConnector extends GenericEditPanel
         else
         {
             TXT_LDAP_SB.setText(object.getSearchbase());
-            TXT_LDAP_SB.setEnabled(false);
+            TXT_LDAP_SB.setEnabled(true);
         }
         if (my_dlg != null)
             my_dlg.pack();
@@ -1249,6 +1249,15 @@ public class EditAccountConnector extends GenericEditPanel
 
         if (CB_USER_IS_EMAIL.isSelected() != test_flag(CS_Constants.ACCT_USER_IS_MAIL))
             return true;
+
+        if (CB_LDAP_SB.isSelected())
+        {
+            if (!object.getSearchbase().equals( TXT_LDAP_SB.getText()))
+            {
+                return true;
+            }
+        }
+
 
         return false;
     }

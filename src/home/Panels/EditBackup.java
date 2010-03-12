@@ -846,6 +846,12 @@ public class EditBackup  extends GenericEditPanel
         {
             return;
         }
+        // REBUILD MODEL AND SET VARS
+        object_overview.gather_sql_result();
+        model = object_overview.get_object_model();
+        row = model.get_row_by_id( object.getId() );
+        object = model.get_object(row);
+
         
         BackupStatus bst = new BackupStatus(object);
 

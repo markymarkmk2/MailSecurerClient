@@ -1318,8 +1318,13 @@ public class ServerTCPCall extends ServerCall
                         upd_cmd += ",";
                     }
                     field_idx++;
-                    String val = method.invoke(o).toString();
-                    val = SQLArrayResult.encode(val);
+                    Object obj = method.invoke(o);
+                    String val = "";
+                    if (obj != null)
+                    {
+                        val = method.invoke(o).toString();
+                        val = SQLArrayResult.encode(val);
+                    }
 
                     upd_cmd += field_name + "='" + val + "'";
                 }

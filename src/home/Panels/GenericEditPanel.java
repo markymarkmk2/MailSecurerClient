@@ -127,6 +127,7 @@ public abstract class GenericEditPanel extends GlossDialogPanel
 
     }
 
+
     protected void abort_action()
     {
         this.setVisible(false);

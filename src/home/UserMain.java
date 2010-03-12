@@ -52,6 +52,8 @@ import java.util.Set;
 
 
 
+
+
 /**
  *
  * @author  Administrator
@@ -155,7 +157,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
 
     public void call_navigation_click()
     {
-        UserMain.errm_ok("Jeht noch nicht");
+        UserMain.info_ok("TODO: Website");
     }
 
     public USERMODE getUserLevel()

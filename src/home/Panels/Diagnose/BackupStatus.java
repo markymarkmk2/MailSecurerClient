@@ -308,7 +308,23 @@ public class BackupStatus extends GlossDialogPanel implements ActionListener
     private void BT_STARTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_STARTActionPerformed
     {//GEN-HEADEREND:event_BT_STARTActionPerformed
         // TODO add your handling code here:
-        UserMain.fcc().call_abstract_function("backup CMD:start MA:" + object.getMandant().getId() + " DA:" + object.getDiskArchive().getId() + " BS:" + object.getId());
+        String ret = UserMain.fcc().call_abstract_function("backup CMD:start MA:" + object.getMandant().getId() + " DA:" + object.getDiskArchive().getId() + " BS:" + object.getId());
+        if (ret == null)
+        {
+            UserMain.errm_ok(UserMain.Txt("Cannot_start_backup"));
+            return;
+        }
+        if (ret.charAt(0) == '0')
+            return;
+
+        if (ret.charAt(0) == '3')
+        {
+            UserMain.errm_ok(UserMain.Txt("Please_initialize_this_customer_first"));
+        }
+        else
+        {
+            UserMain.errm_ok(UserMain.Txt("Error_while_starting_backup" + ": " + ret));
+        }
     }//GEN-LAST:event_BT_STARTActionPerformed
 
     private void BT_ABORTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_ABORTActionPerformed
