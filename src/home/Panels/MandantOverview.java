@@ -224,6 +224,8 @@ public class MandantOverview extends SQLOverviewDialog implements PropertyChange
 
         ServerCall sql = UserMain.sqc().get_sqc();
         boolean okay = sql.DeleteObject( m);
+        if (okay)
+            set_needs_init( true );
 
         return okay;
 

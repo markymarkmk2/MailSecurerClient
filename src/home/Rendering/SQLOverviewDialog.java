@@ -38,13 +38,26 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
     protected GlossTable table;
     protected GlossPanel pg_painter;
     protected String name_field;
+    private static boolean needs_init;
 
 
     public abstract void set_table_header();
         
     public abstract void gather_sql_result();
     public abstract void gather_sql_result(long station_id);
-                
+
+    
+    public static boolean needs_init()
+    {
+        return needs_init;
+    }
+
+    public static void set_needs_init( boolean needs_init )
+    {
+        SQLOverviewDialog.needs_init = needs_init;
+    }
+
+
     public void set_tabel_row_height()
     {
         packRows( table, table.getRowMargin() );
@@ -229,6 +242,7 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
 
         if (okay)
         {
+            set_needs_init( true );
             UserMain.sqc().rebuild_result_array( object.getClass() );
         }
         else
@@ -260,6 +274,7 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
             String object_name = object.getClass().getSimpleName();
             UserMain.errm_ok(this, UserMain.Txt("Cannot_delete") + " " + object_name + " " + sql.get_last_err());
         }
+        set_needs_init( true );
 
         return okay;
     }

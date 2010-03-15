@@ -216,7 +216,7 @@ public class PanelTools extends SwitchSpringPanel
 
         if (UserMain.errm_ok_cancel(null, UserMain.Txt("Do_you_want_to_restart_this_company?")))
         {
-            UserMain.fcc().call_abstract_function("restart_mandant MA:" + UserMain.sqc().get_act_mandant_id(), ServerCall.SHORT_CMD_TO);
+            UserMain.self.initialize_act_mandant();
         }
 }//GEN-LAST:event_BT_INITActionPerformed
 

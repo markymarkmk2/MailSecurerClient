@@ -10,6 +10,7 @@ import dimm.home.*;
 import dimm.home.Panels.AccountConnectorOverview;
 import dimm.home.Panels.BackupOverview;
 import dimm.home.Panels.DAOverview;
+import dimm.home.Panels.GenericEditPanel;
 import dimm.home.Panels.HotfolderOverview;
 import dimm.home.Panels.ImapFetcherOverview;
 import dimm.home.Panels.MilterOverview;
@@ -17,6 +18,7 @@ import dimm.home.Panels.ProxyOverview;
 import dimm.home.Panels.RoleOverview;
 import dimm.home.Rendering.FlatBackgroundTitle;
 import dimm.home.Rendering.GhostButton;
+import dimm.home.Rendering.SQLOverviewDialog;
 import dimm.home.Rendering.SwitchSpringPanel;
 import dimm.home.Rendering.TimingTargetAdapter;
 import home.shared.hibernate.AccountConnector;
@@ -382,13 +384,12 @@ public class PanelVerwaltung extends SwitchSpringPanel
     @Override
     public void activate_panel()
     {
-        boolean system_level = true;
     }
 
     @Override
     public void deactivate_panel()
     {
-        
+          UserMain.self.check_for_param_initialize();
     }
 
     /*

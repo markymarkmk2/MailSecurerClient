@@ -10,7 +10,6 @@ import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StatementID;
 import dimm.home.UserMain;
-import home.shared.CS_Constants.USERMODE;
 
 /**
  *
@@ -19,11 +18,23 @@ import home.shared.CS_Constants.USERMODE;
 public abstract class GenericEditPanel extends GlossDialogPanel
 {
     protected int row;
+    private static boolean needs_init;
 
     protected abstract void set_object_props();
     protected abstract boolean check_changed();
     protected abstract boolean is_plausible();
     protected abstract boolean is_new();
+
+    public static boolean needs_init()
+    {
+        return needs_init;
+    }
+
+    public static void set_needs_init( boolean needs_init )
+    {
+        GenericEditPanel.needs_init = needs_init;
+    }
+
 
     protected boolean update_db(Object object)
     {
@@ -46,6 +57,7 @@ public abstract class GenericEditPanel extends GlossDialogPanel
             UserMain.errm_ok(my_dlg, UserMain.Txt("Cannot_update") + " " + object_name + " " +sql.get_last_err());
             return false;
         }
+        set_needs_init( true );
 
         return true;
     }
@@ -70,6 +82,7 @@ public abstract class GenericEditPanel extends GlossDialogPanel
             UserMain.errm_ok(my_dlg, UserMain.Txt("Cannot_insert") + " " + object_name + " " + sql.get_last_err());
             return false;
         }
+        set_needs_init( true );
 
         return true;
 

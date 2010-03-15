@@ -6,6 +6,7 @@
 
 package dimm.home;
 
+import dimm.home.Panels.GenericEditPanel;
 import dimm.home.SwitchPanels.PanelVerwaltung;
 import dimm.home.SwitchPanels.PanelSystem;
 import dimm.home.SwitchPanels.PanelStartup;
@@ -13,6 +14,7 @@ import dimm.home.Panels.LoginPanel;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossErrDialog;
 import dimm.home.Rendering.NavigationHeader;
+import dimm.home.Rendering.SQLOverviewDialog;
 import dimm.home.Rendering.SpringGlassPane;
 import dimm.home.Rendering.TitlePanel;
 import dimm.home.ServerConnect.FunctionCallConnect;
@@ -33,6 +35,7 @@ import org.jdesktop.fuse.ResourceInjector;
 import  sun.audio.*;    //import the sun.audio package
 
 import dimm.home.ServerConnect.SQLConnect;
+import dimm.home.ServerConnect.ServerCall;
 import dimm.home.SwitchPanels.PanelTools;
 import home.shared.CS_Constants.USERMODE;
 import home.shared.SQL.UserSSOEntry;
@@ -586,6 +589,9 @@ public class UserMain extends javax.swing.JFrame implements LogListener
    
     private void handle_logoff()
     {
+        
+        check_for_param_initialize();
+
         userLevel = USERMODE.UL_DUMMY;
         UserMain.fcc.close();
         UserMain.sqc.close();
@@ -1190,6 +1196,25 @@ public class UserMain extends javax.swing.JFrame implements LogListener
     public boolean is_debug()
     {
         return false;
+    }
+
+    public void initialize_act_mandant()
+    {
+        GenericEditPanel.set_needs_init(false);
+        SQLOverviewDialog.set_needs_init(false);
+        UserMain.fcc().call_abstract_function("restart_mandant MA:" + UserMain.sqc().get_act_mandant_id(), ServerCall.SHORT_CMD_TO);
+    }
+
+    public void check_for_param_initialize()
+    {
+        if (GenericEditPanel.needs_init() || SQLOverviewDialog.needs_init())
+        {
+            if (UserMain.errm_ok_cancel(null, UserMain.Txt("You_have_made_changes,_you_want_to_initialize?")) )
+            {
+                UserMain.self.initialize_act_mandant();
+            }
+        }
+
     }
 
 
