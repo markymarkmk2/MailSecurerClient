@@ -182,15 +182,16 @@ public class EditAccountConnector extends GenericEditPanel
         buttonGroup1 = new javax.swing.ButtonGroup();
         PN_ACTION = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        CB_TYPE = new javax.swing.JComboBox();
         TXT_SERVER = new javax.swing.JTextField();
         LB_SERVER = new javax.swing.JLabel();
-        CB_TYPE = new javax.swing.JComboBox();
         TXT_PORT = new javax.swing.JTextField();
+        TXT_USERNAME = new javax.swing.JTextField();
         LB_PORT = new javax.swing.JLabel();
         LB_USER = new javax.swing.JLabel();
         TXTP_PWD = new javax.swing.JPasswordField();
+        TXTP_PWD1 = new javax.swing.JPasswordField();
         LB_PWD = new javax.swing.JLabel();
-        TXT_USERNAME = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         RB_INSECURE = new javax.swing.JRadioButton();
         RB_TLS_IV_AVAIL = new javax.swing.JRadioButton();
@@ -215,7 +216,6 @@ public class EditAccountConnector extends GenericEditPanel
         LB_DOMAINSUFFX = new javax.swing.JLabel();
         TXT_USERDOMAIN = new javax.swing.JTextField();
         LB_PWD1 = new javax.swing.JLabel();
-        TXTP_PWD1 = new javax.swing.JPasswordField();
         BT_DISABLED = new javax.swing.JCheckBox();
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
@@ -232,6 +232,13 @@ public class EditAccountConnector extends GenericEditPanel
 
         jLabel1.setText(UserMain.getString("Typ")); // NOI18N
 
+        CB_TYPE.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        CB_TYPE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CB_TYPEActionPerformed(evt);
+            }
+        });
+
         TXT_SERVER.setText(UserMain.Txt("Neuer_Server")); // NOI18N
         TXT_SERVER.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -245,13 +252,6 @@ public class EditAccountConnector extends GenericEditPanel
         });
 
         LB_SERVER.setText(UserMain.getString("Server")); // NOI18N
-
-        CB_TYPE.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        CB_TYPE.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CB_TYPEActionPerformed(evt);
-            }
-        });
 
         TXT_PORT.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -336,15 +336,15 @@ public class EditAccountConnector extends GenericEditPanel
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(RB_TLS_IV_AVAIL)
-                                .addComponent(RB_INSECURE, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                                .addComponent(RB_INSECURE, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
                                 .addComponent(RB_TLS_FORCE))
                             .addGap(63, 63, 63))
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addComponent(RB_SSL)
-                            .addContainerGap(124, Short.MAX_VALUE))
+                            .addContainerGap(146, Short.MAX_VALUE))
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addComponent(CB_CERTIFICATE)
-                            .addContainerGap(68, Short.MAX_VALUE)))
+                            .addContainerGap(90, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(BT_IMPORT_CERT)
                         .addContainerGap())))
@@ -513,13 +513,13 @@ public class EditAccountConnector extends GenericEditPanel
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(CB_TYPE, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(TXT_DOMAINLIST, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
+                            .addComponent(TXT_DOMAINLIST, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
                             .addGroup(PN_ACTIONLayout.createSequentialGroup()
                                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(TXTP_PWD1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
-                                    .addComponent(TXTP_PWD, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
-                                    .addComponent(TXT_USERNAME, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
-                                    .addComponent(TXT_SERVER, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE))
+                                    .addComponent(TXTP_PWD1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                                    .addComponent(TXTP_PWD, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                                    .addComponent(TXT_USERNAME, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                                    .addComponent(TXT_SERVER, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE))
                                 .addGap(18, 18, 18)
                                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(PN_ACTIONLayout.createSequentialGroup()

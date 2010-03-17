@@ -19,7 +19,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jSplitPane1" alignment="1" pref="632" max="32767" attributes="0"/>
+                  <Component id="SPL_MAIL" alignment="1" pref="632" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="CB_HQ" min="-2" max="-2" attributes="0"/>
                       <EmptySpace pref="440" max="32767" attributes="0"/>
@@ -34,7 +34,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jSplitPane1" pref="354" max="32767" attributes="0"/>
+              <Component id="SPL_MAIL" pref="354" max="32767" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="BT_CLOSE" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -70,9 +70,10 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CB_HQActionPerformed"/>
       </Events>
     </Component>
-    <Container class="javax.swing.JSplitPane" name="jSplitPane1">
+    <Container class="javax.swing.JSplitPane" name="SPL_MAIL">
       <Properties>
-        <Property name="dividerLocation" type="int" value="100"/>
+        <Property name="dividerLocation" type="int" value="80"/>
+        <Property name="dividerSize" type="int" value="3"/>
         <Property name="orientation" type="int" value="0"/>
       </Properties>
 
@@ -93,7 +94,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jSplitPane2" alignment="0" pref="99" max="32767" attributes="0"/>
+                  <Component id="jSplitPane2" alignment="0" pref="79" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -142,7 +143,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="SCP_TXTA" alignment="0" pref="248" max="32767" attributes="0"/>
+                  <Component id="SCP_TXTA" alignment="0" pref="270" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>

@@ -217,14 +217,6 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         login_retries = 0;
         
 
-        String l_code = UserMain.get_default_lang();
-        if (l_code == null || l_code.length() == 0)
-            l_code = Main.get_prop( Preferences.COUNTRYCODE, "EN");
-        
-        if (l_code.compareTo("EN") == 0)
-           CB_LANG.setSelectedIndex(0);
-        if (l_code.compareTo("DE") == 0)
-           CB_LANG.setSelectedIndex(1);
         
         in_init = false;
 
@@ -402,28 +394,21 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        PF_PWD = new javax.swing.JPasswordField();
         jLabel1 = new javax.swing.JLabel();
         CB_USER = new javax.swing.JComboBox();
         LB_PWD = new javax.swing.JLabel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
         BT_CHANGE_PWD = new GlossButton();
-        CB_LANG = new javax.swing.JComboBox();
-        jLabel3 = new javax.swing.JLabel();
         LB_USER = new javax.swing.JLabel();
         TXT_USER = new javax.swing.JTextField();
+        PF_PWD = new javax.swing.JPasswordField();
         jLabel2 = new javax.swing.JLabel();
         CB_SERVER = new javax.swing.JComboBox();
         jLabel4 = new javax.swing.JLabel();
         CB_MANDANT = new javax.swing.JComboBox();
         BT_SSL = new javax.swing.JCheckBox();
-
-        PF_PWD.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                PF_PWDMouseClicked(evt);
-            }
-        });
+        jLabel3 = new javax.swing.JLabel();
 
         jLabel1.setText(UserMain.Txt("Benutzer")); // NOI18N
 
@@ -457,20 +442,17 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             }
         });
 
-        CB_LANG.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "English", "Deutsch" }));
-        CB_LANG.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CB_LANGActionPerformed(evt);
-            }
-        });
-
-        jLabel3.setText(UserMain.Txt("Sprache")); // NOI18N
-
         LB_USER.setText(UserMain.getString("Loginname")); // NOI18N
 
         TXT_USER.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 TXT_USERMouseClicked(evt);
+            }
+        });
+
+        PF_PWD.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                PF_PWDMouseClicked(evt);
             }
         });
 
@@ -491,11 +473,14 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         });
 
         BT_SSL.setText(UserMain.Txt("SSL")); // NOI18N
+        BT_SSL.setOpaque(false);
         BT_SSL.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_SSLActionPerformed(evt);
             }
         });
+
+        jLabel3.setText(UserMain.Txt("SSL")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -506,7 +491,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(BT_CHANGE_PWD)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 109, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(BT_ABORT)
                             .addComponent(BT_OK, javax.swing.GroupLayout.Alignment.TRAILING)))
@@ -516,22 +501,16 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                             .addComponent(LB_PWD)
                             .addComponent(jLabel1)
                             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(CB_SERVER, 0, 223, Short.MAX_VALUE)
-                            .addComponent(CB_MANDANT, 0, 223, Short.MAX_VALUE)
-                            .addComponent(CB_USER, 0, 223, Short.MAX_VALUE)
-                            .addComponent(TXT_USER, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
-                            .addComponent(PF_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(11, 11, 11)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(BT_SSL)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(CB_LANG, 0, 135, Short.MAX_VALUE)
-                                .addGap(88, 88, 88)))))
+                            .addComponent(CB_SERVER, 0, 196, Short.MAX_VALUE)
+                            .addComponent(CB_MANDANT, 0, 196, Short.MAX_VALUE)
+                            .addComponent(CB_USER, 0, 196, Short.MAX_VALUE)
+                            .addComponent(TXT_USER, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                            .addComponent(PF_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                            .addComponent(BT_SSL))))
                 .addContainerGap())
         );
 
@@ -560,13 +539,11 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(PF_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LB_PWD))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
-                .addComponent(BT_SSL)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(CB_LANG, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BT_SSL)
                     .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(BT_CHANGE_PWD)
                     .addGroup(layout.createSequentialGroup()
@@ -586,6 +563,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             TXT_USER.setVisible(true);
             LB_USER.setVisible(true);
              CB_MANDANT.setVisible(true);
+             TXT_USER.requestFocus();
         }
         if (CB_USER.getSelectedIndex() == 1) // MULTIADMIN
         {
@@ -593,6 +571,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             TXT_USER.setVisible(true);
             LB_USER.setVisible(true);
             CB_MANDANT.setVisible(true);
+            TXT_USER.requestFocus();
         }
         if (CB_USER.getSelectedIndex() == 2) // SYSADMIN
         {
@@ -600,6 +579,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             BT_CHANGE_PWD.setVisible(false);
             TXT_USER.setVisible(true);
             LB_USER.setVisible(true);
+            TXT_USER.requestFocus();
         }
             
 }//GEN-LAST:event_CB_USERActionPerformed
@@ -693,40 +673,6 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         }        
     }//GEN-LAST:event_BT_CHANGE_PWDActionPerformed
 
-    private void CB_LANGActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_LANGActionPerformed
-    {//GEN-HEADEREND:event_CB_LANGActionPerformed
-        // TODO add your handling code here:
-        if (!in_init)
-        {
-            SQLConnect sql = UserMain.sqc();
-
-            String l_code = "EN";
-            if (CB_LANG.getSelectedIndex() == 1)
-            {
-                l_code = "DE";
-            }
-            if (CB_LANG.getSelectedIndex() == 0)
-            {
-                l_code = "EN";
-            }
-            if (CB_LANG.getSelectedIndex() == 2)
-            {
-                l_code = "DK";
-            }
-            Main.set_prop( Preferences.COUNTRYCODE, l_code );    
-            Main.get_prefs().store_props();
-            
-            String qry = "update mandant set lang_code='" + l_code+ "' where id=" + sql.get_act_mandant_id();
-            sql.sql_lazy_update( qry );
-            
-            this.setVisible(false);
-            
-            main.restart_gui(l_code);     
-                        
-           
-        }
-}//GEN-LAST:event_CB_LANGActionPerformed
-
     private void TXT_USERMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_TXT_USERMouseClicked
     {//GEN-HEADEREND:event_TXT_USERMouseClicked
         // TODO add your handling code here:
@@ -751,6 +697,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     {//GEN-HEADEREND:event_CB_SERVERActionPerformed
         // TODO add your handling code here:
         rebuild_mandant_list();
+        TXT_USER.requestFocus();
         
     }//GEN-LAST:event_CB_SERVERActionPerformed
 
@@ -772,7 +719,6 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     private javax.swing.JButton BT_CHANGE_PWD;
     private javax.swing.JButton BT_OK;
     private javax.swing.JCheckBox BT_SSL;
-    private javax.swing.JComboBox CB_LANG;
     private javax.swing.JComboBox CB_MANDANT;
     private javax.swing.JComboBox CB_SERVER;
     private javax.swing.JComboBox CB_USER;

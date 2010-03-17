@@ -25,11 +25,7 @@ public class GlossErrDialog extends javax.swing.JDialog
     public static final int MODE_BUSY_ABORTABLE = 5;
 
   
-    @InjectedResource
-    private Color radarFG = new Color( 205, 175, 95 );
-    @InjectedResource
-    private Color radarPing = new Color(245, 10, 5);
-
+ 
 
     private boolean okay = false;
     private boolean aborted = false;
@@ -50,7 +46,7 @@ public class GlossErrDialog extends javax.swing.JDialog
         }
         initComponents();
 
-        radar = new Radar(radarFG, radarPing);
+        radar = new Radar();
         set_defaults();
     }
     public GlossErrDialog(java.awt.Dialog parent)
@@ -59,6 +55,7 @@ public class GlossErrDialog extends javax.swing.JDialog
         initComponents();
 
         radar = new Radar();
+//        radar = new Radar();
         this.getRootPane().setDefaultButton(BT_OK);
         set_defaults();
     }

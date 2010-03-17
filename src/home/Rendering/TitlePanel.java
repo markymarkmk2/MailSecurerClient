@@ -57,6 +57,8 @@ public class TitlePanel extends JComponent
     @InjectedResource
     private BufferedImage backgroundGradient;
     @InjectedResource
+    private BufferedImage remoteBackgroundGradient;
+    @InjectedResource
     private Color inactiveLightColor;
     @InjectedResource
     private Color inactiveShadowColor;
@@ -86,6 +88,13 @@ public class TitlePanel extends JComponent
 
 
     String title;
+    boolean is_remote_connected;
+
+    public void set_remote_connected( boolean is_remote_connected )
+    {
+        this.is_remote_connected = is_remote_connected;
+        this.repaint();
+    }
     
     public TitlePanel(Component _parent)
     {
@@ -158,10 +167,18 @@ public class TitlePanel extends JComponent
             return;
         */
         Window window = SwingUtilities.getWindowAncestor(this);
-        window.removeMouseListener(mouse_handler);
-        window.removeMouseMotionListener(mouse_handler);
-
-        window.removeWindowListener(window_handler);
+        if (window == null)
+            return;
+        
+        if (mouse_handler != null)
+        {
+            window.removeMouseListener(mouse_handler);
+            window.removeMouseMotionListener(mouse_handler);
+        }
+        if (window_handler != null)
+        {
+            window.removeWindowListener(window_handler);
+        }
         
     }
    
@@ -294,10 +311,12 @@ public class TitlePanel extends JComponent
                 RenderingHints.VALUE_ANTIALIAS_OFF);
 
 
+        Image img = active ? backgroundGradient : inactiveBackgroundGradient;
+        if (is_remote_connected)
+            img = remoteBackgroundGradient;
 
         Rectangle clip = g2.getClipBounds();
-        g2.drawImage(active ? backgroundGradient : inactiveBackgroundGradient,
-                clip.x, 0, clip.width, getHeight() - 2, null);
+        g2.drawImage(img, clip.x, 0, clip.width, getHeight() - 2, null);
 
         g2.setColor(active ? lightColor : inactiveLightColor);
         g2.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
@@ -546,7 +565,8 @@ public class TitlePanel extends JComponent
             closeButton.setIcon(new ImageIcon(close));
             if (iconifyButton != null)
                 iconifyButton.setIcon(new ImageIcon(minimize));
-            getRootPane().repaint();
+            if (getRootPane() != null)
+                getRootPane().repaint();
         }
 
         @Override
@@ -555,7 +575,8 @@ public class TitlePanel extends JComponent
             closeButton.setIcon(new ImageIcon(closeInactive));
             if (iconifyButton != null)
                 iconifyButton.setIcon(new ImageIcon(minimizeInactive));
-            getRootPane().repaint();
+            if (getRootPane() != null)
+                getRootPane().repaint();
         }
     }
 }

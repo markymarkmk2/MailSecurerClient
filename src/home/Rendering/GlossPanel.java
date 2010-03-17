@@ -113,10 +113,10 @@ public class GlossPanel extends JXPanel
         super.paintBorder(g);
         Color old_color = g.getColor();
 
-        g.setColor(new Color(80, 80, 80));//new Color( 130, 130, 130));
+        g.setColor(UserMain.self.getGradientLight());//new Color( 130, 130, 130));
         g.drawLine(0, 0, getWidth(), 0);
         g.drawLine(0, 0, 0, getHeight());
-        g.setColor(new Color(20, 20, 20));
+        g.setColor(UserMain.self.getGradientDark());
         g.drawLine(getWidth() - 1, 1, getWidth() - 1, getHeight());
         g.drawLine(1, getHeight() - 1, getWidth(), getHeight() - 1);
 

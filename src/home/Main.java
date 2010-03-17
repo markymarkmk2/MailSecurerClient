@@ -8,9 +8,7 @@
  */
 package dimm.home;
 
-import dimm.home.Rendering.UI_Bluesea;
 import dimm.home.Rendering.UI_Generic;
-import dimm.home.Rendering.UI_Pirates;
 import dimm.home.native_libs.NativeLoader;
 import javax.swing.UIManager;
 
@@ -30,8 +28,15 @@ public class Main
     public static final String PREFS_PATH = "";
     public static final String UPDATE_PATH = "update/";
     public static final String LOG_PATH = "logs/";
-    public static String version_str = "1.0.0";
+    public static String version_str = "1.2.1";
     public static boolean enable_distributor;
+
+    static void reinit_prefs()
+    {
+        
+    }
+
+
 
     // public static final String SERVER_UPDATEWORKER_PATH = "/websense/v5/update/";
     Preferences prefs;
@@ -162,7 +167,7 @@ public class Main
         ui = null;
         String force_mandant = null;
         boolean verbose = false;
-        int debug = 0;
+        int debug = 0;        
 
         for (int i = 0; i < args.length; i++)
         {
@@ -170,14 +175,7 @@ public class Main
             {
                 scan_local = true;
             }
-            if (args[i].compareTo("-blue") == 0)
-            {
-                ui = new UI_Bluesea();
-            }
-            if (args[i].compareTo("-black") == 0)
-            {
-                ui = new UI_Pirates();
-            }
+            
             if (args[i].compareTo("-b") == 0)
             {
                 with_beta = true;
@@ -239,25 +237,20 @@ public class Main
                 fixed_ip = args[i + 1];
             }
         }
+        Main mm = new Main();
+        
 
-
-        // FIRST SET OUT L&F
-        if (ui == null)
-            ui = new UI_Pirates();
-
+        // FIRST SET OUT L&F        
+        ui = UI_Generic.create_ui( (int)Main.get_long_prop(Preferences.UI, 0l) );
         ui.set_ui(verbose);
 
         //StreamConnect.main(args);
 
-        Main mm = new Main();
         UserMain.init_text_interface(null);
 
         final SplashDlg splash = new SplashDlg(null, false);
 
-        if (Main.get_long_prop(Preferences.CHECK_NEWS) > 0)
-        {
-            splash.set_check_news(true);
-        }
+        
 
         splash.setVisible(true);
         final long start = System.currentTimeMillis() / 1000;
@@ -298,8 +291,8 @@ public class Main
         }
 
 //            mn.get_update_worker().check_updates();
-        splash.set_text("Initializing...");
-        while ((System.currentTimeMillis() / 1000 - start) < 3)
+        splash.set_text( UserMain.Txt("Initializing") + "...");
+        while ((System.currentTimeMillis() / 1000 - start) < 3 || splash.prefs_active())
         {
             /*                if (mn.get_update_worker().check_updates_ready())
             {

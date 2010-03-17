@@ -53,13 +53,13 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="CB_TYPE" alignment="0" min="-2" pref="122" max="-2" attributes="1"/>
-                              <Component id="TXT_DOMAINLIST" alignment="1" pref="325" max="32767" attributes="0"/>
+                              <Component id="TXT_DOMAINLIST" alignment="1" pref="303" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="1" attributes="0">
-                                      <Component id="TXTP_PWD1" alignment="0" pref="189" max="32767" attributes="1"/>
-                                      <Component id="TXTP_PWD" alignment="0" pref="189" max="32767" attributes="1"/>
-                                      <Component id="TXT_USERNAME" alignment="0" pref="189" max="32767" attributes="1"/>
-                                      <Component id="TXT_SERVER" alignment="0" pref="189" max="32767" attributes="3"/>
+                                      <Component id="TXTP_PWD1" alignment="0" pref="167" max="32767" attributes="1"/>
+                                      <Component id="TXTP_PWD" alignment="0" pref="167" max="32767" attributes="1"/>
+                                      <Component id="TXT_USERNAME" alignment="0" pref="167" max="32767" attributes="1"/>
+                                      <Component id="TXT_SERVER" alignment="0" pref="167" max="32767" attributes="3"/>
                                   </Group>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
@@ -149,6 +149,21 @@
             </Property>
           </Properties>
         </Component>
+        <Component class="javax.swing.JComboBox" name="CB_TYPE">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="4">
+                <StringItem index="0" value="Item 1"/>
+                <StringItem index="1" value="Item 2"/>
+                <StringItem index="2" value="Item 3"/>
+                <StringItem index="3" value="Item 4"/>
+              </StringArray>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CB_TYPEActionPerformed"/>
+          </Events>
+        </Component>
         <Component class="javax.swing.JTextField" name="TXT_SERVER">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -167,26 +182,13 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JComboBox" name="CB_TYPE">
-          <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
-                <StringItem index="0" value="Item 1"/>
-                <StringItem index="1" value="Item 2"/>
-                <StringItem index="2" value="Item 3"/>
-                <StringItem index="3" value="Item 4"/>
-              </StringArray>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CB_TYPEActionPerformed"/>
-          </Events>
-        </Component>
         <Component class="javax.swing.JTextField" name="TXT_PORT">
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="TXT_PORTMouseClicked"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TXT_PORTActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JTextField" name="TXT_USERNAME">
         </Component>
         <Component class="javax.swing.JLabel" name="LB_PORT">
           <Properties>
@@ -204,14 +206,14 @@
         </Component>
         <Component class="javax.swing.JPasswordField" name="TXTP_PWD">
         </Component>
+        <Component class="javax.swing.JPasswordField" name="TXTP_PWD1">
+        </Component>
         <Component class="javax.swing.JLabel" name="LB_PWD">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
               <ResourceString bundle="dimm/home/MA_Properties.properties" key="Password" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
-        </Component>
-        <Component class="javax.swing.JTextField" name="TXT_USERNAME">
         </Component>
         <Container class="javax.swing.JPanel" name="jPanel1">
           <Properties>
@@ -235,18 +237,18 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="RB_TLS_IV_AVAIL" min="-2" max="-2" attributes="0"/>
-                                      <Component id="RB_INSECURE" pref="104" max="32767" attributes="0"/>
+                                      <Component id="RB_INSECURE" pref="126" max="32767" attributes="0"/>
                                       <Component id="RB_TLS_FORCE" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="RB_SSL" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="124" max="32767" attributes="0"/>
+                                  <EmptySpace pref="146" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="CB_CERTIFICATE" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="68" max="32767" attributes="0"/>
+                                  <EmptySpace pref="90" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
@@ -576,8 +578,6 @@
               <ResourceString bundle="dimm/home/MA_Properties.properties" key="Repeat_password" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
-        </Component>
-        <Component class="javax.swing.JPasswordField" name="TXTP_PWD1">
         </Component>
         <Component class="javax.swing.JCheckBox" name="BT_DISABLED">
           <Properties>

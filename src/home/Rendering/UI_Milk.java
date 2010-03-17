@@ -23,14 +23,14 @@ import org.jdesktop.fuse.swing.SwingModule;
  *
  * @author Administrator
  */
-public class UI_Pirates extends UI_Generic
+public class UI_Milk extends UI_Generic
 {
 
-    public static final Color nice_white = new Color( 199,199,199);
-    public static final Color nice_gray = new Color( 100,100,100);
+    public static final Color nice_white = new Color( 30,30,30);
+    public static final Color nice_gray = new Color( 200,200,200);
     public static final Color appl_base_color = new Color( 208,82,0);
     public static final Color appl_selected_color = appl_base_color;
-    public static final Color appl_dgray = new Color( 51,51,51);
+    public static final Color appl_dgray = new Color( 241,241,241);
     public static final Font small_font = new Font("Tahoma", Font.PLAIN, 11 );
 
     @Override
@@ -81,10 +81,10 @@ public class UI_Pirates extends UI_Generic
            
             
             ResourceInjector.addModule(new SwingModule());
-            ResourceInjector.get().load(UserMain.class, "/dimm/home/resources/mc_black.uitheme");
+            ResourceInjector.get().load(UserMain.class, "/dimm/home/resources/mc_milk.uitheme");
             
             //EtchedBorder b = (EtchedBorder)BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
-            EtchedBorder etched_border = (EtchedBorder)BorderFactory.createEtchedBorder( new Color( 0x44, 0x44, 0x44 ), new Color( 0x26, 0x26, 0x26 ));
+            EtchedBorder etched_border = (EtchedBorder)BorderFactory.createEtchedBorder( new Color( 0xf4, 0xf4, 0xf4 ), new Color( 0xa6, 0xa6, 0xa6 ));
             
             Border empty_border = BorderFactory.createEmptyBorder();
 
@@ -240,29 +240,7 @@ public class UI_Pirates extends UI_Generic
             UIManager.put("OptionPane.background", new ColorUIResource(appl_dgray) );
             UIManager.put("OptionPane.foreground", new ColorUIResource(nice_white) );
             UIManager.put("OptionPane.messageForeground", new ColorUIResource(nice_white) );
-/*
-key: OptionPane.background        val: javax.swing.plaf.ColorUIResource[r=212,g=208,b=200]
- key: OptionPane.border        val: javax.swing.plaf.BorderUIResource$EmptyBorderUIResource@1f0aecc
- key: OptionPane.buttonAreaBorder        val: javax.swing.plaf.BorderUIResource$EmptyBorderUIResource@1f1680f
- key: OptionPane.buttonClickThreshhold        val: 500
- key: OptionPane.buttonFont        val: javax.swing.plaf.FontUIResource[family=Tahoma,name=Tahoma,style=plain,size=11]
- key: OptionPane.buttonMinimumWidth        val: 75
- key: OptionPane.errorIcon        val: javax.swing.ImageIcon@11c0d60
- key: OptionPane.errorSound        val: win.sound.hand
- key: OptionPane.font        val: javax.swing.plaf.FontUIResource[family=Tahoma,name=Tahoma,style=plain,size=11]
- key: OptionPane.foreground        val: javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
- key: OptionPane.informationIcon        val: javax.swing.ImageIcon@147917a
- key: OptionPane.informationSound        val: win.sound.asterisk
- key: OptionPane.messageAreaBorder        val: javax.swing.plaf.BorderUIResource$EmptyBorderUIResource@1284fd4
- key: OptionPane.messageFont        val: javax.swing.plaf.FontUIResource[family=Tahoma,name=Tahoma,style=plain,size=11]
- key: OptionPane.messageForeground        val: javax.swing.plaf.ColorUIResource[r=0,g=0,b=0]
- key: OptionPane.minimumSize        val: javax.swing.plaf.DimensionUIResource[width=262,height=90]
- key: OptionPane.questionIcon        val: javax.swing.ImageIcon@1eb5666
- key: OptionPane.questionSound        val: win.sound.question
- key: OptionPane.warningIcon        val: javax.swing.ImageIcon@14275d4
- key: OptionPane.warningSound        val: win.sound.exclamation
- key: OptionPane.windowBindings        val: [Ljava.lang.Object;@1d0d124
-            */
+
         }
         catch (Exception exc)
         {

@@ -32,11 +32,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
+import java.util.StringTokenizer;
 import javax.mail.Address;
 import javax.mail.MessagingException;
 import javax.mail.Part;
 import javax.mail.internet.MimeMessage;
 import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.table.AbstractTableModel;
 import org.lobobrowser.html.gui.HtmlPanel;
 import org.lobobrowser.html.parser.*;
@@ -44,7 +49,6 @@ import org.lobobrowser.html.test.SimpleHtmlRendererContext;
 import org.lobobrowser.html.test.SimpleUserAgentContext;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 
 /**
@@ -180,6 +184,7 @@ class MailAttachmentModel extends AbstractTableModel
 }
 
 
+
 public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
 {
 
@@ -190,6 +195,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
     String plain_txt;
     GlossTable tb_header;
     GlossTable tb_att;
+    boolean test_flying_saucer = true;
 
     /** Creates new form MailViewPanel */
     public MailPreviewPanel( RFCMimeMail msg )
@@ -200,21 +206,16 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
 
         last_renderer_component = SCP_TXTA;
 
-        html_txt = msg.get_html_content();
+        html_txt = msg.get_html_content();                
         plain_txt = msg.get_text_content();
 
 
         if (html_txt != null)
         {
-            if (Main.get_prefs().get_boolean_prop(Preferences.HTML_HQ_RENDERER))
-            {
-                CB_HQ.setSelected(true);  // CALLS CALLBACK AND SETS BROWSER
-            }
-            else
-            {
-                Component renderer = create_lobobrowser_renderer();
-                add_view_panel(renderer);
-            }
+            CB_HQ.setSelected(Main.get_prefs().get_boolean_prop(Preferences.HTML_HQ_RENDERER) );  // CALLS CALLBACK AND SETS BROWSER
+
+            Component r = create_html_renderer(CB_HQ.isSelected());
+            set_renderer( r );
         }
         else
         {
@@ -223,9 +224,93 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             TXTA_MAIL.setCaretPosition(0);
         }
 
-        set_table_models();
-
+        set_table_models();        
+    }
+    
+    Component create_html_renderer( boolean hq)
+    {
         
+        Component renderer = null;
+        Part html_part = msg.get_html_part();
+        if (hq)
+        {
+            renderer = create_columba_renderer();
+        }
+        else
+        {
+            String charset = null;
+            if (html_part != null)
+            {
+                charset = get_charset(html_part);
+            }
+            if (charset == null)
+                charset = "UTF-8";
+
+            renderer = create_lobobrowser_renderer(html_txt, charset);
+        }
+        return renderer;
+    }
+
+    void set_renderer( Component renderer )
+    {
+        add_view_panel(renderer);
+        if (my_dlg != null)
+        {
+            EventQueue.invokeLater(new Runnable()
+            {
+
+                @Override
+                public void run()
+                {
+                    my_dlg.pack();
+                }
+            });
+        }
+    }
+
+    static public String get_charset( Part p )
+    {
+        if (p == null)
+            return null;
+
+        String mt;
+        try
+        {
+            mt = p.getContentType();
+        }
+        catch (MessagingException ex)
+        {
+            return null;
+        }
+        int atr_idx = mt.indexOf(';');
+        if (atr_idx == -1)
+            atr_idx = mt.indexOf('\n');
+        if (atr_idx == -1)
+            return "";
+
+
+        String attr = mt.substring(atr_idx) + 1;
+
+        String delim = "[/;\"=\n\r\t ]";
+        StringTokenizer st = new StringTokenizer(attr, delim);
+        String name = st.nextToken();
+        try
+        {
+            if (name.compareToIgnoreCase("charset") == 0)
+            {
+                String eq = st.nextToken("\"\n\r");
+                String val = eq;
+                if (st.hasMoreTokens())
+                    val = st.nextToken("\"\n\r");
+                
+                return javax.mail.internet.MimeUtility.javaCharset(val);
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println("Invalid Charset: " + mt);
+        }
+        return "UTF-8";
     }
 
     void set_table_models()
@@ -271,14 +356,23 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         return TXTA_MAIL;
     }
 
-    Component create_lobobrowser_renderer()
+    Component create_lobobrowser_renderer(String html_txt, String charset)
     {
         HtmlPanel htmlPanel = null;
         Reader reader = null;
         InputStream in = null;
         try
         {
-            in = new ByteArrayInputStream(html_txt.getBytes("UTF-8"));
+            Charset cset = null;
+            try
+            {
+                cset = Charset.forName(charset);
+            }
+            catch (Exception e)
+            {
+                cset = Charset.defaultCharset();
+            }
+            in = new ByteArrayInputStream(html_txt.getBytes(cset));
             String uri = "??";
             SimpleHtmlRendererContext ctx;
 
@@ -286,10 +380,11 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             // which may be obtained from the Content-Type header
             // of an HTTP response.
             reader = new InputStreamReader(in);
-
+         
             // InputSourceImpl constructor with URI recommended
             // so the renderer can resolve page component URLs.
             InputSource is = new InputSourceImpl(reader, uri);
+            is.setEncoding(cset.name());
             htmlPanel = new HtmlPanel();
 
             /*UserAgentContext ucontext = new LocalUserAgentContext();
@@ -405,7 +500,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
 
         BT_CLOSE = new GlossButton();
         CB_HQ = new javax.swing.JCheckBox();
-        jSplitPane1 = new javax.swing.JSplitPane();
+        SPL_MAIL = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
         jSplitPane2 = new javax.swing.JSplitPane();
         SCP_HEADER = new javax.swing.JScrollPane();
@@ -430,8 +525,9 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             }
         });
 
-        jSplitPane1.setDividerLocation(100);
-        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        SPL_MAIL.setDividerLocation(80);
+        SPL_MAIL.setDividerSize(3);
+        SPL_MAIL.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
         jSplitPane2.setDividerLocation(400);
         jSplitPane2.setLeftComponent(SCP_HEADER);
@@ -445,10 +541,10 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
+            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
         );
 
-        jSplitPane1.setTopComponent(jPanel1);
+        SPL_MAIL.setTopComponent(jPanel1);
 
         TXTA_MAIL.setColumns(20);
         TXTA_MAIL.setRows(5);
@@ -462,10 +558,10 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         );
         PN_VIEWLayout.setVerticalGroup(
             PN_VIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SCP_TXTA, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
+            .addComponent(SCP_TXTA, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
         );
 
-        jSplitPane1.setBottomComponent(PN_VIEW);
+        SPL_MAIL.setBottomComponent(PN_VIEW);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -474,7 +570,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
+                    .addComponent(SPL_MAIL, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(CB_HQ)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 440, Short.MAX_VALUE)
@@ -485,7 +581,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
+                .addComponent(SPL_MAIL, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_CLOSE)
@@ -503,16 +599,9 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
     private void CB_HQActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_HQActionPerformed
     {//GEN-HEADEREND:event_CB_HQActionPerformed
         // TODO add your handling code here:
-        if (CB_HQ.isSelected())
-        {
-            Component renderer = create_columba_renderer();
-            add_view_panel(renderer);
-        }
-        else
-        {
-            Component renderer = create_lobobrowser_renderer();
-            add_view_panel(renderer);
-        }
+        Component r = create_html_renderer(CB_HQ.isSelected());
+        set_renderer( r );
+        
     }//GEN-LAST:event_CB_HQActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_CLOSE;
@@ -521,9 +610,9 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
     private javax.swing.JScrollPane SCP_ATTACHMENT;
     private javax.swing.JScrollPane SCP_HEADER;
     private javax.swing.JScrollPane SCP_TXTA;
+    private javax.swing.JSplitPane SPL_MAIL;
     private javax.swing.JTextArea TXTA_MAIL;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane2;
     // End of variables declaration//GEN-END:variables
 
@@ -659,5 +748,9 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
                 }
             }
         }
+    }
+    JComponent get_SPL_MAIL()
+    {
+        return SPL_MAIL;
     }
 }

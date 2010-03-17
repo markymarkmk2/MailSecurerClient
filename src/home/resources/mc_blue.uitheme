@@ -75,6 +75,7 @@ TitlePanel.inactiveShadowColor=#2B2B2B
 
 TitlePanel.grip=/dimm/home/resources/img_blue/title-grip.png
 TitlePanel.backgroundGradient=/dimm/home/resources/img_blue/title-background.png
+TitlePanel.remoteBackgroundGradient=/dimm/home/resources/img_blue/title-remote-background.png
 
 TitlePanel.inactiveGrip=/dimm/home/resources/img_blue/title-grip-inactive.png
 TitlePanel.inactiveBackgroundGradient=/dimm/home/resources/img_blue/title-background-inactive.png

@@ -7,6 +7,7 @@ package dimm.home.Utilities;
 
 
 import dimm.home.UserMain;
+import dimm.home.native_libs.NativeLoader;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -170,7 +171,7 @@ public class CmdExecutor
 
                     // AUTOMAGICALLY ADD SUFFIX FOR LOCAL SCRIPTS, PATH IS NOT EVALUATED!!!
                     // THIS KEEPS SCRIPTS CAMPATIBLE OVER PLATFORMS
-                    if (System.getProperty("os.name").startsWith("Windows"))
+                    if (NativeLoader.is_win())
                     {                            
                         if (!f.exists())
                         {

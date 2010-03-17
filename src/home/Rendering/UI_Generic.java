@@ -7,19 +7,89 @@ package dimm.home.Rendering;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.TreeMap;
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
+import javax.swing.plaf.ComponentUI;
+import javax.swing.plaf.basic.BasicButtonUI;
 
+
+class MyButtonUI extends BasicButtonUI
+{
+    ComponentUI default_ui;
+    GlossButton bt;
+
+    public MyButtonUI()
+    {
+        this.default_ui = UIManager.getUI(new JButton());
+        bt = new GlossButton();
+        bt.setFont(UI_Pirates.small_font);
+        bt.setBorderPainted(false);
+        bt.setContentAreaFilled(false);
+        bt.setFocusPainted(false);
+        bt.setBorder(null);
+        bt.setOpaque( false );
+    }
+
+    @Override
+    public void installUI( JComponent c )
+    {
+        super.installUI(c);
+    }
+
+    @Override
+    public void update( Graphics g, JComponent c )
+    {
+        super.update(g, c);
+    }
+
+
+    @Override
+    public void paint( Graphics g, JComponent c )
+    {
+        if (c instanceof JButton)
+        {
+            JButton jbt = (JButton)c;
+            bt.setText( jbt.getText() );
+            bt.setSize( jbt.getSize() );
+            bt.setFont(UI_Pirates.small_font);
+            bt.setBorderPainted(false);
+            bt.setContentAreaFilled(false);
+            bt.setFocusPainted(false);
+            bt.setBorder(null);
+            bt.setOpaque( false );
+        }
+
+        //default_ui.paint(g, bt);
+        bt.paint(g);
+    }
+
+
+
+}
 /**
  *
  * @author mw
  */
 public abstract class UI_Generic
 {
+
+    public static UI_Generic create_ui( int ui_id )
+    {
+        switch( ui_id )
+        {
+            case 0:    return new UI_Pirates();
+            case 1:    return new UI_Milk();
+            case 2:    return new UI_Bluesea();
+        }
+        return new UI_Pirates();
+    }
     public abstract Color get_appl_base_color();
     public abstract Color get_appl_selected_color();
     public abstract Color get_appl_dgray();

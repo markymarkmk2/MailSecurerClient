@@ -25,11 +25,14 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
+import org.apache.tools.ant.filters.StringInputStream;
 
 import org.columba.core.gui.htmlviewer.api.IHTMLViewerPlugin;
 import org.columba.core.io.DiskIO;
@@ -67,12 +70,14 @@ public class ColumbaFSRenderer extends JScrollPane implements
         {
 
             Tidy tidy = new Tidy();
+            StringReader rdr = new StringReader(body);
+            StringWriter wrt = new StringWriter();
 
-            BufferedInputStream sourceIn = new BufferedInputStream(
+/*            BufferedInputStream sourceIn = new BufferedInputStream(
                     new ByteArrayInputStream(body.getBytes("ISO-8859-1")));
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-
+*/
             // Set bean properties
             tidy.setQuiet(false);
             tidy.setShowWarnings(true);
@@ -87,9 +92,9 @@ public class ColumbaFSRenderer extends JScrollPane implements
 
             tidy.setErrout(new PrintWriter(System.out));
 
-            tidy.parse(sourceIn, out);
+            tidy.parse(rdr, wrt);
 
-            panel.setDocument(new ByteArrayInputStream(out.toByteArray()), baseUrl.toExternalForm());
+            panel.setDocument(new StringInputStream( wrt.toString()), baseUrl.toExternalForm());
 
         }
         catch (Exception e)

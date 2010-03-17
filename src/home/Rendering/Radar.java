@@ -29,13 +29,15 @@ import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.Timer;
+import org.jdesktop.fuse.InjectedResource;
+import org.jdesktop.fuse.ResourceInjector;
 
 public class Radar extends JComponent implements ActionListener
 {
     private static final int TICK_MS = 10;
     private static final int DECAY_LEN = 31;
     private static final int DECAY_SECTOR_WIDTH = 6;
-    private static final float DECAY_DIMM = 0.4f;
+    
 //    private static final int DECAY_LEN = 51;
     private static int size = 100;
     private BufferedImage RadarFrameBuffer;
@@ -52,54 +54,55 @@ public class Radar extends JComponent implements ActionListener
     Color rdr_lbrown = new Color( 205, 175, 95 );
     Color rdr_red = new Color(245, 10, 5);
     Color rdr_dark_gray = new Color(15, 15, 15);
-    Color start_color;
-    Color ping_color;
-    Color back_color;
-    Color grid_color;
+    
     Composite acomp;
     Timer timer;
     ImageIcon ic;
     ImageIcon ich;
     Font pc_font = new Font( Font.SANS_SERIF, Font.PLAIN, 10 );
 
+    @InjectedResource
+    private Color start_color = new Color( 205, 175, 95 );
+    @InjectedResource
+    private Color ping_color = new Color(245, 10, 5);
+    @InjectedResource
+    private Color back_color = new Color( 80, 80, 80 );
+    @InjectedResource
+    private Color grid_color = new Color( 80, 80, 80 );
+    @InjectedResource
+    private static float decay_dimm = 0.4f;
+
+
     double percent_val;
     boolean with_percent;
 
     public Radar()
     {
-        this( null, null, false );
-    }
-    public Radar(boolean wp)
-    {
-        this( null, null, wp);
-    }
-    public Radar(Color c, Color p )
-    {
-        this(c, p, false);
+        this(  false );
     }
     
-    public Radar(Color c, Color p, boolean _with_percent)
+    public Radar( boolean _with_percent)
     {
-        if (c != null)
-            start_color = c;
-        else
-            start_color = rdr_lbrown;
-        
-        if (p != null)
-            ping_color = p;
-        else
-            ping_color = rdr_red;
+        try
+        {
+            ResourceInjector.get().inject(this);
+        }
+        catch (Exception e)
+        {
+            e = null;
+        }
+
+       
 
         with_percent = _with_percent;
-        back_color = rdr_dark_gray;
-        grid_color = rdr_lbrown;
+      
         
         init();
 
         timer = new Timer(TICK_MS, this);
 
         ic = new ImageIcon(this.getClass().getResource("/dimm/home/images/radarframe.png"));
-        size = (ic.getIconHeight() * 80) / 100;
+        size = (ic.getIconHeight() * 80) / 100 + 5;
         ich = new ImageIcon(this.getClass().getResource("/dimm/home/images/radarhighlight.png"));
 
         start_time = System.currentTimeMillis();
@@ -268,9 +271,9 @@ public class Radar extends JComponent implements ActionListener
             int r = start_color.getRed() - (start_color.getRed() * i) / DECAY_LEN;
             int g = start_color.getGreen() - (start_color.getGreen() * i) / DECAY_LEN;
             int b = start_color.getBlue() - (start_color.getBlue() * i) / DECAY_LEN;
-            r = (int) (r * DECAY_DIMM);
-            g = (int) (g * DECAY_DIMM);
-            b = (int) (b * DECAY_DIMM);
+            r = (int) (r * decay_dimm);
+            g = (int) (g * decay_dimm);
+            b = (int) (b * decay_dimm);
             if (r < back_color.getRed())
             {
                 r = back_color.getRed();
@@ -286,7 +289,7 @@ public class Radar extends JComponent implements ActionListener
             color[i] = new Color(r, g, b);
         }
         // DARKER THAN RDR-BEAM
-        grid_color = color[5];
+        //grid_color = color[5];
     }
     int get_angle_int(double a)
     {
@@ -299,7 +302,7 @@ public class Radar extends JComponent implements ActionListener
         //gBuffer = g;
         int ds = 5;
         int rx = ds;
-        int ry = ds;
+        int ry = ds - 1;
         int rw = size - 2 * ds;
         int rh = size - 2 * ds;
         double angle = 360 - act_angle + 90;
@@ -347,7 +350,7 @@ public class Radar extends JComponent implements ActionListener
         gRadarPulsBuffer.setColor(grid_color);
         gRadarPulsBuffer.drawOval(size / 2 - 10, size / 2 - 10, 20, 20);
         gRadarPulsBuffer.drawOval(size / 2 - 24, size / 2 - 24, 48, 48);
-        gRadarPulsBuffer.setColor(color[1]);
+        //gRadarPulsBuffer.setColor(grid_color);
         gRadarPulsBuffer.drawLine(0, size / 2, size, size / 2);
         gRadarPulsBuffer.drawLine( size / 2, 0, size / 2, size);
         

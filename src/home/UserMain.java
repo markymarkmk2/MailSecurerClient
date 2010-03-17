@@ -15,6 +15,7 @@ import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossErrDialog;
 import dimm.home.Rendering.NavigationHeader;
 import dimm.home.Rendering.SQLOverviewDialog;
+import dimm.home.Rendering.SingleTextEditPanel;
 import dimm.home.Rendering.SpringGlassPane;
 import dimm.home.Rendering.TitlePanel;
 import dimm.home.ServerConnect.FunctionCallConnect;
@@ -37,6 +38,7 @@ import  sun.audio.*;    //import the sun.audio package
 import dimm.home.ServerConnect.SQLConnect;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.SwitchPanels.PanelTools;
+import dimm.home.Utilities.SwingWorker;
 import home.shared.CS_Constants.USERMODE;
 import home.shared.SQL.UserSSOEntry;
 import home.shared.Utilities.LogListener;
@@ -51,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.Set;
+import jrdesktop.utilities.JRConnectEventListener;
 
 
 
@@ -114,6 +117,12 @@ public class UserMain extends javax.swing.JFrame implements LogListener
     private Color gradientTop = Color.black;
     @InjectedResource
     private Color gradientBottom = Color.gray;
+    @InjectedResource
+    private Color gradientLight = Color.black;
+    @InjectedResource
+    private Color gradientDark = Color.gray;
+    @InjectedResource
+    private Color tableHeaderBackground = Color.black;
 
     // GLOBAL HALO PICTURE
     public static BufferedImage ghaloPicture;    
@@ -149,13 +158,13 @@ public class UserMain extends javax.swing.JFrame implements LogListener
 
     private static SQLConnect sqc;
     private static FunctionCallConnect fcc;
+    JRD_Server jrd_server;
 
 
     public static String get_version_str()
     {
         return Main.version_str;
-    }
-    private String l_code = "DE";
+    }    
     //private long firmen_id = 1;
 
     public void call_navigation_click()
@@ -167,6 +176,19 @@ public class UserMain extends javax.swing.JFrame implements LogListener
     {
         return userLevel;
     }
+    public Color getTableHeaderBackground()
+    {
+        return tableHeaderBackground;
+    }
+    public Color getGradientLight()
+    {
+        return gradientLight;
+    }
+
+    public Color getGradientDark()
+    {
+        return gradientDark;
+    }
 
 
     public long get_firmen_id()
@@ -177,7 +199,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
 
     public void restart_gui()
     {
-        restart_gui( l_code );
+        restart_gui( Main.get_prop(Preferences.COUNTRYCODE, "DE") );
     }
 
  
@@ -333,22 +355,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
         
         init_text_interface(null);
 
-        ResourceInjector.get().inject(this);
-        ghaloPicture = haloPicture;
-        ggradientTop = gradientTop;
-        ggradientBottom = gradientBottom;
-        
-        initComponents();
 
-
-                  
-        vkb = new VKeyboard();
-        
-        this.setTitle("JMailClient");
-        setIconImage( iconPicture );
-                                       
-        // GLASSPANE INIT
-        setupGlassPane();
         
 
 
@@ -366,6 +373,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
         {
         }
         
+        setUndecorated(true);
         restart_gui();      
         
     }
@@ -417,6 +425,26 @@ public class UserMain extends javax.swing.JFrame implements LogListener
 
     public void restart_gui(String l_code)
     {
+        ResourceInjector.get().inject(this);
+        ghaloPicture = haloPicture;
+        ggradientTop = gradientTop;
+        ggradientBottom = gradientBottom;
+
+        if (jLayeredPane1 != null)
+            getContentPane().remove(jLayeredPane1);
+        initComponents();
+
+
+
+        vkb = new VKeyboard();
+
+        this.setTitle("JMailClient");
+        setIconImage( iconPicture );
+
+        // GLASSPANE INIT
+        setupGlassPane();
+        
+        
         if (navPanel != null)
         {
             PN_MAIN.remove(navPanel.get_panel_switcher());
@@ -620,7 +648,6 @@ public class UserMain extends javax.swing.JFrame implements LogListener
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(0, 0, 0));
-        setUndecorated(true);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);
@@ -1217,6 +1244,62 @@ public class UserMain extends javax.swing.JFrame implements LogListener
 
     }
 
+    static SwingWorker sw_jrd = null;
+    public static void start_jrd_server(JRConnectEventListener listener)
+    {
+        if (sw_jrd != null)
+            return;
+
+        if (self.jrd_server == null)
+        {
+            self.jrd_server = new JRD_Server();
+        }
+        self.jrd_server.add_listener(listener);
+
+        final SingleTextEditPanel pnl = new SingleTextEditPanel(UserMain.Txt("RemoteKey"));
+        GenericGlossyDlg dlg = new GenericGlossyDlg(self, true, pnl);
+        dlg.setVisible(true);
+        if (!pnl.isOkay())
+            return;
+
+        sw_jrd = new SwingWorker()
+        {
+
+            @Override
+            public Object construct()
+            {
+                UserMain.self.show_busy("Connecting...");
+                boolean ret = self.jrd_server.start_session(pnl.getText());
+                UserMain.self.hide_busy();
+                self.titlePanel.set_remote_connected(ret);
+                sw_jrd = null;
+                return null;
+            }
+        };
+        sw_jrd.start();
+    }
+    public static boolean stop_jrd_server(JRConnectEventListener listener)
+    {
+        if (self.jrd_server == null)
+        {
+            return false;
+        }
+        boolean ret = self.jrd_server.stop_session();
+        if (ret)
+        {
+            self.titlePanel.set_remote_connected(false);
+            self.jrd_server.remove_listener(listener);
+        }
+        return ret;
+    }
+    public static boolean is_jrd_server_running()
+    {
+        if (self.jrd_server == null)
+        {
+            return false;
+        }
+        return self.jrd_server.is_running();
+    }
 
 
 

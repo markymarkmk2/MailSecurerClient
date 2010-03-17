@@ -99,7 +99,7 @@ public class GlossTable extends JTable
         setRowMargin(4);
         setShowVerticalLines(false);
         getTableHeader().setOpaque(true);
-        getTableHeader().setBackground(Color.BLACK);        
+        getTableHeader().setBackground(UserMain.self.getTableHeaderBackground());
         
     }
 

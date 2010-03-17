@@ -42,6 +42,10 @@ public class GhostButton extends JButton
     private Font pathFont;
     @InjectedResource
     private Font subFont;
+    @InjectedResource
+    float shadowOpacity = 0.8f;
+    @InjectedResource
+    float subShadowOpacity = 0.8f;
 
 
     int text_width;
@@ -159,7 +163,7 @@ public class GhostButton extends JButton
             y += insets.top;
 
             Color shadowColor = Color.BLACK;
-            float shadowOpacity = 0.8f;
+            
             float shadowOffsetX = 2;
             float shadowOffsetY = 2;
             g2.setColor(shadowColor);
@@ -184,7 +188,7 @@ public class GhostButton extends JButton
                 shadowOffsetY = 1;
                 g2.setColor(shadowColor);
                 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-                                                           shadowOpacity));
+                                                           subShadowOpacity));
                 sub_layout.draw(g2, shadowOffsetX + x, shadowOffsetY + y);
                 g2.setComposite(composite);
 

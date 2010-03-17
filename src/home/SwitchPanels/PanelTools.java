@@ -11,10 +11,12 @@ import dimm.home.Rendering.FlatBackgroundTitle;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
 import dimm.home.Rendering.TimingTargetAdapter;
-import dimm.home.ServerConnect.ServerCall;
 import dimm.home.UserMain;
 import java.awt.Dimension;
 import java.awt.Point;
+
+import jrdesktop.utilities.JRConnectEvent;
+import jrdesktop.utilities.JRConnectEventListener;
 import org.jdesktop.fuse.ResourceInjector;
 
 
@@ -23,7 +25,7 @@ import org.jdesktop.fuse.ResourceInjector;
  *
  * @author  Administrator
  */
-public class PanelTools extends SwitchSpringPanel
+public class PanelTools extends SwitchSpringPanel implements JRConnectEventListener
 {
 
     /** Creates new form PanelTasks */
@@ -141,8 +143,8 @@ public class PanelTools extends SwitchSpringPanel
         BT_STATUS.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_STATUS.setForeground(new java.awt.Color(201, 201, 201));
         BT_STATUS.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/status.png"))); // NOI18N
-        BT_STATUS.setText(UserMain.Txt("Status")); // NOI18N
-        BT_STATUS.setToolTipText(UserMain.Txt("Long_Status")); // NOI18N
+        BT_STATUS.setText(UserMain.Txt("RemoteSupport")); // NOI18N
+        BT_STATUS.setToolTipText(UserMain.Txt("Long_Remote")); // NOI18N
         BT_STATUS.setBorderPainted(false);
         BT_STATUS.setContentAreaFilled(false);
         BT_STATUS.setFocusPainted(false);
@@ -234,7 +236,19 @@ public class PanelTools extends SwitchSpringPanel
     private void BT_STATUSActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_STATUSActionPerformed
     {//GEN-HEADEREND:event_BT_STATUSActionPerformed
         // TODO add your handling code here:
+
+        if (!UserMain.is_jrd_server_running())
+        {
+            UserMain.start_jrd_server(this);
+        }
+        else
+        {
+            UserMain.stop_jrd_server(this);
+        }
+        BT_STATUS.repaint();
+
     }//GEN-LAST:event_BT_STATUSActionPerformed
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_IMPORT_MBOX;
@@ -255,6 +269,22 @@ public class PanelTools extends SwitchSpringPanel
     public void deactivate_panel()
     {
         
+    }
+
+
+    @Override
+    public void connect_event( JRConnectEvent ext )
+    {
+        if (ext.getEvent() == JRConnectEvent.EVENT.CONNECTED)
+        {
+             BT_STATUS.setText(UserMain.Txt("CloseRemoteSupport"));
+             BT_STATUS.setToolTipText(UserMain.Txt("CloseRemoteSupport"));
+        }
+        else
+        {
+             BT_STATUS.setText(UserMain.Txt("RemoteSupport"));
+             BT_STATUS.setToolTipText(UserMain.Txt("Long_Remote"));
+        }
     }
 
    
