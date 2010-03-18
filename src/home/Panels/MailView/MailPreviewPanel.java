@@ -10,8 +10,6 @@
  */
 package dimm.home.Panels.MailView;
 
-import dimm.home.Main;
-import dimm.home.Preferences;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.Rendering.GlossTable;
@@ -40,8 +38,6 @@ import javax.mail.Part;
 import javax.mail.internet.MimeMessage;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import javax.swing.table.AbstractTableModel;
 import org.lobobrowser.html.gui.HtmlPanel;
 import org.lobobrowser.html.parser.*;
@@ -212,14 +208,13 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
 
         if (html_txt != null)
         {
-            CB_HQ.setSelected(Main.get_prefs().get_boolean_prop(Preferences.HTML_HQ_RENDERER) );  // CALLS CALLBACK AND SETS BROWSER
 
-            Component r = create_html_renderer(CB_HQ.isSelected());
+            Component r = create_html_renderer();
             set_renderer( r );
         }
         else
         {
-            CB_HQ.setVisible(false);
+            
             TXTA_MAIL.setText(plain_txt);
             TXTA_MAIL.setCaretPosition(0);
         }
@@ -227,17 +222,12 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         set_table_models();        
     }
     
-    Component create_html_renderer( boolean hq)
+    Component create_html_renderer()
     {
         
         Component renderer = null;
         Part html_part = msg.get_html_part();
-        if (hq)
-        {
-            renderer = create_columba_renderer();
-        }
-        else
-        {
+       
             String charset = null;
             if (html_part != null)
             {
@@ -247,7 +237,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
                 charset = "UTF-8";
 
             renderer = create_lobobrowser_renderer(html_txt, charset);
-        }
+       
         return renderer;
     }
 
@@ -334,20 +324,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         tb_att.addMouseListener(this);
         tb_att.embed_to_scrollpanel( SCP_ATTACHMENT );
     }
-
-    Component create_columba_renderer()
-    {
-        try
-        {
-            ColumbaFSRenderer renderer = new ColumbaFSRenderer();
-            renderer.view(html_txt);
-            return renderer;
-        }
-        catch (Exception e)
-        {
-        }
-        return null;
-    }
+  
 
     Component create_text_renderer()
     {
@@ -499,7 +476,6 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
     private void initComponents() {
 
         BT_CLOSE = new GlossButton();
-        CB_HQ = new javax.swing.JCheckBox();
         SPL_MAIL = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
         jSplitPane2 = new javax.swing.JSplitPane();
@@ -513,15 +489,6 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         BT_CLOSE.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_CLOSEActionPerformed(evt);
-            }
-        });
-
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/MA_Properties"); // NOI18N
-        CB_HQ.setText(bundle.getString("High-Quality")); // NOI18N
-        CB_HQ.setOpaque(false);
-        CB_HQ.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CB_HQActionPerformed(evt);
             }
         });
 
@@ -571,10 +538,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(SPL_MAIL, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(CB_HQ)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 440, Short.MAX_VALUE)
-                        .addComponent(BT_CLOSE)))
+                    .addComponent(BT_CLOSE, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -583,9 +547,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
                 .addContainerGap()
                 .addComponent(SPL_MAIL, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BT_CLOSE)
-                    .addComponent(CB_HQ))
+                .addComponent(BT_CLOSE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -596,16 +558,8 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         my_dlg.setVisible(false);
     }//GEN-LAST:event_BT_CLOSEActionPerformed
 
-    private void CB_HQActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_HQActionPerformed
-    {//GEN-HEADEREND:event_CB_HQActionPerformed
-        // TODO add your handling code here:
-        Component r = create_html_renderer(CB_HQ.isSelected());
-        set_renderer( r );
-        
-    }//GEN-LAST:event_CB_HQActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_CLOSE;
-    private javax.swing.JCheckBox CB_HQ;
     private javax.swing.JPanel PN_VIEW;
     private javax.swing.JScrollPane SCP_ATTACHMENT;
     private javax.swing.JScrollPane SCP_HEADER;

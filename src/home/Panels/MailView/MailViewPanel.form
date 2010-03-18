@@ -115,7 +115,6 @@
             <StringItem index="2" value="1000"/>
           </StringArray>
         </Property>
-        <Property name="selectedIndex" type="int" value="0"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CB_ENTRIESActionPerformed"/>

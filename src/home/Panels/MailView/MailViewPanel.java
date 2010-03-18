@@ -1177,6 +1177,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                 try
                 {
                     f = File.createTempFile("mstemp", ".eml");
+                    f.deleteOnExit();
                 }
                 catch (IOException ex)
                 {
@@ -1210,14 +1211,12 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                     cmd[0] = "open";
                     cmd[1] = f.getAbsolutePath();
                 }
-                if (NativeLoader.is_osx())
+                if (cmd != null)
                 {
-                    cmd = new String[2];
-                    cmd[0] = "./open_mail.sh";
-                    cmd[1] = f.getAbsolutePath();
+                    CmdExecutor exe = new CmdExecutor(cmd);
+                    exe.set_no_debug(false);
+                    exe.exec();
                 }
-                CmdExecutor exe = new CmdExecutor(cmd);
-                exe.exec();
             }
         }
     }

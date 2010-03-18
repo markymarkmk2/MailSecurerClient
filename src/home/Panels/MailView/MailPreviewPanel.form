@@ -20,11 +20,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="SPL_MAIL" alignment="1" pref="632" max="32767" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="CB_HQ" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="440" max="32767" attributes="0"/>
-                      <Component id="BT_CLOSE" min="-2" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="BT_CLOSE" alignment="1" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -36,10 +32,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="SPL_MAIL" pref="354" max="32767" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="BT_CLOSE" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="CB_HQ" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
+              <Component id="BT_CLOSE" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -58,17 +51,6 @@
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new GlossButton()"/>
       </AuxValues>
-    </Component>
-    <Component class="javax.swing.JCheckBox" name="CB_HQ">
-      <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="dimm/home/MA_Properties.properties" key="High-Quality" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-        </Property>
-        <Property name="opaque" type="boolean" value="false"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CB_HQActionPerformed"/>
-      </Events>
     </Component>
     <Container class="javax.swing.JSplitPane" name="SPL_MAIL">
       <Properties>
