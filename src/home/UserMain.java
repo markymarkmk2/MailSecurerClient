@@ -53,7 +53,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.Set;
-import jrdesktop.utilities.JRConnectEventListener;
+import dimm.jrdesktop.utilities.JRConnectEventListener;
 
 
 

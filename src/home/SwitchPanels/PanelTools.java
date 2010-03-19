@@ -15,8 +15,8 @@ import dimm.home.UserMain;
 import java.awt.Dimension;
 import java.awt.Point;
 
-import jrdesktop.utilities.JRConnectEvent;
-import jrdesktop.utilities.JRConnectEventListener;
+import dimm.jrdesktop.utilities.JRConnectEvent;
+import dimm.jrdesktop.utilities.JRConnectEventListener;
 import org.jdesktop.fuse.ResourceInjector;
 
 
