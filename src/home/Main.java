@@ -28,12 +28,17 @@ public class Main
     public static final String PREFS_PATH = "";
     public static final String UPDATE_PATH = "update/";
     public static final String LOG_PATH = "logs/";
-    public static String version_str = "1.2.1";
+    public static String version_str = "1.2.2";
     public static boolean enable_distributor;
 
     static void reinit_prefs()
     {
         
+    }
+
+    public static String get_version_str()
+    {
+        return version_str;
     }
 
 
@@ -64,6 +69,12 @@ public class Main
      */
     public static void main( String[] args )
     {
+
+        if (args.length == 1 && args[0].compareTo("-version") == 0)
+        {
+            System.out.println(Main.get_version_str());
+            return;
+        }
 
         System.out.println("Look and Feels:");
         UIManager.LookAndFeelInfo[] lfi = UIManager.getInstalledLookAndFeels();

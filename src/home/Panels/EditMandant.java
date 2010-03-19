@@ -875,6 +875,10 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             TXT_IMAP_PORT.setEditable(true);
             TXT_IMAP_HOST.setText(object.getImap_host());
             TXT_IMAP_HOST.setEditable(true);
+
+
+
+            UserMain.errm_ok(my_dlg, UserMain.Txt("IMAP_Warning"));
         }
     }//GEN-LAST:event_BT_IMAP_ENABLEDActionPerformed
 
