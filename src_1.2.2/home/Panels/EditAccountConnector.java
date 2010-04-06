@@ -95,16 +95,7 @@ public class EditAccountConnector extends GenericEditPanel
                     TXT_LDAP_SB.setText(object.getSearchbase());
                     CB_LDAP_SB.setSelected(true);
                 }
-                if (is_ldap())
-                {
-                    TXT_SEARCHFIELD.setText(object.getSearchattribute());
-                    TXT_MAILFIELDS.setText(object.getMailattribute());
-                }
-                else if (CB_USER_IS_EMAIL.isSelected())
-                {
-                    TXT_USERDOMAIN.setText(object.getMailattribute());
-                }
-                
+
                 String type = object.getType();
                 for (int i = 0; i < CS_Constants.get_ac_list_count(); i++)
                 {
@@ -115,6 +106,18 @@ public class EditAccountConnector extends GenericEditPanel
                         break;
                     }
                 }
+
+                TXT_SEARCHFIELD.setText(object.getSearchattribute());
+
+                if (is_ldap())
+                {
+                    TXT_MAILFIELDS.setText(object.getMailattribute());
+                }
+                else if (CB_USER_IS_EMAIL.isSelected())
+                {
+                    TXT_USERDOMAIN.setText(object.getMailattribute());
+                }
+                
                 CB_TYPEActionPerformed(null);
                 
                 TXT_DOMAINLIST.setText(object.getDomainlist());
@@ -724,10 +727,11 @@ public class EditAccountConnector extends GenericEditPanel
         if (RB_TLS_IV_AVAIL.isSelected())
             flags |= CS_Constants.ACCT_USE_TLS_IF_AVAIL;
 
+        // search_attribute, mail_field_list, domain_list, exclude_list
         
         final String cmd = "TestLogin CMD:test MA:" + UserMain.self.get_act_mandant().getId() + " NM:'" + user_name + "' PW:'" + pwd + "' HO:" +
-                TXT_SERVER.getText() + " PO:" + TXT_PORT.getText() + " SB:" + TXT_LDAP_SB.getText() +
-                " TY:" + type + " FL:" + flags;
+                TXT_SERVER.getText() + " PO:" + TXT_PORT.getText() + " SB:" + TXT_LDAP_SB.getText() + " SA:" + TXT_SEARCHFIELD.getText() +
+                " ML:" + TXT_MAILFIELDS.getText() + " DO:" + TXT_DOMAINLIST.getText() + " TY:" + type + " FL:" + flags + " EX:" + object.getExcludefilter();
 
         if (sw != null)
         {

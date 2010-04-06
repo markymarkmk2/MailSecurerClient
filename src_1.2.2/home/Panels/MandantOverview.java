@@ -24,6 +24,7 @@ import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StatementID;
+import home.shared.CS_Constants;
 import home.shared.CS_Constants.USERMODE;
 import home.shared.SQL.SQLArrayResult;
 
@@ -85,7 +86,7 @@ class MandantTableModel extends OverviewModel
                 return new Boolean(mandant.getImap_port() != 0);
             case 3:
                 int flags = sqlResult.getInt(rowIndex, "Flags");
-                return new Boolean((flags & MandantOverview.DISABLED) == MandantOverview.DISABLED); // DISABLED
+                return new Boolean((flags & CS_Constants.MA_DISABLED) == CS_Constants.MA_DISABLED); // DISABLED
             default:
                 return super.getValueAt(rowIndex, columnIndex);
         }
@@ -115,7 +116,6 @@ class MandantTableModel extends OverviewModel
 public class MandantOverview extends SQLOverviewDialog implements PropertyChangeListener
 {
     
-    public static final int DISABLED =   0x01;
 
     public class MandantLicenseEntry
     {

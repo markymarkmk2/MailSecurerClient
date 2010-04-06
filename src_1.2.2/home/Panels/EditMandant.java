@@ -175,8 +175,17 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             int port = object.getImap_port();
             if (port > 0)
             {
+                CB_IMAP_SSL.setEnabled(true);
+                if (test_flag(CS_Constants.MA_IMAP_SSL))
+                {
+                    CB_IMAP_SSL.setSelected(true);
+                }
                 TXT_IMAP_PORT.setText("" + port);
                 TXT_IMAP_HOST.setText(object.getImap_host());
+            }
+            else
+            {
+                CB_IMAP_SSL.setEnabled(false);
             }
 
             // CALLBACK SETS TEXT AND EDITABLE
@@ -224,6 +233,12 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         table.addMouseListener(this);
 
         build_header_list(object);
+    }
+
+    boolean test_flag( int test_flag )
+    {
+        int flags = Integer.parseInt(object.getFlags());
+        return ((flags & test_flag) == test_flag);
     }
     boolean test_smtp_flag( int test_flag )
     {
@@ -299,6 +314,8 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         TXT_IMAP_HOST = new javax.swing.JTextField();
         TXT_IMAP_PORT = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
+        CB_IMAP_SSL = new javax.swing.JCheckBox();
+        jLabel15 = new javax.swing.JLabel();
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
@@ -669,41 +686,55 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
 
         jLabel1.setText(bundle.getString("IMAP_Port")); // NOI18N
 
+        CB_IMAP_SSL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CB_IMAP_SSLActionPerformed(evt);
+            }
+        });
+
+        jLabel15.setText(UserMain.Txt("SSL")); // NOI18N
+
         javax.swing.GroupLayout PN_IMAPLayout = new javax.swing.GroupLayout(PN_IMAP);
         PN_IMAP.setLayout(PN_IMAPLayout);
         PN_IMAPLayout.setHorizontalGroup(
             PN_IMAPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_IMAPLayout.createSequentialGroup()
-                .addGap(23, 23, 23)
+            .addGroup(PN_IMAPLayout.createSequentialGroup()
                 .addGroup(PN_IMAPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(BT_IMAP_ENABLED)
                     .addGroup(PN_IMAPLayout.createSequentialGroup()
-                        .addGap(21, 21, 21)
+                        .addGap(23, 23, 23)
+                        .addComponent(BT_IMAP_ENABLED))
+                    .addGroup(PN_IMAPLayout.createSequentialGroup()
+                        .addGap(53, 53, 53)
                         .addGroup(PN_IMAPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
-                            .addComponent(jLabel1))))
-                .addGap(10, 10, 10)
-                .addGroup(PN_IMAPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(TXT_IMAP_HOST)
-                    .addComponent(TXT_IMAP_PORT, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE))
-                .addContainerGap(271, Short.MAX_VALUE))
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel15))
+                        .addGap(10, 10, 10)
+                        .addGroup(PN_IMAPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(CB_IMAP_SSL)
+                            .addGroup(PN_IMAPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(TXT_IMAP_HOST)
+                                .addComponent(TXT_IMAP_PORT, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(310, Short.MAX_VALUE))
         );
         PN_IMAPLayout.setVerticalGroup(
             PN_IMAPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PN_IMAPLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(PN_IMAPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(BT_IMAP_ENABLED)
-                    .addGroup(PN_IMAPLayout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addGroup(PN_IMAPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(TXT_IMAP_HOST, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(PN_IMAPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(TXT_IMAP_PORT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))))
-                .addContainerGap(246, Short.MAX_VALUE))
+                .addComponent(BT_IMAP_ENABLED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(PN_IMAPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(TXT_IMAP_HOST, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(PN_IMAPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(TXT_IMAP_PORT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(PN_IMAPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(CB_IMAP_SSL)
+                    .addComponent(jLabel15))
+                .addContainerGap(208, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(UserMain.getString("IMAP-Parameter"), PN_IMAP); // NOI18N
@@ -864,17 +895,17 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             TXT_IMAP_PORT.setEditable(false);
             TXT_IMAP_HOST.setText("");
             TXT_IMAP_HOST.setEditable(false);
+            CB_IMAP_SSL.setEnabled(false);
         }
         else
         {
-            int port = object.getImap_port();
-            if (port == 0)
-                port = 143;
-
-            TXT_IMAP_PORT.setText(Integer.toString(port));                        
+            // SET THE PORT ACCORDING TO SSL
+            CB_IMAP_SSLActionPerformed(null);
+                      
             TXT_IMAP_PORT.setEditable(true);
             TXT_IMAP_HOST.setText(object.getImap_host());
             TXT_IMAP_HOST.setEditable(true);
+            CB_IMAP_SSL.setEnabled(true);
 
 
 
@@ -1057,6 +1088,12 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
 
     }//GEN-LAST:event_TXT_MAILTOMouseClicked
 
+    private void CB_IMAP_SSLActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_IMAP_SSLActionPerformed
+    {//GEN-HEADEREND:event_CB_IMAP_SSLActionPerformed
+        // TODO add your handling code here:
+        TXT_IMAP_PORT.setText( (CB_IMAP_SSL.isSelected() ? "993" : "143" ));
+    }//GEN-LAST:event_CB_IMAP_SSLActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JButton BT_ADD_HEADER;
@@ -1066,6 +1103,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
     private javax.swing.JButton BT_OK;
     private javax.swing.JButton BT_TEST;
     private javax.swing.JCheckBox CB_CERTIFICATE;
+    private javax.swing.JCheckBox CB_IMAP_SSL;
     private javax.swing.JPanel PN_ACTION;
     private javax.swing.JPanel PN_BASE;
     private javax.swing.JPanel PN_BUTTONS;
@@ -1098,6 +1136,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1201,7 +1240,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
 
         flags = get_object_flags();
 
-        return ((flags & MandantOverview.DISABLED) == MandantOverview.DISABLED);
+        return ((flags & CS_Constants.MA_DISABLED) == CS_Constants.MA_DISABLED);
     }
 
     void set_object_disabled( boolean f )
@@ -1210,11 +1249,11 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
 
         if (f)
         {
-            set_object_flag(MandantOverview.DISABLED);
+            set_object_flag(CS_Constants.MA_DISABLED);
         }
         else
         {
-            clr_object_flag(MandantOverview.DISABLED);
+            clr_object_flag(CS_Constants.MA_DISABLED);
         }
     }
 
@@ -1406,9 +1445,9 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         String enc_passwd = CryptTools.crypt_internal( pwd, UserMain.self, CryptTools.ENC_MODE.ENCRYPT);
 
         boolean de = BT_DISABLED.isSelected();
-/*        MandantOverview.MandantLicenseEntry mte = (MandantOverview.MandantLicenseEntry) CB_LICENSE.getSelectedItem();
-        String lic = mte.type;
-*/
+
+        object.setFlags("0");
+        
         String lic = "";
         object.setName(name);
         set_object_disabled(de);
@@ -1421,15 +1460,20 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         {
             imap_port = Integer.parseInt(TXT_IMAP_PORT.getText());
             imap_host = TXT_IMAP_HOST.getText();
+            if (CB_IMAP_SSL.isSelected())
+            {
+                set_object_flag(CS_Constants.MA_IMAP_SSL);
+            }
         }
 
         object.setImap_port(imap_port);
         object.setImap_host(imap_host);
-        object.setSmtp_port(imap_port);
+
         object.setSmtp_host(TXT_SMTP_HOST.getText());
         object.setSmtp_user(TXT_SMTP_USER.getText());
         object.setSmtp_port(Integer.parseInt(TXT_SMTP_PORT.getText()));
         object.setSmtp_pwd(get_smtp_pwd());
+        
         object.setMailfrom( TXT_MAILFROM.getText() );
         object.setNotificationlist( TXT_MAILTO.getText() );
 

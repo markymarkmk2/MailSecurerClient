@@ -174,6 +174,7 @@ public class MailExportPanel extends GlossDialogPanel
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.setCurrentDirectory(last_dir);
+
         if (JFileChooser.APPROVE_OPTION != chooser.showDialog(my_dlg, UserMain.Txt("Select_export_directory")))
         {
             jTextField1.setText("");
@@ -181,6 +182,9 @@ public class MailExportPanel extends GlossDialogPanel
         }
 
         File dir = chooser.getSelectedFile();
+        if (!dir.exists() || dir.isFile())
+            dir = dir.getParentFile();
+
         jTextField1.setText(dir.getAbsolutePath());
         last_dir = dir;
 

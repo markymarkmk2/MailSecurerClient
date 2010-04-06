@@ -28,7 +28,7 @@ public class Main
     public static final String PREFS_PATH = "";
     public static final String UPDATE_PATH = "update/";
     public static final String LOG_PATH = "logs/";
-    public static String version_str = "1.2.2";
+    public static String version_str = "1.2.3";
     public static boolean enable_distributor;
 
     static void reinit_prefs()
