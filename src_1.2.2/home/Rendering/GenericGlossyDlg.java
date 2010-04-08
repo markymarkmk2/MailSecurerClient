@@ -92,6 +92,25 @@ public class GenericGlossyDlg extends JDialog
             setLocation(loc.x + 30, loc.y + 30 );
         
     }
+    public Point get_next_location( )
+    {
+        Point loc = getLocation();
+        if (isVisible())
+            loc = getLocationOnScreen();
+
+        if (UserMain.self.is_touchscreen())
+        {
+            loc.x += 10;
+            loc.y += 10;
+        }
+        else
+        {
+            loc.x += 30;
+            loc.y += 30;
+        }
+        return loc;
+
+    }
   
 
     /** This method is called from within the constructor to

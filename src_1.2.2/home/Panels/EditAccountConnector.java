@@ -126,7 +126,7 @@ public class EditAccountConnector extends GenericEditPanel
                 if (exclude_filter_save == null)
                     exclude_filter_save = "";
 
-                set_filter_preview( LogicFilter.get_nice_filter_text( exclude_filter_save, true ) );
+                set_filter_preview( LogicFilter.get_nice_filter_text( exclude_filter_save ) );
 
             }
             catch (Exception exc)
@@ -1427,17 +1427,16 @@ public class EditAccountConnector extends GenericEditPanel
             var_names.add(new VarTypeEntry("Mailheader", ExprEntry.TYPE.STRING) );
 
 
-            boolean compressed = true;
-            LogicFilter rf = new LogicFilter(var_names, object.getExcludefilter(), compressed );
+            LogicFilter rf = new LogicFilter(var_names, object.getExcludefilter() );
 
             GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, rf);
             dlg.setVisible(true);
 
             if (rf.isOkay())
             {
-                 String role_filter_xml = rf.get_compressed_xml_list_data(compressed);
+                 String role_filter_xml = rf.get_compressed_xml_list_data();
                  object.setExcludefilter(role_filter_xml);
-                 set_filter_preview( LogicFilter.get_nice_filter_text( role_filter_xml, compressed ) );
+                 set_filter_preview( LogicFilter.get_nice_filter_text( role_filter_xml ) );
             }
         }
         catch (Exception exc)

@@ -429,17 +429,8 @@ public class LicensePanel extends GlossDialogPanel implements MouseListener,  Pr
         {
             FunctionCallConnect fcc = UserMain.fcc();
 
-            XStream xs = new XStream();
-            String ticket_str = xs.toXML(ticket);
-            try
-            {
-                ticket_str = ZipUtilities.compress(ticket_str);
-            }
-            catch (Exception exc)
-            {
-                UserMain.errm_ok( my_dlg, UserMain.Txt("Lizenz_wurde_nicht_übernommen") + ": " + exc.getLocalizedMessage());
-                return;
-            }
+
+            String ticket_str = ParseToken.BuildCompressedObjectString(ticket);
 
             String ret = fcc.call_abstract_function("LicenseConfig CMD:SET PRD:" + ticket.getProduct() + "TK:" + ticket_str, FunctionCallConnect.SHORT_TIMEOUT );
 
@@ -660,11 +651,7 @@ public class LicensePanel extends GlossDialogPanel implements MouseListener,  Pr
             if (ret.charAt(0) == '0')
             {
                 ParseToken pt = new ParseToken(ret.substring(3));
-                String lic = pt.GetString("TK:");
-                lic = ZipUtilities.uncompress(lic);
-
-                XStream xs = new XStream();
-                Object o = xs.fromXML(lic);
+                Object o = pt.GetCompressedObject("TK:");
                 if (o instanceof ArrayList)
                 {
                     ArrayList<ValidTicketContainer> ticket_list = (ArrayList<ValidTicketContainer>)o;

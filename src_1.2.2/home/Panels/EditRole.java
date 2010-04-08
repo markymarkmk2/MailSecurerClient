@@ -26,6 +26,7 @@ import home.shared.Utilities.Validator;
 import home.shared.CS_Constants;
 import home.shared.SQL.OptCBEntry;
 import home.shared.SQL.SQLArrayResult;
+import home.shared.Utilities.ParseToken;
 import home.shared.Utilities.ZipUtilities;
 import home.shared.filter.ExprEntry;
 import home.shared.filter.VarTypeEntry;
@@ -77,8 +78,7 @@ public class EditRole extends GenericEditPanel
             object = model.get_object(row);
 
             TXT_NAME.setText(object.getName());
-            boolean compressed = (get_object_flags() & CS_Constants.ROLE_ACM_COMPRESSED) == CS_Constants.ROLE_ACM_COMPRESSED;
-            String acm_text = vbox_overview.get_account_match_descr(object.getAccountmatch(), compressed);
+            String acm_text = vbox_overview.get_account_match_descr(object.getAccountmatch());
             
             TXT_ACCOUNTMATCH.setText( acm_text );
 
@@ -90,7 +90,7 @@ public class EditRole extends GenericEditPanel
 
             role_filter_save = object.getAccountmatch();
 
-            set_filter_preview( LogicFilter.get_nice_filter_text( role_filter_save, compressed ) );
+            set_filter_preview( LogicFilter.get_nice_filter_text( role_filter_save ) );
         }
         else
         {
@@ -430,20 +430,7 @@ public class EditRole extends GenericEditPanel
                 
                 if (ret != null && ret.charAt(0) == '0')
                 {
-                    String xml = null;
-                    try
-                    {
-                        xml = ZipUtilities.uncompress(ret.substring(3));
-                    }
-                    catch (Exception iOException)
-                    {
-                        UserMain.errm_ok(my_dlg, UserMain.Txt("Check_user_failed") + ": " + iOException.getMessage());
-                        sw = null;
-                        return null;
-                    }
-
-                    XStream xs = new XStream();
-                    Object o = xs.fromXML( xml );
+                    Object o = ParseToken.DeCompressObject(ret.substring(3));
                     if (o instanceof ArrayList<?>)
                     {
                         ArrayList<String> list = (ArrayList<String>)o;
@@ -801,17 +788,16 @@ public class EditRole extends GenericEditPanel
             var_names.add(new VarTypeEntry("Group", ExprEntry.TYPE.STRING) );
             
             
-            boolean compressed = (get_object_flags() & CS_Constants.ROLE_ACM_COMPRESSED) == CS_Constants.ROLE_ACM_COMPRESSED;
-            LogicFilter rf = new LogicFilter(var_names, object.getAccountmatch(), compressed );
+            LogicFilter rf = new LogicFilter(var_names, object.getAccountmatch());
 
             GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, rf);
             dlg.setVisible(true);
 
             if (rf.isOkay())
             {
-                 String role_filter_xml = rf.get_compressed_xml_list_data(compressed);
+                 String role_filter_xml = rf.get_compressed_xml_list_data();
                  object.setAccountmatch(role_filter_xml);
-                 set_filter_preview( LogicFilter.get_nice_filter_text( role_filter_xml, compressed ) );
+                 set_filter_preview( LogicFilter.get_nice_filter_text( role_filter_xml) );
             }
         }
         catch (Exception exc)

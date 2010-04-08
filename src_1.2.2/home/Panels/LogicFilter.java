@@ -15,7 +15,7 @@ import com.thoughtworks.xstream.XStream;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.UserMain;
-import home.shared.Utilities.ZipUtilities;
+import home.shared.Utilities.ParseToken;
 import home.shared.filter.ExprEntry;
 import home.shared.filter.ExprEntry.OPERATION;
 import home.shared.filter.ExprEntry.TYPE;
@@ -75,12 +75,12 @@ public class LogicFilter extends GlossDialogPanel
     boolean in_init;
     
     /** Creates new form RoleFilter */
-    public LogicFilter(ArrayList<VarTypeEntry> var_names, String compressed_list_str, boolean compressed)
+    public LogicFilter(ArrayList<VarTypeEntry> var_names, String compressed_list_str)
     {
         initComponents();
 
         // READ COMPRESSED FILTER XML DATA
-        ArrayList<LogicEntry> list = get_filter_list( compressed_list_str, compressed );
+        ArrayList<LogicEntry> list = get_filter_list( compressed_list_str);
 
         model = new LogicEntryModel(list);
 
@@ -148,24 +148,9 @@ public class LogicFilter extends GlossDialogPanel
         in_init = false;
     }
 
-    public String get_compressed_xml_list_data( boolean compressed)
+    public String get_compressed_xml_list_data()
     {
-        String xml = null;
-        XStream xstr = new XStream();
-        xml = xstr.toXML(model.getChildren());
-        String compressed_list_str = xml;
-        if (compressed)
-        {
-            try
-            {
-                compressed_list_str = ZipUtilities.compress(xml);
-            }
-            catch (Exception e)
-            {
-                UserMain.errm_ok(UserMain.Txt("Invalid_filter,_resetting_to_empty_list"));
-                compressed_list_str = "";
-            }
-        }
+        String compressed_list_str = ParseToken.BuildCompressedObjectString(model.getChildren());
         return compressed_list_str;
     }
 
@@ -198,7 +183,7 @@ public class LogicFilter extends GlossDialogPanel
         return (e.isNeg() ? UserMain.Txt("not") + " " : "") ;
     }
 
-    public static ArrayList<LogicEntry> get_filter_list( String list_str, boolean compressed )
+    public static ArrayList<LogicEntry> get_filter_list( String list_str)
     {
         ArrayList<LogicEntry> list = null;
         if (list_str == null || list_str.length() == 0)
@@ -209,14 +194,7 @@ public class LogicFilter extends GlossDialogPanel
         {
             try
             {
-                String xml_list_str = list_str;
-
-                if (compressed)
-                    xml_list_str = ZipUtilities.uncompress(list_str);
-
-                XStream xstr = new XStream();
-
-                list = (ArrayList<LogicEntry>) xstr.fromXML(xml_list_str);
+                list = (ArrayList<LogicEntry>) ParseToken.DeCompressObject(list_str);
             }
             catch (Exception e)
             {
@@ -227,9 +205,9 @@ public class LogicFilter extends GlossDialogPanel
         return list;
     }
     
-    public static String get_nice_filter_text( String compressed_list_str, boolean compressed )
+    public static String get_nice_filter_text( String compressed_list_str)
     {
-        ArrayList<LogicEntry> list = get_filter_list( compressed_list_str, compressed );
+        ArrayList<LogicEntry> list = get_filter_list( compressed_list_str);
 
         StringBuffer sb = new StringBuffer();
 

@@ -6,7 +6,6 @@
 
 package dimm.home.Panels;
 
-import com.thoughtworks.xstream.XStream;
 import home.shared.SQL.SQLResult;
 import dimm.home.Main;
 import dimm.home.Preferences;
@@ -24,7 +23,6 @@ import home.shared.Utilities.ParseToken;
 import dimm.home.Utilities.SwingWorker;
 import home.shared.CS_Constants.USERMODE;
 import home.shared.SQL.UserSSOEntry;
-import home.shared.Utilities.ZipUtilities;
 import home.shared.hibernate.Mandant;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -773,10 +771,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         if (ret != null && ret.charAt(0) == '0')
         {
             pt = new ParseToken( ret.substring(3) );
-            String cxml = pt.GetString("CSSO:");
-            String xml = ZipUtilities.uncompress(cxml);
-            XStream xs = new XStream();
-            Object o = xs.fromXML(xml);
+            Object o = pt.GetCompressedObject("CSSO:");
             if (o instanceof UserSSOEntry)
             {
                 sso_entry = (UserSSOEntry)o;
@@ -845,14 +840,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         if (ret != null && ret.charAt(0) == '0')
         {
             pt = new ParseToken( ret.substring(3) );
-            String cxml = pt.GetString("CSSO:");
-            String xml = ZipUtilities.uncompress(cxml);
-            XStream xs = new XStream();
-            Object o = xs.fromXML(xml);
-            if (o instanceof UserSSOEntry)
-            {
-                sso_entry = (UserSSOEntry)o;
-            }
+            sso_entry = pt.GetObject("CSSO:", UserSSOEntry.class);
         }
         Mandant ma = UserMain.sqc().get_mandant(m_id);
 

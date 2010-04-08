@@ -19,16 +19,15 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="SCP_TABLE" alignment="1" pref="625" max="32767" attributes="0"/>
+                  <Component id="SCP_TABLE" alignment="1" pref="652" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="BT_CSR" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="BT_IMPORT" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="BT_IMPORT_CA" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="124" max="32767" attributes="0"/>
+                      <Component id="BT_IMPORT_CA" linkSize="1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="429" max="32767" attributes="0"/>
                       <Component id="BT_OKAY" min="-2" pref="80" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="BT_NEW_KEY" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="BT_CSR" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="BT_IMPORT" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -38,13 +37,17 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="SCP_TABLE" pref="143" max="32767" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="BT_OKAY" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
-                  <Component id="BT_CSR" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="BT_IMPORT" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="BT_IMPORT_CA" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Component id="SCP_TABLE" pref="258" max="32767" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="BT_NEW_KEY" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+              <Component id="BT_CSR" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="BT_IMPORT" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="BT_OKAY" min="-2" pref="25" max="-2" attributes="0"/>
+                  <Component id="BT_IMPORT_CA" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -103,6 +106,19 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_IMPORT_CAActionPerformed"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new GlossButton()"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JButton" name="BT_NEW_KEY">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="dimm/home/MA_Properties.properties" key="Create_New_Key" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_NEW_KEYActionPerformed"/>
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new GlossButton()"/>

@@ -11,14 +11,14 @@
 
 package dimm.home.Panels;
 
-import com.thoughtworks.xstream.XStream;
+import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.Rendering.GlossTable;
+import dimm.home.Rendering.SingleTextAreaPanel;
 import dimm.home.ServerConnect.FunctionCallConnect;
 import dimm.home.UserMain;
 import home.shared.Utilities.ParseToken;
-import home.shared.Utilities.ZipUtilities;
 import java.awt.Component;
 import java.awt.Insets;
 import java.awt.event.MouseEvent;
@@ -26,8 +26,10 @@ import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ import javax.swing.JTable;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
@@ -327,7 +330,8 @@ class CertTableModel extends AbstractTableModel
             spm.setMaximum( new Integer(cert_list.get(i).length) );
 
             JSpinner sp= new JSpinner(spm);
-            sp.setValue( new Integer(1) );
+            sp.setValue( new Integer(cert_list.get(i).length)  );
+            spm.addChangeListener(panel);
             level_list.add(sp);
         }
     }
@@ -337,7 +341,7 @@ class CertTableModel extends AbstractTableModel
  *
  * @author mw
  */
-public class CertificatePanel extends GlossDialogPanel implements MouseListener,  PropertyChangeListener
+public class CertificatePanel extends GlossDialogPanel implements MouseListener,  PropertyChangeListener, ChangeListener
 {
     GlossTable table;
     
@@ -383,13 +387,8 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
             if (ret.charAt(0) == '0')
             {
                 ParseToken pt = new ParseToken(ret);
-                String xml = pt.GetString("CL:");
-                xml = ZipUtilities.uncompress(xml);
-
-
-                XStream xs = new XStream();
-                Object o = xs.fromXML(xml);
-                if ( o instanceof ArrayList)
+                ArrayList o = pt.GetObject("CL:", ArrayList.class);
+                if ( o != null)
                 {
                     ArrayList<X509Certificate[]> cert_list = (ArrayList<X509Certificate[]>)o;
                     model = new CertTableModel(this, cert_list);
@@ -481,6 +480,7 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
         BT_CSR = new GlossButton();
         BT_IMPORT = new GlossButton();
         BT_IMPORT_CA = new GlossButton();
+        BT_NEW_KEY = new GlossButton();
 
         BT_OKAY.setText(UserMain.Txt("Close")); // NOI18N
         BT_OKAY.addActionListener(new java.awt.event.ActionListener() {
@@ -510,6 +510,13 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
             }
         });
 
+        BT_NEW_KEY.setText(UserMain.getString("Create_New_Key")); // NOI18N
+        BT_NEW_KEY.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_NEW_KEYActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -517,27 +524,33 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(SCP_TABLE, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 625, Short.MAX_VALUE)
+                    .addComponent(SCP_TABLE, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 652, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(BT_CSR)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(BT_IMPORT)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(BT_IMPORT_CA)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 124, Short.MAX_VALUE)
-                        .addComponent(BT_OKAY, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 429, Short.MAX_VALUE)
+                        .addComponent(BT_OKAY, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(BT_NEW_KEY)
+                    .addComponent(BT_CSR)
+                    .addComponent(BT_IMPORT))
                 .addContainerGap())
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {BT_CSR, BT_IMPORT, BT_IMPORT_CA, BT_NEW_KEY});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(SCP_TABLE, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(SCP_TABLE, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(BT_NEW_KEY)
+                .addGap(4, 4, 4)
+                .addComponent(BT_CSR)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BT_IMPORT)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(BT_OKAY, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_CSR)
-                    .addComponent(BT_IMPORT)
                     .addComponent(BT_IMPORT_CA))
                 .addContainerGap())
         );
@@ -561,14 +574,13 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
         if (ret != null && ret.length() > 0 && ret.charAt(0) == '0')
         {
             ParseToken pt = new ParseToken(ret.substring(3) );
-            String xml = pt.GetString("CSR:");
-            xml = ZipUtilities.uncompress(xml);
-            XStream xs = new XStream();
-            String csr = xs.fromXML(xml).toString();
+            String csr = pt.GetCompressedObject("CSR:").toString();
 
             
             JFileChooser jch = new JFileChooser();
             jch.setSelectedFile(new File("MailSecurer.csr"));
+            jch.setLocation( my_dlg.get_next_location() );
+            
             if (jch.showSaveDialog(my_dlg) == JFileChooser.APPROVE_OPTION)
             {
                 try
@@ -583,29 +595,156 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
                     UserMain.errm_ok(my_dlg, UserMain.Txt("Cannot_save_CSR_to_file") + ": " + iOException.getMessage());
                 }
             }
+
+            SingleTextAreaPanel stap = new SingleTextAreaPanel(false);
+            stap.setText(csr);
+            GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, stap);
+            dlg.set_next_location( my_dlg );
+            dlg.setVisible(true);
         }
     }//GEN-LAST:event_BT_CSRActionPerformed
 
     private void BT_IMPORTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_IMPORTActionPerformed
     {//GEN-HEADEREND:event_BT_IMPORTActionPerformed
         // TODO add your handling code here:
+        byte[] data = select_ca_data();
+        if (data != null)
+        {
+
+            ByteBuffer bb = ByteBuffer.wrap(data);
+            String cert = ParseToken.BuildCompressedObjectString( bb );
+            // DATA IS VALID NOW
+            FunctionCallConnect fcc = UserMain.fcc();
+            String ret = fcc.call_abstract_function("certificate CMD:import AL:mailsecurer KS:mailsecurer CERT:\"" + cert + "\"", FunctionCallConnect.MEDIUM_TIMEOUT );
+            if (ret != null && ret.length() > 0 && ret.charAt(0) == '0')
+            {
+                UserMain.info_ok(my_dlg, UserMain.Txt("Certificate_was_imported_successful" ));
+            }
+            else
+            {
+                UserMain.errm_ok(my_dlg, UserMain.Txt("Certificate_could_not_be_imported") + ": " + ret);
+            }
+            read_certificates();
+            propertyChange( new PropertyChangeEvent(this, "REBUILD", null, null ) );
+
+        }
     }//GEN-LAST:event_BT_IMPORTActionPerformed
 
     private void BT_IMPORT_CAActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_IMPORT_CAActionPerformed
     {//GEN-HEADEREND:event_BT_IMPORT_CAActionPerformed
         // TODO add your handling code here:
+        // TODO add your handling code here:
+        byte[] data = select_ca_data();
+        if (data != null)
+        {
+
+            ByteBuffer bb = ByteBuffer.wrap(data);
+            String cert = ParseToken.BuildCompressedObjectString( bb );
+            // BUILD A FAKE ALIAS, MUST BE UNIQUE
+            String alias = Long.toString(System.currentTimeMillis() / 1000);
+            // DATA IS VALID NOW
+            FunctionCallConnect fcc = UserMain.fcc();
+            String ret = fcc.call_abstract_function("certificate CMD:import TC:1 AL:" + alias + " KS:mailsecurer CERT:\"" + cert + "\"", FunctionCallConnect.MEDIUM_TIMEOUT );
+            if (ret != null && ret.length() > 0 && ret.charAt(0) == '0')
+            {
+                UserMain.info_ok(my_dlg, UserMain.Txt("Certificate_was_imported_successful" ));
+            }
+            else
+            {
+                UserMain.errm_ok(my_dlg, UserMain.Txt("Certificate_could_not_be_imported") + ": " + ret);
+            }
+            read_certificates();
+            propertyChange( new PropertyChangeEvent(this, "REBUILD", null, null ) );
+
+        }
     }//GEN-LAST:event_BT_IMPORT_CAActionPerformed
+
+    private void BT_NEW_KEYActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_NEW_KEYActionPerformed
+    {//GEN-HEADEREND:event_BT_NEW_KEYActionPerformed
+        // TODO add your handling code here:
+        NewCertificatePanel pnl = new NewCertificatePanel();
+        GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
+        dlg.set_next_location( my_dlg );
+        dlg.setVisible(true);
+        if (pnl.isOk())
+        {
+            FunctionCallConnect fcc = UserMain.fcc();
+            String cmd = "certificate CMD:create AL:" + pnl.get_alias() +
+                    " CN:\"" + pnl.get_CN() + "\"" +
+                    " O_:\"" + pnl.get_O() + "\"" +
+                    " L_:\"" + pnl.get_L() + "\"" +
+                    " S_:\"" + pnl.get_S() + "\"" +
+                    " OU:\"" + pnl.get_OU() + "\"" +
+                    " C_:\"" + pnl.get_C() + "\"" +
+                    " KL:" + pnl.get_keylength() + 
+                    " KS:mailsecurer";
+
+            String ret = fcc.call_abstract_function(cmd, FunctionCallConnect.MEDIUM_TIMEOUT );
+            if (ret != null && ret.length() > 0 && ret.charAt(0) == '0')
+            {
+                UserMain.info_ok(my_dlg, UserMain.Txt("Certificate_was_created_successful" ));
+            }
+            else
+            {
+                UserMain.errm_ok(my_dlg, UserMain.Txt("Certificate_could_not_be_created") + ": " + ret);
+            }
+
+            read_certificates();
+            propertyChange( new PropertyChangeEvent(this, "REBUILD", null, null ) );
+
+        }
+    }//GEN-LAST:event_BT_NEW_KEYActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_CSR;
     private javax.swing.JButton BT_IMPORT;
     private javax.swing.JButton BT_IMPORT_CA;
+    private javax.swing.JButton BT_NEW_KEY;
     private javax.swing.JButton BT_OKAY;
     private javax.swing.JScrollPane SCP_TABLE;
     // End of variables declaration//GEN-END:variables
 
 
+    byte[] select_ca_data()
+    {
+        JFileChooser jch = new JFileChooser();
+        jch.setLocation( my_dlg.get_next_location() );
+
+        if (jch.showOpenDialog(my_dlg) == JFileChooser.APPROVE_OPTION)
+        {
+            byte[] data = null;
+            FileInputStream tr = null;
+            try
+            {
+                File f = jch.getSelectedFile();
+                tr = new FileInputStream(f);
+                data = new byte[(int)f.length()];
+                tr.read(data);
+
+                return data;
+            }
+            catch (IOException iOException)
+            {
+                UserMain.errm_ok(my_dlg, UserMain.Txt("Cannot_load_certificate") + ": " + iOException.getMessage());
+                return null;
+            }
+            finally
+            {
+                if (tr != null)
+                {
+                    try
+                    {
+                        tr.close();
+                    }
+                    catch (IOException iOException)
+                    {
+                    }
+                }
+            }
+        }
+        return null;
+    }
  
 
 
@@ -703,12 +842,12 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
     {
         X509Certificate[] cert = model.get_cert_list().get(row);
 
-        XStream xs = new XStream();
-        String xml = xs.toXML(cert);
-        xml = ZipUtilities.compress(xml);
+        String xml = ParseToken.BuildCompressedObjectString(cert);
 
         FunctionCallConnect fcc = UserMain.fcc();
         String ret = fcc.call_abstract_function("certificate CMD:delete_cert CERT:\"" + xml + "\"", FunctionCallConnect.SHORT_TIMEOUT );
+
+        read_certificates();
 
         if (ret != null && fcc.get_last_err_code() == 0)
         {
@@ -721,9 +860,10 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
         UserMain.errm_ok(my_dlg, UserMain.Txt("Cannot_delete_certificate") + ": " + ret);
         return false;
     }
-    
-   
 
-
-   
+    @Override
+    public void stateChanged( ChangeEvent e )
+    {
+        table.tableChanged(new TableModelEvent(table.getModel()) );
+    }
 }

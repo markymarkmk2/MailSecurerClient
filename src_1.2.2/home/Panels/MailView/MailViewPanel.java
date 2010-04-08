@@ -29,7 +29,6 @@ import dimm.home.Utilities.SwingWorker;
 import dimm.home.native_libs.NativeLoader;
 import home.shared.CS_Constants;
 import home.shared.SQL.OptCBEntry;
-import home.shared.Utilities.ZipUtilities;
 import home.shared.filter.ExprEntry;
 import home.shared.filter.ExprEntry.OPERATION;
 import home.shared.filter.ExprEntry.TYPE;
@@ -509,7 +508,7 @@ class SimpleSearchTableModel extends AbstractTableModel implements MouseListener
         ic_delete = GlossTable.create_table_button("/dimm/home/images/web_delete.png");     
     }
 
-    public String get_compressed_xml_list_data( boolean compressed)
+    public String get_compressed_xml_list_data()
     {
         String xml = null;
         XStream xstr = new XStream();
@@ -531,20 +530,8 @@ class SimpleSearchTableModel extends AbstractTableModel implements MouseListener
                 }
             }
         }
-        xml = xstr.toXML(al);
-        String compressed_list_str = xml;
-        if (compressed)
-        {
-            try
-            {
-                compressed_list_str = ZipUtilities.compress(xml);
-            }
-            catch (Exception e)
-            {
-                UserMain.errm_ok(UserMain.Txt("Invalid_filter,_resetting_to_empty_list"));
-                compressed_list_str = "";
-            }
-        }
+
+        String compressed_list_str = ParseToken.BuildCompressedObjectString(al);
         return compressed_list_str;
     }
 
@@ -1903,17 +1890,16 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             //var_names.add(CS_Constants.FLD_META_ADDRESS);
             
            
-            boolean compressed = true;
-            LogicFilter rf = new LogicFilter(var_names, last_filter, compressed );
+            LogicFilter rf = new LogicFilter(var_names, last_filter );
 
             GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, rf);
             dlg.setVisible(true);
 
             if (rf.isOkay())
             {
-                 last_filter = rf.get_compressed_xml_list_data(compressed);
+                 last_filter = rf.get_compressed_xml_list_data();
 
-                 String nice_txt = LogicFilter.get_nice_filter_text( last_filter, compressed );
+                 String nice_txt = LogicFilter.get_nice_filter_text( last_filter );
                  TXTA_FILTER.setText(nice_txt);
                  TXTA_FILTER.setCaretPosition(0);
                  
@@ -1981,7 +1967,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         // TODO add your handling code here:
         boolean b1 = simple_search_table.getColumnModel().getColumn(1).getCellEditor().stopCellEditing();
         boolean b2 = BT_SIMPLESEARCH.requestFocusInWindow();
-        last_filter = simple_search_tablemodel.get_compressed_xml_list_data(/*compressed*/ true);
+        last_filter = simple_search_tablemodel.get_compressed_xml_list_data();
         
         do_filter_search();
 
