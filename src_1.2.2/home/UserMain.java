@@ -77,6 +77,16 @@ public class UserMain extends javax.swing.JFrame implements LogListener
         // THIS IS HOOK FOR CLOSING SEARCH WINDOW, NEEDED BY TB-PLUGIN
     }
 
+    public static boolean check_logout( ServerCall sq )
+    {
+        if (sq.get_last_err_code() == 8)
+        {
+            errm_ok( UserMain.Txt("Sorry,_you_have_been_logged_out_due_to_inactivity"));
+            return true;
+        }
+        return false;
+    }
+
     // PANELS
     NavigationHeader navPanel ;
     PanelVerwaltung pn_verwaltung;

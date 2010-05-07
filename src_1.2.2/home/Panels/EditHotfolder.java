@@ -20,8 +20,6 @@ import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.ServerConnect.RMXFileSystemView;
 import home.shared.Utilities.Validator;
 import home.shared.CS_Constants;
-import java.io.File;
-import javax.swing.JFileChooser;
 
 
 
@@ -34,6 +32,7 @@ public class EditHotfolder extends GenericEditPanel
     HotfolderOverview vbox_overview;
     HotfolderTableModel model;
     Hotfolder object;
+    Hotfolder save_object;
     DiskArchiveComboModel dacm;
     String object_name;
     
@@ -58,6 +57,7 @@ public class EditHotfolder extends GenericEditPanel
         if (!model.is_new(row))
         {
             object = model.get_object(row);
+            save_object = new Hotfolder( object );
 
 
             TXT_PATH.setText(object.getPath());
@@ -250,7 +250,7 @@ public class EditHotfolder extends GenericEditPanel
     private void BT_OKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_OKActionPerformed
     {//GEN-HEADEREND:event_BT_OKActionPerformed
         // TODO add your handling code here:
-        ok_action(object);
+        ok_action(object, save_object);
     }//GEN-LAST:event_BT_OKActionPerformed
 
     private void BT_ABORTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_ABORTActionPerformed

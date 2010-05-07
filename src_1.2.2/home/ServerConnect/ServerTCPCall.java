@@ -807,6 +807,36 @@ public class ServerTCPCall extends ServerCall
                 return cid;
             }
             last_err_code = retcode;
+            last_return = ret;
+        }
+        catch (Exception exc)
+        {
+            last_ex = exc;
+        }
+        return null;
+    }
+
+    @Override
+    public ConnectionID open_audit( String db )
+    {
+
+        init_stat("");
+
+        try
+        {
+            String ret = send_rmx("open_audit " + db, SHORT_CMD_TO);
+
+            calc_stat(ret);
+
+            int idx = ret.indexOf(':');
+            int retcode = Integer.parseInt(ret.substring(0, idx));
+
+            if (retcode == 0)
+            {
+                ConnectionID cid = new ConnectionID(ret.substring(idx + 2));
+                return cid;
+            }
+            last_err_code = retcode;
         }
         catch (Exception exc)
         {
@@ -1273,7 +1303,7 @@ public class ServerTCPCall extends ServerCall
     }
 
     @Override
-    public boolean Update( StatementID sta, Object o )
+    public boolean Update( StatementID sta, Object o, Object save_o )
     {
         boolean ret = false;
 
@@ -1298,18 +1328,39 @@ public class ServerTCPCall extends ServerCall
                 String meth_name = method.getName();
 
                 boolean is_getter = meth_name.startsWith("get");
-                boolean is_setter = meth_name.startsWith("set");
-
+                
                 if (!is_getter)
                 {
                     continue;
                 }
 
+                // SKIP KEY
                 if (method.getName().compareTo("getId") == 0)
                 {
                     continue;
                 }
+                
                 String field_name = get_name_from_hibernate_class(method.getName().substring(3));
+                Object get_obj = method.invoke(o);
+                
+                // DETECT DIFFERENTIAL TO SAVE OBJECT
+                if (save_o != null)
+                {
+                    Object save_obj = method.invoke(save_o);
+                    if (get_obj instanceof Comparable)
+                    {
+                        Comparable c = (Comparable) get_obj;
+                        if (c.equals(save_obj))
+                        {
+                            continue;
+                        }
+                    }
+                    else if (get_obj == save_obj)
+                    {
+                        continue;
+                    }
+                }
+
 
                 if (ret_type.compareTo("java.lang.String") == 0)
                 {
@@ -1318,11 +1369,11 @@ public class ServerTCPCall extends ServerCall
                         upd_cmd += ",";
                     }
                     field_idx++;
-                    Object obj = method.invoke(o);
+                    
                     String val = "";
-                    if (obj != null)
+                    if (get_obj != null)
                     {
-                        val = method.invoke(o).toString();
+                        val = get_obj.toString();
                         val = SQLArrayResult.encode(val);
                     }
 
@@ -1335,7 +1386,7 @@ public class ServerTCPCall extends ServerCall
                         upd_cmd += ",";
                     }
                     field_idx++;
-                    String val = method.invoke(o).toString();
+                    String val = get_obj.toString();
                     val = SQLArrayResult.encode(val);
 
                     upd_cmd += field_name + "=" + val;
@@ -1348,7 +1399,7 @@ public class ServerTCPCall extends ServerCall
                     }
                     field_idx++;
 
-                    upd_cmd += field_name + "=" + ((Integer) method.invoke(o)).intValue() + "";
+                    upd_cmd += field_name + "=" + ((Integer)get_obj).intValue() + "";
                 }
                 else if (ret_type.compareTo("long") == 0)
                 {
@@ -1362,7 +1413,7 @@ public class ServerTCPCall extends ServerCall
                 }
                 else if (ret_type.contains(".DiskArchive"))
                 {
-                    DiskArchive da = (DiskArchive) method.invoke(o);
+                    DiskArchive da = (DiskArchive) get_obj;
 
                     if (da != null)
                     {
@@ -1377,7 +1428,7 @@ public class ServerTCPCall extends ServerCall
                 }
                 else if (ret_type.contains(".DiskSpace"))
                 {
-                    DiskSpace ds = (DiskSpace) method.invoke(o);
+                    DiskSpace ds = (DiskSpace)get_obj;
                     if (ds != null)
                     {
                         if (field_idx > 0)
@@ -1391,7 +1442,7 @@ public class ServerTCPCall extends ServerCall
                 }
                 else if (ret_type.contains(".Mandant"))
                 {
-                    Mandant m = (Mandant) method.invoke(o);
+                    Mandant m = (Mandant)get_obj;
                     if (m != null)
                     {
                         if (field_idx > 0)
@@ -1405,7 +1456,7 @@ public class ServerTCPCall extends ServerCall
                 }
                 else if (ret_type.contains(".Role"))
                 {
-                    Role ro = (Role) method.invoke(o);
+                    Role ro = (Role)get_obj;
                     if (ro != null)
                     {
                         if (field_idx > 0)
@@ -1419,7 +1470,7 @@ public class ServerTCPCall extends ServerCall
                 }
                 else if (ret_type.contains(".AccountConnector"))
                 {
-                    AccountConnector ac = (AccountConnector) method.invoke(o);
+                    AccountConnector ac = (AccountConnector)get_obj;
                     if (ac != null)
                     {
                         if (field_idx > 0)
@@ -1433,7 +1484,7 @@ public class ServerTCPCall extends ServerCall
                 }
                 else if (!ret_type.contains("java.util.Set"))
                 {
-                    Object unknown = method.invoke(o);
+                    Object unknown = get_obj;
                     if (unknown != null)
                     {
                         throw new Exception("Invalid return type for Method " + meth_name);

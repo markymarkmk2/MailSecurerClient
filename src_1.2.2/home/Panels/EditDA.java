@@ -43,7 +43,8 @@ public class EditDA extends GenericEditPanel
 {
     DAOverview object_overview;
     DATableModel model;
-    DiskArchive object;    
+    DiskArchive object;
+    DiskArchive save_object;
     String object_name;
     
     
@@ -73,6 +74,7 @@ public class EditDA extends GenericEditPanel
         if (!model.is_new(row))
         {
             object = model.get_object(row);
+            save_object = new DiskArchive( object );
 
             TXT_NAME.setText(object.getName());
 
@@ -88,6 +90,8 @@ public class EditDA extends GenericEditPanel
                     break;
                 }
             }
+
+            BT_DISABLED.setSelected(  object_is_disabled() );
         }
         else
         {
@@ -264,7 +268,7 @@ public class EditDA extends GenericEditPanel
     private void BT_OKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_OKActionPerformed
     {//GEN-HEADEREND:event_BT_OKActionPerformed
         // TODO add your handling code here:
-        ok_action(object);        
+        ok_action(object, save_object);
     }//GEN-LAST:event_BT_OKActionPerformed
 
     private void BT_ABORTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_ABORTActionPerformed
@@ -296,7 +300,7 @@ public class EditDA extends GenericEditPanel
         if (_is_new)
         {
             // IN CASE OF ERROR -> LEAVE, MESSAGE WAS ALREADY SHOWN
-            if (!save_action(object) || model.getRowCount() <= 0)
+            if (!save_action(object, save_object) || model.getRowCount() <= 0)
                 return;
 
             // NOW THE LAST OBJECT IN OVERVIEWLIST IS OUR NEW OBJECT, OBJECTS ARE ORDERED BY ID
@@ -398,6 +402,7 @@ public class EditDA extends GenericEditPanel
     }
 
     
+    @Override
     protected boolean check_changed()
     {        
         if (model.is_new(row))
@@ -415,6 +420,7 @@ public class EditDA extends GenericEditPanel
         return false;
     }
                         
+    @Override
     protected boolean is_plausible()
     {
         if (!Validator.is_valid_name( TXT_NAME.getText(), 255))
@@ -427,6 +433,7 @@ public class EditDA extends GenericEditPanel
     }
 
 
+    @Override
     protected void set_object_props()
     {
         String name = TXT_NAME.getText();
@@ -437,9 +444,9 @@ public class EditDA extends GenericEditPanel
     }
 
     @Override
-    protected boolean save_action( Object object )
+    protected boolean save_action( Object o, Object so )
     {
-        boolean ok = super.save_action(object);
+        boolean ok = super.save_action(o, so);
 
         // IF SOMETHING HAS BEEN SAVED, WE REBUILD OUR GLOBAL DA-LIST
         if (ok)

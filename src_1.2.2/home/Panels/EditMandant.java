@@ -13,7 +13,6 @@ import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossTable;
 import dimm.home.Rendering.SQLOverviewDialog;
-import dimm.home.Rendering.SingleTextEditPanel;
 import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.ServerCall;
@@ -124,6 +123,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
     MandantOverview object_overview;
     MandantTableModel model;
     Mandant object;
+    Mandant save_object;
     ArrayList<MailHeaderVariable> mhv_list;
     boolean was_new_record;
 
@@ -134,16 +134,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
 
         object_overview = _overview;
         model = object_overview.get_object_model();
-/*
-        CB_LICENSE.removeAllItems();
 
-        // FILL COMBOBOX TYPE
-        for (int i = 0; i < object_overview.get_ml_entry_list().length; i++)
-        {
-            MandantOverview.MandantLicenseEntry mte = object_overview.get_ml_entry_list()[i];
-            CB_LICENSE.addItem(mte);
-        }
-*/
         mhv_list = new ArrayList<MailHeaderVariable>();
 
 
@@ -151,18 +142,8 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         if (!model.is_new(row))
         {
             object = model.get_object(row);
-/*
-            String license = object.getLicense();
-            for (int i = 0; i < object_overview.get_ml_entry_list().length; i++)
-            {
-                MandantOverview.MandantLicenseEntry mte = object_overview.get_ml_entry_list()[i];
-                if (mte.type.compareTo(license) == 0)
-                {
-                    CB_LICENSE.setSelectedIndex(i);
-                    break;
-                }
-            }
- * */
+            save_object = new Mandant( object );
+
             String db_passwd = object.getPassword();
             String dec_passwd = CryptTools.crypt_internal( db_passwd, UserMain.self, CryptTools.ENC_MODE.DECRYPT);
             if (dec_passwd != null)
@@ -801,11 +782,11 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
 
 
     @Override
-    protected void ok_action(Object o)
+    protected void ok_action(Object o, Object so)
     {
         boolean has_pwd = false;
 
-        boolean ok = save_action( object );
+        boolean ok = save_action( o, so );
 
         if (!ok)
             return;
@@ -848,7 +829,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
     {//GEN-HEADEREND:event_BT_OKActionPerformed
       
         // WE HAVE TO SAVE FIRST TO GET A VALID ID!!!!
-        ok_action(object);
+        ok_action(object, save_object);
     }//GEN-LAST:event_BT_OKActionPerformed
 
     private void BT_ABORTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_ABORTActionPerformed
@@ -1534,13 +1515,15 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         dlg.setVisible(true);
         if (pnl.isOkay())
         {
+            MailHeaderVariable hmv = hmodel.get_object(row);
+            MailHeaderVariable save_hmv = new MailHeaderVariable(hmv);
             hmodel.get_object(row).setVarName( pnl.getText() );
             hmodel.get_object(row).setFlags( pnl.getFlags() );
 
             ServerCall sql = UserMain.sqc().get_sqc();
             ConnectionID cid = sql.open();
             StatementID sta = sql.createStatement(cid);
-            sql.Update(sta, hmodel.get_object(row));
+            sql.Update(sta, hmv, save_hmv);
 
             propertyChange(new PropertyChangeEvent(this, "REBUILD", null, null));
         }
@@ -1576,7 +1559,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
 
         if (was_new)
         {
-            boolean ok = save_action(object);
+            boolean ok = save_action(object, save_object);
             if (!ok)
             {
                 return;
@@ -1671,9 +1654,9 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
     }
 
     @Override
-    protected boolean save_action( Object o )
+    protected boolean save_action( Object o, Object so )
     {
-        boolean ret =  super.save_action(o);
+        boolean ret =  super.save_action(o, so);
 
         if (ret)
         {

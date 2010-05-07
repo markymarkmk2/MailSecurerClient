@@ -29,6 +29,7 @@ public class EditMilter extends GenericEditPanel
     MilterOverview object_overview;
     MilterTableModel model;
     Milter object;
+    Milter save_object;
     DiskArchiveComboModel dacm;
     
     
@@ -62,6 +63,7 @@ public class EditMilter extends GenericEditPanel
             try
             {
                 object = model.get_object(row);
+                save_object = new Milter( object );
 
                 String type = object.getType();
                 for (int i = 0; i < object_overview.get_mt_entry_list().length; i++)
@@ -328,7 +330,7 @@ public class EditMilter extends GenericEditPanel
     {//GEN-HEADEREND:event_BT_OKActionPerformed
         // TODO add your handling code here:
         
-        ok_action(object);
+        ok_action(object, save_object);
        
     }//GEN-LAST:event_BT_OKActionPerformed
 
@@ -453,6 +455,7 @@ public class EditMilter extends GenericEditPanel
     }
 
     
+    @Override
     protected boolean check_changed()
     {        
         if (model.is_new(row))
@@ -496,6 +499,7 @@ public class EditMilter extends GenericEditPanel
         return false;
     }
                         
+    @Override
     protected boolean is_plausible()
     {
         if (!Validator.is_valid_name( TXT_SERVER1.getText(), 255))
@@ -551,6 +555,7 @@ public class EditMilter extends GenericEditPanel
     }
 
 
+    @Override
     protected void set_object_props()
     {
         String server1 = TXT_SERVER1.getText();

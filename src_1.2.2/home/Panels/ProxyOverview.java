@@ -24,6 +24,7 @@ import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StatementID;
+import home.shared.CS_Constants;
 import home.shared.SQL.SQLArrayResult;
 
 
@@ -84,7 +85,7 @@ class ProxyTableModel extends OverviewModel
                 return proxy.getRemoteServer() + ":" + proxy.getRemotePort();
             case 4:
                 int flags = sqlResult.getInt(rowIndex, "Flags");
-                return new Boolean((flags & ProxyOverview.DISABLED) == ProxyOverview.DISABLED); // DISABLED
+                return new Boolean((flags & CS_Constants.PX_DISABLED) == CS_Constants.PX_DISABLED); // DISABLED
             default:
                 return super.getValueAt(rowIndex, columnIndex);
         }
@@ -102,8 +103,6 @@ class ProxyTableModel extends OverviewModel
  */
 public class ProxyOverview extends SQLOverviewDialog implements PropertyChangeListener
 {
-    
-    public static final int DISABLED =   0x01;
 
     public class ProxyTypeEntry
     {
@@ -199,7 +198,11 @@ public class ProxyOverview extends SQLOverviewDialog implements PropertyChangeLi
     {
         ServerCall sql = UserMain.sqc().get_sqc();
         ConnectionID cid = sql.open();
-        StatementID sid = sql.createStatement(cid);
+
+        if (!check_valid_cid( sql, cid ))
+            return;
+
+         StatementID sid = sql.createStatement(cid);
 
         String qry =  model.get_qry( firmen_id );
 

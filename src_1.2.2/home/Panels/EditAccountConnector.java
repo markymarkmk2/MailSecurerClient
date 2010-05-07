@@ -38,6 +38,7 @@ public class EditAccountConnector extends GenericEditPanel
     AccountConnectorOverview object_overview;
     AccountConnectorTableModel model;
     AccountConnector object;
+    AccountConnector save_object;
     DiskArchiveComboModel dacm;
     private String exclude_filter_save = null;
     
@@ -64,6 +65,7 @@ public class EditAccountConnector extends GenericEditPanel
             try
             {
                 object = model.get_object(row);
+                save_object = new AccountConnector( object );
 
 
                 TXT_SERVER.setText(object.getIp());
@@ -659,7 +661,7 @@ public class EditAccountConnector extends GenericEditPanel
     {//GEN-HEADEREND:event_BT_OKActionPerformed
         // TODO add your handling code here:
 
-        ok_action(object);
+        ok_action(object, save_object);
 
     }//GEN-LAST:event_BT_OKActionPerformed
 
@@ -979,7 +981,7 @@ public class EditAccountConnector extends GenericEditPanel
         if (_is_new)
         {
             // IN CASE OF ERROR -> LEAVE, MESSAGE WAS ALREADY SHOWN
-            if (!save_action(object) || model.getRowCount() <= 0)
+            if (!save_action(object, save_object) || model.getRowCount() <= 0)
                 return;
 
             // NOW THE LAST OBJECT IN OVERVIEWLIST IS OUR NEW OBJECT, OBJECTS ARE ORDERED BY ID

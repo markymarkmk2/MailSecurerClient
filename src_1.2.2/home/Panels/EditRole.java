@@ -47,6 +47,7 @@ public class EditRole extends GenericEditPanel
     RoleOverview vbox_overview;
     RoleTableModel model;
     Role object;
+    Role save_object;
     
     String object_name;
 
@@ -76,6 +77,7 @@ public class EditRole extends GenericEditPanel
         if (!model.is_new(row))
         {
             object = model.get_object(row);
+            save_object = new Role( object );
 
             TXT_NAME.setText(object.getName());
             String acm_text = vbox_overview.get_account_match_descr(object.getAccountmatch());
@@ -378,7 +380,7 @@ public class EditRole extends GenericEditPanel
     private void BT_OKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_OKActionPerformed
     {//GEN-HEADEREND:event_BT_OKActionPerformed
         // TODO add your handling code here:
-        ok_action(object);
+        ok_action(object, save_object);
     }//GEN-LAST:event_BT_OKActionPerformed
 
     private void BT_ABORTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_ABORTActionPerformed
@@ -748,9 +750,9 @@ public class EditRole extends GenericEditPanel
     }
 
     @Override
-    protected boolean update_db(Object object)
+    protected boolean update_db(Object object, Object save_object)
     {
-        boolean ret = super.update_db(object);
+        boolean ret = super.update_db(object, save_object);
         if (ret)
         {
             ret = write_opts_buttons( this.object.getId() );

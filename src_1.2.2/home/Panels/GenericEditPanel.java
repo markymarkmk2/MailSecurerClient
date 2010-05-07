@@ -36,7 +36,7 @@ public abstract class GenericEditPanel extends GlossDialogPanel
     }
 
 
-    protected boolean update_db(Object object)
+    protected boolean update_db(Object object, Object old_object)
     {
         set_object_props();
 
@@ -47,7 +47,7 @@ public abstract class GenericEditPanel extends GlossDialogPanel
         ConnectionID cid = sql.open();
         StatementID sta = sql.createStatement(cid);
 
-        boolean okay = sql.Update( sta, object );
+        boolean okay = sql.Update( sta, object, old_object );
 
         sql.close(sta);
         sql.close(cid);
@@ -88,16 +88,16 @@ public abstract class GenericEditPanel extends GlossDialogPanel
 
     }
 
-    protected void ok_action(Object object)
+    protected void ok_action(Object object, Object old_object)
     {
-        boolean ok = save_action( object );
+        boolean ok = save_action( object, old_object );
         
         if (ok)
             this.setVisible(false);
 
     }
 
-    protected boolean save_action(Object object)
+    protected boolean save_action(Object object, Object old_object)
     {
         boolean ok = true;
 
@@ -126,7 +126,7 @@ public abstract class GenericEditPanel extends GlossDialogPanel
                 }
                 if (UserMain.info_ok_cancel(UserMain.WANT_DB_CHANGE_TXT, this.getLocationOnScreen()))
                 {
-                    ok = update_db(object);
+                    ok = update_db(object, old_object);
                     this.firePropertyChange("REBUILD", null, null);
                 }
             }

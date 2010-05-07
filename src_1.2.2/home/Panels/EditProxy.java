@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import home.shared.hibernate.DiskArchive;
 import home.shared.hibernate.Proxy;
 import dimm.home.Models.DiskArchiveComboModel;
+import home.shared.CS_Constants;
 import home.shared.Utilities.Validator;
 
 
@@ -29,6 +30,7 @@ public class EditProxy extends GenericEditPanel
     ProxyOverview object_overview;
     ProxyTableModel model;
     Proxy object;
+    Proxy save_object;
     DiskArchiveComboModel dacm;
     
     
@@ -60,6 +62,7 @@ public class EditProxy extends GenericEditPanel
         if (!model.is_new(row))
         {
             object = model.get_object(row);
+            save_object = new Proxy( object );
 
             String type = object.getType();
             for (int i = 0; i < object_overview.get_mt_entry_list().length; i++)
@@ -81,6 +84,7 @@ public class EditProxy extends GenericEditPanel
             TXT_PORT1.setText( object.getLocalPort().toString());
             TXT_PORT2.setText( object.getRemotePort().toString());
             BT_DISABLED.setSelected( object_is_disabled() );
+            BT_SSL.setSelected(object_is_ssl());
             
         }
         else
@@ -120,6 +124,7 @@ public class EditProxy extends GenericEditPanel
         TXT_SERVER2 = new javax.swing.JTextField();
         TXT_PORT2 = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
+        BT_SSL = new javax.swing.JCheckBox();
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
@@ -196,43 +201,46 @@ public class EditProxy extends GenericEditPanel
 
         jLabel6.setText(UserMain.getString("Port")); // NOI18N
 
+        BT_SSL.setText("SSL");
+        BT_SSL.setOpaque(false);
+
         javax.swing.GroupLayout PN_ACTIONLayout = new javax.swing.GroupLayout(PN_ACTION);
         PN_ACTION.setLayout(PN_ACTIONLayout);
         PN_ACTIONLayout.setHorizontalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel5))
-                .addGap(35, 35, 35)
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(TXT_SERVER2, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
-                            .addComponent(TXT_SERVER1, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel5))
+                        .addGap(35, 35, 35)
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(TXT_PORT1))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_ACTIONLayout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(TXT_PORT2, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_ACTIONLayout.createSequentialGroup()
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(CB_TYPE, javax.swing.GroupLayout.Alignment.LEADING, 0, 227, Short.MAX_VALUE)
-                            .addComponent(CB_VAULT, 0, 227, Short.MAX_VALUE))
-                        .addContainerGap())))
-            .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(BT_DISABLED, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(TXT_SERVER2, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                                    .addComponent(TXT_SERVER1, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                                        .addComponent(jLabel4)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(TXT_PORT1))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_ACTIONLayout.createSequentialGroup()
+                                        .addComponent(jLabel6)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(TXT_PORT2, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(CB_TYPE, 0, 227, Short.MAX_VALUE)
+                            .addComponent(CB_VAULT, javax.swing.GroupLayout.Alignment.TRAILING, 0, 227, Short.MAX_VALUE)))
+                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(BT_SSL)
+                            .addComponent(BT_DISABLED, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE))))
+                .addContainerGap())
         );
         PN_ACTIONLayout.setVerticalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -257,7 +265,9 @@ public class EditProxy extends GenericEditPanel
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(CB_VAULT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(BT_SSL)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
                 .addComponent(BT_DISABLED)
                 .addContainerGap())
         );
@@ -317,7 +327,7 @@ public class EditProxy extends GenericEditPanel
     {//GEN-HEADEREND:event_BT_OKActionPerformed
         // TODO add your handling code here:
         
-        ok_action(object);
+        ok_action(object, save_object);
        
     }//GEN-LAST:event_BT_OKActionPerformed
 
@@ -376,6 +386,7 @@ public class EditProxy extends GenericEditPanel
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JCheckBox BT_DISABLED;
     private javax.swing.JButton BT_OK;
+    private javax.swing.JCheckBox BT_SSL;
     private javax.swing.JComboBox CB_TYPE;
     private javax.swing.JComboBox CB_VAULT;
     private javax.swing.JPanel PN_ACTION;
@@ -429,19 +440,33 @@ public class EditProxy extends GenericEditPanel
 
         flags = get_object_flags();
 
-        return ((flags & ProxyOverview.DISABLED) == ProxyOverview.DISABLED);
+        return ((flags & CS_Constants.PX_DISABLED) == CS_Constants.PX_DISABLED);
+    }
+    boolean object_is_ssl()
+    {
+        int flags = 0;
+
+        flags = get_object_flags();
+
+        return ((flags & CS_Constants.PX_SSL) == CS_Constants.PX_SSL);
     }
     void set_object_disabled( boolean f)
     {
-        int flags = get_object_flags();
-
         if (f)
-            set_object_flag( ProxyOverview.DISABLED );
+            set_object_flag( CS_Constants.PX_DISABLED );
         else
-            clr_object_flag( ProxyOverview.DISABLED );
+            clr_object_flag( CS_Constants.PX_DISABLED );
+    }
+    void set_object_ssl( boolean f)
+    {
+        if (f)
+            set_object_flag( CS_Constants.PX_SSL );
+        else
+            clr_object_flag( CS_Constants.PX_SSL );
     }
 
     
+    @Override
     protected boolean check_changed()
     {        
         if (model.is_new(row))
@@ -457,16 +482,18 @@ public class EditProxy extends GenericEditPanel
 
         if (TXT_SERVER2.isVisible())
         {
-            server = object.getLocalServer();
+            server = object.getRemoteServer();
             if (server != null && TXT_SERVER2.getText().compareTo(server ) != 0)
                 return true;
 
-            port = object.getLocalPort();
+            port = object.getRemotePort();
             if (Integer.parseInt( TXT_PORT2.getText() ) != port)
                 return true;
         }
 
         if (BT_DISABLED.isSelected() != object_is_disabled())
+            return true;
+        if (BT_SSL.isSelected() != object_is_ssl())
             return true;
 
         long da_id = model.getSqlResult().getLong( row, "da_id");
@@ -484,6 +511,7 @@ public class EditProxy extends GenericEditPanel
         return false;
     }
                         
+    @Override
     protected boolean is_plausible()
     {
         if (!Validator.is_valid_name( TXT_SERVER1.getText(), 256))
@@ -514,7 +542,6 @@ public class EditProxy extends GenericEditPanel
         }
 
 
-
         try
         {
             DiskArchive da = dacm.get_selected_da();
@@ -541,6 +568,7 @@ public class EditProxy extends GenericEditPanel
     }
 
 
+    @Override
     protected void set_object_props()
     {
         String server1 = TXT_SERVER1.getText();
@@ -548,7 +576,7 @@ public class EditProxy extends GenericEditPanel
         String server2 = object.getRemoteServer();
         ProxyOverview.ProxyTypeEntry mte = (ProxyOverview.ProxyTypeEntry)CB_TYPE.getSelectedItem();
         String typ = mte.type;
-        boolean de = BT_DISABLED.isSelected();
+        
         
         if (TXT_SERVER2.isVisible())
         {
@@ -560,7 +588,8 @@ public class EditProxy extends GenericEditPanel
         object.setLocalServer(server1);
         object.setRemoteServer(server2);
         object.setLocalPort(port1);
-        set_object_disabled( de );
+        set_object_disabled( BT_DISABLED.isSelected() );
+        set_object_ssl( BT_SSL.isSelected() );
         object.setDiskArchive( dacm.get_selected_da());
         object.setType(typ);
     }

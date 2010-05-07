@@ -188,6 +188,10 @@ public class DAOverview extends SQLOverviewDialog
     {
         ServerCall sql = UserMain.sqc().get_sqc();
         ConnectionID cid = sql.open();
+        
+        if (!check_valid_cid( sql, cid ))
+            return;
+
         StatementID sid = sql.createStatement(cid);
 
         String qry =  model.get_qry( firmen_id );

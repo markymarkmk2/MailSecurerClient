@@ -11,7 +11,6 @@ import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.ServerConnect.RMXFileSystemView;
 import dimm.home.UserMain;
-import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
@@ -48,7 +47,8 @@ public class EditDiskSpace extends GenericEditPanel
 {
     DiskSpaceOverview object_overview;
     DiskSpaceTableModel model;
-    DiskSpace object;    
+    DiskSpace object;
+    DiskSpace save_object;
     
     
     /** Creates new form EditChannelPanel */
@@ -86,6 +86,7 @@ public class EditDiskSpace extends GenericEditPanel
         if (!model.is_new(row))
         {
             object = model.get_object(row);
+            save_object = new DiskSpace( object );
 
             String status = object.getStatus();
             for (int i = 0; i < object_overview.get_ds_entry_list().length; i++)
@@ -355,7 +356,7 @@ public class EditDiskSpace extends GenericEditPanel
     private void BT_OKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_OKActionPerformed
     {//GEN-HEADEREND:event_BT_OKActionPerformed
         // TODO add your handling code here:
-        ok_action(object);
+        ok_action(object, save_object);
     }//GEN-LAST:event_BT_OKActionPerformed
 
     private void BT_ABORTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_ABORTActionPerformed

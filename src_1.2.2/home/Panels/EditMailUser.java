@@ -113,6 +113,7 @@ public class EditMailUser extends GenericEditPanel implements PropertyChangeList
     MailUserOverview object_overview;
     MailUserOverviewTableModel model;
     MailUser object;
+    MailUser save_object;
     ArrayList<MailAddress> mail_add_list;
     ArrayList<MailAddress> mail_view_list;
     GlossTable add_table;
@@ -138,6 +139,7 @@ public class EditMailUser extends GenericEditPanel implements PropertyChangeList
             try
             {
                 object = model.get_object(row);
+                save_object = new MailUser( object );
 
 
                 TXT_EMAIL.setText(object.getEmail());
@@ -429,7 +431,7 @@ public class EditMailUser extends GenericEditPanel implements PropertyChangeList
     {//GEN-HEADEREND:event_BT_OKActionPerformed
         // TODO add your handling code here:
 
-        ok_action(object);
+        ok_action(object, save_object);
 
     }//GEN-LAST:event_BT_OKActionPerformed
 
@@ -631,12 +633,14 @@ public class EditMailUser extends GenericEditPanel implements PropertyChangeList
         dlg.setVisible(true);
         if (pnl.isOkay())
         {
-            model.get_object(row).setEmail(pnl.getText());
+            MailAddress ma = model.get_object(row);
+            MailAddress save_ma = new MailAddress( ma );
+            ma.setEmail(pnl.getText());
 
             ServerCall sql = UserMain.sqc().get_sqc();
             ConnectionID cid = sql.open();
             StatementID sta = sql.createStatement(cid);
-            sql.Update(sta, model.get_object(row));
+            sql.Update(sta, ma, save_ma);
 
             propertyChange(new PropertyChangeEvent(this, "REBUILD", null, null));
         }
@@ -690,7 +694,7 @@ public class EditMailUser extends GenericEditPanel implements PropertyChangeList
 
         if (was_new)
         {
-            boolean ok = save_action(object);
+            boolean ok = save_action(object, save_object);
             if (!ok)
             {
                 return;

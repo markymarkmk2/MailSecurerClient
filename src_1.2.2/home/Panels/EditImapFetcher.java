@@ -40,6 +40,7 @@ public class EditImapFetcher extends GenericEditPanel
     ImapFetcherOverview object_overview;
     ImapFetcherTableModel model;
     ImapFetcher object;
+    ImapFetcher save_object;
     DiskArchiveComboModel dacm;
     private File last_dir;
     
@@ -72,6 +73,7 @@ public class EditImapFetcher extends GenericEditPanel
         if (!model.is_new(row))
         {
             object = model.get_object(row);
+            save_object = new ImapFetcher( object );
 
             String type = object.getType();
             for (int i = 0; i < object_overview.get_mt_entry_list().length; i++)
@@ -458,7 +460,7 @@ public class EditImapFetcher extends GenericEditPanel
     {//GEN-HEADEREND:event_BT_OKActionPerformed
         // TODO add your handling code here:
         
-        ok_action(object);
+        ok_action(object, save_object);
        
     }//GEN-LAST:event_BT_OKActionPerformed
 

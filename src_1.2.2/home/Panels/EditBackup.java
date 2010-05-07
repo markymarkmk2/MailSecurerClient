@@ -57,6 +57,7 @@ public class EditBackup  extends GenericEditPanel
     BackupOverview object_overview;
     BackupTableModel model;
     Backup object;
+    Backup save_object;
     DiskArchiveComboModel dacm;
 
     JFormattedTextField[] time_list = new JFormattedTextField[7];
@@ -147,7 +148,9 @@ public class EditBackup  extends GenericEditPanel
 
         if (!model.is_new(row))
         {
-            object = model.get_object(row);           
+            object = model.get_object(row);
+            save_object = new Backup( object );
+            
             int da_id = model.getSqlResult().getInt( row, "da_id");
             dacm.set_act_id(da_id);           
             CB_DISABLED.setSelected( test_flag(CS_Constants.BACK_DISABLED) );
@@ -812,7 +815,7 @@ public class EditBackup  extends GenericEditPanel
     private void BT_OKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_OKActionPerformed
     {//GEN-HEADEREND:event_BT_OKActionPerformed
         // TODO add your handling code here:
-        ok_action(object);
+        ok_action(object, save_object);
     }//GEN-LAST:event_BT_OKActionPerformed
 
     private void COMBO_CYCLE_UNITSActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_COMBO_CYCLE_UNITSActionPerformed
@@ -842,7 +845,7 @@ public class EditBackup  extends GenericEditPanel
     private void BT_STARTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_STARTActionPerformed
     {//GEN-HEADEREND:event_BT_STARTActionPerformed
         // TODO add your handling code here:
-        if (!save_action(object))
+        if (!save_action(object, save_object))
         {
             return;
         }
@@ -936,9 +939,9 @@ public class EditBackup  extends GenericEditPanel
         int flags = get_object_flags();
 
         if (f)
-            set_object_flag( ProxyOverview.DISABLED );
+            set_object_flag( CS_Constants.BACK_DISABLED );
         else
-            clr_object_flag( ProxyOverview.DISABLED );
+            clr_object_flag( CS_Constants.BACK_DISABLED );
     }
     void set_object_flag(int flag)
     {

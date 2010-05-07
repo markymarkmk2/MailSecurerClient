@@ -78,6 +78,25 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
         set_tabel_row_height();
         super.setSize(d);
     }
+    protected boolean check_valid_cid( ServerCall sq, ConnectionID cid )
+    {
+        if (cid != null)
+            return true;
+
+        // UNITIALIZED
+        if (sq.get_last_err_code() == 8)
+        {
+            UserMain.errm_ok( this, UserMain.Txt("Sorry,_you_have_been_logged_out_due_to_inactivity"));
+            setVisible(false);
+            return false;
+        }
+
+        UserMain.errm_ok(this, UserMain.Txt("Cannot_open_database_connection,_please_logout_and_try_again"));
+        setVisible(false);
+
+        return false;
+
+    }
 
     
  @Override
@@ -262,7 +281,11 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
 
         ServerCall sql = UserMain.sqc().get_sqc();
         ConnectionID cid = sql.open();
-        StatementID sta = sql.createStatement(cid);
+
+        if (!check_valid_cid( sql, cid ))
+            return false;
+
+         StatementID sta = sql.createStatement(cid);
 
         boolean okay = sql.Delete( sta, object );
 

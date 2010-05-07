@@ -38,7 +38,7 @@ public abstract class ServerCall {
 
     public abstract boolean Insert( StatementID sta, Object o );
 
-    public abstract boolean Update( StatementID sta, Object o );
+    public abstract boolean Update( StatementID sta, Object o, Object save_o );
 
     void calc_stat( String ret )
     {
@@ -115,6 +115,7 @@ public abstract class ServerCall {
     public abstract ConnectionID open();
 
     public abstract ConnectionID open( String db );
+    public abstract ConnectionID open_audit( String db );
 
     public abstract InStreamID open_in_stream( String file );
 

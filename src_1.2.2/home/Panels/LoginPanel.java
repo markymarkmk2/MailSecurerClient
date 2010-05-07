@@ -875,46 +875,42 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
 
     boolean try_sysadmin_login( String nname, String pwd )
     {
-            String sys_pwd = "admin";
-            String sys_user = "sys";
-            String sret = UserMain.fcc().call_abstract_function("GETSETOPTION CMD:GETADMIN", ServerCall.SHORT_CMD_TO);
-            if (sret != null && sret.charAt(0) == '0')
+        FunctionCallConnect fcc = UserMain.fcc();
+
+        String ret = fcc.call_abstract_function("auth_user CMD:sysadmin NM:'" + nname + "' PW:'" + pwd + "'", FunctionCallConnect.MEDIUM_TIMEOUT );
+
+        if (ret == null)
+        {
+            UserMain.errm_ok(UserMain.getString("Die_Authentifizierung_ist_fehlgeschlagen"));
+            return false;
+        }
+        int idx = ret.indexOf(':');
+        if (idx == -1)
+        {
+            UserMain.errm_ok(UserMain.getString("Fehler_beim_Authentifizieren: ") + ret);
+            return false;
+        }
+        int code = Integer.parseInt(ret.substring(0, idx) );
+
+        if (code != 0)
+        {
+            UserMain.errm_ok(UserMain.getString("Die_Authentifizierung_war_nicht_erfolgreich: ") + ret.substring(idx) );
+            return false;
+        }
+
+        main.setUserLevel( USERMODE.UL_SYSADMIN );
+        main.set_titel( "<" + nname + "> (" + UserMain.Txt("SysAdmin") + ")" );
+
+        SwingUtilities.invokeLater( new Runnable()
+        {
+            @Override
+            public void run()
             {
-                ParseToken pt = new ParseToken( sret.substring(3 ));
-                sys_user = pt.GetString("NA:");
-                sys_pwd = pt.GetString("PWD:");
+                main.switch_to_panel(UserMain.PBC_SYSTEM);
             }
-            String user = this.TXT_USER.getText();
+        });
 
-            // TODO: GET FROM PREFS
-            boolean login_okay = false;
-            if (pwd.compareTo("helikon") == 0)
-            {
-                login_okay = true;
-            }
-
-            if (!login_okay)
-            {
-                if (user.compareTo( sys_user) != 0 || pwd.compareTo(sys_pwd) != 0)
-                {
-                    UserMain.errm_ok(UserMain.getString("Der_Login_stimmt_nicht"));
-                    return false;
-                }
-            }
-
-            main.setUserLevel( USERMODE.UL_SYSADMIN );
-            main.set_titel( "<" + sys_user + "> (" + UserMain.Txt("SysAdmin") + ")" );
-            
-            SwingUtilities.invokeLater( new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    main.switch_to_panel(UserMain.PBC_SYSTEM);
-                }
-            });
-
-            return true;
+        return true;
     }
 
     
