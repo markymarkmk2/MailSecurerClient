@@ -55,6 +55,7 @@ public class EditRole extends GenericEditPanel
     
     SQLResult<RoleOption>  option_res;
     String role_filter_save;
+    boolean was_4eyes;
 
     
     /** Creates new form EditChannelPanel */
@@ -73,6 +74,8 @@ public class EditRole extends GenericEditPanel
         accm = new AccountConnectorComboModel(da_res );
                                 
         row = _row;
+
+        PNL_4EYES.setVisible(false);
         
         if (!model.is_new(row))
         {
@@ -86,6 +89,14 @@ public class EditRole extends GenericEditPanel
 
             
             read_opts_buttons( object.getId() );
+            TXT_4EYES_USER.setText(object.getUser4eyes());
+            TXTP_4EYES_PWD.setText(object.getPwd4eyes());
+            
+            if (BT_4EYES.isSelected())
+            {
+                was_4eyes = true;
+                PNL_4EYES.setVisible(true);
+            }
             BT_DISABLED.setSelected( object_is_disabled() );
             int ac_id = model.getSqlResult().getInt( row, "ac_id");
             accm.set_act_id(ac_id);
@@ -118,6 +129,14 @@ public class EditRole extends GenericEditPanel
         for (int i = 0; i < OptCBEntry.opt_list.length; i++)
         {
             OptCBEntry optCBEntry = OptCBEntry.opt_list[i];
+
+            // 4-EYES IS ALREADY FIXED INCLUDED (BECAUSE OF UER/PWD)
+            if (optCBEntry.getTxt().compareTo(OptCBEntry._4EYES) == 0)
+            {
+                optCBEntry.setCb(BT_4EYES);
+                continue;
+            }
+            
             JCheckBox cb = new javax.swing.JCheckBox();
 
             optCBEntry.setTxt(UserMain.Txt(optCBEntry.getToken()));
@@ -175,6 +194,12 @@ public class EditRole extends GenericEditPanel
         CB_ACCOUNT = new javax.swing.JComboBox();
         jScrollPane1 = new javax.swing.JScrollPane();
         TXT_ACCOUNTMATCH = new javax.swing.JTextArea();
+        BT_4EYES = new javax.swing.JCheckBox();
+        PNL_4EYES = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        TXT_4EYES_USER = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        TXTP_4EYES_PWD = new javax.swing.JPasswordField();
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
@@ -233,7 +258,7 @@ public class EditRole extends GenericEditPanel
                     .addComponent(CP_OPT4)
                     .addComponent(CP_OPT5)
                     .addComponent(CP_OPT6))
-                .addContainerGap(334, Short.MAX_VALUE))
+                .addContainerGap(344, Short.MAX_VALUE))
         );
         PN_OPTSLayout.setVerticalGroup(
             PN_OPTSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -249,7 +274,7 @@ public class EditRole extends GenericEditPanel
                 .addComponent(CP_OPT5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(CP_OPT6)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/MA_Properties"); // NOI18N
@@ -266,29 +291,84 @@ public class EditRole extends GenericEditPanel
         });
         jScrollPane1.setViewportView(TXT_ACCOUNTMATCH);
 
+        BT_4EYES.setText(UserMain.Txt("4EYES")); // NOI18N
+        BT_4EYES.setOpaque(false);
+        BT_4EYES.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_4EYESActionPerformed(evt);
+            }
+        });
+
+        PNL_4EYES.setOpaque(false);
+
+        jLabel4.setText(UserMain.Txt("User")); // NOI18N
+
+        jLabel5.setText(UserMain.Txt("Password")); // NOI18N
+
+        TXTP_4EYES_PWD.setEditable(false);
+        TXTP_4EYES_PWD.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TXTP_4EYES_PWDMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout PNL_4EYESLayout = new javax.swing.GroupLayout(PNL_4EYES);
+        PNL_4EYES.setLayout(PNL_4EYESLayout);
+        PNL_4EYESLayout.setHorizontalGroup(
+            PNL_4EYESLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PNL_4EYESLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(PNL_4EYESLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel4))
+                .addGap(48, 48, 48)
+                .addGroup(PNL_4EYESLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(TXTP_4EYES_PWD)
+                    .addComponent(TXT_4EYES_USER, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)))
+        );
+        PNL_4EYESLayout.setVerticalGroup(
+            PNL_4EYESLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PNL_4EYESLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(PNL_4EYESLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(TXT_4EYES_USER, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(PNL_4EYESLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(TXTP_4EYES_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout PN_ACTIONLayout = new javax.swing.GroupLayout(PN_ACTION);
         PN_ACTION.setLayout(PN_ACTIONLayout);
         PN_ACTIONLayout.setHorizontalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(BT_DISABLED, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE))
-                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_ACTIONLayout.createSequentialGroup()
+                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, PN_ACTIONLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(TXT_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(CB_ACCOUNT, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 155, Short.MAX_VALUE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, PN_ACTIONLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(PN_OPTS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(BT_DISABLED, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
                             .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel2))
+                                .addComponent(BT_4EYES)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(TXT_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(CB_ACCOUNT, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))))))
+                                .addComponent(PNL_4EYES, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
         );
         PN_ACTIONLayout.setVerticalGroup(
@@ -308,12 +388,16 @@ public class EditRole extends GenericEditPanel
                         .addComponent(jLabel2))
                     .addGroup(PN_ACTIONLayout.createSequentialGroup()
                         .addGap(11, 11, 11)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
                 .addComponent(PN_OPTS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
+                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(BT_4EYES)
+                    .addComponent(PNL_4EYES, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BT_DISABLED)
-                .addContainerGap())
+                .addContainerGap(49, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -461,9 +545,32 @@ public class EditRole extends GenericEditPanel
         // TODO add your handling code here:
         edit_user_filter();
     }//GEN-LAST:event_TXT_ACCOUNTMATCHMouseClicked
+
+    private void BT_4EYESActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_4EYESActionPerformed
+    {//GEN-HEADEREND:event_BT_4EYESActionPerformed
+        // TODO add your handling code here:
+        PNL_4EYES.setVisible(BT_4EYES.isSelected());
+    }//GEN-LAST:event_BT_4EYESActionPerformed
+
+    private void TXTP_4EYES_PWDMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_TXTP_4EYES_PWDMouseClicked
+    {//GEN-HEADEREND:event_TXTP_4EYES_PWDMouseClicked
+        // TODO add your handling code here:
+        CheckPwdPanel pnl = new CheckPwdPanel(UserMain.self, /*trong*/true);
+        GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);        
+
+        dlg.setLocation(my_dlg.get_next_location());
+        dlg.setTitle(UserMain.getString("4Augen-Passwort_setzen"));
+        dlg.setVisible(true);
+
+        if (pnl.isOkay())
+        {
+            TXTP_4EYES_PWD.setText(pnl.get_pwd());
+        }
+    }//GEN-LAST:event_TXTP_4EYES_PWDMouseClicked
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox BT_4EYES;
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JCheckBox BT_DISABLED;
     private javax.swing.JButton BT_MATCH_USERS;
@@ -475,26 +582,35 @@ public class EditRole extends GenericEditPanel
     private javax.swing.JCheckBox CP_OPT4;
     private javax.swing.JCheckBox CP_OPT5;
     private javax.swing.JCheckBox CP_OPT6;
+    private javax.swing.JPanel PNL_4EYES;
     private javax.swing.JPanel PN_ACTION;
     private javax.swing.JPanel PN_BUTTONS;
     private javax.swing.JPanel PN_OPTS;
+    private javax.swing.JPasswordField TXTP_4EYES_PWD;
+    private javax.swing.JTextField TXT_4EYES_USER;
     private javax.swing.JTextArea TXT_ACCOUNTMATCH;
     private javax.swing.JTextField TXT_NAME;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
     int get_object_flags()
     {
+        return get_object_flags(object);
+    }
+    int get_object_flags(Role r)
+    {
         int flags = 0;
-        if (object.getFlags() == null || object.getFlags().length() == 0)
+        if (r.getFlags() == null || r.getFlags().length() == 0)
             return 0;
 
         try
         {
-            flags = Integer.parseInt(object.getFlags());
+            flags = Integer.parseInt(r.getFlags());
         }
         catch (NumberFormatException numberFormatException)
         {
@@ -526,8 +642,6 @@ public class EditRole extends GenericEditPanel
     }
     void set_object_disabled( boolean f)
     {
-        int flags = get_object_flags();
-
         if (f)
             set_object_flag( CS_Constants.ROLE_DISABLED);
         else
@@ -563,6 +677,22 @@ public class EditRole extends GenericEditPanel
         if (object.getAccountmatch().compareTo(role_filter_save) != 0)
             return true;
 
+        if (BT_4EYES.isSelected())
+        {
+            if (object.getUser4eyes() == null)
+                return true;
+
+            if (object.getUser4eyes().compareTo( TXT_4EYES_USER.getText()) != 0)
+                return true;
+
+            if (object.getPwd4eyes() == null)
+                return true;
+
+            String pwd = new String( TXTP_4EYES_PWD.getPassword() );
+            if (object.getPwd4eyes().compareTo( pwd) != 0)
+                return true;
+        }
+
         return false;
     }
                         
@@ -589,6 +719,20 @@ public class EditRole extends GenericEditPanel
             UserMain.errm_ok(UserMain.getString("Benutzerfilter_ist_nicht_okay"));
             return false;
         }
+        if (BT_4EYES.isSelected())
+        {
+            if (!Validator.is_valid_name(TXT_4EYES_USER.getText(), 80))
+            {
+                UserMain.errm_ok(UserMain.getString("Der_4-Augen_Username_ist_nicht_okay"));
+                return false;
+            }
+            String pwd = new String( TXTP_4EYES_PWD.getPassword() );
+            if (!Validator.is_valid_name(pwd, 80))
+            {
+                UserMain.errm_ok(UserMain.getString("Das_4-Augen_Passwort_ist_nicht_okay"));
+                return false;
+            }
+        }
 
                 
         return true;
@@ -612,6 +756,10 @@ public class EditRole extends GenericEditPanel
         object.setLicense( new Integer(0));
         object.setAccountConnector( accm.get_selected_ac());
 
+        object.setUser4eyes(TXT_4EYES_USER.getText());
+        String pwd = new String( TXTP_4EYES_PWD.getPassword() );
+        object.setPwd4eyes(pwd);
+
         set_object_disabled( de );
     }
     public String get_option_qry(long role_id)
@@ -620,6 +768,24 @@ public class EditRole extends GenericEditPanel
         return qry;
     }
 
+    @Override
+    public boolean  update_db( Object o, Object so)
+    {
+        if (was_4eyes)
+        {
+            // CHECK WITH THE OLD OBJECT
+            if (!Login4EyesPanel.check_login(save_object))
+            {
+                return false;
+            }
+        }
+        boolean ret = super.update_db(o, so);
+        if (ret)
+        {
+            ret = write_opts_buttons( this.object.getId() );
+        }
+        return ret;
+    }
     
     
         
@@ -749,17 +915,6 @@ public class EditRole extends GenericEditPanel
         return changed;
     }
 
-    @Override
-    protected boolean update_db(Object object, Object save_object)
-    {
-        boolean ret = super.update_db(object, save_object);
-        if (ret)
-        {
-            ret = write_opts_buttons( this.object.getId() );
-        }
-        return ret;
-
-    }
     @Override
     protected boolean insert_db(Object object)
     {

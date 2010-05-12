@@ -118,6 +118,11 @@ public class UI_Pirates extends UI_Generic
 
             UIManager.put("PasswordField.background", new ColorUIResource(appl_dgray) );
             UIManager.put("PasswordField.foreground", new ColorUIResource(nice_white) );
+            UIManager.put("PasswordField.inactiveBackground", new ColorUIResource(appl_dgray) );
+            UIManager.put("PasswordField.disabledBackground",new ColorUIResource(appl_dgray) );
+            UIManager.put("PasswordField.inactiveForeground", new ColorUIResource(nice_white) );
+            UIManager.put("PasswordField.selectionBackground", new ColorUIResource(appl_dgray));
+            UIManager.put("PasswordField.selectionForeground", new ColorUIResource(appl_selected_color));
             UIManager.put("PasswordField.selectionForeground", new ColorUIResource(appl_selected_color));
             UIManager.put("PasswordField.caretForeground", new ColorUIResource(appl_selected_color));
             UIManager.put("PasswordField.border", etched_border);

@@ -14,6 +14,7 @@ package dimm.home.Panels.MailView;
 import com.thoughtworks.xstream.XStream;
 import dimm.home.Main;
 import dimm.home.Panels.LogicFilter;
+import dimm.home.Panels.Login4EyesPanel;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
@@ -35,6 +36,7 @@ import home.shared.filter.ExprEntry.TYPE;
 import home.shared.filter.GroupEntry;
 import home.shared.filter.LogicEntry;
 import home.shared.filter.VarTypeEntry;
+import home.shared.hibernate.Role;
 import home.shared.mail.RFCMimeMail;
 import java.awt.Component;
 import java.awt.FileDialog;
@@ -323,6 +325,7 @@ class MailTableModel extends AbstractTableModel
     static final int ATTACH_COL = 3;
     static final int SUBJECT_COL = 4;
     static final int SIZE_COL = 5;
+    static final int _4EYES_COL = 6;
 
     MailViewPanel pnl;
     ArrayList<ArrayList<String>> result_array;
@@ -330,6 +333,8 @@ class MailTableModel extends AbstractTableModel
 
     JButton ic_attachment;
     JButton ic_no_attachment;
+
+    String _4eyes_protected;
 
     MailTableModel(MailViewPanel _pnl,  ArrayList<ArrayList<String>> ret_arr)
     {
@@ -350,6 +355,9 @@ class MailTableModel extends AbstractTableModel
         field_list.add(CS_Constants.FLD_HAS_ATTACHMENT);
         field_list.add(CS_Constants.FLD_SUBJECT);
         field_list.add(CS_Constants.FLD_SIZE);
+        field_list.add(CS_Constants.VFLD_4EYES);
+
+        _4eyes_protected = UserMain.Txt("Protected_by_4-eyes_principle");
 
     }
 
@@ -382,7 +390,7 @@ class MailTableModel extends AbstractTableModel
     @Override
     public Class<?> getColumnClass(int columnIndex)
     {
-        if (columnIndex == ATTACH_COL)
+        if (columnIndex == ATTACH_COL || columnIndex == _4EYES_COL)
             return JButton.class;
 
         return String.class;
@@ -404,12 +412,41 @@ class MailTableModel extends AbstractTableModel
         return field_list.size();
     }
 
+    Role get_4_eyes_model( int rowIndex )
+    {
+        Role role = null;
+        String _4eyes_val = result_array.get(rowIndex).get(_4EYES_COL);
+        boolean is_4eyes = false;
+
+        if (_4eyes_val != null && _4eyes_val.length() > 0 && Character.isDigit(_4eyes_val.charAt(0)) )
+        {
+            is_4eyes = true;
+            try
+            {
+                role = UserMain.sqc().get_role(Integer.parseInt(_4eyes_val));
+            }
+            catch (Exception numberFormatException)
+            {
+                System.out.println("Invalid role col val: " + _4eyes_val);
+            }
+        }
+        return role;
+    }
+
     
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex)
     {
         String val = result_array.get(rowIndex).get(columnIndex);
+
+        Role role = get_4_eyes_model( rowIndex );
+
+        if (columnIndex == SUBJECT_COL && role != null && !pnl.is4eyes_logged_in(role))
+        {
+            return _4eyes_protected;
+        }
+
         if ( columnIndex == 0)
         {
             long time = Long.parseLong(val, 16);
@@ -913,6 +950,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             table.getColumnModel().getColumn(MailTableModel.SUBJECT_COL).setPreferredWidth(180);
             table.getColumnModel().getColumn(MailTableModel.SIZE_COL).setMinWidth(30);
             table.getColumnModel().getColumn(MailTableModel.SIZE_COL).setMaxWidth(50);
+            table.getColumnModel().getColumn(MailTableModel._4EYES_COL).setMinWidth(0);
+            table.getColumnModel().getColumn(MailTableModel._4EYES_COL).setMaxWidth(0);
         }
     }
 
@@ -924,6 +963,14 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             return;
         }
 
+        // CHECK FOR 4 EYES
+        Role role = model.get_4_eyes_model( row );
+        if (role != null)
+        {
+            if (!check_4eyes_login(role))
+                return;
+        }
+        
         if (sw != null)
             return;
 
@@ -962,6 +1009,14 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         {
             return;
         }
+        // CHECK FOR 4 EYES
+        Role role = model.get_4_eyes_model( row );
+        if (role != null)
+        {
+            if (!check_4eyes_login(role))
+                return;
+        }
+
 
         if (view_sw != null)
         {
@@ -1017,6 +1072,14 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         {
             return;
         }
+        // CHECK FOR 4 EYES
+        Role role = model.get_4_eyes_model( row );
+        if (role != null)
+        {
+            if (!check_4eyes_login(role))
+                return;
+        }
+
 
         if (sw != null)
             return;
@@ -1156,6 +1219,15 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
             int row = rowi[i];
             row = sorter.convertRowIndexToModel(row);
+
+            // CHECK FOR 4 EYES
+            Role role = model.get_4_eyes_model( row );
+            if (role != null)
+            {
+                if (!check_4eyes_login(role))
+                    continue;
+            }
+
             String subject = table.getModel().getValueAt(row, MailTableModel.SUBJECT_COL).toString();
             subject = clean_fname(subject);
             File f = null;
@@ -1239,6 +1311,15 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
                 int row = rowi[i];
                 row = sorter.convertRowIndexToModel(row);
+
+                // CHECK FOR 4 EYES
+                Role role = model.get_4_eyes_model( row );
+                if (role != null)
+                {
+                    if (!check_4eyes_login(role))
+                        continue;
+                }
+
 
                 d.setTime(System.currentTimeMillis());
                 String timestamp = sdf.format( d );
@@ -1804,6 +1885,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             return;
         }
 
+
         MailExportPanel pnl = new MailExportPanel(  );
         GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
         dlg.set_next_location( my_dlg );
@@ -1831,7 +1913,30 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             return;
         }
 
+        // GET SELECTED ROWS
         int[] rowi = table.getSelectedRows();
+
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < rowi.length; i++)
+        {
+            int row = row = sorter.convertRowIndexToModel(rowi[i]);
+
+            // CHECK FOR 4 EYES
+            Role role = model.get_4_eyes_model( row );
+            if (role != null)
+            {
+                if (!check_4eyes_login(role))
+                    break;
+            }
+
+            if (i > 0)
+                sb.append( ",");
+            sb.append( row );
+        }
+        if (sb.length() == 0)
+            return;
+
+        // GET MAILADDRESS
         GetMailAddressPanel pnl = new GetMailAddressPanel( UserMain.self.get_act_mailaliases() );
         GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
         dlg.set_next_location( my_dlg );
@@ -1843,18 +1948,9 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
         String mail = pnl.get_mail();
 
-        FunctionCallConnect fcc = UserMain.fcc();
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < rowi.length; i++)
-        {
-            if (i > 0)
-                sb.append( ",");
-            int row = row = sorter.convertRowIndexToModel(rowi[i]);
-            sb.append( row );
-        }
-
         UserMain.self.show_busy(my_dlg, UserMain.Txt("Sende_Mail...") );
 
+        FunctionCallConnect fcc = UserMain.fcc();
         String ret = fcc.call_abstract_function("SearchMail CMD:send_mail ID:" + search_id + " TO:" + mail + " ROWLIST:" + sb.toString(), FunctionCallConnect.LONG_TIMEOUT);
 
         UserMain.self.hide_busy();
@@ -2180,6 +2276,33 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     @Override
     public void editingCanceled( ChangeEvent e )
     {       
+    }
+
+
+    protected Role _4e_role = null;
+    
+    boolean is4eyes_logged_in(Role role)
+    {
+        if (_4e_role == null)
+            return false;
+
+        if (role != null && _4e_role != null && role.getId() != _4e_role.getId())
+            return false;
+
+        return true;
+    }
+    boolean check_4eyes_login(Role role)
+    {
+
+        if (is4eyes_logged_in(role))
+            return true;
+
+
+        if (Login4EyesPanel.check_login(role))
+        {
+            _4e_role = role;
+        }
+        return is4eyes_logged_in(role);
     }
 
 }

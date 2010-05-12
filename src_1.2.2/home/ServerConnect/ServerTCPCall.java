@@ -1491,8 +1491,15 @@ public class ServerTCPCall extends ServerCall
                     }
                 }
             }
+
+            // NO DIFFERENCES FOUND ?
+            if (upd_cmd.trim().length() == 0)
+                return true;
+
+            // BUILD CMD
             String upd_stmt = "update " + rec_name + " set " + upd_cmd + " where id=" + id;
 
+            //EXEC
             int rows = executeUpdate(sta, upd_stmt);
 
             return (rows == 1) ? true : false;
