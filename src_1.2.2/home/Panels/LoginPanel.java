@@ -22,6 +22,7 @@ import dimm.home.UserMain;
 import home.shared.Utilities.ParseToken;
 import dimm.home.Utilities.SwingWorker;
 import home.shared.CS_Constants.USERMODE;
+import home.shared.SQL.OptCBEntry;
 import home.shared.SQL.UserSSOEntry;
 import home.shared.hibernate.Mandant;
 import java.util.ArrayList;
@@ -843,16 +844,17 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             sso_entry = pt.GetObject("CSSO:", UserSSOEntry.class);
         }
         Mandant ma = UserMain.sqc().get_mandant(m_id);
+        boolean is_4_eyes = sso_entry.role_has_option(OptCBEntry._4EYES);
 
         if (sso_entry != null && sso_entry.is_admin())
         {
             main.setUserLevel( USERMODE.UL_ADMIN );
-            main.set_titel( ma.getName() + " <" + nname + "> (" + UserMain.Txt("Admin") + ")" );
+            main.set_titel( ma.getName() + " <" + nname + "> (" + UserMain.Txt("Admin") + ")"  + (is_4_eyes ? " " + UserMain.Txt("4_Eyes") : ""));
         }
         else
         {
             main.setUserLevel( USERMODE.UL_USER );
-            main.set_titel( ma.getName() + " <" + nname + "> (" + UserMain.Txt("User") + ")" );
+            main.set_titel( ma.getName() + " <" + nname + "> (" + UserMain.Txt("User") + ")"   + (is_4_eyes ? " " + UserMain.Txt("4_Eyes") : ""));
         }
         main.set_act_userdata( nname, pwd, mail_aliases, sso_token, sso_entry );
 

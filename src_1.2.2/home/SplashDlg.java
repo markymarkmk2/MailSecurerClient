@@ -6,13 +6,50 @@
 
 package dimm.home;
 
+import com.sun.image.codec.jpeg.JPEGCodec;
+import com.sun.image.codec.jpeg.JPEGImageDecoder;
+import com.sun.media.jai.codec.ImageDecoder;
+import com.sun.media.jai.codec.JPEGDecodeParam;
 import dimm.home.Panels.PreferencesPanel;
 import dimm.home.Rendering.GenericGlossyDlg;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
+import java.awt.color.ICC_ColorSpace;
+import java.awt.color.ICC_Profile;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorConvertOp;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
+import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.IIOException;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import javax.media.jai.ImageLayout;
+import javax.media.jai.JAI;
+import javax.media.jai.ParameterBlockJAI;
+import javax.media.jai.RasterFactory;
+import javax.media.jai.RenderedOp;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.Timer;
 import org.jdesktop.fuse.InjectedResource;
 import org.jdesktop.fuse.ResourceInjector;
@@ -257,5 +294,167 @@ public class SplashDlg extends javax.swing.JDialog implements ActionListener
     {
         return prefs_active;
     }
-    
+
+
+
+
+
+
+    public static BufferedImage load_jpg(File f) throws Throwable
+    {
+        // Set the input.
+        ImageInputStream input = ImageIO.createImageInputStream(f);
+
+        return load_jpg( input);
+    }
+
+
+    public static BufferedImage load_jpg(ImageInputStream input) throws Throwable
+    {
+        // Find a JPEG reader which supports reading Rasters.
+        Iterator readers = ImageIO.getImageReadersByFormatName("JPEG");
+        ImageReader reader = null;
+        while(readers.hasNext())
+        {
+            reader = (ImageReader)readers.next();
+            if(reader.canReadRaster()) {
+                break;
+            }
+        }
+        reader.setInput(input);
+
+
+        // Create the image.
+        BufferedImage image = null;
+        try
+        {
+            // Try reading an image (including color conversion).
+            image = reader.read(0);
+        } 
+        catch(IIOException e)
+        {
+            // Try reading a Raster (no color conversion).
+            Raster raster = reader.readRaster(0, null);
+
+            // Arbitrarily select a BufferedImage type.
+            int imageType;
+            switch(raster.getNumBands()) {
+            case 1:
+                imageType = BufferedImage.TYPE_BYTE_GRAY;
+                break;
+            case 3:
+                imageType = BufferedImage.TYPE_3BYTE_BGR;
+                break;
+            case 4:
+                imageType = BufferedImage.TYPE_4BYTE_ABGR;
+                image = createJPEG4( raster );
+
+                break;
+            default:
+                throw new UnsupportedOperationException();
+            }
+
+
+        }
+        return image;
+    }
+
+private static BufferedImage createJPEG4(Raster r)
+{
+    int w = r.getWidth(), h = r.getHeight();
+    byte[] rgb = new byte[w*h*3];
+
+    int[] C = r.getSamples(0,0,w,h, 0, (int[])null);
+    int[] M = r.getSamples(0,0,w,h, 1, (int[])null);
+    int[] Y = r.getSamples(0,0,w,h, 2, (int[])null);
+    int[] K = r.getSamples(0,0,w,h, 3, (int[])null);
+
+    for (int i=0,imax=C.length, base=0; i<imax; i++, base+=3)
+    {
+        int k = K[i];
+        rgb[base] = (byte)Math.min(255, (C[i] * k)/256);
+        rgb[base + 1] = (byte)Math.min(255, (M[i] * k)/256);
+        rgb[base + 2] = (byte)Math.min(255, (Y[i] * k)/256);
+
+    }
+
+    // from other image types we know InterleavedRaster's can be manipulated by AffineTransformOp, so create one of those.
+    r = Raster.createInterleavedRaster(new DataBufferByte(rgb, rgb.length), w, h, w*3,3, new int[] {0,1,2}, null);
+    ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+    ColorModel cm = new ComponentColorModel(cs, false, true, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+
+    return new BufferedImage(cm, (WritableRaster)r, true, null);
+  }
+
+
+    static void show( RenderedImage image)
+    {
+
+        JFrame frame = new JFrame();
+        frame.getContentPane().add(new com.sun.media.jai.widget.DisplayJAI(image));
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+
+    public static void main( String[] args )
+    {
+        String icc_file = "J:\\tmp\\Metacache\\cmyk.icc";
+        String fname = "J:\\tmp\\Metacache\\27785_21009_0.jpg";
+        if (args.length != 0)
+        {
+            fname = args[0];
+        }
+
+        File img = new File( fname );
+        if (img.exists())
+        {
+            try
+            {
+              /*  ParameterBlock pb = (new ParameterBlock()).add(fname);
+                RenderedOp node = new RenderedOp("fileload", pb, null);
+                 PlanarImage i = node.createInstance();
+                BufferedImage bimg = i.getAsBufferedImage();
+               * */
+
+
+                BufferedImage bi = load_jpg( img );
+                show( bi );
+//                ReadJPEGRaster rrr = new ReadJPEGRaster(img);
+/*
+                com.sun.media.jai.codec.JPEGDecodeParam para = new JPEGDecodeParam();
+                para.setDecodeToCSM( false );
+
+
+                ImageDecoder dec = com.sun.media.jai.codec.ImageCodec.createImageDecoder("jpeg", img, para);
+                Raster r = dec.decodeAsRaster();
+                RenderedImage ri = dec.decodeAsRenderedImage();
+                ColorModel cm = ri.getColorModel();
+                BufferedImage bimg = new BufferedImage( ri.getWidth(), ri.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                ri.copyData(bimg.getRaster());
+                
+*/
+
+                //convertCMYKtoRGB(node, icc_file);
+
+
+ //               read_cmyk( img,  "J:\\tmp\\Metacache\\cmyk.icc" );
+//                loadcmyk(img);
+/*            MetaFileEntry mfe = new MetaFileEntry();
+                mfe.read_preview_image(img);
+                SinglePreviewDlg dlg = new SinglePreviewDlg(null, mfe);
+                dlg.setVisible(true);*/
+            }
+            catch (Throwable ex)
+            {
+                ex.printStackTrace();
+//                Logger.getLogger(SplashDlg.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+/*            MetaFileEntry mfe = new MetaFileEntry();
+            mfe.read_preview_image(img);
+            SinglePreviewDlg dlg = new SinglePreviewDlg(null, mfe);
+            dlg.setVisible(true);*/
+        }
+    }
 }

@@ -175,6 +175,8 @@ public class EditBackup  extends GenericEditPanel
             object.setMandant(UserMain.sqc().get_act_mandant());
             COMBO_CYCLE_UNITS.setSelectedIndex( 1 ); // HOUR
             SP_CYCLE_CNT.setValue( new Integer(6) );
+            TXT_AGENT.setText("127.0.0.1");
+            TXT_AGENT_PORT.setText("11173");
             set_mode_visibility();
             Date d = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat(CS_Constants.BACK_STARTDATE_FORMAT);

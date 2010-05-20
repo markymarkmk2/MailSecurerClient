@@ -318,6 +318,10 @@ public class SQLConnect extends Connect implements SQLObjectGetter
     {
         return get_sql_list_container(DiskArchive.class).list;
     }
+    public SQLResult<DiskSpace> get_ds_result()
+    {
+        return get_sql_list_container(DiskSpace.class).list;
+    }
     public SQLResult<Hotfolder> get_hf_result()
     {
         return get_sql_list_container(Hotfolder.class).list;

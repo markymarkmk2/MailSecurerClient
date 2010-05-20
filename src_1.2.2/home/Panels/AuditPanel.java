@@ -24,6 +24,7 @@ import home.shared.SQL.SQLArrayResult;
 import home.shared.SQL.SQLResult;
 import home.shared.hibernate.Mandant;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.io.File;
@@ -32,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import javax.swing.JButton;
+import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
@@ -136,7 +138,7 @@ class AuditTableModel extends AbstractTableModel
             case 8: 
             {
                 if (!panel.show_answer())
-                    return null;
+                    return "";
                 
                 return sqlResult.getString(rowIndex, "answer" );
             }
@@ -211,15 +213,21 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
     AuditTableModel model;
     GlossTable table;
     HashMap<String,Mandant> ma_map;
+    int ma_id;
 
-    public AuditPanel()
+    public AuditPanel(int ma_id)
     {
+        this.ma_id = ma_id;
+        
         initComponents();
 
         SQLResult<Mandant> mr = UserMain.sqc().get_mandant_result();
 
         CB_MANDANT.removeAllItems();
-        CB_MANDANT.addItem( new MandantEntry(MandantEntry.ME_ALL));
+        if (ma_id < 0)
+        {
+            CB_MANDANT.addItem( new MandantEntry(MandantEntry.ME_ALL));
+        }
         CB_MANDANT.addItem( new MandantEntry(MandantEntry.ME_SYSTEM));
 
         ma_map = new HashMap<String,Mandant>();
@@ -227,6 +235,11 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
         for (int i = 0; i < mr.size(); i++)
         {
             Mandant mandant = mr.get(i);
+            if (ma_id >= 0)
+            {
+                if (mandant.getId() != ma_id)
+                    continue;
+            }
             CB_MANDANT.addItem( new MandantEntry(mandant));
 
             ma_map.put(Integer.toString(mandant.getId()), mandant);
@@ -247,6 +260,8 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
         table.embed_to_scrollpanel( SCP_TABLE );
 
         set_table_header();
+
+        
     }
 
 
@@ -259,21 +274,26 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
 
         // MA
         cm.getColumn(1).setPreferredWidth(50);
+        cm.getColumn(1).setPreferredWidth(50);
         // UTYPE
         cm.getColumn(2).setPreferredWidth(50);
+        cm.getColumn(2).setMaxWidth(80);
         // UNAME
         cm.getColumn(3).setPreferredWidth(50);
         // ROLE
         cm.getColumn(4).setPreferredWidth(50);
+        cm.getColumn(4).setMaxWidth(120);
         // CMD
         cm.getColumn(5).setPreferredWidth(50);
+        cm.getColumn(5).setMaxWidth(120);
+        // CMD
 
         // ARGS
         if (show_args())
         {
             cm.getColumn(6).setMinWidth(0);
             cm.getColumn(6).setMaxWidth(1000);
-            cm.getColumn(6).setPreferredWidth(200);
+            cm.getColumn(6).setPreferredWidth(280);
         }
         else
         {
@@ -289,7 +309,7 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
             cm.getColumn(7).setPreferredWidth(30);
             cm.getColumn(8).setMinWidth(0);
             cm.getColumn(8).setMaxWidth(1000);
-            cm.getColumn(8).setPreferredWidth(200);
+            cm.getColumn(8).setPreferredWidth(280);
         }
         else
         {
@@ -303,9 +323,18 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
 
     void _search() throws ParseException
     {
-        MandantEntry me = (MandantEntry) CB_MANDANT.getSelectedItem();
-        int me_id = me.getId();
+        int me_id = MandantEntry.ME_ALL;
+        if (ma_id >= 0)
+        {
+            me_id = ma_id;
+        }
+        else
+        {
+            MandantEntry me = (MandantEntry) CB_MANDANT.getSelectedItem();
+            me_id = me.getId();
+        }
         String uname = TXT_USER.getText();
+        String cmd  = TXT_CMD.getText();
         String from = TXT_FROM.getText();
         String till = TXT_TILL.getText();
 
@@ -319,6 +348,10 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
         if (uname.length() > 0)
         {
             qry += " and username like '" + uname + "%'";
+        }
+        if (cmd.length() > 0)
+        {
+            qry += " and cmd like '%" + cmd + "%'";
         }
         if (from.length() > 0)
         {
@@ -353,6 +386,7 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
         set_tabel_row_height();
         set_table_header();
         table.repaint();
+        
     }
 
     void search()
@@ -380,7 +414,60 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
 
         return m.getName();
     }
- 
+
+    public void set_tabel_row_height()
+    {
+        packRows( table, table.getRowMargin() );
+        table.repaint();
+    }
+
+    public int getPreferredRowHeight(JTable table, int rowIndex, int margin)
+    {
+        // Get the current default height for all rows
+        int height = table.getRowHeight();
+
+        // Determine highest cell in the row
+        for (int c=0; c<table.getColumnCount(); c++)
+        {
+            TableCellRenderer renderer = table.getCellRenderer(rowIndex, c);
+            Component comp = table.prepareRenderer(renderer, rowIndex, c);
+           
+            int w = table.getColumnModel().getColumn(c).getWidth();
+            if (w == 0)
+                w = comp.getPreferredSize().width;
+            if (w > 0)
+            {
+                int n = (comp.getPreferredSize().width + w - 1) / w;
+
+                int h = n*comp.getPreferredSize().height + 2*margin;
+
+                if (h > height)
+                    height = h;
+            }
+        }
+        return height;
+    }
+
+    public void packRows(JTable table, int margin)
+    {
+        for (int r=0; r<table.getRowCount(); r++)
+        {
+            // Get the preferred height
+            int h = getPreferredRowHeight(table, r, margin);
+
+            // Now set the row height using the preferred height
+
+            table.setRowHeight(r, h);
+            //System.out.println("Rowheight row " + r + " = " + h);
+
+        }
+    }
+    @Override
+    public void setSize(Dimension d)
+    {
+        set_tabel_row_height();
+        super.setSize(d);
+    }
  
 
     /** This method is called from within the constructor to
@@ -407,6 +494,8 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
         BT_SEARCH = new javax.swing.JButton();
         CB_SHOW_ANSWER = new javax.swing.JCheckBox();
         CB_SHOW_ARGS = new javax.swing.JCheckBox();
+        jLabel5 = new javax.swing.JLabel();
+        TXT_CMD = new javax.swing.JTextField();
         BT_EXPORT = new javax.swing.JButton();
 
         LOG_PANEL.setMinimumSize(new java.awt.Dimension(600, 200));
@@ -432,8 +521,8 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
 
         jLabel3.setText(UserMain.Txt("von")); // NOI18N
 
-        TXT_FROM.setBackground(new java.awt.Color(255, 255, 255));
         TXT_FROM.setEditable(false);
+        TXT_FROM.setOpaque(false);
         TXT_FROM.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 TXT_FROMMouseClicked(evt);
@@ -442,8 +531,8 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
 
         jLabel4.setText(UserMain.Txt("bis")); // NOI18N
 
-        TXT_TILL.setBackground(new java.awt.Color(255, 255, 255));
         TXT_TILL.setEditable(false);
+        TXT_TILL.setOpaque(false);
         TXT_TILL.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 TXT_TILLMouseClicked(evt);
@@ -473,6 +562,8 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
             }
         });
 
+        jLabel5.setText(UserMain.Txt("Command")); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -481,11 +572,13 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2))
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(TXT_USER)
-                    .addComponent(CB_MANDANT, 0, 127, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(CB_MANDANT, 0, 127, Short.MAX_VALUE)
+                    .addComponent(TXT_USER, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                    .addComponent(TXT_CMD, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -524,7 +617,11 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
                             .addComponent(jLabel4)
                             .addComponent(CB_SHOW_ANSWER)))
                     .addComponent(BT_SEARCH))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(TXT_CMD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         BT_EXPORT.setText(UserMain.Txt("Export")); // NOI18N
@@ -616,6 +713,7 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
     private javax.swing.JCheckBox CB_SHOW_ARGS;
     private javax.swing.JPanel LOG_PANEL;
     private javax.swing.JScrollPane SCP_TABLE;
+    private javax.swing.JTextField TXT_CMD;
     private javax.swing.JTextField TXT_FROM;
     private javax.swing.JTextField TXT_TILL;
     private javax.swing.JTextField TXT_USER;
@@ -623,6 +721,7 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 
@@ -679,43 +778,5 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
     {
         return CB_SHOW_ANSWER.isSelected();
     }
-    public int getPreferredRowHeight(int rowIndex, int margin)
-    {
-        // Get the current default height for all rows
-        int height = table.getRowHeight();
-
-        // Determine highest cell in the row
-        for (int c=0; c<table.getColumnCount(); c++)
-        {
-            TableCellRenderer renderer = table.getCellRenderer(rowIndex, c);
-            Component comp = table.prepareRenderer(renderer, rowIndex, c);
-            if (comp != null)
-            {
-                int h = comp.getPreferredSize().height + 2*margin;
-                height = Math.max(height, h);
-            }
-
-        }
-        return height;
-    }
-
-    private void set_tabel_row_height()
-    {
-        int margin = table.getRowMargin();
-        for (int r=0; r<table.getRowCount(); r++)
-        {
-            // Get the preferred height
-            int h = getPreferredRowHeight(r, margin);
-
-            // Now set the row height using the preferred height
-            table.setRowHeight(r, h);
-        }
-        table.repaint();
-    }
-
-
-
-
-
 
 }

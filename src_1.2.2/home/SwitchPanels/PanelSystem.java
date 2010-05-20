@@ -105,7 +105,7 @@ public class PanelSystem extends SwitchSpringPanel
         PN_BUTTONS.setOpaque(false);
         PN_BUTTONS.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        BT_SET_ADMIN_LOGIN.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_SET_ADMIN_LOGIN.setFont(new java.awt.Font("Arial", 0, 14));
         BT_SET_ADMIN_LOGIN.setForeground(new java.awt.Color(201, 201, 201));
         BT_SET_ADMIN_LOGIN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/login-register.png"))); // NOI18N
         BT_SET_ADMIN_LOGIN.setText(UserMain.Txt("Sysadmin")); // NOI18N
@@ -121,7 +121,7 @@ public class PanelSystem extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_SET_ADMIN_LOGIN, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 200, 190, 50));
 
-        BT_MANDANTEN.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_MANDANTEN.setFont(new java.awt.Font("Arial", 0, 14));
         BT_MANDANTEN.setForeground(new java.awt.Color(201, 201, 201));
         BT_MANDANTEN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/rollen.png"))); // NOI18N
         BT_MANDANTEN.setText(UserMain.Txt("Mandanten")); // NOI18N
@@ -140,7 +140,7 @@ public class PanelSystem extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_MANDANTEN, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 80, 150, 50));
 
-        BT_LICENSE.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_LICENSE.setFont(new java.awt.Font("Arial", 0, 14));
         BT_LICENSE.setForeground(new java.awt.Color(201, 201, 201));
         BT_LICENSE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
         BT_LICENSE.setText(UserMain.Txt("Lizenzen")); // NOI18N
@@ -156,7 +156,7 @@ public class PanelSystem extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_LICENSE, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, 190, 50));
 
-        BT_ZERTIFIKATE.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_ZERTIFIKATE.setFont(new java.awt.Font("Arial", 0, 14));
         BT_ZERTIFIKATE.setForeground(new java.awt.Color(201, 201, 201));
         BT_ZERTIFIKATE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/imap.png"))); // NOI18N
         BT_ZERTIFIKATE.setText(UserMain.Txt("Certificats")); // NOI18N
@@ -264,7 +264,7 @@ public class PanelSystem extends SwitchSpringPanel
         // TODO add your handling code here:
         if (check_selected())
         {
-            TimingTargetAdapter tt = make_spring_button_dlg( new AuditPanel(),  get_dlg_pos(),  UserMain.getString("AuditLog") );
+            TimingTargetAdapter tt = make_spring_button_dlg( new AuditPanel( /*ma_id*/-1),  get_dlg_pos(),  UserMain.getString("AuditLog") );
             spring_button_action(evt.getSource(), tt);
         }
 

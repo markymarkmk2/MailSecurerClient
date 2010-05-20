@@ -804,6 +804,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_SUBJECT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_BODY, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_ATTACHMENT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );*/
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_FROM, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_ALL, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_ALL, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_SUBJECT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
@@ -833,6 +834,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         simple_search_table.getColumnModel().getColumn(2).setCellEditor( txt_editor  );
 
         TBP_SEARCH.setSelectedIndex(SIMPLE_SEARCH);
+
+        CB_VIEW_CONTENT.setSelected(true);
 
 
         if (CB_VIEW_CONTENT.isSelected())

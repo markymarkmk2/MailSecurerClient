@@ -5,6 +5,8 @@
  */
 package dimm.home.SwitchPanels;
 
+import dimm.home.Panels.AuditPanel;
+import dimm.home.Panels.Diagnose.StorageDiagnose;
 import dimm.home.Panels.LogPanel;
 import dimm.home.Panels.MailImport.PanelImportMailbox;
 import dimm.home.Rendering.FlatBackgroundTitle;
@@ -95,6 +97,8 @@ public class PanelTools extends SwitchSpringPanel implements JRConnectEventListe
         BT_INIT = new GhostButton();
         BT_STATUS = new GhostButton();
         BT_LOG = new GhostButton();
+        BT_AUDITLOG = new GhostButton();
+        BT_DIAGNOSE = new GhostButton();
         PN_HEADER = new javax.swing.JPanel();
 
         setOpaque(false);
@@ -142,7 +146,7 @@ public class PanelTools extends SwitchSpringPanel implements JRConnectEventListe
 
         BT_STATUS.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_STATUS.setForeground(new java.awt.Color(201, 201, 201));
-        BT_STATUS.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/status.png"))); // NOI18N
+        BT_STATUS.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
         BT_STATUS.setText(UserMain.Txt("RemoteSupport")); // NOI18N
         BT_STATUS.setToolTipText(UserMain.Txt("Long_Remote")); // NOI18N
         BT_STATUS.setBorderPainted(false);
@@ -177,6 +181,44 @@ public class PanelTools extends SwitchSpringPanel implements JRConnectEventListe
             }
         });
         PN_BUTTONS.add(BT_LOG, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 80, 170, 50));
+
+        BT_AUDITLOG.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_AUDITLOG.setForeground(new java.awt.Color(201, 201, 201));
+        BT_AUDITLOG.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/diagnose.png"))); // NOI18N
+        BT_AUDITLOG.setText(UserMain.Txt("AuditLog")); // NOI18N
+        BT_AUDITLOG.setToolTipText(UserMain.Txt("Long_AuditLog")); // NOI18N
+        BT_AUDITLOG.setBorderPainted(false);
+        BT_AUDITLOG.setContentAreaFilled(false);
+        BT_AUDITLOG.setFocusPainted(false);
+        BT_AUDITLOG.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        BT_AUDITLOG.setMaximumSize(new java.awt.Dimension(101, 26));
+        BT_AUDITLOG.setMinimumSize(new java.awt.Dimension(101, 26));
+        BT_AUDITLOG.setPreferredSize(new java.awt.Dimension(101, 26));
+        BT_AUDITLOG.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_AUDITLOGActionPerformed(evt);
+            }
+        });
+        PN_BUTTONS.add(BT_AUDITLOG, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 80, 170, 50));
+
+        BT_DIAGNOSE.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_DIAGNOSE.setForeground(new java.awt.Color(201, 201, 201));
+        BT_DIAGNOSE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/status.png"))); // NOI18N
+        BT_DIAGNOSE.setText(UserMain.Txt("Diagnose")); // NOI18N
+        BT_DIAGNOSE.setToolTipText(UserMain.Txt("Long_Diag")); // NOI18N
+        BT_DIAGNOSE.setBorderPainted(false);
+        BT_DIAGNOSE.setContentAreaFilled(false);
+        BT_DIAGNOSE.setFocusPainted(false);
+        BT_DIAGNOSE.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        BT_DIAGNOSE.setMaximumSize(new java.awt.Dimension(101, 26));
+        BT_DIAGNOSE.setMinimumSize(new java.awt.Dimension(101, 26));
+        BT_DIAGNOSE.setPreferredSize(new java.awt.Dimension(101, 26));
+        BT_DIAGNOSE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_DIAGNOSEActionPerformed(evt);
+            }
+        });
+        PN_BUTTONS.add(BT_DIAGNOSE, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 200, 170, 50));
 
         PN_HEADER.setOpaque(false);
         PN_HEADER.setLayout(new javax.swing.BoxLayout(PN_HEADER, javax.swing.BoxLayout.LINE_AXIS));
@@ -248,9 +290,28 @@ public class PanelTools extends SwitchSpringPanel implements JRConnectEventListe
         BT_STATUS.repaint();
 
     }//GEN-LAST:event_BT_STATUSActionPerformed
+
+    private void BT_AUDITLOGActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_AUDITLOGActionPerformed
+    {//GEN-HEADEREND:event_BT_AUDITLOGActionPerformed
+        // TODO add your handling code here:
+
+        TimingTargetAdapter tt = make_spring_button_dlg( new AuditPanel( UserMain.self.get_act_mandant_id() ),  get_dlg_pos(),  UserMain.getString("AuditLog") );
+        spring_button_action(evt.getSource(), tt);
+
+    }//GEN-LAST:event_BT_AUDITLOGActionPerformed
+
+    private void BT_DIAGNOSEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_DIAGNOSEActionPerformed
+    {//GEN-HEADEREND:event_BT_DIAGNOSEActionPerformed
+        // TODO add your handling code here:
+        TimingTargetAdapter tt = make_spring_button_dlg( new StorageDiagnose( UserMain.self.get_act_mandant_id() ),  get_dlg_pos(),  UserMain.getString("StorageDiagnose") );
+        spring_button_action(evt.getSource(), tt);
+
+    }//GEN-LAST:event_BT_DIAGNOSEActionPerformed
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BT_AUDITLOG;
+    private javax.swing.JButton BT_DIAGNOSE;
     private javax.swing.JButton BT_IMPORT_MBOX;
     private javax.swing.JButton BT_INIT;
     private javax.swing.JButton BT_LOG;

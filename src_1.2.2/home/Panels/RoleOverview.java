@@ -45,7 +45,7 @@ class RoleTableModel extends OverviewModel
     @Override
     public String get_qry(long mandanten_id)
     {
-        String qry = "select * from role where mid=" + mandanten_id + " order by id";
+        String qry = "select * from role where mid=" + mandanten_id + " order by name";
         return qry;
     }
 

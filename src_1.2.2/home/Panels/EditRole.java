@@ -550,6 +550,11 @@ public class EditRole extends GenericEditPanel
     {//GEN-HEADEREND:event_BT_4EYESActionPerformed
         // TODO add your handling code here:
         PNL_4EYES.setVisible(BT_4EYES.isSelected());
+        if (BT_4EYES.isSelected())
+        {
+            TXTP_4EYES_PWD.setText("");
+            TXT_4EYES_USER.setText("");
+        }
     }//GEN-LAST:event_BT_4EYESActionPerformed
 
     private void TXTP_4EYES_PWDMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_TXTP_4EYES_PWDMouseClicked
