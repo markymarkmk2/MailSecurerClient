@@ -626,13 +626,13 @@ public class LicensePanel extends GlossDialogPanel implements MouseListener,  Pr
         FunctionCallConnect fcc = UserMain.fcc();
         String ret = fcc.call_abstract_function("LicenseConfig CMD:DEL PRD:" + tck.getTicket().getProduct(), FunctionCallConnect.SHORT_TIMEOUT );
 
-         if (ret != null && fcc.get_last_err_code() == 0)
-         {
+        if (ret != null && fcc.get_last_err_code() == 0)
+        {
             if (ret.charAt(0) == '0')
             {
                 return true;
             }
-         }
+        }
         return false;
 
     }
