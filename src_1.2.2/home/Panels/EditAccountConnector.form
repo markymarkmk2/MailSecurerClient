@@ -43,32 +43,50 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="LB_PWD" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="LB_SERVER" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="LB_USER" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="LB_PWD1" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="CB_TYPE" alignment="0" min="-2" pref="122" max="-2" attributes="1"/>
-                              <Component id="TXT_DOMAINLIST" alignment="1" pref="303" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="1" attributes="0">
-                                      <Component id="TXTP_PWD1" alignment="0" pref="167" max="32767" attributes="1"/>
-                                      <Component id="TXTP_PWD" alignment="0" pref="167" max="32767" attributes="1"/>
-                                      <Component id="TXT_USERNAME" alignment="0" pref="167" max="32767" attributes="1"/>
-                                      <Component id="TXT_SERVER" alignment="0" pref="167" max="32767" attributes="3"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="LB_PWD" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="LB_USER" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="LB_PWD1" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" attributes="0">
-                                          <Component id="LB_PORT" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                                          <Component id="TXT_PORT" min="-2" pref="86" max="-2" attributes="1"/>
+                                          <Group type="103" groupAlignment="1" attributes="0">
+                                              <Component id="TXTP_PWD1" alignment="0" pref="176" max="32767" attributes="1"/>
+                                              <Component id="TXTP_PWD" alignment="0" pref="176" max="32767" attributes="1"/>
+                                              <Component id="TXT_USERNAME" alignment="0" pref="176" max="32767" attributes="1"/>
+                                          </Group>
+                                          <EmptySpace min="-2" pref="127" max="-2" attributes="0"/>
                                       </Group>
-                                      <Component id="BT_DISABLED" alignment="0" min="-2" pref="115" max="-2" attributes="1"/>
+                                      <Component id="TXT_DOMAINLIST" pref="303" max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="LB_SERVER" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="LB_AD_DOMAIN" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="CB_TYPE" alignment="0" min="-2" pref="122" max="-2" attributes="1"/>
+                                      <Group type="102" alignment="1" attributes="0">
+                                          <Group type="103" groupAlignment="1" attributes="0">
+                                              <Component id="TXT_AD_DOMAIN" alignment="0" pref="167" max="32767" attributes="0"/>
+                                              <Component id="TXT_SERVER" alignment="1" pref="167" max="32767" attributes="3"/>
+                                          </Group>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="102" attributes="0">
+                                                  <Component id="LB_PORT" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                                  <Component id="TXT_PORT" min="-2" pref="86" max="-2" attributes="1"/>
+                                              </Group>
+                                              <Component id="BT_DISABLED" alignment="0" min="-2" pref="115" max="-2" attributes="1"/>
+                                          </Group>
+                                      </Group>
                                   </Group>
                               </Group>
                           </Group>
@@ -98,14 +116,19 @@
                               </Group>
                               <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="14" max="32767" attributes="0"/>
+                          <EmptySpace pref="10" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="TXT_SERVER" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                               <Component id="LB_SERVER" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="TXT_PORT" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                               <Component id="LB_PORT" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="TXT_AD_DOMAIN" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="LB_AD_DOMAIN" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="TXT_USERNAME" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="LB_USER" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -125,18 +148,18 @@
                               <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="TXT_DOMAINLIST" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="38" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
-                      <Component id="PN_LDAPOPT" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="PN_LDAPOPT" min="0" pref="126" max="32767" attributes="1"/>
+                      <Component id="jPanel3" alignment="0" max="32767" attributes="1"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -400,11 +423,11 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="TXT_LDAP_SB" alignment="0" pref="104" max="32767" attributes="0"/>
-                          <Component id="TXT_MAILFIELDS" alignment="0" pref="104" max="32767" attributes="0"/>
-                          <Component id="TXT_SEARCHFIELD" alignment="0" pref="104" max="32767" attributes="0"/>
+                          <Component id="TXT_LDAP_SB" alignment="0" pref="100" max="32767" attributes="0"/>
+                          <Component id="TXT_MAILFIELDS" alignment="0" pref="100" max="32767" attributes="0"/>
+                          <Component id="TXT_SEARCHFIELD" alignment="0" pref="100" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -425,7 +448,7 @@
                           <Component id="CB_LDAP_SB" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="TXT_LDAP_SB" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -587,6 +610,15 @@
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="LB_AD_DOMAIN">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="AD_Domain" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="TXT_AD_DOMAIN">
         </Component>
       </SubComponents>
     </Container>
