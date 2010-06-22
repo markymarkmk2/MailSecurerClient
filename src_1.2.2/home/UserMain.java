@@ -1249,6 +1249,15 @@ public class UserMain extends javax.swing.JFrame implements LogListener
             if (UserMain.errm_ok_cancel(null, UserMain.Txt("You_have_made_changes,_you_want_to_initialize?")) )
             {
                 UserMain.self.initialize_act_mandant();
+
+                userLevel = USERMODE.UL_DUMMY;
+                
+                UserMain.fcc.close();
+                UserMain.sqc.close();
+                restart_gui();
+                reset_act_userdata();
+
+                UserMain.info_ok(null, UserMain.Txt("Please_login_again") );
             }
         }
 
