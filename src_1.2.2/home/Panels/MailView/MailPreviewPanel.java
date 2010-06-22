@@ -492,11 +492,12 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             }
         });
 
-        SPL_MAIL.setDividerLocation(80);
+        SPL_MAIL.setDividerLocation(70);
         SPL_MAIL.setDividerSize(3);
         SPL_MAIL.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
         jSplitPane2.setDividerLocation(400);
+        jSplitPane2.setDividerSize(3);
         jSplitPane2.setLeftComponent(SCP_HEADER);
         jSplitPane2.setRightComponent(SCP_ATTACHMENT);
 
@@ -508,7 +509,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
+            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
         );
 
         SPL_MAIL.setTopComponent(jPanel1);
@@ -525,7 +526,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         );
         PN_VIEWLayout.setVerticalGroup(
             PN_VIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SCP_TXTA, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
+            .addComponent(SCP_TXTA, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
         );
 
         SPL_MAIL.setBottomComponent(PN_VIEW);

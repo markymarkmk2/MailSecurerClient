@@ -40,6 +40,8 @@ import home.shared.hibernate.Role;
 import home.shared.mail.RFCMimeMail;
 import java.awt.Component;
 import java.awt.FileDialog;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedInputStream;
@@ -765,6 +767,10 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     MailTableRowSorter sorter;
 
     public static final double DFLT_DIV_POS = 0.3;
+    private static int SIMPLE_TAB_COL_CONDITION = 0;
+    private static int SIMPLE_TAB_COL_NEG = 1;
+    private static int SIMPLE_TAB_COL_VALUE = 2;
+    private static int SIMPLE_TAB_COL_DELETE = 3;
 
     /** Creates new form MailViewPanel */
     public MailViewPanel()
@@ -820,19 +826,29 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         CB_NEG.addItem( new NegCBEntry(true));
 
         JTextField TXT_VAL = new JTextField();
-        
-        simple_search_table.getColumnModel().getColumn(1).setMinWidth(30);
-        simple_search_table.getColumnModel().getColumn(1).setMaxWidth(30);
-        simple_search_table.getColumnModel().getColumn(3).setMinWidth(30);
-        simple_search_table.getColumnModel().getColumn(3).setMaxWidth(30);
-        simple_search_table.getColumnModel().getColumn(0).setCellEditor( new DefaultCellEditor(  CB_CONDITION ) );
-        simple_search_table.getColumnModel().getColumn(1).setCellEditor( new DefaultCellEditor(  CB_NEG ) );
+        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_NEG).setMinWidth(30);
+        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_NEG).setMaxWidth(30);
+        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_DELETE).setMinWidth(30);
+        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_DELETE).setMaxWidth(30);
+        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_CONDITION).setCellEditor( new DefaultCellEditor(  CB_CONDITION ) );
+        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_NEG).setCellEditor( new DefaultCellEditor(  CB_NEG ) );
         DefaultCellEditor txt_editor = new DefaultCellEditor( TXT_VAL);
         txt_editor.setClickCountToStart(1);
         txt_editor.addCellEditorListener(this);
-     
-        simple_search_table.getColumnModel().getColumn(2).setCellEditor( txt_editor  );
+        TXT_VAL.addActionListener( new ActionListener()
+        {
 
+            @Override
+            public void actionPerformed( ActionEvent e )
+            {
+                simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_VALUE).getCellEditor().stopCellEditing();
+                last_filter = simple_search_tablemodel.get_compressed_xml_list_data();
+                do_filter_search();
+            }
+        });
+
+        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_VALUE).setCellEditor( txt_editor  );
+       
         TBP_SEARCH.setSelectedIndex(SIMPLE_SEARCH);
 
         CB_VIEW_CONTENT.setSelected(true);
@@ -840,7 +856,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
         if (CB_VIEW_CONTENT.isSelected())
         {
-            SPL_VIEW.setDividerLocation(DFLT_DIV_POS);
+            SPL_VIEW.setDividerLocation(200);
         }
         else
         {
@@ -2045,7 +2061,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     {//GEN-HEADEREND:event_BT_ADDActionPerformed
         // TODO add your handling code here:
         // DEFAULT: ALL CONTAINS WORD
-        simple_search_tablemodel.model.getChildren().add( new ExprEntry(simple_search_tablemodel.model.getChildren(), CS_Constants.VFLD_ALL, "", ExprEntry.OPERATION.CONTAINS, ExprEntry.TYPE.STRING, false, false));
+        simple_search_tablemodel.model.getChildren().add( new ExprEntry(simple_search_tablemodel.model.getChildren(), CS_Constants.FLD_FROM, "", ExprEntry.OPERATION.CONTAINS, ExprEntry.TYPE.STRING, false, false));
         simple_search_tablemodel.fireTableDataChanged();
 
     }//GEN-LAST:event_BT_ADDActionPerformed
@@ -2064,7 +2080,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     private void BT_SIMPLESEARCHActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_SIMPLESEARCHActionPerformed
     {//GEN-HEADEREND:event_BT_SIMPLESEARCHActionPerformed
         // TODO add your handling code here:
-        boolean b1 = simple_search_table.getColumnModel().getColumn(1).getCellEditor().stopCellEditing();
+        boolean b1 = simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_VALUE).getCellEditor().stopCellEditing();
         boolean b2 = BT_SIMPLESEARCH.requestFocusInWindow();
         last_filter = simple_search_tablemodel.get_compressed_xml_list_data();
         
@@ -2273,7 +2289,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     @Override
     public void editingStopped( ChangeEvent e )
     {
-        this.BT_SIMPLESEARCHActionPerformed(null);
+        //this.BT_SIMPLESEARCHActionPerformed(null);
     }
 
     @Override
