@@ -11,7 +11,6 @@
 
 package dimm.home.Panels.MailView;
 
-import com.thoughtworks.xstream.XStream;
 import dimm.home.Main;
 import dimm.home.Panels.LogicFilter;
 import dimm.home.Panels.Login4EyesPanel;
@@ -23,6 +22,7 @@ import dimm.home.ServerConnect.FunctionCallConnect;
 import dimm.home.ServerConnect.InStreamID;
 import dimm.home.ServerConnect.ServerInputStream;
 import dimm.home.UserMain;
+import dimm.home.Utilities.CXStream;
 import dimm.home.Utilities.CmdExecutor;
 import home.shared.Utilities.ParseToken;
 import home.shared.Utilities.SizeStr;
@@ -550,7 +550,7 @@ class SimpleSearchTableModel extends AbstractTableModel implements MouseListener
     public String get_compressed_xml_list_data()
     {
         String xml = null;
-        XStream xstr = new XStream();
+        CXStream xstr = new CXStream();
 
         ArrayList<LogicEntry> al = new ArrayList<LogicEntry>();
 
@@ -942,7 +942,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             return;
         }
 
-        XStream xstream = new XStream();
+        CXStream xstream = new CXStream();
         Object o = xstream.fromXML(search_get_ret.substring(3));
 
         if (o instanceof ArrayList)

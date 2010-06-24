@@ -11,15 +11,14 @@
 
 package dimm.home.Panels;
 
-import com.thoughtworks.xstream.XStream;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.Rendering.GlossTable;
 import dimm.home.ServerConnect.FunctionCallConnect;
 import dimm.home.UserMain;
+import dimm.home.Utilities.CXStream;
 import home.shared.Utilities.ParseToken;
-import home.shared.Utilities.ZipUtilities;
 import home.shared.license.DemoLicenseTicket;
 import home.shared.license.HWIDLicenseTicket;
 import home.shared.license.LicenseTicket;
@@ -477,7 +476,7 @@ public class LicensePanel extends GlossDialogPanel implements MouseListener,  Pr
         if (lic_path.exists())
         {
             FileInputStream fis = null;
-            XStream xs = new XStream();
+            CXStream xs = new CXStream();
             try
             {
                 fis = new FileInputStream(lic_path);

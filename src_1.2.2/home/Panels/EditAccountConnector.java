@@ -5,7 +5,6 @@
  */
 package dimm.home.Panels;
 
-import com.thoughtworks.xstream.XStream;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.UserMain;
 import javax.swing.JButton;
@@ -15,6 +14,7 @@ import dimm.home.Panels.MailView.GetUserMailPwdPanel;
 import dimm.home.Rendering.EditTextList;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.ServerConnect.ServerCall;
+import dimm.home.Utilities.CXStream;
 import dimm.home.Utilities.SwingWorker;
 import home.shared.Utilities.Validator;
 import home.shared.CS_Constants;
@@ -825,7 +825,7 @@ public class EditAccountConnector extends GenericEditPanel
         // BUILD IMPORT_COMMAND
 
 
-        XStream xs = new XStream();
+        CXStream xs = new CXStream();
         String cert_xml = xs.toXML(bb);
         
         final String cmd = "upload_certificate MA:" + object.getMandant().getId() + " TY:cacert + CERT:" + cert_xml;

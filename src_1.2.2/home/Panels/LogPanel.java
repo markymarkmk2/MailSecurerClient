@@ -302,14 +302,19 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         long get_line_cnt = 5;
         while(!found_last_top)
         {
-            // UPPER LIMIT
-            if (get_line_cnt > LINES_PER_CALL)
-                break; 
 
             // GET LINES UNTIL WE REACH LAST TOP
             String new_top = read_nlines_block( get_line_cnt, 0);
             if (new_top == null || new_top.length() == 0)
                 break;
+
+            // UPPER LIMIT ?
+            if (get_line_cnt > LINES_PER_CALL)
+            {
+                // SET AS NEW START
+                LOG_TEXT.setText(new_top);
+                break;
+            }
 
             // IS LAST LINE IDENTICAL TO THIS LINE?
             java.util.StringTokenizer stok = new java.util.StringTokenizer( new_top, "\n\r" );

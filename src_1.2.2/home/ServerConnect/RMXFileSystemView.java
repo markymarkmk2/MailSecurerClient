@@ -5,7 +5,7 @@
 
 package dimm.home.ServerConnect;
 
-import com.thoughtworks.xstream.XStream;
+import dimm.home.Utilities.CXStream;
 import home.shared.SQL.RMXFile;
 import java.io.IOException;
 import javax.swing.Icon;
@@ -24,21 +24,21 @@ public class RMXFileSystemView
     
     static RMXFile toFile( String s )
     {
-        XStream xs = new XStream();
+        CXStream xs = new CXStream();
         RMXFile f = (RMXFile)xs.fromXML( s );
         return f;
     }
 
     static RMXFile[] toFileArray( String s )
     {
-        XStream xs = new XStream();
+        CXStream xs = new CXStream();
         RMXFile f[] = (RMXFile[])xs.fromXML( s );
         return f;
     }
 
     static String fromFile( RMXFile f )
     {
-        XStream xs = new XStream();
+        CXStream xs = new CXStream();
         return xs.toXML(f);
     }
     private void check_answer( String ret ) throws IOException

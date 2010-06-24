@@ -11,10 +11,10 @@
 
 package dimm.home.Panels;
 
-import com.thoughtworks.xstream.XStream;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.UserMain;
+import dimm.home.Utilities.CXStream;
 import home.shared.Utilities.ParseToken;
 import home.shared.filter.ExprEntry;
 import home.shared.filter.ExprEntry.OPERATION;
@@ -644,7 +644,7 @@ public class LogicFilter extends GlossDialogPanel
         // TODO add your handling code here:
         setOkay(true);
         this.my_dlg.setVisible(false);
-        XStream xstr = new XStream();
+        CXStream xstr = new CXStream();
         try
         {
             FileOutputStream fos = new FileOutputStream("last_rule.txt");

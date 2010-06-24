@@ -5,7 +5,6 @@
  */
 package dimm.home.Panels;
 
-import com.thoughtworks.xstream.XStream;
 import home.shared.SQL.SQLResult;
 import dimm.home.Models.OverviewModel;
 import dimm.home.Rendering.EditTextList;
@@ -18,6 +17,7 @@ import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StatementID;
 import dimm.home.UserMain;
+import dimm.home.Utilities.CXStream;
 import dimm.home.Utilities.SwingWorker;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -964,7 +964,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         // BUILD IMPORT_COMMAND
 
 
-        XStream xs = new XStream();
+        CXStream xs = new CXStream();
         String cert_xml = xs.toXML(bb);
 
         final String cmd = "upload_certificate MA:" + object.getId() + " TY:cacert + CERT:" + cert_xml;

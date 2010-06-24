@@ -8,9 +8,9 @@ import java.lang.reflect.Method;
 import home.shared.hibernate.DiskArchive;
 import home.shared.hibernate.DiskSpace;
 import home.shared.hibernate.Mandant;
-import com.thoughtworks.xstream.XStream;
 
 import dimm.home.UserMain;
+import dimm.home.Utilities.CXStream;
 import home.shared.CS_Constants;
 import home.shared.SQL.SQLArrayResult;
 import home.shared.hibernate.AccountConnector;
@@ -914,7 +914,7 @@ public class ServerTCPCall extends ServerCall
             {
                 String xml = ret.substring(idx + 2);
 
-                XStream xstream = new XStream();
+                CXStream xstream = new CXStream();
                 SQLArrayResult retarr = (SQLArrayResult) xstream.fromXML(xml);
                 retarr.decode();
                 return retarr;
@@ -1866,7 +1866,7 @@ public class ServerTCPCall extends ServerCall
 
         try
         {
-            XStream xs = new XStream();
+            CXStream xs = new CXStream();
             String xml = xs.toXML(o);
 
             String ret = send_rmx("DeleteObject " + xml, SHORT_CMD_TO);
