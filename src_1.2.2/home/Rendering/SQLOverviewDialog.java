@@ -5,6 +5,7 @@
 
 package dimm.home.Rendering;
 
+import dimm.home.Main;
 import dimm.home.Models.OverviewModel;
 import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ServerCall;
@@ -345,5 +346,154 @@ public abstract class SQLOverviewDialog extends JDialog  implements MouseListene
 
         this.repaint();
     }
+
+    protected void initComponents()
+    {
+        java.awt.GridBagConstraints gridBagConstraints;
+
+        PN_MAIN = new GlossPanel();
+        PN_TITLE = new javax.swing.JPanel();
+        PN_TABLE = new javax.swing.JPanel();
+        SCP_TABLE = new javax.swing.JScrollPane();
+        PN_BUTTONS = new javax.swing.JPanel();
+        BT_NEW = new GlossButton();
+        BT_QUIT = new GlossButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
+
+        PN_MAIN.setLayout(new java.awt.GridBagLayout());
+
+        if (Main.ui.has_rendered_panels())
+        {
+            setBackground(new java.awt.Color(0, 0, 0));
+            setUndecorated(true);
+
+            PN_MAIN.setBackground(new java.awt.Color(51, 51, 51));
+
+            PN_TITLE.setOpaque(false);
+            PN_TITLE.setLayout(new javax.swing.BoxLayout(PN_TITLE, javax.swing.BoxLayout.LINE_AXIS));
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy = 0;
+            gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+            gridBagConstraints.weightx = 1.0;
+            gridBagConstraints.insets = new java.awt.Insets(2, 2, 0, 2);
+            PN_MAIN.add(PN_TITLE, gridBagConstraints);
+
+            PN_TABLE.setBackground(new java.awt.Color(51, 51, 51));
+            PN_TABLE.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+            PN_TABLE.setForeground(new java.awt.Color(255, 255, 255));
+            PN_TABLE.setOpaque(false);
+
+            SCP_TABLE.setBackground(new java.awt.Color(51, 51, 51));
+            SCP_TABLE.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 3, 1, 3));
+            SCP_TABLE.setOpaque(false);
+        }
+        SCP_TABLE.setPreferredSize(new java.awt.Dimension(600, 250));
+
+        PN_TABLE.setLayout(new javax.swing.BoxLayout(PN_TABLE, javax.swing.BoxLayout.LINE_AXIS));
+        PN_TABLE.add(SCP_TABLE);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 2, 2, 2);
+        PN_MAIN.add(PN_TABLE, gridBagConstraints);
+
+        BT_NEW.setText(UserMain.Txt("New")); // NOI18N
+        BT_QUIT.setText(UserMain.Txt("CLOSE_DIALOG")); // NOI18N
+
+
+        //BT_NEW.setMargin(new java.awt.Insets(2, 20, 2, 20));
+
+        if (Main.ui.has_rendered_panels())
+        {
+            PN_BUTTONS.setOpaque(false);
+
+            BT_NEW.setForeground(new java.awt.Color(204, 204, 204));
+            BT_NEW.setActionCommand("        ");
+            BT_NEW.setBorder(null);
+            BT_NEW.setContentAreaFilled(false);
+            BT_QUIT.setForeground(new java.awt.Color(204, 204, 204));
+            
+            BT_QUIT.setBorder(BT_NEW.getBorder());
+            BT_QUIT.setContentAreaFilled(false);
+        }
+        BT_NEW.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_NEWActionPerformed(evt);
+            }
+        });
+
+        BT_QUIT.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_QUITActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout PN_BUTTONSLayout = new javax.swing.GroupLayout(PN_BUTTONS);
+        PN_BUTTONS.setLayout(PN_BUTTONSLayout);
+        PN_BUTTONSLayout.setHorizontalGroup(
+            PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
+                .addContainerGap(200, Short.MAX_VALUE)
+                .addComponent(BT_NEW, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(BT_QUIT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14))
+        );
+        PN_BUTTONSLayout.setVerticalGroup(
+            PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PN_BUTTONSLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BT_QUIT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BT_NEW, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(0, 2, 2, 2);
+        PN_MAIN.add(PN_BUTTONS, gridBagConstraints);
+
+        getContentPane().add(PN_MAIN);
+
+        pack();
+    }// </editor-fold>
+
+ protected void BT_NEWActionPerformed(java.awt.event.ActionEvent evt)
+    {
+        // TODO add your handling code here:
+
+                new_edit_dlg();
+
+    }
+
+    protected void BT_QUITActionPerformed(java.awt.event.ActionEvent evt)
+    {
+        // TODO add your handling code here:
+        this.setVisible(false);
+    }
+
+
+    // Variables declaration - do not modify
+    protected javax.swing.JButton BT_NEW;
+    protected javax.swing.JButton BT_QUIT;
+    protected javax.swing.JPanel PN_BUTTONS;
+    protected org.jdesktop.swingx.JXPanel PN_MAIN;
+    protected javax.swing.JPanel PN_TABLE;
+    protected javax.swing.JPanel PN_TITLE;
+    protected javax.swing.JScrollPane SCP_TABLE;
+    // End of variables declaration
+
 
 }

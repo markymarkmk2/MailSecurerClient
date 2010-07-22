@@ -86,7 +86,7 @@
                       <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="CB_VAULT" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="25" max="32767" attributes="0"/>
+                  <EmptySpace pref="27" max="32767" attributes="0"/>
                   <Component id="BT_DISABLED" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -184,10 +184,10 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="154" max="32767" attributes="0"/>
-                  <Component id="BT_ABORT" min="-2" pref="80" max="-2" attributes="0"/>
+                  <EmptySpace pref="180" max="32767" attributes="0"/>
+                  <Component id="BT_ABORT" linkSize="1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="BT_OK" min="-2" pref="80" max="-2" attributes="0"/>
+                  <Component id="BT_OK" linkSize="1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -197,8 +197,8 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="BT_OK" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
-                      <Component id="BT_ABORT" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                      <Component id="BT_OK" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="BT_ABORT" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>

@@ -21,7 +21,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="BT_CHANGE_PWD" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="82" max="32767" attributes="0"/>
+                      <EmptySpace pref="153" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="BT_ABORT" linkSize="2" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="BT_OK" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -38,11 +38,11 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="CB_SERVER" alignment="0" pref="196" max="32767" attributes="1"/>
-                          <Component id="CB_MANDANT" alignment="0" pref="196" max="32767" attributes="1"/>
-                          <Component id="CB_USER" alignment="0" pref="196" max="32767" attributes="1"/>
-                          <Component id="TXT_USER" alignment="1" pref="196" max="32767" attributes="1"/>
-                          <Component id="PF_PWD" pref="196" max="32767" attributes="1"/>
+                          <Component id="CB_SERVER" alignment="0" pref="267" max="32767" attributes="1"/>
+                          <Component id="CB_MANDANT" alignment="0" pref="267" max="32767" attributes="1"/>
+                          <Component id="CB_USER" alignment="0" pref="267" max="32767" attributes="1"/>
+                          <Component id="TXT_USER" alignment="1" pref="267" max="32767" attributes="1"/>
+                          <Component id="PF_PWD" pref="267" max="32767" attributes="1"/>
                           <Component id="BT_SSL" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>

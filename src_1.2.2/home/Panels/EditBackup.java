@@ -356,6 +356,7 @@ public class EditBackup  extends GenericEditPanel
         TXTF_TIME0.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT))));
         TXTF_TIME0.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         TXTF_TIME0.setText("02:00");
+        TXTF_TIME0.setPreferredSize(new java.awt.Dimension(40, 20));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -364,7 +365,7 @@ public class EditBackup  extends GenericEditPanel
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TXTF_TIME0, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TXTF_TIME0, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(CB_DAY1))
                 .addContainerGap(27, Short.MAX_VALUE))
         );
@@ -388,6 +389,7 @@ public class EditBackup  extends GenericEditPanel
         TXTF_TIME1.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT))));
         TXTF_TIME1.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         TXTF_TIME1.setText("02:00");
+        TXTF_TIME1.setPreferredSize(new java.awt.Dimension(40, 20));
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -396,7 +398,7 @@ public class EditBackup  extends GenericEditPanel
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TXTF_TIME1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TXTF_TIME1, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(CB_DAY2))
                 .addContainerGap(23, Short.MAX_VALUE))
         );
@@ -420,6 +422,7 @@ public class EditBackup  extends GenericEditPanel
         TXTF_TIME2.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT))));
         TXTF_TIME2.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         TXTF_TIME2.setText("02:00");
+        TXTF_TIME2.setPreferredSize(new java.awt.Dimension(40, 20));
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -428,9 +431,9 @@ public class EditBackup  extends GenericEditPanel
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TXTF_TIME2, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TXTF_TIME2, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(CB_DAY3))
-                .addContainerGap(7, Short.MAX_VALUE))
+                .addGap(7, 7, 7))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -452,6 +455,7 @@ public class EditBackup  extends GenericEditPanel
         TXTF_TIME3.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT))));
         TXTF_TIME3.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         TXTF_TIME3.setText("02:00");
+        TXTF_TIME3.setPreferredSize(new java.awt.Dimension(40, 20));
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -460,7 +464,7 @@ public class EditBackup  extends GenericEditPanel
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TXTF_TIME3, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TXTF_TIME3, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(CB_DAY4))
                 .addContainerGap(19, Short.MAX_VALUE))
         );
@@ -484,6 +488,7 @@ public class EditBackup  extends GenericEditPanel
         TXTF_TIME4.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT))));
         TXTF_TIME4.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         TXTF_TIME4.setText("02:00");
+        TXTF_TIME4.setPreferredSize(new java.awt.Dimension(40, 20));
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -492,7 +497,7 @@ public class EditBackup  extends GenericEditPanel
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TXTF_TIME4, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TXTF_TIME4, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(CB_DAY5))
                 .addContainerGap(35, Short.MAX_VALUE))
         );
@@ -516,6 +521,7 @@ public class EditBackup  extends GenericEditPanel
         TXTF_TIME5.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT))));
         TXTF_TIME5.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         TXTF_TIME5.setText("02:00");
+        TXTF_TIME5.setPreferredSize(new java.awt.Dimension(40, 20));
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -524,7 +530,7 @@ public class EditBackup  extends GenericEditPanel
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TXTF_TIME5, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TXTF_TIME5, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(CB_DAY6))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
@@ -548,6 +554,7 @@ public class EditBackup  extends GenericEditPanel
         TXTF_TIME6.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT))));
         TXTF_TIME6.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         TXTF_TIME6.setText("02:00");
+        TXTF_TIME6.setPreferredSize(new java.awt.Dimension(40, 20));
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
@@ -556,7 +563,7 @@ public class EditBackup  extends GenericEditPanel
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TXTF_TIME6, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TXTF_TIME6, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(CB_DAY7))
                 .addContainerGap(29, Short.MAX_VALUE))
         );
@@ -579,7 +586,7 @@ public class EditBackup  extends GenericEditPanel
                 .addGap(0, 0, 0)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
@@ -727,25 +734,26 @@ public class EditBackup  extends GenericEditPanel
                                     .addComponent(jLabel6))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(CB_MODE, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(CB_VAULT, 0, 259, Short.MAX_VALUE)
+                                    .addComponent(TXTF_VALID_FROM, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(TXT_AGENT, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(CB_MODE, javax.swing.GroupLayout.Alignment.LEADING, 0, 186, Short.MAX_VALUE)
+                                            .addComponent(TXT_AGENT, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE))
                                         .addGap(18, 18, 18)
                                         .addComponent(TXT_AGENT_PORT, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(CB_VAULT, 0, 221, Short.MAX_VALUE)
-                                    .addComponent(TXTF_VALID_FROM, javax.swing.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE)
-                                    .addComponent(TXT_PATH, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(TXT_PATH, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE))
                                 .addGap(18, 18, 18))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(BT_START, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(BT_START)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(layout.createSequentialGroup()
                                     .addGap(259, 259, 259)
-                                    .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(BT_ABORT)
                                     .addGap(18, 18, 18)
-                                    .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(BT_OK))
                                 .addGroup(layout.createSequentialGroup()
                                     .addGap(18, 18, 18)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -755,6 +763,9 @@ public class EditBackup  extends GenericEditPanel
                     .addComponent(PN_SCHEDULE, javax.swing.GroupLayout.DEFAULT_SIZE, 718, Short.MAX_VALUE))
                 .addContainerGap())
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {BT_ABORT, BT_OK});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()

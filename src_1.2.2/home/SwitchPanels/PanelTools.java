@@ -7,7 +7,7 @@ package dimm.home.SwitchPanels;
 
 import dimm.home.Panels.AuditPanel;
 import dimm.home.Panels.Diagnose.StorageDiagnose;
-import dimm.home.Panels.LogPanel;
+import dimm.home.Panels.Diagnose.LogPanel;
 import dimm.home.Panels.MailImport.PanelImportMailbox;
 import dimm.home.Rendering.FlatBackgroundTitle;
 import dimm.home.Rendering.GhostButton;

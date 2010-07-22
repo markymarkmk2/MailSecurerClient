@@ -134,31 +134,34 @@ public class TitlePanel extends JComponent
   */      
         mouse_handler = new MouseInputHandler();
         Window window = SwingUtilities.getWindowAncestor(this);
-        window.addMouseListener(mouse_handler);
-        window.addMouseMotionListener(mouse_handler);
-
-        window_handler = new WindowHandler();
-        window.addWindowListener(window_handler);
-        
-        if (window instanceof JDialog)
+        if (window != null)
         {
-            JRootPane rootPane = this.getRootPane();
-            InputMap iMap = rootPane.getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW);
-            iMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "escape");
+            window.addMouseListener(mouse_handler);
+            window.addMouseMotionListener(mouse_handler);
 
-            ActionMap aMap = rootPane.getActionMap();
-            if (aMap.get("escape") == null)
+            window_handler = new WindowHandler();
+            window.addWindowListener(window_handler);
+
+            if (window instanceof JDialog)
             {
-                aMap.put("escape", new AbstractAction()
-                    {
-                    @Override
-                        public void actionPerformed(ActionEvent e)
+                JRootPane rootPane = this.getRootPane();
+                InputMap iMap = rootPane.getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW);
+                iMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "escape");
+
+                ActionMap aMap = rootPane.getActionMap();
+                if (aMap.get("escape") == null)
+                {
+                    aMap.put("escape", new AbstractAction()
                         {
-                            close();
-                        } });
-            }                
-            
-        }        
+                        @Override
+                            public void actionPerformed(ActionEvent e)
+                            {
+                                close();
+                            } });
+                }
+
+            }
+        }
     }
     
     public void removeListeners()
@@ -333,7 +336,7 @@ public class TitlePanel extends JComponent
         
         if (title != null)
         {
-            g2.setColor( Main.ui.get_nice_white() );
+            g2.setColor( Main.ui.get_foreground() );
             g2.setFont(titleFont);
             g2.drawString(title, 22, getHeight() - 6);
         }

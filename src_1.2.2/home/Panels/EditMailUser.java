@@ -286,7 +286,7 @@ public class EditMailUser extends GenericEditPanel implements PropertyChangeList
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SCP_ADD_MAIL, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
+            .addComponent(SCP_ADD_MAIL, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(UserMain.Txt("Allowed_Viewers"))); // NOI18N
@@ -299,7 +299,7 @@ public class EditMailUser extends GenericEditPanel implements PropertyChangeList
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SCP_VIEW_MAIL, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
+            .addComponent(SCP_VIEW_MAIL, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
         );
 
         BT_NEW_ADD_MAIL.setText(UserMain.Txt("New")); // NOI18N
@@ -365,7 +365,7 @@ public class EditMailUser extends GenericEditPanel implements PropertyChangeList
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_NEW_ADD_MAIL)
@@ -401,10 +401,10 @@ public class EditMailUser extends GenericEditPanel implements PropertyChangeList
         PN_BUTTONSLayout.setHorizontalGroup(
             PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
-                .addContainerGap(484, Short.MAX_VALUE)
-                .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(510, Short.MAX_VALUE)
+                .addComponent(BT_ABORT)
                 .addGap(18, 18, 18)
-                .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(BT_OK)
                 .addContainerGap())
         );
 
@@ -415,8 +415,8 @@ public class EditMailUser extends GenericEditPanel implements PropertyChangeList
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(BT_OK)
+                    .addComponent(BT_ABORT))
                 .addContainerGap())
         );
 

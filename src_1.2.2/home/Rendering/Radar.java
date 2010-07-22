@@ -28,6 +28,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.Timer;
 import org.jdesktop.fuse.InjectedResource;
 import org.jdesktop.fuse.ResourceInjector;
@@ -373,7 +374,7 @@ public class Radar extends JComponent implements ActionListener
 
         if (with_percent)
         {
-            g2.setColor(Main.ui.get_nice_white());
+            g2.setColor(Main.ui.get_foreground());
             String pc_str = "" + (int)(percent_val + 0.5) + "%";
             FontRenderContext frc = g2.getFontRenderContext();
             TextLayout tl = new TextLayout(pc_str, pc_font, frc);
@@ -406,5 +407,18 @@ public class Radar extends JComponent implements ActionListener
             }
         }
         repaint();
+    }
+    
+    public static void main( String[] args )
+    {
+        JFrame  dlg = new JFrame("RadarTest");
+
+        Radar radar = new Radar();
+        dlg.add( radar);
+        radar.start();
+        dlg.pack();
+        dlg.setVisible(true);
+        
+
     }
 }

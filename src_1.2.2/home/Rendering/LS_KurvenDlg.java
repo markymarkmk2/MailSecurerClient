@@ -92,8 +92,8 @@ class LS_Achse extends JPanel implements MouseMotionListener
         pnl = _pnl;
         is_x_axis = _is_x_axis;
         clr_legend_bg = Color.black;
-        clr_legend_fg = Main.ui.get_nice_white();
-        clr_cursor = Main.ui.get_appl_base_color();
+        clr_legend_fg = Main.ui.get_foreground();
+        clr_cursor = Main.ui.get_table_header_color();
     }
     @Override
     public void setBounds(int x, int y, int width, int height)
@@ -307,8 +307,8 @@ class LS_Panel extends JPanel implements MouseListener, MouseMotionListener
     LS_Panel(JTextField _TXT_POS)
     {
         TXT_POS = _TXT_POS;
-        clr_back = Main.ui.get_appl_dgray();
-        clr_line_fg = Main.ui.get_appl_base_color();
+        clr_back = Main.ui.get_background();
+        clr_line_fg = Main.ui.get_table_header_color();
         
         setBackground(clr_back);
         
@@ -447,7 +447,7 @@ class LS_Panel extends JPanel implements MouseListener, MouseMotionListener
             Rectangle r = point_to_rect( cursor_pt );
             last_cursor_pt = cursor_pt;        
 
-            g.setColor(Main.ui.get_nice_white());
+            g.setColor(Main.ui.get_foreground());
 
             g.drawOval(r.x - r.width/2, r.y - r.height, r.width, r.height);
 

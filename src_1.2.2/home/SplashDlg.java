@@ -6,22 +6,14 @@
 
 package dimm.home;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageDecoder;
-import com.sun.media.jai.codec.ImageDecoder;
-import com.sun.media.jai.codec.JPEGDecodeParam;
 import dimm.home.Panels.PreferencesPanel;
 import dimm.home.Rendering.GenericGlossyDlg;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
-import java.awt.color.ICC_ColorSpace;
-import java.awt.color.ICC_Profile;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorConvertOp;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
@@ -30,26 +22,13 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import javax.media.jai.ImageLayout;
-import javax.media.jai.JAI;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.RasterFactory;
-import javax.media.jai.RenderedOp;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
 import javax.swing.Timer;
 import org.jdesktop.fuse.InjectedResource;
 import org.jdesktop.fuse.ResourceInjector;
@@ -176,11 +155,12 @@ public class SplashDlg extends javax.swing.JDialog implements ActionListener
         LB_LOAD.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         LB_LOAD.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 
-        LB_VERSION.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        LB_VERSION.setFont(new java.awt.Font("Tahoma", 0, 10));
         LB_VERSION.setForeground(new java.awt.Color(201, 201, 201));
         LB_VERSION.setText("V 1.2.3");
         LB_VERSION.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
+        BT_PREFS.setForeground(new java.awt.Color(210, 210, 210));
         BT_PREFS.setText(UserMain.Txt("Preferences")); // NOI18N
         BT_PREFS.setBorderPainted(false);
         BT_PREFS.setContentAreaFilled(false);

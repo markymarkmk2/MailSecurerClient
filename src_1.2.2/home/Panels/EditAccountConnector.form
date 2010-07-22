@@ -19,104 +19,97 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,-99,0,0,2,121"/>
   </AuxValues>
 
-  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Component id="PN_ACTION" alignment="0" max="32767" attributes="0"/>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" attributes="0">
+              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Component id="PN_ACTION" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
   <SubComponents>
     <Container class="javax.swing.JPanel" name="PN_ACTION">
       <Properties>
         <Property name="doubleBuffered" type="boolean" value="false"/>
         <Property name="opaque" type="boolean" value="false"/>
       </Properties>
-      <Constraints>
-        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-          <GridBagConstraints gridX="-1" gridY="-1" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="1.0"/>
-        </Constraint>
-      </Constraints>
 
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="LB_PWD" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="LB_USER" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="LB_PWD1" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" attributes="0">
-                                          <Group type="103" groupAlignment="1" attributes="0">
-                                              <Component id="TXTP_PWD1" alignment="0" pref="176" max="32767" attributes="1"/>
-                                              <Component id="TXTP_PWD" alignment="0" pref="176" max="32767" attributes="1"/>
-                                              <Component id="TXT_USERNAME" alignment="0" pref="176" max="32767" attributes="1"/>
-                                          </Group>
-                                          <EmptySpace min="-2" pref="127" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Component id="TXT_DOMAINLIST" pref="303" max="32767" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="LB_SERVER" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="LB_AD_DOMAIN" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="CB_TYPE" alignment="0" min="-2" pref="122" max="-2" attributes="1"/>
-                                      <Group type="102" alignment="1" attributes="0">
-                                          <Group type="103" groupAlignment="1" attributes="0">
-                                              <Component id="TXT_AD_DOMAIN" alignment="0" pref="167" max="32767" attributes="0"/>
-                                              <Component id="TXT_SERVER" alignment="1" pref="167" max="32767" attributes="3"/>
-                                          </Group>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Group type="102" attributes="0">
-                                                  <Component id="LB_PORT" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                                                  <Component id="TXT_PORT" min="-2" pref="86" max="-2" attributes="1"/>
-                                              </Group>
-                                              <Component id="BT_DISABLED" alignment="0" min="-2" pref="115" max="-2" attributes="1"/>
-                                          </Group>
-                                      </Group>
-                                  </Group>
-                              </Group>
-                          </Group>
-                          <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-                          <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-                      </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jPanel3" min="-2" max="-2" attributes="1"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="PN_LDAPOPT" max="32767" attributes="0"/>
+                          <Component id="PN_LDAPOPT" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="LB_SERVER" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="LB_AD_DOMAIN" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="LB_PWD" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="LB_PWD1" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="LB_USER" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="LB_LDAP_SB" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="TXT_LDAP_SB" pref="263" max="32767" attributes="0"/>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Component id="CB_TYPE" min="-2" pref="148" max="-2" attributes="1"/>
+                                  <EmptySpace pref="50" max="32767" attributes="0"/>
+                                  <Component id="BT_DISABLED" min="-2" max="-2" attributes="1"/>
+                              </Group>
+                              <Component id="TXT_DOMAINLIST" pref="263" max="32767" attributes="0"/>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Component id="TXT_SERVER" pref="171" max="32767" attributes="3"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="LB_PORT" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="TXT_PORT" min="-2" max="-2" attributes="1"/>
+                              </Group>
+                              <Component id="TXT_AD_DOMAIN" alignment="1" pref="263" max="32767" attributes="1"/>
+                              <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="TXTP_PWD1" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="TXTP_PWD" alignment="0" max="32767" attributes="3"/>
+                                  <Component id="TXT_USERNAME" alignment="0" pref="134" max="32767" attributes="1"/>
+                              </Group>
+                          </Group>
+                          <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
+                          <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="PN_BUTTONS" alignment="0" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                  <Component id="CB_TYPE" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="BT_DISABLED" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="BT_DISABLED" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="CB_TYPE" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="10" max="32767" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="TXT_SERVER" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                               <Component id="LB_SERVER" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -128,12 +121,17 @@
                               <Component id="TXT_AD_DOMAIN" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="LB_AD_DOMAIN" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="TXT_LDAP_SB" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="LB_LDAP_SB" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="TXT_USERNAME" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="LB_USER" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="TXTP_PWD" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="LB_PWD" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -145,21 +143,20 @@
                           </Group>
                           <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="TXT_DOMAINLIST" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" attributes="0">
-                          <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="jPanel1" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="PN_LDAPOPT" min="0" pref="126" max="32767" attributes="1"/>
-                      <Component id="jPanel3" alignment="0" max="32767" attributes="1"/>
+                  <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="PN_LDAPOPT" alignment="1" min="0" pref="121" max="32767" attributes="1"/>
+                      <Component id="jPanel3" alignment="0" min="-2" max="-2" attributes="1"/>
                   </Group>
-                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="PN_BUTTONS" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -206,6 +203,12 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="TXT_PORT">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="12345"/>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[50, 20]"/>
+            </Property>
+          </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="TXT_PORTMouseClicked"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TXT_PORTActionPerformed"/>
@@ -417,17 +420,15 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="CB_LDAP_SB" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="LB_MAILFIELDS" min="-2" max="-2" attributes="0"/>
                           <Component id="LB_SEARCHFIELD" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="TXT_LDAP_SB" alignment="0" pref="100" max="32767" attributes="0"/>
                           <Component id="TXT_MAILFIELDS" alignment="0" pref="100" max="32767" attributes="0"/>
                           <Component id="TXT_SEARCHFIELD" alignment="0" pref="100" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -443,12 +444,7 @@
                           <Component id="TXT_MAILFIELDS" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="LB_MAILFIELDS" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="CB_LDAP_SB" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="TXT_LDAP_SB" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -467,19 +463,6 @@
                   <ResourceString bundle="dimm/home/MA_Properties.properties" key="LDAP_Mail_Field" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="CB_LDAP_SB">
-              <Properties>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="dimm/home/MA_Properties.properties" key="LDAP-Searchbase" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
-                </Property>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CB_LDAP_SBActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JTextField" name="TXT_LDAP_SB">
             </Component>
             <Component class="javax.swing.JTextField" name="TXT_MAILFIELDS">
               <Properties>
@@ -541,7 +524,7 @@
                           <Component id="LB_DOMAINSUFFX" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="TXT_USERDOMAIN" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="14" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -620,103 +603,107 @@
         </Component>
         <Component class="javax.swing.JTextField" name="TXT_AD_DOMAIN">
         </Component>
-      </SubComponents>
-    </Container>
-    <Container class="javax.swing.JPanel" name="PN_BUTTONS">
-      <Properties>
-        <Property name="doubleBuffered" type="boolean" value="false"/>
-        <Property name="opaque" type="boolean" value="false"/>
-      </Properties>
-      <Constraints>
-        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-          <GridBagConstraints gridX="-1" gridY="1" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="0.0"/>
-        </Constraint>
-      </Constraints>
+        <Component class="javax.swing.JTextField" name="TXT_LDAP_SB">
+        </Component>
+        <Component class="javax.swing.JLabel" name="LB_LDAP_SB">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Searchbase" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+        </Component>
+        <Container class="javax.swing.JPanel" name="PN_BUTTONS">
+          <Properties>
+            <Property name="doubleBuffered" type="boolean" value="false"/>
+            <Property name="opaque" type="boolean" value="false"/>
+          </Properties>
 
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="BT_TEST" linkSize="1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="BT_EDIT_USERS" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="182" max="32767" attributes="0"/>
-                  <Component id="BT_ABORT" linkSize="1" min="-2" pref="80" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="BT_OK" linkSize="1" min="-2" pref="80" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace max="32767" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="BT_OK" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
-                      <Component id="BT_ABORT" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
-                      <Component id="BT_TEST" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
-                      <Component id="BT_EDIT_USERS" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="BT_TEST" linkSize="1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="BT_EDIT_USERS" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="197" max="32767" attributes="0"/>
+                      <Component id="BT_ABORT" linkSize="1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="BT_OK" linkSize="1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
               </Group>
-          </Group>
-        </DimensionLayout>
-      </Layout>
-      <SubComponents>
-        <Component class="javax.swing.JButton" name="BT_OK">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Okay" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_OKActionPerformed"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new GlossButton()"/>
-          </AuxValues>
-        </Component>
-        <Component class="javax.swing.JButton" name="BT_ABORT">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Abbruch" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_ABORTActionPerformed"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new GlossButton()"/>
-          </AuxValues>
-        </Component>
-        <Component class="javax.swing.JButton" name="BT_TEST">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Test" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_TESTActionPerformed"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new GlossButton()"/>
-          </AuxValues>
-        </Component>
-        <Component class="javax.swing.JButton" name="BT_EDIT_USERS">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="dimm/home/MA_Properties.properties" key="Edit_users_and_addresses" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_EDIT_USERSActionPerformed"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new GlossButton()"/>
-          </AuxValues>
-        </Component>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="BT_OK" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="BT_ABORT" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="BT_TEST" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="BT_EDIT_USERS" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JButton" name="BT_OK">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="dimm/home/MA_Properties.properties" key="Okay" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_OKActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new GlossButton()"/>
+              </AuxValues>
+            </Component>
+            <Component class="javax.swing.JButton" name="BT_ABORT">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="dimm/home/MA_Properties.properties" key="Abbruch" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_ABORTActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new GlossButton()"/>
+              </AuxValues>
+            </Component>
+            <Component class="javax.swing.JButton" name="BT_TEST">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="dimm/home/MA_Properties.properties" key="Test" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_TESTActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new GlossButton()"/>
+              </AuxValues>
+            </Component>
+            <Component class="javax.swing.JButton" name="BT_EDIT_USERS">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="dimm/home/MA_Properties.properties" key="Edit_users_and_addresses" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_EDIT_USERSActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new GlossButton()"/>
+              </AuxValues>
+            </Component>
+          </SubComponents>
+        </Container>
       </SubComponents>
     </Container>
   </SubComponents>

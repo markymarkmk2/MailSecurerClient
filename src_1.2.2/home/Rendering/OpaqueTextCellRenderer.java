@@ -24,10 +24,13 @@ public class OpaqueTextCellRenderer extends JXLabel implements TableCellRenderer
     public OpaqueTextCellRenderer(boolean opaque, boolean alt_colors)
     {
         setOpaque(opaque);
-        setForeground(Main.ui.get_nice_white());
+        setForeground(Main.ui.get_foreground());
         this.alt_colors = alt_colors;
         this.setLineWrap(true);
-        this.setVerticalAlignment(TOP);
+        if (Main.ui.has_rendered_panels())
+        {
+            this.setVerticalAlignment(TOP);
+        }
         
     }
     public OpaqueTextCellRenderer(boolean opaque)
@@ -50,9 +53,9 @@ public class OpaqueTextCellRenderer extends JXLabel implements TableCellRenderer
             setText(UserMain.getString("-_invalid_-"));
         
         if (isSelected)
-            setForeground(Main.ui.get_appl_selected_color());
+            setForeground(Main.ui.get_selected_color());
         else
-            setForeground(Main.ui.get_nice_white());
+            setForeground(Main.ui.get_foreground());
 
         if (alt_colors && (row & 1) != 0)
         {

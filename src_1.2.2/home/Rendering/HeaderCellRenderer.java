@@ -32,7 +32,7 @@ class HeaderLabel extends JLabel
         else
             g.drawString( getText(), 3, getHeight() -8);
         Color old_color = g.getColor();
-        g.setColor(Main.ui.get_appl_base_color());
+        g.setColor(Main.ui.get_table_header_color());
         g.drawLine(0, getHeight(), getWidth(), getHeight());
         
         if (getCol() > 0)
@@ -64,7 +64,7 @@ public class HeaderCellRenderer implements TableCellRenderer
     public HeaderCellRenderer( boolean alt_colors)
     {
         label = new HeaderLabel();
-        label.setForeground(Main.ui.get_appl_base_color());
+        label.setForeground(Main.ui.get_table_header_color());
         label.setOpaque(false);
         label.setHorizontalAlignment(JLabel.LEFT);
         this.alt_colors = alt_colors;        

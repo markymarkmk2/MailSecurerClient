@@ -347,29 +347,25 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PN_ACTIONLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2)
-                .addGap(61, 61, 61)
-                .addComponent(TXT_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(303, 303, 303))
-            .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(BT_DISABLED, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(460, Short.MAX_VALUE))
-            .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
                     .addComponent(jLabel5)
                     .addComponent(jLabel12)
                     .addComponent(jLabel6))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TXTP_PWD1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TXT_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TXT_USER, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
                     .addComponent(TXTP_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(TXT_USER, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE))
+                    .addComponent(TXTP_PWD1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(303, 303, 303))
+            .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(BT_DISABLED)
+                .addContainerGap(471, Short.MAX_VALUE))
         );
 
-        PN_ACTIONLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {TXTP_PWD, TXT_USER});
+        PN_ACTIONLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {TXTP_PWD, TXTP_PWD1, TXT_NAME, TXT_USER});
 
         PN_ACTIONLayout.setVerticalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -390,7 +386,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(TXTP_PWD1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel12))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 152, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 154, Short.MAX_VALUE)
                 .addComponent(BT_DISABLED)
                 .addContainerGap())
         );
@@ -510,7 +506,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
                 .addComponent(CB_CERTIFICATE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(BT_IMPORT_CERT)
-                .addContainerGap(61, Short.MAX_VALUE))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
 
         BT_TEST.setText(bundle.getString("Test")); // NOI18N
@@ -560,7 +556,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
                             .addComponent(TXT_MAILTO, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(PN_SECURITY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(BT_TEST, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(BT_TEST))
                 .addContainerGap())
         );
         PN_SMTPLayout.setVerticalGroup(
@@ -596,12 +592,12 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
                         .addGroup(PN_SMTPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel14)
                             .addComponent(TXT_MAILTO, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
-                        .addComponent(BT_TEST, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
+                        .addComponent(BT_TEST)
                         .addContainerGap())
                     .addGroup(PN_SMTPLayout.createSequentialGroup()
                         .addComponent(PN_SECURITY, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap(85, Short.MAX_VALUE))))
+                        .addContainerGap(86, Short.MAX_VALUE))))
         );
 
         jTabbedPane1.addTab(UserMain.Txt("SMTP-Parameter"), PN_SMTP); // NOI18N
@@ -635,7 +631,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             .addGroup(PN_INDEXLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(PN_INDEXLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(BT_ADD_HEADER, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BT_ADD_HEADER)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, PN_INDEXLayout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -651,7 +647,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
                     .addComponent(SCP_TABLE, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BT_ADD_HEADER)
-                .addContainerGap(159, Short.MAX_VALUE))
+                .addContainerGap(161, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(bundle.getString("Index_Parameter"), PN_INDEX); // NOI18N
@@ -715,7 +711,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
                 .addGroup(PN_IMAPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(CB_IMAP_SSL)
                     .addComponent(jLabel15))
-                .addContainerGap(208, Short.MAX_VALUE))
+                .addContainerGap(210, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(UserMain.getString("IMAP-Parameter"), PN_IMAP); // NOI18N
@@ -742,19 +738,22 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         PN_BUTTONSLayout.setHorizontalGroup(
             PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
-                .addContainerGap(373, Short.MAX_VALUE)
-                .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(399, Short.MAX_VALUE)
+                .addComponent(BT_ABORT)
                 .addGap(18, 18, 18)
-                .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(BT_OK)
                 .addContainerGap())
         );
+
+        PN_BUTTONSLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {BT_ABORT, BT_OK});
+
         PN_BUTTONSLayout.setVerticalGroup(
             PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(BT_OK)
+                    .addComponent(BT_ABORT))
                 .addContainerGap())
         );
 
@@ -773,7 +772,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(PN_BUTTONS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1446,6 +1445,15 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
                 set_object_flag(CS_Constants.MA_IMAP_SSL);
             }
         }
+        int smtp_flags = 0;
+        if (RB_SSL.isSelected())
+            smtp_flags |= CS_Constants.ACCT_USE_SSL;
+        if (RB_TLS_FORCE.isSelected())
+            smtp_flags |= CS_Constants.ACCT_USE_TLS_FORCE;
+        if (RB_TLS_IV_AVAIL.isSelected())
+            smtp_flags |= CS_Constants.ACCT_USE_TLS_IF_AVAIL;
+
+
 
         object.setImap_port(imap_port);
         object.setImap_host(imap_host);
@@ -1454,6 +1462,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         object.setSmtp_user(TXT_SMTP_USER.getText());
         object.setSmtp_port(Integer.parseInt(TXT_SMTP_PORT.getText()));
         object.setSmtp_pwd(get_smtp_pwd());
+        object.setSmtp_flags(smtp_flags);
         
         object.setMailfrom( TXT_MAILFROM.getText() );
         object.setNotificationlist( TXT_MAILTO.getText() );

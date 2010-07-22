@@ -728,7 +728,7 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
     @Override
     public JButton get_default_button()
     {
-        return BT_OK;
+        return BT_SEARCH;
     }
 
     /** Closes the dialog */

@@ -12,6 +12,7 @@ import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.Rendering.UI_Generic;
 import dimm.home.UserMain;
+import home.shared.Utilities.ParseToken;
 import javax.swing.JButton;
 
 // Preferences
@@ -23,6 +24,7 @@ import javax.swing.JButton;
 public class PreferencesPanel extends GlossDialogPanel
 {
     boolean okay;
+    int last_ui;
 
     public boolean isOkay()
     {
@@ -34,8 +36,29 @@ public class PreferencesPanel extends GlossDialogPanel
     {
         initComponents();
         CB_CHECK_NEW.setSelected( Main.get_long_prop(Preferences.CHECK_NEWS) > 0);
-        
-        COMBO_UI.setSelectedIndex((int)Main.get_long_prop(Preferences.UI, 0l) );
+
+
+        last_ui = (int)Main.get_long_prop(Preferences.UI, 0l);
+        if (last_ui < COMBO_UI.getItemCount())
+            COMBO_UI.setSelectedIndex( last_ui );
+        else
+            COMBO_UI.setSelectedIndex( 0 );
+
+        String ds = Main.get_prop( Preferences.DEFAULT_STATION );
+        if (ds != null && ds.length() > 0)
+        {
+            ParseToken pt = new ParseToken(ds);
+            String ip = pt.GetString("IP:");
+            long po = pt.GetLongValue("PO:");
+            boolean only_this = pt.GetBoolean("OT:");
+
+            if (ip != null && ip.length() > 0 && po > 0)
+            {
+                TXT_SERVER_IP.setText(ip);
+                TXT_SERVER_PORT.setText(Long.toString(po) );
+                CB_NO_SCANNING.setSelected(only_this);
+            }
+        }
 
         String l_code = Main.get_prop( Preferences.COUNTRYCODE, "DE");
 
@@ -57,13 +80,30 @@ public class PreferencesPanel extends GlossDialogPanel
             l_code = "DE";
         }
         Main.set_prop( Preferences.COUNTRYCODE, l_code );
-        Main.set_long_prop(Preferences.UI, COMBO_UI.getSelectedIndex());
+        int selected_ui =  COMBO_UI.getSelectedIndex();
+
+        Main.set_long_prop(Preferences.UI, selected_ui);
         Main.set_long_prop(Preferences.CHECK_NEWS, CB_CHECK_NEW.isSelected() ? 1 : 0);
+
+        String ds = "";
+        if (TXT_SERVER_IP.getText().length() > 0 && TXT_SERVER_PORT.getText().length() > 0)
+        {
+            ds = "NAME:MailSecurer IP:" + TXT_SERVER_IP.getText() + " PO:" + TXT_SERVER_PORT.getText();
+            ds += " OT:" + (CB_NO_SCANNING.isSelected() ? "1":"0");
+        }
+        Main.set_prop( Preferences.DEFAULT_STATION, ds );
 
         Main.get_prefs().store_props();
 
+        if (selected_ui != last_ui)
+        {
+            UserMain.errm_ok(UserMain.Txt("Please_restart_the_Client"));
+            System.exit(0);
+        }
+
         Main.ui = UI_Generic.create_ui( (int)Main.get_long_prop(Preferences.UI, 0l) );
         Main.ui.set_ui(false);
+
 
         if (UserMain.self != null)
         {            
@@ -93,6 +133,11 @@ public class PreferencesPanel extends GlossDialogPanel
         COMBO_LANG = new javax.swing.JComboBox();
         CB_CHECK_NEW = new javax.swing.JCheckBox();
         jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        TXT_SERVER_IP = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        TXT_SERVER_PORT = new javax.swing.JTextField();
+        CB_NO_SCANNING = new javax.swing.JCheckBox();
 
         BT_OK.setText(UserMain.Txt("Okay")); // NOI18N
         BT_OK.addActionListener(new java.awt.event.ActionListener() {
@@ -110,7 +155,7 @@ public class PreferencesPanel extends GlossDialogPanel
 
         jLabel1.setText(UserMain.Txt("Look_n_Feel")); // NOI18N
 
-        COMBO_UI.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Pirates", "Milk" }));
+        COMBO_UI.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Pirates", "Native" }));
 
         jLabel2.setText(UserMain.Txt("Language")); // NOI18N
 
@@ -121,6 +166,13 @@ public class PreferencesPanel extends GlossDialogPanel
 
         jLabel3.setText(UserMain.Txt("CheckNews")); // NOI18N
 
+        jLabel4.setText(UserMain.Txt("Server-IP")); // NOI18N
+
+        jLabel5.setText(UserMain.Txt("Server-Port")); // NOI18N
+
+        CB_NO_SCANNING.setText(UserMain.Txt("No_Scan_for_Servers")); // NOI18N
+        CB_NO_SCANNING.setOpaque(false);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -128,19 +180,27 @@ public class PreferencesPanel extends GlossDialogPanel
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel3))
-                .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(BT_ABORT)
                         .addGap(18, 18, 18)
                         .addComponent(BT_OK))
-                    .addComponent(CB_CHECK_NEW)
-                    .addComponent(COMBO_UI, 0, 152, Short.MAX_VALUE)
-                    .addComponent(COMBO_LANG, 0, 152, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5))
+                        .addGap(20, 20, 20)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(CB_CHECK_NEW)
+                            .addComponent(COMBO_UI, 0, 202, Short.MAX_VALUE)
+                            .addComponent(COMBO_LANG, 0, 202, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(TXT_SERVER_PORT, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                                .addComponent(CB_NO_SCANNING))
+                            .addComponent(TXT_SERVER_IP, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
 
@@ -161,7 +221,16 @@ public class PreferencesPanel extends GlossDialogPanel
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(CB_CHECK_NEW))
-                .addGap(26, 26, 26)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(TXT_SERVER_IP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(TXT_SERVER_PORT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(CB_NO_SCANNING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK)
                     .addComponent(BT_ABORT))
@@ -190,11 +259,16 @@ public class PreferencesPanel extends GlossDialogPanel
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JButton BT_OK;
     private javax.swing.JCheckBox CB_CHECK_NEW;
+    private javax.swing.JCheckBox CB_NO_SCANNING;
     private javax.swing.JComboBox COMBO_LANG;
     private javax.swing.JComboBox COMBO_UI;
+    private javax.swing.JTextField TXT_SERVER_IP;
+    private javax.swing.JTextField TXT_SERVER_PORT;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     // End of variables declaration//GEN-END:variables
 
     @Override

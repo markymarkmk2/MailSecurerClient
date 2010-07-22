@@ -19,21 +19,32 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace max="32767" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
                       <Component id="BT_ABORT" linkSize="2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="BT_OK" linkSize="2" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="CB_CHECK_NEW" min="-2" max="-2" attributes="0"/>
-                  <Component id="COMBO_UI" alignment="0" pref="152" max="32767" attributes="0"/>
-                  <Component id="COMBO_LANG" alignment="0" pref="152" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="CB_CHECK_NEW" min="-2" max="-2" attributes="0"/>
+                          <Component id="COMBO_UI" alignment="0" pref="202" max="32767" attributes="0"/>
+                          <Component id="COMBO_LANG" alignment="0" pref="202" max="32767" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="TXT_SERVER_PORT" min="-2" pref="64" max="-2" attributes="0"/>
+                              <EmptySpace pref="17" max="32767" attributes="0"/>
+                              <Component id="CB_NO_SCANNING" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="TXT_SERVER_IP" alignment="0" min="-2" pref="106" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -57,7 +68,18 @@
                   <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="CB_CHECK_NEW" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="TXT_SERVER_IP" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="TXT_SERVER_PORT" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="CB_NO_SCANNING" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace pref="47" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="BT_OK" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="BT_ABORT" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -106,7 +128,7 @@
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="2">
             <StringItem index="0" value="Pirates"/>
-            <StringItem index="1" value="Milk"/>
+            <StringItem index="1" value="Native"/>
           </StringArray>
         </Property>
       </Properties>
@@ -139,6 +161,32 @@
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="dimm/home/Panels/Bundle.properties" key="CheckNews" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
         </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel4">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="dimm/home/Panels/Bundle.properties" key="Server-IP" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="TXT_SERVER_IP">
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel5">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="dimm/home/Panels/Bundle.properties" key="Server-Port" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="TXT_SERVER_PORT">
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="CB_NO_SCANNING">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="dimm/home/Panels/Bundle.properties" key="No_Scan_for_Servers" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+        </Property>
+        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
     </Component>
   </SubComponents>

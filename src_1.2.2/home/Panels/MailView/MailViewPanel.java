@@ -811,8 +811,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_BODY, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_ATTACHMENT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );*/
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_FROM, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_ALL, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_ALL, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_TO, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_SUBJECT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_SUBJECT, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_MAIL, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
@@ -820,6 +819,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_TXT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_TXT, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)) );
         CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_ATTACHMENT_NAME, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_ALL, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_ALL, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)) );
 
         JComboBox CB_NEG = new JComboBox();
         CB_NEG.addItem( new NegCBEntry(false));
@@ -1630,7 +1631,6 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         });
 
         CB_ENTRIES.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "10", "100", "1000" }));
-        CB_ENTRIES.setSelectedIndex(0);
         CB_ENTRIES.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CB_ENTRIESActionPerformed(evt);
@@ -1660,7 +1660,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             }
         });
 
-        BT_ADD.setText("+");
+        BT_ADD.setText(" + ");
         BT_ADD.setMargin(new java.awt.Insets(2, 1, 2, 1));
         BT_ADD.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1668,13 +1668,16 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             }
         });
 
-        BT_DEL.setText("-");
+        BT_DEL.setText(" - ");
         BT_DEL.setMargin(new java.awt.Insets(2, 1, 2, 1));
         BT_DEL.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_DELActionPerformed(evt);
             }
         });
+
+        SCP_LIST.setMinimumSize(new java.awt.Dimension(24, 70));
+        SCP_LIST.setPreferredSize(new java.awt.Dimension(4, 100));
 
         BT_SIMPLESEARCH.setText(UserMain.getString("Search")); // NOI18N
         BT_SIMPLESEARCH.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
@@ -1690,13 +1693,13 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             PN_SIMPLELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_SIMPLELayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(BT_ADD, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(BT_ADD)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(BT_DEL, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 629, Short.MAX_VALUE)
+                .addComponent(BT_DEL)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 653, Short.MAX_VALUE)
                 .addComponent(BT_SIMPLESEARCH)
                 .addContainerGap())
-            .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 772, Short.MAX_VALUE)
+            .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 792, Short.MAX_VALUE)
         );
 
         PN_SIMPLELayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {BT_ADD, BT_DEL});
@@ -1706,11 +1709,11 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             .addGroup(PN_SIMPLELayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(PN_SIMPLELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BT_ADD, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_DEL, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BT_ADD)
+                    .addComponent(BT_DEL)
                     .addComponent(BT_SIMPLESEARCH))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
+                .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE))
         );
 
         TBP_SEARCH.addTab(UserMain.getString("Simple_Search"), PN_SIMPLE); // NOI18N
@@ -1742,7 +1745,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                 .addContainerGap()
                 .addComponent(jLabel5)
                 .addGap(32, 32, 32)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 696, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 716, Short.MAX_VALUE)
                 .addContainerGap())
         );
         PN_COMPLEXLayout.setVerticalGroup(
@@ -1750,7 +1753,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             .addGroup(PN_COMPLEXLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(PN_COMPLEXLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
                     .addComponent(jLabel5))
                 .addContainerGap())
         );
@@ -1785,16 +1788,17 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
         SPL_VIEW.setDividerSize(3);
         SPL_VIEW.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        SPL_VIEW.setPreferredSize(new java.awt.Dimension(763, 352));
 
         javax.swing.GroupLayout PN_PREVIEWLayout = new javax.swing.GroupLayout(PN_PREVIEW);
         PN_PREVIEW.setLayout(PN_PREVIEWLayout);
         PN_PREVIEWLayout.setHorizontalGroup(
             PN_PREVIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
         );
         PN_PREVIEWLayout.setVerticalGroup(
             PN_PREVIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
         );
 
         SPL_VIEW.setRightComponent(PN_PREVIEW);
@@ -1803,7 +1807,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SCP_TABLE, javax.swing.GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE)
+            .addComponent(SCP_TABLE, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1827,16 +1831,16 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(SPL_VIEW, javax.swing.GroupLayout.DEFAULT_SIZE, 767, Short.MAX_VALUE)
+                        .addComponent(SPL_VIEW, javax.swing.GroupLayout.DEFAULT_SIZE, 787, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(32, 32, 32)
                         .addComponent(CB_ENTRIES, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 532, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 552, Short.MAX_VALUE)
                         .addComponent(CB_VIEW_CONTENT)
                         .addContainerGap())
-                    .addComponent(TBP_SEARCH, javax.swing.GroupLayout.DEFAULT_SIZE, 777, Short.MAX_VALUE)
+                    .addComponent(TBP_SEARCH, javax.swing.GroupLayout.DEFAULT_SIZE, 797, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(BT_TOGGLE_SELECTION)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1849,21 +1853,21 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                         .addComponent(BT_VIEW_CONTENT)
                         .addGap(18, 18, 18)
                         .addComponent(BT_OPEN_EML)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 130, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
                         .addComponent(BT_CLOSE)
                         .addGap(10, 10, 10))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(TBP_SEARCH, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(TBP_SEARCH, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(CB_ENTRIES, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(CB_VIEW_CONTENT))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(SPL_VIEW, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
+                .addComponent(SPL_VIEW, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_CLOSE)

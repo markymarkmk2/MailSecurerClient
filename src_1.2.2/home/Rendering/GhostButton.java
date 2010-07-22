@@ -163,17 +163,21 @@ public class GhostButton extends JButton
             y += insets.top;
 
             Color shadowColor = Color.BLACK;
-            
+
             float shadowOffsetX = 2;
             float shadowOffsetY = 2;
-            g2.setColor(shadowColor);
             Composite composite = g2.getComposite();
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-                                                       shadowOpacity));
-            layout.draw(g2, shadowOffsetX + x, shadowOffsetY + y);
-            g2.setComposite(composite);
 
-            g2.setColor(Main.ui.get_nice_white());
+            if (Main.ui.has_rendered_button())
+            {
+                g2.setColor(shadowColor);
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+                                                           shadowOpacity));
+                layout.draw(g2, shadowOffsetX + x, shadowOffsetY + y);
+                g2.setComposite(composite);
+            }
+
+            g2.setColor(Main.ui.get_foreground());
             layout.draw(g2, x, y);
 
 
@@ -184,15 +188,18 @@ public class GhostButton extends JButton
                                                subFont, context);
 
                 y += sub_layout.getAscent() + 6.0f;
-                shadowOffsetX = 1;
-                shadowOffsetY = 1;
-                g2.setColor(shadowColor);
-                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-                                                           subShadowOpacity));
-                sub_layout.draw(g2, shadowOffsetX + x, shadowOffsetY + y);
-                g2.setComposite(composite);
+                if (Main.ui.has_rendered_button())
+                {
+                    shadowOffsetX = 1;
+                    shadowOffsetY = 1;
+                    g2.setColor(shadowColor);
+                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+                                                               subShadowOpacity));
+                    sub_layout.draw(g2, shadowOffsetX + x, shadowOffsetY + y);
+                    g2.setComposite(composite);
+                }
 
-                g2.setColor(Main.ui.get_nice_white());
+                g2.setColor(Main.ui.get_foreground());
                 sub_layout.draw(g2, x, y);
 
             }

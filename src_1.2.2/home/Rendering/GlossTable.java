@@ -33,7 +33,10 @@ public class GlossTable extends JTable
             if (coh instanceof JViewport)
             {
                 JViewport vp = (JViewport) coh;
-                vp.setOpaque(false);
+                if (Main.ui.has_rendered_panels())
+                {
+                    vp.setOpaque(false);
+                }
             }
         }
     }
@@ -67,7 +70,7 @@ public class GlossTable extends JTable
         super();
        
 
-        setShowGrid(false);
+        //setShowGrid(false);
         setShowVerticalLines(false);
         setShowHorizontalLines(false);
         //setCellSelectionEnabled(false);
@@ -87,19 +90,29 @@ public class GlossTable extends JTable
                 "/dimm/home/images/ok_empty.png"));
    
         getTableHeader().setDefaultRenderer(new HeaderCellRenderer(alt_colors));
-        setOpaque(false);
-        setRowHeight(20);
 
 
         setEnabled(true);
         
-        setGridColor(Main.ui.get_nice_gray());
         setShowGrid(true);
-        setRowMargin(4);
         setShowVerticalLines(false);
-        getTableHeader().setOpaque(true);
+
         getTableHeader().setBackground(UserMain.self.getTableHeaderBackground());
-        
+
+        if (Main.ui.has_rendered_panels())
+        {
+            setOpaque(false);
+            setGridColor(Main.ui.get_nice_gray());
+            getTableHeader().setOpaque(true);
+            setRowHeight(20);
+            setRowMargin(4);
+        }
+        else
+        {
+            setGridColor(Main.ui.get_nice_gray());
+            setShowVerticalLines(false);
+            setShowHorizontalLines(true);
+        }
     }
 
 

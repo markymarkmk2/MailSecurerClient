@@ -35,7 +35,7 @@ public class CheckBoxListCellRenderer extends JButton implements ListCellRendere
         this.setPressedIcon(new ImageIcon(this.getClass().getResource("/dimm/home/images/ok.png")));
         this.setIconTextGap(10);
         this.setOpaque(false);
-        this.setForeground(Main.ui.get_nice_white());
+        this.setForeground(Main.ui.get_foreground());
         this.setContentAreaFilled(false);
         this.setBorderPainted(false);
         this.setHorizontalAlignment(LEFT);

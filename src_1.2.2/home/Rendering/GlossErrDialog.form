@@ -5,10 +5,9 @@
     <Property name="defaultCloseOperation" type="int" value="2"/>
     <Property name="modal" type="boolean" value="true"/>
     <Property name="resizable" type="boolean" value="false"/>
-    <Property name="undecorated" type="boolean" value="true"/>
   </Properties>
   <SyntheticProperties>
-    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="formSizePolicy" type="int" value="2"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -68,14 +67,14 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <Component id="PN_ICON" min="-2" pref="84" max="-2" attributes="0"/>
+                              <Component id="PN_ICON" min="-2" pref="90" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                               <Component id="TXT_ERR" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="BT_ABORT" min="-2" pref="70" max="-2" attributes="0"/>
+                              <Component id="BT_ABORT" linkSize="1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                              <Component id="BT_OK" min="-2" pref="70" max="-2" attributes="0"/>
+                              <Component id="BT_OK" linkSize="1" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -87,13 +86,13 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="PN_ICON" min="-2" pref="84" max="-2" attributes="1"/>
-                          <Component id="TXT_ERR" pref="110" max="32767" attributes="2"/>
+                          <Component id="PN_ICON" min="-2" pref="90" max="-2" attributes="1"/>
+                          <Component id="TXT_ERR" pref="112" max="32767" attributes="2"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="BT_OK" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
-                          <Component id="BT_ABORT" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                          <Component id="BT_OK" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="BT_ABORT" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -121,13 +120,8 @@
             <Component class="javax.swing.JButton" name="BT_OK">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="" key="Okay" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="dimm/home/MA_Properties.properties" key="Okay" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
                 </Property>
-                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                  <Border info="null"/>
-                </Property>
-                <Property name="borderPainted" type="boolean" value="false"/>
-                <Property name="contentAreaFilled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_OKActionPerformed"/>
@@ -139,13 +133,8 @@
             <Component class="javax.swing.JButton" name="BT_ABORT">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="" key="Abbruch" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="dimm/home/MA_Properties.properties" key="Abbruch" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
                 </Property>
-                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                  <Border info="null"/>
-                </Property>
-                <Property name="borderPainted" type="boolean" value="false"/>
-                <Property name="contentAreaFilled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_ABORTActionPerformed"/>
@@ -162,11 +151,6 @@
               <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
               <SubComponents>
                 <Component class="org.jdesktop.swingx.JXLabel" name="LBX_ICON">
-                  <Properties>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/dimm/home/images/radarframe.png"/>
-                    </Property>
-                  </Properties>
                 </Component>
               </SubComponents>
             </Container>

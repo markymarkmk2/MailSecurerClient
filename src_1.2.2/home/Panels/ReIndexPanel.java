@@ -20,6 +20,7 @@ import dimm.home.UserMain;
 import home.shared.Utilities.SizeStr;
 import home.shared.Utilities.ParseToken;
 import home.shared.hibernate.DiskArchive;
+import java.awt.Color;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -66,6 +67,13 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
     public ReIndexPanel( int da_idx, int ds_idx)
     {
         initComponents();
+
+        if (Main.ui.has_rendered_panels())
+        {
+            PB_PERCENT.setBackground(Color.BLACK);
+            PB_PERCENT.setForeground( new Color(0,51,153));
+        }
+
         String  icn_ok = "/dimm/home/images/web_check.png";
         String  icn_empty = "/dimm/home/images/ok_empty.png";
         String  icn_warn = "/dimm/home/images/web_delete.png";
@@ -144,7 +152,7 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
                  }
              }
 
-             if (status != last_status)
+//             if (status != last_status)
              {
                  set_icon( BT_ACTIVE, pt.GetBoolean("BS:") ? ok_icn : empty_icn);
                  set_icon( BT_RABORT, pt.GetBoolean("AB:") ? nok_icn : empty_icn);
@@ -174,7 +182,8 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
                  {
                      last_da = act_da;
                      DiskArchive da = UserMain.sqc().get_disk_archive(act_da);
-                     TXT_DA.setText( da.getName() );
+                     if (da != null)
+                        TXT_DA.setText( da.getName() );
                  }
 
 
@@ -202,7 +211,7 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
         {
             String cmd = "reindex CMD:resume MA:" + UserMain.self.get_act_mandant().getId();
             ret = UserMain.fcc().call_abstract_function(cmd, ServerCall.SHORT_CMD_TO);
-            BT_STARTSTOP.setText(UserMain.Txt("Resume") );
+            BT_STARTSTOP.setText(UserMain.Txt("Pause") );
         }
         if (status == STATUS.NOT_STARTED || status == STATUS.ABORTED || status == STATUS.FINISHED )
         {
@@ -280,8 +289,6 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
             }
         });
 
-        PB_PERCENT.setBackground(new java.awt.Color(0, 0, 0));
-        PB_PERCENT.setForeground(new java.awt.Color(0, 51, 153));
         PB_PERCENT.setStringPainted(true);
 
         TXT_DA.setEditable(false);
@@ -363,7 +370,7 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel3)
                     .addComponent(jLabel7)
@@ -380,32 +387,31 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(TXT_ARSIZ, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
-                                    .addComponent(TXT_ARCNT, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
-                                    .addComponent(TXT_ASIZ, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
-                                    .addComponent(TXT_ACNT, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE))
+                                    .addComponent(TXT_ARSIZ, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                                    .addComponent(TXT_ARCNT, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                                    .addComponent(TXT_ASIZ, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                                    .addComponent(TXT_ACNT, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(TXT_TSIZ, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
-                                    .addComponent(TXT_TCNT, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
-                                    .addComponent(TXT_TRSIZ, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
-                                    .addComponent(TXT_TRCNT, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)))
-                            .addComponent(TXT_DS, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
-                            .addComponent(TXT_STATUS, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE))
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(BT_ACTIVE)
-                        .addGap(182, 182, 182)
-                        .addComponent(BT_RPAUSE)
-                        .addGap(64, 64, 64))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(PB_PERCENT, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(BT_STARTSTOP, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(TXT_TSIZ, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
+                                    .addComponent(TXT_TCNT, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
+                                    .addComponent(TXT_TRSIZ, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
+                                    .addComponent(TXT_TRCNT, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)))
+                            .addComponent(TXT_DS, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+                            .addComponent(TXT_STATUS, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE))
                         .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(TXT_DA, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
+                        .addComponent(TXT_DA, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(PB_PERCENT, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(BT_ACTIVE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(BT_RPAUSE)
+                            .addComponent(BT_STARTSTOP, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE))
                         .addContainerGap())))
         );
 
@@ -483,11 +489,14 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(BT_ABORT)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 234, Short.MAX_VALUE)
-                        .addComponent(BT_OKAY, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 287, Short.MAX_VALUE)
+                        .addComponent(BT_OKAY))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {BT_ABORT, BT_OKAY});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -495,7 +504,7 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BT_OKAY, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BT_OKAY)
                     .addComponent(BT_ABORT))
                 .addContainerGap())
         );
@@ -596,6 +605,7 @@ public class ReIndexPanel extends GlossDialogPanel implements ActionListener
         catch (Exception exc)
         {
             Main.err_log_warn("Caught exception in read_starus: " + exc.getMessage());
+            exc.printStackTrace();
         }
         timer.start();
     }

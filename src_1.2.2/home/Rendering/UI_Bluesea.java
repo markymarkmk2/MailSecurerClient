@@ -32,25 +32,25 @@ public class UI_Bluesea extends UI_Generic
     public static final Font small_font = new Font("Tahoma", Font.PLAIN, 11 );
 
     @Override
-    public Color get_appl_base_color()
+    public Color get_table_header_color()
     {
         return appl_base_color;
     }
 
     @Override
-    public Color get_appl_selected_color()
+    public Color get_selected_color()
     {
         return appl_selected_color;
     }
 
     @Override
-    public Color get_appl_dgray()
+    public Color get_background()
     {
         return appl_dgray;
     }
 
     @Override
-    public Color get_nice_white()
+    public Color get_foreground()
     {
         return nice_white;
     }
@@ -240,6 +240,18 @@ TabbedPane.background	val: javax.swing.plaf.ColorUIResource[r=212,g=208,b=200]
             uidftest();        
     
     }
+    @Override
+    public boolean has_rendered_button()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean has_rendered_panels()
+    {
+        return true;
+    }
+
 
 
 }

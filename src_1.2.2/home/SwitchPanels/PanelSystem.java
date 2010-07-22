@@ -9,6 +9,7 @@ import dimm.home.*;
 import dimm.home.Panels.AuditPanel;
 import dimm.home.Panels.CertificatePanel;
 import dimm.home.Panels.LicensePanel;
+import dimm.home.Panels.Diagnose.LogConfigPanel;
 import dimm.home.Panels.MandantOverview;
 import dimm.home.Panels.SetAdminLoginPanel;
 import dimm.home.Rendering.FlatBackgroundTitle;
@@ -98,6 +99,7 @@ public class PanelSystem extends SwitchSpringPanel
         BT_LICENSE = new GhostButton();
         BT_ZERTIFIKATE = new GhostButton();
         BT_AUDITLOG = new GhostButton();
+        BT_CONFIG_LOG = new GhostButton();
         PN_HEADER = new javax.swing.JPanel();
 
         setOpaque(false);
@@ -105,7 +107,7 @@ public class PanelSystem extends SwitchSpringPanel
         PN_BUTTONS.setOpaque(false);
         PN_BUTTONS.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        BT_SET_ADMIN_LOGIN.setFont(new java.awt.Font("Arial", 0, 14));
+        BT_SET_ADMIN_LOGIN.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_SET_ADMIN_LOGIN.setForeground(new java.awt.Color(201, 201, 201));
         BT_SET_ADMIN_LOGIN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/login-register.png"))); // NOI18N
         BT_SET_ADMIN_LOGIN.setText(UserMain.Txt("Sysadmin")); // NOI18N
@@ -121,7 +123,7 @@ public class PanelSystem extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_SET_ADMIN_LOGIN, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 200, 190, 50));
 
-        BT_MANDANTEN.setFont(new java.awt.Font("Arial", 0, 14));
+        BT_MANDANTEN.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_MANDANTEN.setForeground(new java.awt.Color(201, 201, 201));
         BT_MANDANTEN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/rollen.png"))); // NOI18N
         BT_MANDANTEN.setText(UserMain.Txt("Mandanten")); // NOI18N
@@ -140,7 +142,7 @@ public class PanelSystem extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_MANDANTEN, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 80, 150, 50));
 
-        BT_LICENSE.setFont(new java.awt.Font("Arial", 0, 14));
+        BT_LICENSE.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_LICENSE.setForeground(new java.awt.Color(201, 201, 201));
         BT_LICENSE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/disk-jockey-32x32.png"))); // NOI18N
         BT_LICENSE.setText(UserMain.Txt("Lizenzen")); // NOI18N
@@ -156,7 +158,7 @@ public class PanelSystem extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_LICENSE, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, 190, 50));
 
-        BT_ZERTIFIKATE.setFont(new java.awt.Font("Arial", 0, 14));
+        BT_ZERTIFIKATE.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_ZERTIFIKATE.setForeground(new java.awt.Color(201, 201, 201));
         BT_ZERTIFIKATE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/imap.png"))); // NOI18N
         BT_ZERTIFIKATE.setText(UserMain.Txt("Certificats")); // NOI18N
@@ -190,6 +192,22 @@ public class PanelSystem extends SwitchSpringPanel
             }
         });
         PN_BUTTONS.add(BT_AUDITLOG, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 80, 150, 50));
+
+        BT_CONFIG_LOG.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_CONFIG_LOG.setForeground(new java.awt.Color(201, 201, 201));
+        BT_CONFIG_LOG.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/tr_einstellungen.png"))); // NOI18N
+        BT_CONFIG_LOG.setText(UserMain.Txt("Log_Configuration")); // NOI18N
+        BT_CONFIG_LOG.setToolTipText(UserMain.getString("Configurate_the_log_settings")); // NOI18N
+        BT_CONFIG_LOG.setBorderPainted(false);
+        BT_CONFIG_LOG.setContentAreaFilled(false);
+        BT_CONFIG_LOG.setFocusPainted(false);
+        BT_CONFIG_LOG.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        BT_CONFIG_LOG.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_CONFIG_LOGActionPerformed(evt);
+            }
+        });
+        PN_BUTTONS.add(BT_CONFIG_LOG, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 80, 190, 50));
 
         PN_HEADER.setOpaque(false);
         PN_HEADER.setLayout(new javax.swing.BoxLayout(PN_HEADER, javax.swing.BoxLayout.LINE_AXIS));
@@ -270,8 +288,20 @@ public class PanelSystem extends SwitchSpringPanel
 
     }//GEN-LAST:event_BT_AUDITLOGActionPerformed
 
+    private void BT_CONFIG_LOGActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_CONFIG_LOGActionPerformed
+    {//GEN-HEADEREND:event_BT_CONFIG_LOGActionPerformed
+        // TODO add your handling code here:
+        if (check_selected())
+        {
+            TimingTargetAdapter tt = make_spring_button_dlg( new LogConfigPanel(),  get_dlg_pos(),  UserMain.getString("Log_Configuration") );
+            spring_button_action(evt.getSource(), tt);
+        }
+
+    }//GEN-LAST:event_BT_CONFIG_LOGActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_AUDITLOG;
+    private javax.swing.JButton BT_CONFIG_LOG;
     private javax.swing.JButton BT_LICENSE;
     private javax.swing.JButton BT_MANDANTEN;
     private javax.swing.JButton BT_SET_ADMIN_LOGIN;

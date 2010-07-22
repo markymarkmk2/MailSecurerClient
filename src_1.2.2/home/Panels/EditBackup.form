@@ -39,20 +39,22 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="CB_MODE" alignment="0" min="-2" pref="103" max="-2" attributes="0"/>
+                                  <Component id="CB_VAULT" alignment="0" pref="259" max="32767" attributes="1"/>
+                                  <Component id="TXTF_VALID_FROM" alignment="0" pref="259" max="32767" attributes="1"/>
                                   <Group type="102" alignment="1" attributes="0">
-                                      <Component id="TXT_AGENT" pref="148" max="32767" attributes="0"/>
+                                      <Group type="103" groupAlignment="1" attributes="0">
+                                          <Component id="CB_MODE" alignment="0" pref="186" max="32767" attributes="0"/>
+                                          <Component id="TXT_AGENT" alignment="1" pref="186" max="32767" attributes="0"/>
+                                      </Group>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Component id="TXT_AGENT_PORT" min="-2" pref="55" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="CB_VAULT" alignment="0" pref="221" max="32767" attributes="1"/>
-                                  <Component id="TXTF_VALID_FROM" alignment="0" pref="221" max="32767" attributes="1"/>
-                                  <Component id="TXT_PATH" alignment="0" min="-2" pref="221" max="-2" attributes="1"/>
+                                  <Component id="TXT_PATH" alignment="0" pref="259" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
-                              <Component id="BT_START" min="-2" pref="105" max="-2" attributes="0"/>
+                              <Component id="BT_START" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -60,9 +62,9 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
                                   <EmptySpace min="-2" pref="259" max="-2" attributes="0"/>
-                                  <Component id="BT_ABORT" min="-2" pref="80" max="-2" attributes="0"/>
+                                  <Component id="BT_ABORT" linkSize="2" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                                  <Component id="BT_OK" min="-2" pref="80" max="-2" attributes="0"/>
+                                  <Component id="BT_OK" linkSize="2" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -150,7 +152,7 @@
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Component id="jPanel3" linkSize="1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                  <Component id="jPanel4" linkSize="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="jPanel4" linkSize="1" min="-2" pref="100" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Component id="jPanel5" linkSize="1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
@@ -196,7 +198,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="TXTF_TIME0" alignment="0" min="-2" pref="45" max="-2" attributes="1"/>
+                          <Component id="TXTF_TIME0" alignment="0" min="-2" pref="55" max="-2" attributes="1"/>
                           <Component id="CB_DAY1" alignment="0" min="-2" max="-2" attributes="1"/>
                       </Group>
                       <EmptySpace pref="27" max="32767" attributes="0"/>
@@ -231,6 +233,9 @@
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="11"/>
                 <Property name="text" type="java.lang.String" value="02:00"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[40, 20]"/>
+                </Property>
               </Properties>
             </Component>
           </SubComponents>
@@ -250,7 +255,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="TXTF_TIME1" alignment="0" min="-2" pref="45" max="-2" attributes="1"/>
+                          <Component id="TXTF_TIME1" alignment="0" min="-2" pref="55" max="-2" attributes="1"/>
                           <Component id="CB_DAY2" alignment="0" min="-2" max="-2" attributes="1"/>
                       </Group>
                       <EmptySpace pref="23" max="32767" attributes="0"/>
@@ -285,6 +290,9 @@
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="11"/>
                 <Property name="text" type="java.lang.String" value="02:00"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[40, 20]"/>
+                </Property>
               </Properties>
             </Component>
           </SubComponents>
@@ -301,13 +309,13 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="TXTF_TIME2" alignment="0" min="-2" pref="45" max="-2" attributes="1"/>
+                          <Component id="TXTF_TIME2" alignment="0" min="-2" pref="55" max="-2" attributes="1"/>
                           <Component id="CB_DAY3" alignment="0" min="-2" max="-2" attributes="1"/>
                       </Group>
-                      <EmptySpace pref="7" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -339,6 +347,9 @@
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="11"/>
                 <Property name="text" type="java.lang.String" value="02:00"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[40, 20]"/>
+                </Property>
               </Properties>
             </Component>
           </SubComponents>
@@ -358,7 +369,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="TXTF_TIME3" alignment="0" min="-2" pref="45" max="-2" attributes="1"/>
+                          <Component id="TXTF_TIME3" alignment="0" min="-2" pref="55" max="-2" attributes="1"/>
                           <Component id="CB_DAY4" alignment="0" min="-2" max="-2" attributes="1"/>
                       </Group>
                       <EmptySpace pref="19" max="32767" attributes="0"/>
@@ -393,6 +404,9 @@
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="11"/>
                 <Property name="text" type="java.lang.String" value="02:00"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[40, 20]"/>
+                </Property>
               </Properties>
             </Component>
           </SubComponents>
@@ -412,7 +426,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="TXTF_TIME4" alignment="0" min="-2" pref="45" max="-2" attributes="1"/>
+                          <Component id="TXTF_TIME4" alignment="0" min="-2" pref="55" max="-2" attributes="1"/>
                           <Component id="CB_DAY5" alignment="0" min="-2" max="-2" attributes="1"/>
                       </Group>
                       <EmptySpace pref="35" max="32767" attributes="0"/>
@@ -447,6 +461,9 @@
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="11"/>
                 <Property name="text" type="java.lang.String" value="02:00"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[40, 20]"/>
+                </Property>
               </Properties>
             </Component>
           </SubComponents>
@@ -466,7 +483,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="TXTF_TIME5" alignment="0" min="-2" pref="45" max="-2" attributes="1"/>
+                          <Component id="TXTF_TIME5" alignment="0" min="-2" pref="55" max="-2" attributes="1"/>
                           <Component id="CB_DAY6" alignment="0" min="-2" max="-2" attributes="1"/>
                       </Group>
                       <EmptySpace pref="21" max="32767" attributes="0"/>
@@ -501,6 +518,9 @@
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="11"/>
                 <Property name="text" type="java.lang.String" value="02:00"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[40, 20]"/>
+                </Property>
               </Properties>
             </Component>
           </SubComponents>
@@ -520,7 +540,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="TXTF_TIME6" alignment="0" min="-2" pref="45" max="-2" attributes="1"/>
+                          <Component id="TXTF_TIME6" alignment="0" min="-2" pref="55" max="-2" attributes="1"/>
                           <Component id="CB_DAY7" alignment="0" min="-2" max="-2" attributes="1"/>
                       </Group>
                       <EmptySpace pref="29" max="32767" attributes="0"/>
@@ -555,6 +575,9 @@
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="11"/>
                 <Property name="text" type="java.lang.String" value="02:00"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[40, 20]"/>
+                </Property>
               </Properties>
             </Component>
           </SubComponents>

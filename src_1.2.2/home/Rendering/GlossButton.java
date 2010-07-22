@@ -4,6 +4,7 @@
  */
 package dimm.home.Rendering;
 
+import dimm.home.Main;
 import java.awt.AlphaComposite;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -71,17 +72,23 @@ public class GlossButton extends JXButton implements MouseListener
         ResourceInjector.get().inject(this);
 
         setFont(pathFont);
-        setFocusable(false);
 
-        setBorderPainted(false);
-        setContentAreaFilled(false);
-        setFocusPainted(false);
-        setBorder(null);  
-        setOpaque( false );
+        if (Main.ui.has_rendered_button())
+        {
 
-        this.addMouseListener(this);
+            setFocusable(false);
 
-        addMouseListener(new HiglightHandler());
+            setBorderPainted(false);
+            setContentAreaFilled(false);
+            setFocusPainted(false);
+            setBorder(null);
+            setOpaque( false );
+            addMouseListener(new HiglightHandler());
+
+            addMouseListener(this);
+        }
+
+        
         pressed = false;
 
         ins = new Insets(5, 20, 6, 20);
@@ -99,6 +106,9 @@ public class GlossButton extends JXButton implements MouseListener
     @Override
     public Insets getInsets()
     {
+        if (!Main.ui.has_rendered_button())
+            return super.getInsets();
+        
         return ins;
     }
 
@@ -162,6 +172,12 @@ public class GlossButton extends JXButton implements MouseListener
     @Override
     protected void paintComponent(Graphics g)
     {
+        if (!Main.ui.has_rendered_button())
+        {
+            super.paintComponent(g);
+            return;
+        }
+
         Graphics2D g2 = (Graphics2D) g;
         int press_offset = 0;
         if (pressed)

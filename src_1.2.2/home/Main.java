@@ -18,6 +18,8 @@ import javax.swing.UIManager;
  */
 public class Main
 {
+    public static String version_str = "1.3.6";
+    
 
     static Main me;
     public static boolean scan_local = false;
@@ -28,7 +30,7 @@ public class Main
     public static final String PREFS_PATH = "";
     public static final String UPDATE_PATH = "update/";
     public static final String LOG_PATH = "logs/";
-    public static String version_str = "1.3.2";
+
     public static boolean enable_distributor;
 
     static void reinit_prefs()
@@ -251,7 +253,8 @@ public class Main
         Main mm = new Main();
         
 
-        // FIRST SET OUT L&F        
+        // FIRST SET OUT L&F
+        //UI_Generic.save_uid();
         ui = UI_Generic.create_ui( (int)Main.get_long_prop(Preferences.UI, 0l) );
         ui.set_ui(verbose);
 
@@ -267,13 +270,6 @@ public class Main
         final long start = System.currentTimeMillis() / 1000;
 
 
-        /* Ping p = new Ping("www.gruppemedia.de");
-        if (p.ping() < 0)
-        {
-        UserMain.errm_ok(UserMain.Txt("Kein_Internet_nur_lokale_Boxen_sichtbar"));
-        //                SQLListBuilder.set_offline(true);
-        }
-         */
 
         UserMain mn = null;
         try

@@ -91,7 +91,7 @@ class VKButton extends JButton
             @Override
             public void mouseEntered(MouseEvent e)
             {
-                setForeground(Main.ui.get_appl_base_color());
+                setForeground(Main.ui.get_table_header_color());
                 
                 
             }

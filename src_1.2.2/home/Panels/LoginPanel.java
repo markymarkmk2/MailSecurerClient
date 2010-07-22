@@ -15,7 +15,6 @@ import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.CommContainer;
 import dimm.home.ServerConnect.FunctionCallConnect;
 import dimm.home.ServerConnect.SQLConnect;
-import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StationEntry;
 import dimm.home.ServerConnect.UDP_Communicator;
 import dimm.home.UserMain;
@@ -490,7 +489,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(BT_CHANGE_PWD)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 153, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(BT_ABORT)
                             .addComponent(BT_OK, javax.swing.GroupLayout.Alignment.TRAILING)))
@@ -504,11 +503,11 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                             .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(CB_SERVER, 0, 196, Short.MAX_VALUE)
-                            .addComponent(CB_MANDANT, 0, 196, Short.MAX_VALUE)
-                            .addComponent(CB_USER, 0, 196, Short.MAX_VALUE)
-                            .addComponent(TXT_USER, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
-                            .addComponent(PF_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                            .addComponent(CB_SERVER, 0, 267, Short.MAX_VALUE)
+                            .addComponent(CB_MANDANT, 0, 267, Short.MAX_VALUE)
+                            .addComponent(CB_USER, 0, 267, Short.MAX_VALUE)
+                            .addComponent(TXT_USER, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
+                            .addComponent(PF_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
                             .addComponent(BT_SSL))))
                 .addContainerGap())
         );
@@ -861,17 +860,17 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         SQLConnect sql = UserMain.sqc();
         sql.set_mandant_id(m_id);
 
-        if (main.getUserLevel() == USERMODE.UL_ADMIN )
+        SwingUtilities.invokeLater( new Runnable()
         {
-            SwingUtilities.invokeLater( new Runnable()
+            @Override
+            public void run()
             {
-                @Override
-                public void run()
-                {
+                if (main.getUserLevel() == USERMODE.UL_ADMIN )
                     main.switch_to_panel(UserMain.PBC_ADMIN);
-                }
-            });
-        }
+                else
+                    main.switch_to_panel(UserMain.PBC_SEARCH);
+            }
+        });
         return true;
     }
 
@@ -940,7 +939,10 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                 
                 // NO SCANNING
                 if (only_this)
+                {
+                    UserMain.self.hide_busy();
                     return st_list;
+                }
             }
             catch (Exception e)
             {

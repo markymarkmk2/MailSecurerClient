@@ -522,7 +522,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
         
         PN_MAIN.add(navPanel.get_panel_switcher(), BorderLayout.CENTER);
 
-        switch_to_panel(PBC_SEARCH);
+        switch_to_panel(PBC_LOGIN);
 
        
 
@@ -573,12 +573,19 @@ public class UserMain extends javax.swing.JFrame implements LogListener
                 navPanel.enable_button(PBC_SYSTEM, true);
                 navPanel.enable_button(PBC_SEARCH, true );
             }
-            else
+            else if (this.getUserLevel() == USERMODE.UL_ADMIN)
             {
                 navPanel.enable_button(PBC_ADMIN, true);
                 navPanel.enable_button(PBC_TOOLS, true);
                 navPanel.enable_button(PBC_SYSTEM, false);
-                navPanel.enable_button(PBC_SEARCH, true );
+                navPanel.enable_button(PBC_SEARCH, true );                
+            }
+            else
+            {
+                navPanel.enable_button(PBC_ADMIN, false);
+                navPanel.enable_button(PBC_TOOLS, false);
+                navPanel.enable_button(PBC_SYSTEM, false);
+                navPanel.enable_button(PBC_SEARCH, true );                
             }
 
             navPanel.remove_button(PBC_LOGIN);
@@ -591,6 +598,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
             navPanel.enable_button(PBC_TOOLS, false);
             navPanel.enable_button(PBC_SYSTEM, false);
             navPanel.enable_button(PBC_SEARCH, true );
+            switch_to_panel( PBC_LOGIN );
         }
         navPanel.update_active_panel();        
     }
@@ -602,22 +610,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
         navPanel.switch_to_panel( id);
         this.repaint();
     }
-/*    private void switch_to_admin()
-    {
-        navPanel.switch_to_panel( PBC_ADMIN);
-        this.repaint();
-    }
-    private void switch_to_search()
-    {
-        navPanel.switch_to_panel( PBC_SEARCH);
-        this.repaint();
-    }
-    private void switch_to_system()
-    {
-        navPanel.switch_to_panel( PBC_SYSTEM);
-        this.repaint();
-    }
-*/
+
     public int get_act_panel_id()
     {
         return navPanel.get_act_pbc_id();
@@ -657,7 +650,6 @@ public class UserMain extends javax.swing.JFrame implements LogListener
         PN_GLASS = new org.jdesktop.swingx.JXPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setBackground(new java.awt.Color(0, 0, 0));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);
@@ -681,9 +673,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 0, 2);
         PN_USERMAIN.add(PN_TITLE, gridBagConstraints);
 
-        PN_MAIN.setBackground(new java.awt.Color(0, 0, 0));
         PN_MAIN.setMinimumSize(new java.awt.Dimension(868, 600));
-        PN_MAIN.setOpaque(false);
         PN_MAIN.setPreferredSize(new java.awt.Dimension(868, 600));
         PN_MAIN.setLayout(new java.awt.BorderLayout());
 
@@ -1199,41 +1189,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
         return get_act_mandant().getId();
     }
 
-    @Override
-    public void error_log( String txt )
-    {
-        err_log(txt);
-    }
-
-    @Override
-    public void error_log( String txt, Exception ex )
-    {
-        err_log(txt + ": " + ex.getLocalizedMessage());
-    }
-
-    @Override
-    public void warn_log( String txt )
-    {
-        err_log(txt);
-    }
-
-    @Override
-    public void info_log( String txt )
-    {
-        System.out.println(txt);
-    }
-
-    @Override
-    public void debug_log( String txt )
-    {
-        System.out.println(txt);
-    }
-
-    @Override
-    public boolean is_debug()
-    {
-        return false;
-    }
+   
 
     public void initialize_act_mandant()
     {
@@ -1318,6 +1274,37 @@ public class UserMain extends javax.swing.JFrame implements LogListener
             return false;
         }
         return self.jrd_server.is_running();
+    }
+
+    @Override
+    public void log_msg( int lvl, String typ, String txt )
+    {
+        if (lvl == LogListener.LVL_ERR)
+            err_log( typ + ": " + txt);
+        else
+            System.out.println(typ + ": " + txt);
+    }
+
+    @Override
+    public void log_msg( int lvl, String typ, String txt, Exception ex )
+    {
+        if (lvl == LogListener.LVL_ERR)
+            err_log( typ + ": " + txt + ": " + ((ex != null) ? ex.getMessage() : ""));
+        else
+            System.out.println(typ + ": " + txt + ": " + ((ex != null) ? ex.getMessage() : ""));
+    }
+
+    @Override
+    public boolean log_has_lvl( String typ, int lvl )
+    {
+        if (lvl == LogListener.LVL_VERBOSE)
+            if (debug < 8)
+                return false;
+        else if (lvl == LogListener.LVL_DEBUG)
+            if (debug <= 0)
+                return false;
+
+        return true;
     }
 
 

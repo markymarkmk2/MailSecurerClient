@@ -7,16 +7,12 @@ package dimm.home.SwitchPanels;
 
 import dimm.home.*;
 import dimm.home.Panels.MailView.MailViewPanel;
-import dimm.home.Panels.LogicFilter;
-import dimm.home.Rendering.BackgroundTitle;
 import dimm.home.Rendering.FlatBackgroundTitle;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
-import dimm.home.Rendering.TimingTargetAdapter;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.util.ArrayList;
 import org.jdesktop.fuse.ResourceInjector;
 
 

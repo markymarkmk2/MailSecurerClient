@@ -189,6 +189,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="BT_PREFS">
               <Properties>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="d2" green="d2" red="d2" type="rgb"/>
+                </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="dimm/home/MA_Properties.properties" key="Preferences" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
                 </Property>

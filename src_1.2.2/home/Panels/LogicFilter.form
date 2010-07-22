@@ -21,15 +21,15 @@
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="BT_ADD_EXPR" min="-2" max="-2" attributes="1"/>
+                      <Component id="BT_ADD_EXPR" linkSize="2" min="-2" max="-2" attributes="1"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="BT_ADD_GROUP" min="-2" max="-2" attributes="1"/>
+                      <Component id="BT_ADD_GROUP" linkSize="2" min="-2" max="-2" attributes="1"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="BT_DEL_ELEM" min="-2" pref="122" max="-2" attributes="1"/>
-                      <EmptySpace pref="44" max="32767" attributes="0"/>
-                      <Component id="BT_ABORT" min="-2" pref="80" max="-2" attributes="0"/>
+                      <Component id="BT_DEL_ELEM" linkSize="2" min="-2" max="-2" attributes="1"/>
+                      <EmptySpace pref="49" max="32767" attributes="0"/>
+                      <Component id="BT_ABORT" linkSize="1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="BT_CLOSE" min="-2" pref="80" max="-2" attributes="0"/>
+                      <Component id="BT_CLOSE" linkSize="1" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -78,8 +78,8 @@
               </Group>
               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="BT_CLOSE" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
-                  <Component id="BT_ABORT" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                  <Component id="BT_CLOSE" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="BT_ABORT" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="BT_ADD_EXPR" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="BT_ADD_GROUP" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="BT_DEL_ELEM" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -122,7 +122,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="SCP_LIST" alignment="0" pref="239" max="32767" attributes="0"/>
+              <Component id="SCP_LIST" alignment="0" pref="241" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>

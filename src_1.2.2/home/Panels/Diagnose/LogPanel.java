@@ -9,10 +9,11 @@
  * Created on 19.01.2010, 20:12:55
  */
 
-package dimm.home.Panels;
+package dimm.home.Panels.Diagnose;
 
 import dimm.home.Rendering.CustomScrollPane;
 import dimm.home.Rendering.CustomScrollPaneDialog;
+import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.FunctionCallConnect;
@@ -20,6 +21,8 @@ import dimm.home.ServerConnect.InStreamID;
 import dimm.home.ServerConnect.ServerInputStream;
 import dimm.home.UserMain;
 import dimm.home.Utilities.SwingWorker;
+import home.shared.Utilities.LogConfigEntry;
+import home.shared.Utilities.LogListener;
 import home.shared.Utilities.ParseToken;
 import java.awt.Color;
 import java.awt.FileDialog;
@@ -99,6 +102,8 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
     String fixed_log_type;
     boolean logdump_active = false;
 
+    ArrayList<LogConfigEntry> config_list;
+
 
     public LogPanel()
     {
@@ -108,6 +113,7 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         this.end_was_reached = false;
         this.offset = 0;
 
+
         initComponents();
 
 
@@ -115,6 +121,14 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
 
         do_inits();
     }
+
+    @Override
+    public void setDlg( GenericGlossyDlg dlg )
+    {
+        super.setDlg(dlg);
+        my_dlg.setModal(false);
+    }
+
 
     public void set_log_type( String log_type)
     {
@@ -143,9 +157,24 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         
         LOG_PANEL.add(custom_scroll_pane);
 
-        add_log_entry("System", "L4J" );
-        add_log_entry("Backup", "SYNC" );
+        config_list = read_config_list();
 
+
+
+        for (int i = 0; i < config_list.size(); i++)
+        {
+            LogConfigEntry tck = config_list.get(i);
+            add_log_entry( UserMain.Txt( tck.typ ), tck.typ );
+        }
+
+        /*add_log_entry("Debug",  LogListener.DBG );
+        add_log_entry("Warning",  LogListener.WRN );
+        add_log_entry("Error",  LogListener.ERR );
+        add_log_entry("Info",  LogListener.INFO );
+*/
+        add_log_entry("Library", LogListener.L4J );
+        add_log_entry("BackupServer",  LogListener.SYNC );
+        
         reset_text_pos();
 
         set_text(read_next_block());
@@ -156,7 +185,29 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         timer.start();
     }
 
-   
+    private ArrayList<LogConfigEntry> read_config_list()
+    {
+        FunctionCallConnect fcc = UserMain.fcc();
+
+
+        String ret = fcc.call_abstract_function("show_log CMD:get_config" , FunctionCallConnect.SHORT_TIMEOUT );
+
+        
+
+        if (ret != null && fcc.get_last_err_code() == 0)
+        {
+            if (ret.charAt(0) == '0')
+            {
+                ParseToken pt = new ParseToken(ret.substring(3));
+                Object o = pt.GetCompressedObject("CFG:");
+                if (o instanceof ArrayList)
+                {
+                     return (ArrayList<LogConfigEntry>)o;
+                }
+            }
+        }
+        return null;
+    }
 
 
     void reset_text_pos()
@@ -470,6 +521,7 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         BT_OK = new GlossButton();
         jLabel1 = new javax.swing.JLabel();
         BT_DUMP = new GlossButton();
+        BT_FILTER = new javax.swing.JButton();
 
         CB_LOG_SOURCE.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "default" }));
         CB_LOG_SOURCE.addActionListener(new java.awt.event.ActionListener() {
@@ -500,6 +552,13 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
             }
         });
 
+        BT_FILTER.setText(UserMain.Txt("Filter")); // NOI18N
+        BT_FILTER.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_FILTERActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -507,14 +566,16 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(LOG_PANEL, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
+                    .addComponent(LOG_PANEL, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
                         .addComponent(CB_LOG_SOURCE, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(BT_DUMP)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 257, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(BT_FILTER)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 153, Short.MAX_VALUE)
                         .addComponent(BT_OK)))
                 .addContainerGap())
         );
@@ -522,13 +583,14 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(LOG_PANEL, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
+                .addComponent(LOG_PANEL, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK)
                     .addComponent(jLabel1)
                     .addComponent(CB_LOG_SOURCE, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_DUMP))
+                    .addComponent(BT_DUMP)
+                    .addComponent(BT_FILTER))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -595,9 +657,21 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
 
     }//GEN-LAST:event_CB_LOG_SOURCEActionPerformed
 
+    private void BT_FILTERActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_FILTERActionPerformed
+    {//GEN-HEADEREND:event_BT_FILTERActionPerformed
+        // TODO add your handling code here:
+        LogFilterPanel pnl = new LogFilterPanel();
+        GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
+        dlg.set_next_location(my_dlg);
+        dlg.setVisible(true);
+
+
+    }//GEN-LAST:event_BT_FILTERActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_DUMP;
+    private javax.swing.JButton BT_FILTER;
     private javax.swing.JButton BT_OK;
     private javax.swing.JComboBox CB_LOG_SOURCE;
     private javax.swing.JPanel LOG_PANEL;

@@ -632,8 +632,8 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
 
         JT_DIR.setModel(new DefaultTreeModel(null));
 
-        JT_DIR.setForeground(Main.ui.get_nice_white());
-        JT_DIR.setBackground(Main.ui.get_appl_dgray());
+        JT_DIR.setForeground(Main.ui.get_foreground());
+        JT_DIR.setBackground(Main.ui.get_background());
 
         TP_PANE.setEnabledAt(0, true);
         TP_PANE.setEnabledAt(1, false);
@@ -795,7 +795,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 .addComponent(RD_EML)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(RD_MBOX)
-                .addContainerGap(243, Short.MAX_VALUE))
+                .addContainerGap(245, Short.MAX_VALUE))
         );
 
         TP_PANE.addTab(UserMain.getString("Source_type"), PN_SELECT); // NOI18N
@@ -820,7 +820,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -895,7 +895,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -946,7 +946,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout PN_STATUSLayout = new javax.swing.GroupLayout(PN_STATUS);
@@ -976,11 +976,11 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(BT_ABORT)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(BT_BACK, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(BT_BACK)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(BT_NEXT, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(BT_NEXT))
                     .addComponent(TP_PANE, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -991,12 +991,12 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(TP_PANE, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
+                .addComponent(TP_PANE, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BT_NEXT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_BACK, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(BT_NEXT)
+                    .addComponent(BT_BACK)
+                    .addComponent(BT_ABORT))
                 .addContainerGap())
         );
 

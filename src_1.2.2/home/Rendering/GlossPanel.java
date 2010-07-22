@@ -4,6 +4,7 @@
  */
 package dimm.home.Rendering;
 
+import dimm.home.Main;
 import dimm.home.UserMain;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -71,8 +72,12 @@ public class GlossPanel extends JXPanel
 
     void creater_painter( int h )
     {
-        GlossPainter gp = new PanelGlossPainter(Colors.White.alpha(0.2f),
-                GlossPainter.GlossPosition.TOP);
+        if (!Main.ui.has_rendered_panels())
+        {
+            return;
+        }
+
+        GlossPainter gp = new PanelGlossPainter(Colors.White.alpha(0.2f), GlossPainter.GlossPosition.TOP);
         GradientPaint grp = new GradientPaint(0, 0, UserMain.ggradientTop, 0, h, UserMain.ggradientBottom);
         MattePainter aap = new MattePainter(grp);
         CompoundPainter cp = new CompoundPainter(aap, gp);
@@ -111,15 +116,19 @@ public class GlossPanel extends JXPanel
     protected void paintBorder( Graphics g )
     {
         super.paintBorder(g);
-        Color old_color = g.getColor();
 
-        g.setColor(UserMain.self.getGradientLight());//new Color( 130, 130, 130));
-        g.drawLine(0, 0, getWidth(), 0);
-        g.drawLine(0, 0, 0, getHeight());
-        g.setColor(UserMain.self.getGradientDark());
-        g.drawLine(getWidth() - 1, 1, getWidth() - 1, getHeight());
-        g.drawLine(1, getHeight() - 1, getWidth(), getHeight() - 1);
+        if (Main.ui.has_rendered_panels())
+        {
+            Color old_color = g.getColor();
 
-        g.setColor(old_color);
+            g.setColor(UserMain.self.getGradientLight());//new Color( 130, 130, 130));
+            g.drawLine(0, 0, getWidth(), 0);
+            g.drawLine(0, 0, 0, getHeight());
+            g.setColor(UserMain.self.getGradientDark());
+            g.drawLine(getWidth() - 1, 1, getWidth() - 1, getHeight());
+            g.drawLine(1, getHeight() - 1, getWidth(), getHeight() - 1);
+
+            g.setColor(old_color);
+        }
     }
 }

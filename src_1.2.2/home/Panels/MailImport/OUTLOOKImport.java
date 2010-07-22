@@ -309,8 +309,8 @@ class OutlookTreeCellRenderer implements TreeCellRenderer
     {
         jcb = new JCheckBox();
         jlb = new JLabel();
-        jlb.setForeground(Main.ui.get_nice_white() );
-        jlb.setBackground(Main.ui.get_appl_dgray() );
+        jlb.setForeground(Main.ui.get_foreground() );
+        jlb.setBackground(Main.ui.get_background() );
     }
 
     @Override

@@ -51,8 +51,8 @@
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="BT_DISABLED" min="-2" max="-2" attributes="1"/>
-                          <EmptySpace pref="164" max="32767" attributes="0"/>
-                          <Component id="BT_DISKSPACES" min="-2" pref="167" max="-2" attributes="0"/>
+                          <EmptySpace pref="244" max="32767" attributes="0"/>
+                          <Component id="BT_DISKSPACES" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -72,7 +72,7 @@
                       <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="CB_TYPE" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="69" max="32767" attributes="0"/>
+                  <EmptySpace pref="71" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="BT_DISKSPACES" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="BT_DISABLED" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -161,10 +161,10 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="BT_REINDEX" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="117" max="32767" attributes="0"/>
-                  <Component id="BT_ABORT" min="-2" pref="80" max="-2" attributes="0"/>
+                  <EmptySpace pref="143" max="32767" attributes="0"/>
+                  <Component id="BT_ABORT" linkSize="1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="BT_OK" min="-2" pref="80" max="-2" attributes="0"/>
+                  <Component id="BT_OK" linkSize="1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -174,8 +174,8 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="BT_OK" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
-                      <Component id="BT_ABORT" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                      <Component id="BT_OK" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="BT_ABORT" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="BT_REINDEX" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>

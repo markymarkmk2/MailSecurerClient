@@ -10,6 +10,7 @@ import home.shared.SQL.SQLResult;
 import dimm.home.Models.AccountConnectorComboModel;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
+import dimm.home.Rendering.GlossTable;
 import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.ServerCall;
@@ -27,13 +28,289 @@ import home.shared.SQL.OptCBEntry;
 import home.shared.SQL.SQLArrayResult;
 import home.shared.Utilities.ParseToken;
 import home.shared.filter.ExprEntry;
+import home.shared.filter.ExprEntry.OPERATION;
+import home.shared.filter.ExprEntry.TYPE;
+import home.shared.filter.GroupEntry;
+import home.shared.filter.LogicEntry;
 import home.shared.filter.VarTypeEntry;
 import home.shared.hibernate.AccountConnector;
 import home.shared.hibernate.RoleOption;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import javax.swing.DefaultCellEditor;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellEditor;
 
+
+
+class SimpleSearchEntryModel extends GroupEntry
+{
+    SimpleSearchEntryModel(ArrayList<LogicEntry> list)
+    {
+        if (list != null)
+            children = list;
+    }
+}
+class ConditionCBEntry
+{
+    ExprEntry entry;
+
+    public ConditionCBEntry( ExprEntry entry )
+    {
+        this.entry = entry;
+    }
+
+    static String get_nice_txt( ExprEntry e )
+    {
+        return (e.isNeg() ? UserMain.Txt("not") + " " : "") + UserMain.Txt(e.getName()) + " " + LogicFilter.get_op_nice_txt( e.getOperation(), e.getType());
+    }
+    @Override
+    public String toString()
+    {
+        return get_nice_txt(entry);
+    }
+}
+class NegCBEntry
+{
+    boolean neg;
+
+    public NegCBEntry( boolean _neg )
+    {
+        this.neg = _neg;
+    }
+
+    public boolean isNeg()
+    {
+        return neg;
+    }
+
+    static String get_nice_txt( boolean n )
+    {
+        return n ? UserMain.Txt("not") + " " : "";
+    }
+    @Override
+    public String toString()
+    {
+        return get_nice_txt(neg);
+    }
+}
+class SimpleSearchTableModel extends AbstractTableModel implements MouseListener
+{
+    static int DELETE_COL = 3;
+
+    EditRole pnl;
+
+
+    SimpleDateFormat sdf;
+    JButton ic_delete;
+
+    SimpleSearchEntryModel model;
+
+    SimpleSearchTableModel(EditRole _pnl,  SimpleSearchEntryModel _model)
+    {
+        super();
+
+        pnl = _pnl;
+        model = _model;
+
+        sdf = new SimpleDateFormat("dd.MM.yyyy  HH:mm");
+
+        ic_delete = GlossTable.create_table_button("/dimm/home/images/web_delete.png");
+    }
+
+    void set_model(SimpleSearchEntryModel _model)
+    {
+        model = _model;
+        this.fireTableDataChanged();
+    }
+    public String get_compressed_xml_list_data()
+    {
+        ArrayList<LogicEntry> al = new ArrayList<LogicEntry>();
+
+        // ADD ONLY VALID ENTRIES
+        for (int i = 0; i < model.getChildren().size(); i++)
+        {
+            LogicEntry logicEntry = model.getChildren().get(i);
+            if (logicEntry instanceof ExprEntry)
+            {
+                ExprEntry e = (ExprEntry)logicEntry;
+                if (e.getValue().length() > 0)
+                {
+                    ExprEntry ee = new ExprEntry( al, e.getName(), e.getValue(), e.getOperation(), e.getType(), e.isNeg(), e.isPrevious_is_or() );
+                    // ALL ARE ADDED AS "AND"
+                    al.add(ee);
+                }
+            }
+        }
+
+        String compressed_list_str = ParseToken.BuildCompressedObjectString(al);
+        
+        return compressed_list_str;
+    }
+
+
+    @Override
+    public boolean isCellEditable( int row, int column )
+    {
+        if (column < DELETE_COL)
+            return true;
+        return false;
+
+    }
+
+    @Override
+    public String getColumnName(int column)
+    {
+        switch( column )
+        {
+            case 0: return UserMain.Txt("Condition");
+            case 1: return "";
+            case 2: return UserMain.Txt("Value");
+        }
+        return "";
+    }
+
+    @Override
+    public Class<?> getColumnClass(int columnIndex)
+    {
+        if (columnIndex == DELETE_COL)
+            return JButton.class;
+
+        return String.class;
+    }
+
+    @Override
+    public int getRowCount()
+    {
+        if (model == null)
+            return 0;
+        return model.getChildren().size();
+    }
+
+    @Override
+    public int getColumnCount()
+    {
+        return 4;
+    }
+
+
+
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex)
+    {
+        LogicEntry le = model.getChildren().get(rowIndex);
+        if (le instanceof ExprEntry)
+        {
+            ExprEntry ee = (ExprEntry) le;
+            if (columnIndex == 0)
+            {
+                String txt = ConditionCBEntry.get_nice_txt( ee );
+                return txt;
+            }
+            if (columnIndex == 1)
+            {
+                String txt = NegCBEntry.get_nice_txt( ee.isNeg() );
+                return txt;
+            }
+            if (columnIndex == 2)
+            {
+                String txt = ee.getValue();
+                return txt;
+            }
+            if (columnIndex == DELETE_COL)
+            {
+                return ic_delete;
+            }
+        }
+        return "";
+    }
+
+    @Override
+    public void setValueAt( Object aValue, int rowIndex, int columnIndex )
+    {
+        LogicEntry le = model.getChildren().get(rowIndex);
+        if (le instanceof ExprEntry)
+        {
+            ExprEntry ee = (ExprEntry) le;
+            if (columnIndex == 0 && aValue instanceof ConditionCBEntry)
+            {
+                ConditionCBEntry ccbe = (ConditionCBEntry)aValue;
+                ee.setOperation( ccbe.entry.getOperation() );
+                ee.setType( ccbe.entry.getType());
+                ee.setName( ccbe.entry.getName());
+                ee.setNeg( ccbe.entry.isNeg());
+                ee.setPrevious_is_or( ccbe.entry.isPrevious_is_or() );
+            }
+            if (columnIndex == 1&& aValue instanceof NegCBEntry)
+            {
+                NegCBEntry ncb = (NegCBEntry)aValue;
+                ee.setNeg( ncb.isNeg() );
+            }
+            if (columnIndex == 2)
+            {
+                ee.setValue(aValue.toString());
+            }
+        }
+    }
+
+
+    @Override
+    public void mouseClicked( MouseEvent e )
+    {
+        if (e.getClickCount() == 1 && e.getSource() instanceof JTable)
+        {
+            JTable tb = (JTable)e.getSource();
+            int row = tb.rowAtPoint(e.getPoint());
+            int col = tb.columnAtPoint(e.getPoint());
+            if (col == DELETE_COL && row >= 0 && row < model.getChildren().size())
+            {
+                model.getChildren().remove(row);
+                fireTableDataChanged();
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed( MouseEvent e )
+    {
+    }
+
+    @Override
+    public void mouseReleased( MouseEvent e )
+    {
+    }
+
+    @Override
+    public void mouseEntered( MouseEvent e )
+    {
+    }
+
+    @Override
+    public void mouseExited( MouseEvent e )
+    {
+    }
+}
+class SimpleSearchEditor extends  DefaultCellEditor
+{
+    public SimpleSearchEditor( JComboBox cb )
+    {
+        super( cb );
+    }
+}
 
 
 /**
@@ -53,7 +330,26 @@ public class EditRole extends GenericEditPanel
     
     SQLResult<RoleOption>  option_res;
     String role_filter_save;
+    int role_flags_save;
     boolean was_4eyes;
+
+    GlossTable simple_search_list;
+    private static final int SIMPLE_SEARCH = 0;
+    private static final int COMPLEX_SEARCH = 1;
+
+    GlossTable simple_search_table;
+    SimpleSearchTableModel simple_search_tablemodel;
+    TableCellEditor simple_condition_editor;
+    TableCellEditor simple_val_editor;
+
+    public static final double DFLT_DIV_POS = 0.3;
+    private static int SIMPLE_TAB_COL_CONDITION = 0;
+    private static int SIMPLE_TAB_COL_NEG = 1;
+    private static int SIMPLE_TAB_COL_VALUE = 2;
+    private static int SIMPLE_TAB_COL_DELETE = 3;
+
+
+
 
     
     /** Creates new form EditChannelPanel */
@@ -74,6 +370,8 @@ public class EditRole extends GenericEditPanel
         row = _row;
 
         PNL_4EYES.setVisible(false);
+
+        create_simple_search_table();
         
         if (!model.is_new(row))
         {
@@ -83,7 +381,7 @@ public class EditRole extends GenericEditPanel
             TXT_NAME.setText(object.getName());
             String acm_text = vbox_overview.get_account_match_descr(object.getAccountmatch());
             
-            TXT_ACCOUNTMATCH.setText( acm_text );
+            TXTA_FILTER.setText( acm_text );
 
             
             read_opts_buttons( object.getId() );
@@ -101,20 +399,126 @@ public class EditRole extends GenericEditPanel
 
             role_filter_save = object.getAccountmatch();
 
-            set_filter_preview( LogicFilter.get_nice_filter_text( role_filter_save ) );
+            if (test_flag(CS_Constants.ROLE_ACM_SIMPLE))
+            {
+                TBP_SEARCH.setSelectedIndex(SIMPLE_SEARCH);
+                set_simple_search_table_model(role_filter_save);
+            }
+            else
+            {
+                TBP_SEARCH.setSelectedIndex(COMPLEX_SEARCH);
+                set_filter_preview( LogicFilter.get_nice_filter_text( role_filter_save ) );
+            }
+
         }
         else
         {
             object = new Role();
             object.setMandant(UserMain.sqc().get_act_mandant());
             role_filter_save = "";
-            set_object_flag(CS_Constants.ROLE_ACM_COMPRESSED);
+            set_flag(CS_Constants.ROLE_ACM_COMPRESSED);
         }
 
         CB_ACCOUNT.setModel(accm);
         object_name = object.getClass().getSimpleName();
 
+        set_tbp_callback();
+
     }
+
+    void set_tbp_callback()
+    {
+        TBP_SEARCH.addChangeListener( new ChangeListener() {
+
+            @Override
+            public void stateChanged( ChangeEvent e )
+            {
+                if (TBP_SEARCH.getSelectedIndex() == SIMPLE_SEARCH)
+                {
+                    set_flag(CS_Constants.ROLE_ACM_SIMPLE);
+                     set_new_filter_vals(  simple_search_tablemodel.get_compressed_xml_list_data() );
+                }
+                else
+                {
+                    clr_flag(CS_Constants.ROLE_ACM_SIMPLE);
+                    set_new_filter_vals( object.getAccountmatch() );
+                }
+
+            }
+        });
+    }
+
+    void set_simple_search_table_model(String match)
+    {
+        if (test_flag(CS_Constants.ROLE_ACM_SIMPLE))
+        {
+            ArrayList<LogicEntry> list = LogicFilter.get_filter_list( match );
+            SimpleSearchEntryModel sse_model = new SimpleSearchEntryModel( list );
+            simple_search_tablemodel.set_model(sse_model);
+        }
+        else
+        {
+            SimpleSearchEntryModel sse_model = new SimpleSearchEntryModel( null );
+            simple_search_tablemodel.set_model(sse_model);
+        }
+        //simple_search_tablemodel.fireTableDataChanged();
+        simple_search_table.tableChanged( new TableModelEvent(simple_search_tablemodel));
+    }
+
+    JComboBox CB_CONDITION;
+    
+    void create_simple_search_table()
+    {
+        simple_search_table = new GlossTable(true);
+        simple_search_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        simple_search_table.embed_to_scrollpanel( SCP_LIST );
+
+        simple_search_tablemodel = new SimpleSearchTableModel(this, new SimpleSearchEntryModel(null));
+
+        simple_search_table.setModel(simple_search_tablemodel);
+        simple_search_table.addMouseListener(simple_search_tablemodel);
+
+        CB_CONDITION = new JComboBox();
+        CB_CONDITION.removeAllItems();
+        
+           
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, "Username", "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, "Email", "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, "Domain", "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, "Group", "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
+        
+
+        JComboBox CB_NEG = new JComboBox();
+        CB_NEG.addItem( new NegCBEntry(false));
+        CB_NEG.addItem( new NegCBEntry(true));
+
+        JTextField TXT_VAL = new JTextField();
+        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_NEG).setMinWidth(30);
+        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_NEG).setMaxWidth(30);
+        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_DELETE).setMinWidth(30);
+        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_DELETE).setMaxWidth(30);
+        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_CONDITION).setCellEditor( new DefaultCellEditor(  CB_CONDITION ) );
+        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_NEG).setCellEditor( new DefaultCellEditor(  CB_NEG ) );
+        DefaultCellEditor txt_editor = new DefaultCellEditor( TXT_VAL);
+        txt_editor.setClickCountToStart(1);
+        
+        TXT_VAL.addActionListener( new ActionListener()
+        {
+
+            @Override
+            public void actionPerformed( ActionEvent e )
+            {
+                simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_VALUE).getCellEditor().stopCellEditing();                
+            }
+        });
+
+        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_VALUE).setCellEditor( txt_editor  );
+
+        TBP_SEARCH.setSelectedIndex(SIMPLE_SEARCH);
+    }
+
+   
+
 
     void create_option_buttons()
     {
@@ -179,7 +583,6 @@ public class EditRole extends GenericEditPanel
         PN_ACTION = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         TXT_NAME = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
         BT_DISABLED = new javax.swing.JCheckBox();
         PN_OPTS = new javax.swing.JPanel();
         CP_OPT1 = new javax.swing.JCheckBox();
@@ -190,14 +593,20 @@ public class EditRole extends GenericEditPanel
         CP_OPT6 = new javax.swing.JCheckBox();
         jLabel3 = new javax.swing.JLabel();
         CB_ACCOUNT = new javax.swing.JComboBox();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        TXT_ACCOUNTMATCH = new javax.swing.JTextArea();
         BT_4EYES = new javax.swing.JCheckBox();
         PNL_4EYES = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         TXT_4EYES_USER = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         TXTP_4EYES_PWD = new javax.swing.JPasswordField();
+        TBP_SEARCH = new javax.swing.JTabbedPane();
+        PN_SIMPLE = new javax.swing.JPanel();
+        BT_ADD = new GlossButton();
+        BT_DEL = new GlossButton();
+        SCP_LIST = new javax.swing.JScrollPane();
+        PN_COMPLEX = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        TXTA_FILTER = new javax.swing.JTextArea();
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
@@ -223,8 +632,6 @@ public class EditRole extends GenericEditPanel
                 TXT_NAMEActionPerformed(evt);
             }
         });
-
-        jLabel2.setText(UserMain.getString("Mailkonto")); // NOI18N
 
         BT_DISABLED.setText(UserMain.getString("Gesperrt")); // NOI18N
         BT_DISABLED.setOpaque(false);
@@ -256,7 +663,7 @@ public class EditRole extends GenericEditPanel
                     .addComponent(CP_OPT4)
                     .addComponent(CP_OPT5)
                     .addComponent(CP_OPT6))
-                .addContainerGap(344, Short.MAX_VALUE))
+                .addContainerGap(307, Short.MAX_VALUE))
         );
         PN_OPTSLayout.setVerticalGroup(
             PN_OPTSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -277,17 +684,6 @@ public class EditRole extends GenericEditPanel
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/MA_Properties"); // NOI18N
         jLabel3.setText(bundle.getString("Realm")); // NOI18N
-
-        TXT_ACCOUNTMATCH.setColumns(20);
-        TXT_ACCOUNTMATCH.setEditable(false);
-        TXT_ACCOUNTMATCH.setRows(2);
-        TXT_ACCOUNTMATCH.setTabSize(4);
-        TXT_ACCOUNTMATCH.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                TXT_ACCOUNTMATCHMouseClicked(evt);
-            }
-        });
-        jScrollPane1.setViewportView(TXT_ACCOUNTMATCH);
 
         BT_4EYES.setText(UserMain.Txt("4EYES")); // NOI18N
         BT_4EYES.setOpaque(false);
@@ -338,35 +734,104 @@ public class EditRole extends GenericEditPanel
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        TBP_SEARCH.setBorder(javax.swing.BorderFactory.createTitledBorder(UserMain.Txt("Filter"))); // NOI18N
+
+        BT_ADD.setText(" + ");
+        BT_ADD.setMargin(new java.awt.Insets(2, 1, 2, 1));
+        BT_ADD.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_ADDActionPerformed(evt);
+            }
+        });
+
+        BT_DEL.setText(" - ");
+        BT_DEL.setMargin(new java.awt.Insets(2, 1, 2, 1));
+        BT_DEL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_DELActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout PN_SIMPLELayout = new javax.swing.GroupLayout(PN_SIMPLE);
+        PN_SIMPLE.setLayout(PN_SIMPLELayout);
+        PN_SIMPLELayout.setHorizontalGroup(
+            PN_SIMPLELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PN_SIMPLELayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(BT_ADD)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BT_DEL)
+                .addContainerGap(327, Short.MAX_VALUE))
+            .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
+        );
+
+        PN_SIMPLELayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {BT_ADD, BT_DEL});
+
+        PN_SIMPLELayout.setVerticalGroup(
+            PN_SIMPLELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PN_SIMPLELayout.createSequentialGroup()
+                .addGroup(PN_SIMPLELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BT_ADD)
+                    .addComponent(BT_DEL))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE))
+        );
+
+        TBP_SEARCH.addTab(UserMain.Txt("Simple_Filter"), PN_SIMPLE); // NOI18N
+
+        TXTA_FILTER.setColumns(20);
+        TXTA_FILTER.setEditable(false);
+        TXTA_FILTER.setRows(5);
+        TXTA_FILTER.setTabSize(4);
+        TXTA_FILTER.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TXTA_FILTERMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(TXTA_FILTER);
+
+        javax.swing.GroupLayout PN_COMPLEXLayout = new javax.swing.GroupLayout(PN_COMPLEX);
+        PN_COMPLEX.setLayout(PN_COMPLEXLayout);
+        PN_COMPLEXLayout.setHorizontalGroup(
+            PN_COMPLEXLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_COMPLEXLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        PN_COMPLEXLayout.setVerticalGroup(
+            PN_COMPLEXLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PN_COMPLEXLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        TBP_SEARCH.addTab(UserMain.Txt("Complex_Filter"), PN_COMPLEX); // NOI18N
+
         javax.swing.GroupLayout PN_ACTIONLayout = new javax.swing.GroupLayout(PN_ACTION);
         PN_ACTION.setLayout(PN_ACTIONLayout);
         PN_ACTIONLayout.setHorizontalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_ACTIONLayout.createSequentialGroup()
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, PN_ACTIONLayout.createSequentialGroup()
-                        .addContainerGap()
+            .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(BT_DISABLED)
+                    .addComponent(TBP_SEARCH, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+                    .addComponent(PN_OPTS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel2))
+                            .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(TXT_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(CB_ACCOUNT, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 155, Short.MAX_VALUE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, PN_ACTIONLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(PN_OPTS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(BT_DISABLED, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
-                            .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                                .addComponent(BT_4EYES)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(PNL_4EYES, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                            .addComponent(TXT_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(CB_ACCOUNT, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 118, Short.MAX_VALUE))
+                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                        .addComponent(BT_4EYES)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(PNL_4EYES, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         PN_ACTIONLayout.setVerticalGroup(
@@ -380,22 +845,17 @@ public class EditRole extends GenericEditPanel
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(CB_ACCOUNT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel2))
-                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                        .addGap(11, 11, 11)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
+                .addComponent(TBP_SEARCH, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(PN_OPTS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(BT_4EYES)
                     .addComponent(PNL_4EYES, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(17, 17, 17)
                 .addComponent(BT_DISABLED)
-                .addContainerGap(49, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -435,19 +895,22 @@ public class EditRole extends GenericEditPanel
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(BT_MATCH_USERS)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 120, Short.MAX_VALUE)
-                .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 109, Short.MAX_VALUE)
+                .addComponent(BT_ABORT)
                 .addGap(18, 18, 18)
-                .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(BT_OK)
                 .addContainerGap())
         );
+
+        PN_BUTTONSLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {BT_ABORT, BT_OK});
+
         PN_BUTTONSLayout.setVerticalGroup(
             PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BT_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BT_OK)
+                    .addComponent(BT_ABORT)
                     .addComponent(BT_MATCH_USERS))
                 .addContainerGap())
         );
@@ -490,11 +953,10 @@ public class EditRole extends GenericEditPanel
     {//GEN-HEADEREND:event_BT_MATCH_USERSActionPerformed
         // TODO add your handling code here:
 
-        String role_filter_compressed = object.getAccountmatch();
         if (!is_plausible())
             return;
         
-
+        String role_filter_compressed = object.getAccountmatch();
         final String cmd = "ListUsers CMD:match_filter MA:" + UserMain.self.get_act_mandant().getId() + " AC:" + accm.get_act_id() + " FLC:'" + role_filter_compressed + "'";
 
         if (sw != null)
@@ -538,12 +1000,6 @@ public class EditRole extends GenericEditPanel
 
     }//GEN-LAST:event_BT_MATCH_USERSActionPerformed
 
-    private void TXT_ACCOUNTMATCHMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_TXT_ACCOUNTMATCHMouseClicked
-    {//GEN-HEADEREND:event_TXT_ACCOUNTMATCHMouseClicked
-        // TODO add your handling code here:
-        edit_user_filter();
-    }//GEN-LAST:event_TXT_ACCOUNTMATCHMouseClicked
-
     private void BT_4EYESActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_4EYESActionPerformed
     {//GEN-HEADEREND:event_BT_4EYESActionPerformed
         // TODO add your handling code here:
@@ -570,11 +1026,41 @@ public class EditRole extends GenericEditPanel
             TXTP_4EYES_PWD.setText(pnl.get_pwd());
         }
     }//GEN-LAST:event_TXTP_4EYES_PWDMouseClicked
+
+    private void BT_ADDActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_ADDActionPerformed
+    {//GEN-HEADEREND:event_BT_ADDActionPerformed
+        // TODO add your handling code here:
+        // DEFAULT: ALL CONTAINS WORD
+        ConditionCBEntry cbe = (ConditionCBEntry)CB_CONDITION.getItemAt(0);
+        simple_search_tablemodel.model.getChildren().add( cbe.entry );
+        simple_search_tablemodel.fireTableDataChanged();
+    }//GEN-LAST:event_BT_ADDActionPerformed
+
+    private void BT_DELActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_DELActionPerformed
+    {//GEN-HEADEREND:event_BT_DELActionPerformed
+        // TODO add your handling code here:
+        int local_row = simple_search_table.getSelectedRow();
+        if (local_row >= 0)
+        {
+            simple_search_tablemodel.model.getChildren().remove(local_row);
+            simple_search_tablemodel.fireTableDataChanged();
+        }
+}//GEN-LAST:event_BT_DELActionPerformed
+
+    private void TXTA_FILTERMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_TXTA_FILTERMouseClicked
+    {//GEN-HEADEREND:event_TXTA_FILTERMouseClicked
+        // TODO add your handling code here:
+       clr_flag(CS_Constants.ROLE_ACM_SIMPLE);
+       edit_complex_user_filter();
+       
+    }//GEN-LAST:event_TXTA_FILTERMouseClicked
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox BT_4EYES;
     private javax.swing.JButton BT_ABORT;
+    private javax.swing.JButton BT_ADD;
+    private javax.swing.JButton BT_DEL;
     private javax.swing.JCheckBox BT_DISABLED;
     private javax.swing.JButton BT_MATCH_USERS;
     private javax.swing.JButton BT_OK;
@@ -588,19 +1074,28 @@ public class EditRole extends GenericEditPanel
     private javax.swing.JPanel PNL_4EYES;
     private javax.swing.JPanel PN_ACTION;
     private javax.swing.JPanel PN_BUTTONS;
+    private javax.swing.JPanel PN_COMPLEX;
     private javax.swing.JPanel PN_OPTS;
+    private javax.swing.JPanel PN_SIMPLE;
+    private javax.swing.JScrollPane SCP_LIST;
+    private javax.swing.JTabbedPane TBP_SEARCH;
+    private javax.swing.JTextArea TXTA_FILTER;
     private javax.swing.JPasswordField TXTP_4EYES_PWD;
     private javax.swing.JTextField TXT_4EYES_USER;
-    private javax.swing.JTextArea TXT_ACCOUNTMATCH;
     private javax.swing.JTextField TXT_NAME;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 
+    boolean test_flag( int f )
+    {
+        int flags = get_object_flags();
+
+        return ((flags & f) == f);
+    }
     int get_object_flags()
     {
         return get_object_flags(object);
@@ -622,13 +1117,13 @@ public class EditRole extends GenericEditPanel
 
         return flags;
     }
-    void set_object_flag(int flag)
+    void set_flag(int flag)
     {
         int flags = get_object_flags();
         flags |= flag;
         object.setFlags(Integer.toString(flags));
     }
-    void clr_object_flag(int flag)
+    void clr_flag(int flag)
     {
         int flags = get_object_flags();
         flags &= ~flag;
@@ -646,9 +1141,9 @@ public class EditRole extends GenericEditPanel
     void set_object_disabled( boolean f)
     {
         if (f)
-            set_object_flag( CS_Constants.ROLE_DISABLED);
+            set_flag( CS_Constants.ROLE_DISABLED);
         else
-            clr_object_flag( CS_Constants.ROLE_DISABLED);
+            clr_flag( CS_Constants.ROLE_DISABLED);
     }
 
     
@@ -702,6 +1197,12 @@ public class EditRole extends GenericEditPanel
     @Override
     protected boolean is_plausible()
     {
+
+        if (test_flag(CS_Constants.ROLE_ACM_SIMPLE))
+        {
+            simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_VALUE).getCellEditor().stopCellEditing();            
+            object.setAccountmatch(simple_search_tablemodel.get_compressed_xml_list_data());
+        }
         if (!Validator.is_valid_path( TXT_NAME.getText(), 255))
         {
             UserMain.errm_ok(UserMain.getString("Der_Pfad_ist_nicht_okay"));
@@ -932,12 +1433,12 @@ public class EditRole extends GenericEditPanel
 
     private void set_filter_preview( String _nice_filter_text )
     {                   
-        TXT_ACCOUNTMATCH.setText(_nice_filter_text);
-        TXT_ACCOUNTMATCH.setCaretPosition(0);
+        TXTA_FILTER.setText(_nice_filter_text);
+        TXTA_FILTER.setCaretPosition(0);
 
     }
 
-    private void edit_user_filter()
+    private void edit_complex_user_filter()
     {
         try
         {
@@ -955,15 +1456,21 @@ public class EditRole extends GenericEditPanel
 
             if (rf.isOkay())
             {
-                 String role_filter_xml = rf.get_compressed_xml_list_data();
-                 object.setAccountmatch(role_filter_xml);
-                 set_filter_preview( LogicFilter.get_nice_filter_text( role_filter_xml) );
+                set_new_filter_vals(rf.get_compressed_xml_list_data());
             }
         }
         catch (Exception exc)
         {
             exc.printStackTrace();
         }
+    }
+
+    void set_new_filter_vals(String role_filter_xml)
+    {
+
+         object.setAccountmatch(role_filter_xml);
+         set_filter_preview( LogicFilter.get_nice_filter_text( role_filter_xml) );
+
     }
     
    

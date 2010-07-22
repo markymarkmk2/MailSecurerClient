@@ -22,8 +22,8 @@
                   <Component id="SCP_TABLE" alignment="1" pref="652" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="BT_IMPORT_CA" linkSize="1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="429" max="32767" attributes="0"/>
-                      <Component id="BT_OKAY" min="-2" pref="80" max="-2" attributes="0"/>
+                      <EmptySpace pref="448" max="32767" attributes="0"/>
+                      <Component id="BT_OKAY" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Component id="BT_NEW_KEY" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="BT_CSR" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -37,7 +37,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="SCP_TABLE" pref="258" max="32767" attributes="0"/>
+              <Component id="SCP_TABLE" pref="260" max="32767" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="BT_NEW_KEY" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
@@ -46,7 +46,7 @@
               <Component id="BT_IMPORT" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="BT_OKAY" min="-2" pref="25" max="-2" attributes="0"/>
+                  <Component id="BT_OKAY" min="-2" max="-2" attributes="0"/>
                   <Component id="BT_IMPORT_CA" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>

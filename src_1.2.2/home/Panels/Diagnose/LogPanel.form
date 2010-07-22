@@ -19,14 +19,16 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="LOG_PANEL" alignment="0" pref="627" max="32767" attributes="0"/>
+                  <Component id="LOG_PANEL" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="CB_LOG_SOURCE" min="-2" pref="199" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="BT_DUMP" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="257" max="32767" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="BT_FILTER" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="153" max="32767" attributes="0"/>
                       <Component id="BT_OK" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -38,13 +40,14 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="LOG_PANEL" pref="295" max="32767" attributes="0"/>
+              <Component id="LOG_PANEL" pref="334" max="32767" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="BT_OK" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="CB_LOG_SOURCE" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                   <Component id="BT_DUMP" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="BT_FILTER" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -117,6 +120,16 @@
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new GlossButton()"/>
       </AuxValues>
+    </Component>
+    <Component class="javax.swing.JButton" name="BT_FILTER">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="dimm/home/MA_Properties.properties" key="Filter" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_FILTERActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
