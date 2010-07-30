@@ -380,8 +380,28 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
             else
                 System.out.println("Missing DS: " + line);
         }
-        return true;
 
+
+        
+
+        String lic_txt = "";
+        ret = UserMain.fcc().call_abstract_function("LicenseConfig CMD:CHECK PRD:MailSecurer" );
+        if (ret != null && ret.charAt(0) == '0')
+        {
+            ParseToken pt = new ParseToken(ret.substring(3));
+            boolean licensed = pt.GetBoolean("LS:");
+            if (!licensed)
+            {
+                lic_txt = UserMain.Txt("unlicensed");
+            }
+            else if (pt.GetString("MU:").length() > 0)
+            {
+                lic_txt = "  " + pt.GetString("UU:") + "/" + pt.GetString("MU:");
+            }
+        }
+        TXT_LIC.setText(lic_txt);
+
+        return true;
 
 
     }
@@ -399,6 +419,8 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
         PN_DISKSPACES = new javax.swing.JPanel();
         SCP_TABLE = new javax.swing.JScrollPane();
         BT_OKAY = new GlossButton();
+        TXT_LIC = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
 
         jLabel4.setText(UserMain.Txt("Mandant")); // NOI18N
 
@@ -424,22 +446,29 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
             }
         });
 
+        TXT_LIC.setEditable(false);
+        TXT_LIC.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        TXT_LIC.setText("1000/1000");
+
+        jLabel5.setText(UserMain.Txt("Licensestatus")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(PN_DISKSPACES, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(PN_DISKSPACES, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(CB_MANDANT, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(609, Short.MAX_VALUE)
+                        .addComponent(jLabel5)
+                        .addGap(18, 18, 18)
+                        .addComponent(TXT_LIC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 458, Short.MAX_VALUE)
                         .addComponent(BT_OKAY, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -453,7 +482,10 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
                 .addGap(18, 18, 18)
                 .addComponent(PN_DISKSPACES, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(BT_OKAY)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BT_OKAY)
+                    .addComponent(jLabel5)
+                    .addComponent(TXT_LIC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -470,7 +502,9 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
     private javax.swing.JComboBox CB_MANDANT;
     private javax.swing.JPanel PN_DISKSPACES;
     private javax.swing.JScrollPane SCP_TABLE;
+    private javax.swing.JTextField TXT_LIC;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     // End of variables declaration//GEN-END:variables
 
      @Override

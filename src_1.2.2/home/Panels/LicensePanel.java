@@ -244,10 +244,32 @@ public class LicensePanel extends GlossDialogPanel implements MouseListener,  Pr
         read_license_list();
 
         TXT_HWID.setText( read_hwid() );
+
+        read_lic_status();
       
     }
 
+    void read_lic_status()
+    {
 
+        String lic_txt = "";
+        String ret = UserMain.fcc().call_abstract_function("LicenseConfig CMD:CHECK PRD:MailSecurer" );
+        if (ret != null && ret.charAt(0) == '0')
+        {
+            ParseToken pt = new ParseToken(ret.substring(3));
+            boolean licensed = pt.GetBoolean("LS:");
+            if (!licensed)
+            {
+                lic_txt = UserMain.Txt("unlicensed");
+            }
+            else if (pt.GetString("MU:").length() > 0)
+            {
+                lic_txt = "  " + pt.GetString("UU:") + "/" + pt.GetString("MU:");
+            }
+        }
+        TXT_LIC.setText(lic_txt);
+
+    }
     public void set_table_header()
     {
         TableColumnModel cm = table.getTableHeader().getColumnModel();
@@ -320,6 +342,8 @@ public class LicensePanel extends GlossDialogPanel implements MouseListener,  Pr
         BT_NEW_LIC = new GlossButton();
         jLabel1 = new javax.swing.JLabel();
         TXT_HWID = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        TXT_LIC = new javax.swing.JTextField();
 
         BT_OKAY.setText(UserMain.Txt("Close")); // NOI18N
         BT_OKAY.addActionListener(new java.awt.event.ActionListener() {
@@ -339,6 +363,12 @@ public class LicensePanel extends GlossDialogPanel implements MouseListener,  Pr
 
         TXT_HWID.setEditable(false);
 
+        jLabel2.setText(UserMain.Txt("Licensestatus")); // NOI18N
+
+        TXT_LIC.setEditable(false);
+        TXT_LIC.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        TXT_LIC.setText("1000/1000");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -346,12 +376,16 @@ public class LicensePanel extends GlossDialogPanel implements MouseListener,  Pr
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(SCP_TABLE, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
+                    .addComponent(SCP_TABLE, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(TXT_HWID, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 172, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(TXT_LIC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
                         .addComponent(BT_NEW_LIC)
                         .addGap(18, 18, 18)
                         .addComponent(BT_OKAY)))
@@ -361,13 +395,15 @@ public class LicensePanel extends GlossDialogPanel implements MouseListener,  Pr
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(SCP_TABLE, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+                .addComponent(SCP_TABLE, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OKAY)
                     .addComponent(jLabel1)
                     .addComponent(TXT_HWID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_NEW_LIC))
+                    .addComponent(BT_NEW_LIC)
+                    .addComponent(jLabel2)
+                    .addComponent(TXT_LIC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -467,7 +503,9 @@ public class LicensePanel extends GlossDialogPanel implements MouseListener,  Pr
     private javax.swing.JButton BT_OKAY;
     private javax.swing.JScrollPane SCP_TABLE;
     private javax.swing.JTextField TXT_HWID;
+    private javax.swing.JTextField TXT_LIC;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
 
 
