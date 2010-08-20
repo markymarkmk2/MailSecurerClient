@@ -176,7 +176,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             TXT_SMTP_PORT.setText( Integer.toString(object.getSmtp_port()));
             TXT_SMTP_USER.setText(object.getSmtp_user());
             TXTP_SMTP_PWD.setText(object.getSmtp_pwd());
-            TXTP_SMTP_PWD1.setText(object.getSmtp_pwd());
+            
             
 
             if (test_smtp_flag( CS_Constants.ACCT_USE_SSL))
@@ -278,8 +278,6 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         BT_IMPORT_CERT = new javax.swing.JButton();
         TXTP_SMTP_PWD = new javax.swing.JPasswordField();
         BT_TEST = new GlossButton();
-        jLabel13 = new javax.swing.JLabel();
-        TXTP_SMTP_PWD1 = new javax.swing.JPasswordField();
         jLabel7 = new javax.swing.JLabel();
         TXT_MAILFROM = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
@@ -516,8 +514,6 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             }
         });
 
-        jLabel13.setText(UserMain.getString("Passwort_wiederholen")); // NOI18N
-
         jLabel7.setText(UserMain.getString("Sender")); // NOI18N
 
         jLabel14.setText(UserMain.getString("To_List")); // NOI18N
@@ -538,18 +534,16 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
                 .addGroup(PN_SMTPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(PN_SMTPLayout.createSequentialGroup()
                         .addGroup(PN_SMTPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel13)
                             .addComponent(jLabel9)
                             .addComponent(jLabel8)
                             .addComponent(jLabel10)
                             .addComponent(jLabel11)
                             .addComponent(jLabel7)
                             .addComponent(jLabel14))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(9, 9, 9)
                         .addGroup(PN_SMTPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(TXT_MAILFROM, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
                             .addComponent(TXT_SMTP_HOST, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
-                            .addComponent(TXTP_SMTP_PWD1, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
                             .addComponent(TXTP_SMTP_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
                             .addComponent(TXT_SMTP_USER, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
                             .addComponent(TXT_SMTP_PORT, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
@@ -580,11 +574,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
                         .addGroup(PN_SMTPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel11)
                             .addComponent(TXTP_SMTP_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(PN_SMTPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel13)
-                            .addComponent(TXTP_SMTP_PWD1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                        .addGap(49, 49, 49)
                         .addGroup(PN_SMTPLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel7)
                             .addComponent(TXT_MAILFROM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1099,7 +1089,6 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
     private javax.swing.JPasswordField TXTP_PWD;
     private javax.swing.JPasswordField TXTP_PWD1;
     private javax.swing.JPasswordField TXTP_SMTP_PWD;
-    private javax.swing.JPasswordField TXTP_SMTP_PWD1;
     private javax.swing.JTextField TXT_IMAP_HOST;
     private javax.swing.JTextField TXT_IMAP_PORT;
     private javax.swing.JTextField TXT_MAILFROM;
@@ -1114,7 +1103,6 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
@@ -1294,6 +1282,9 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             }
             if (TXT_IMAP_HOST.getText().compareTo( object.getImap_host()) != 0)
                 return true;
+
+            if (CB_IMAP_SSL.isSelected() != test_flag(CS_Constants.MA_IMAP_SSL))
+                return true;
         }
 
         int port = Integer.parseInt(TXT_SMTP_PORT.getText());
@@ -1319,6 +1310,16 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         if (!TXT_MAILFROM.getText().equals( object.getMailfrom()) )
              return true;
 
+        int smtp_flags = 0;
+        if (RB_SSL.isSelected())
+            smtp_flags |= CS_Constants.ACCT_USE_SSL;
+        if (RB_TLS_FORCE.isSelected())
+            smtp_flags |= CS_Constants.ACCT_USE_TLS_FORCE;
+        if (RB_TLS_IV_AVAIL.isSelected())
+            smtp_flags |= CS_Constants.ACCT_USE_TLS_IF_AVAIL;
+
+        if (object.getSmtp_flags() != smtp_flags)
+            return true;
        
 /*
         MandantOverview.MandantLicenseEntry mte = (MandantOverview.MandantLicenseEntry) CB_LICENSE.getSelectedItem();
@@ -1345,11 +1346,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         char[] pwd = TXTP_SMTP_PWD.getPassword();
         return new String(pwd);
     }
-    String get_smtp_pwd1()
-    {
-        char[] pwd = TXTP_SMTP_PWD1.getPassword();
-        return new String(pwd);
-    }
+    
 
     @Override
     protected boolean is_plausible()
@@ -1400,7 +1397,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             UserMain.errm_ok(UserMain.getString("Der_SMTP-Port_ist_nicht_okay"));
             return false;
         }
-        if (get_smtp_pwd().length() == 0 || get_smtp_pwd().length() > 80 || !get_smtp_pwd().equals(get_smtp_pwd1()))
+        if (get_smtp_pwd().length() == 0 || get_smtp_pwd().length() > 80)
         {
             UserMain.errm_ok(UserMain.getString("Das_SMTP-Passwort_ist_nicht_okay"));
             return false;
@@ -1410,6 +1407,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
              UserMain.errm_ok(UserMain.getString("Die_Notificationadresse_ist_nicht_okay"));
              return false;
         }
+
 
 
         return true;

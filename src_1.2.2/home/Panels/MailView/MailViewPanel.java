@@ -1421,7 +1421,10 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         try
         {
             if (file_name == null)
+            {
                 tmp_file = File.createTempFile("dlml", ".tmp", new File("."));
+                tmp_file.deleteOnExit();
+            }
             else
                 tmp_file = new File(file_name);
 

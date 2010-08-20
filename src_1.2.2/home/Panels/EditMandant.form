@@ -228,7 +228,6 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel13" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -236,11 +235,10 @@
                                   <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel14" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="TXT_MAILFROM" alignment="1" pref="274" max="32767" attributes="1"/>
                                   <Component id="TXT_SMTP_HOST" alignment="0" pref="274" max="32767" attributes="1"/>
-                                  <Component id="TXTP_SMTP_PWD1" alignment="0" pref="274" max="32767" attributes="1"/>
                                   <Component id="TXTP_SMTP_PWD" alignment="0" pref="274" max="32767" attributes="1"/>
                                   <Component id="TXT_SMTP_USER" alignment="0" pref="274" max="32767" attributes="1"/>
                                   <Component id="TXT_SMTP_PORT" alignment="0" pref="274" max="32767" attributes="1"/>
@@ -280,12 +278,7 @@
                                   <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="TXTP_SMTP_PWD" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="TXTP_SMTP_PWD1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="TXT_MAILFROM" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -495,15 +488,6 @@
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new GlossButton()"/>
               </AuxValues>
-            </Component>
-            <Component class="javax.swing.JLabel" name="jLabel13">
-              <Properties>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="dimm/home/MA_Properties.properties" key="Passwort_wiederholen" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
-                </Property>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JPasswordField" name="TXTP_SMTP_PWD1">
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel7">
               <Properties>

@@ -224,10 +224,16 @@ public class MandantOverview extends SQLOverviewDialog implements PropertyChange
     {
         Mandant m = get_object_model().get_object( row );
 
+        if (!UserMain.errm_ok_cancel(this, UserMain.Txt("Wenn_Sie_einen_Mandanten_löschen_besteht_kein_Zugriff_mehr_auf_die_archivierten_Daten")))
+            return false;
+
         ServerCall sql = UserMain.sqc().get_sqc();
         boolean okay = sql.DeleteObject( m);
         if (okay)
-            set_needs_init( true );
+        {
+            // REINIT STOPS AND REMOVES THIS ONE
+            UserMain.fcc().call_abstract_function("restart_mandant MA:" + m.getId(), ServerCall.SHORT_CMD_TO);
+        }
 
         return okay;
 

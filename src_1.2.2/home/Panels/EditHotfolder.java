@@ -377,6 +377,10 @@ public class EditHotfolder extends GenericEditPanel
             if (dacm.get_act_id() != da_id)
                 return true;
         }
+
+        String email = get_email_cb_txt();
+        if (object.getUsermailadress().compareTo(email) != 0)
+            return true;
         
         return false;
     }
