@@ -905,8 +905,8 @@ public class EditAccountConnector extends GenericEditPanel
         TXT_PORT.setText( "" + get_dflt_port( type, RB_SSL.isSelected() ) );
 
 
-        TXT_LDAP_SB.setVisible(type.compareTo("ldap") == 0);
-        LB_LDAP_SB.setVisible(type.compareTo("ldap") == 0);
+        TXT_LDAP_SB.setVisible(is_ad() || is_ldap());
+        LB_LDAP_SB.setVisible(is_ad() || is_ldap());
         
         TXT_SEARCHFIELD.setVisible(search_attr_visible);
         TXT_MAILFIELDS.setVisible(search_attr_visible);
@@ -1399,7 +1399,7 @@ public class EditAccountConnector extends GenericEditPanel
             mail_attribute = TXT_USERDOMAIN.getText();
         }
  
-        if (type.compareTo("ldap") == 0)
+        if (is_ad() || is_ldap())
         {
             ldap_sb_text = TXT_LDAP_SB.getText();
             search_attribute = TXT_SEARCHFIELD.getText();

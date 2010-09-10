@@ -18,7 +18,7 @@ import javax.swing.UIManager;
  */
 public class Main
 {
-    public static String version_str = "1.3.7";
+    public static String version_str = "1.3.8";
     
 
     static Main me;
