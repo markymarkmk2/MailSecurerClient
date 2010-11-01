@@ -931,16 +931,23 @@ public class ServerTCPCall extends ServerCall
 
         return null;
     }
-
     @Override
     public ResultSetID executeQuery( StatementID sta, String qry/*, SQLResult result*/ )
+    {
+        return executeQuery(  sta, qry, -1);
+    }
+    @Override
+    public ResultSetID executeQuery( StatementID sta, String qry, int max_rows)
     {
         init_stat(qry);
 
         String ret = null;
         try
         {
-            ret = send_rmx("executeQuery " + sta.getId() + "|" + qry, SHORT_CMD_TO);
+            if (max_rows > 0)
+                ret = send_rmx("executeQueryCnt " + sta.getId() + "|" + max_rows + "|" + qry, SHORT_CMD_TO);
+            else
+                ret = send_rmx("executeQuery " + sta.getId() + "|" + qry, SHORT_CMD_TO);
 
             calc_stat(ret);
 

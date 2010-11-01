@@ -181,6 +181,12 @@ class OlexpRootNode extends DefaultMutableTreeNode implements SwitchableNode
         return false;
     }
 
+    @Override
+    public long get_size()
+    {
+        return 0;
+    }
+
 }
 
 
@@ -244,6 +250,12 @@ class OlexpVersionNode  extends DefaultMutableTreeNode implements SwitchableNode
     {
         return false;
     }
+
+    @Override
+    public long get_size()
+    {
+        return 0;
+    }
 }
 class OlexpFileNode  extends FileNode
 {
@@ -284,8 +296,12 @@ class OlexpTreeCellRenderer implements TreeCellRenderer
 
     OlexpTreeCellRenderer()
     {
+
         jcb = new JCheckBox();
+        jcb.setOpaque(false);
         jlb = new JLabel();
+        jlb.setOpaque(false);
+
         jlb.setForeground(Main.ui.get_foreground() );
         jlb.setBackground(Main.ui.get_background() );
     }

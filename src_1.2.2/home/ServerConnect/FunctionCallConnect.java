@@ -14,7 +14,7 @@ package dimm.home.ServerConnect;
 public class FunctionCallConnect extends Connect
 {
 
-    public static final int SHORT_TIMEOUT = 5;
+    public static final int SHORT_TIMEOUT = 10;
     public static final int MEDIUM_TIMEOUT = 30;
     public static final int LONG_TIMEOUT = 600;
     public static final int NO_TIMEOUT = 0;

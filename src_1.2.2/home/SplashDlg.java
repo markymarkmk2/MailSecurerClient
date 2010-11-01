@@ -46,6 +46,8 @@ public class SplashDlg extends javax.swing.JDialog implements ActionListener
     @InjectedResource
     private BufferedImage glowPicture;
     @InjectedResource
+    private boolean hide_preferences = false;
+    @InjectedResource
     private BufferedImage noglowPicture;
 
     
@@ -53,9 +55,16 @@ public class SplashDlg extends javax.swing.JDialog implements ActionListener
     public SplashDlg(java.awt.Frame parent, boolean modal)
     {
         super(parent, modal);
+        
         ResourceInjector.get().inject(this);
 
         initComponents();
+
+        if (hide_preferences)
+        {
+            BT_PREFS.setVisible(false);
+        }
+
         
         incr = 0.03f;
         act_alpha = 0.0f;
@@ -386,6 +395,8 @@ private static BufferedImage createJPEG4(Raster r)
             fname = args[0];
         }
 
+        SplashDlg dlg = new SplashDlg(null, true);
+        
         File img = new File( fname );
         if (img.exists())
         {

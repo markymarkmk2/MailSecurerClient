@@ -134,6 +134,12 @@ class EMLRootNode extends DefaultMutableTreeNode implements SwitchableNode
     {
         return false;
     }
+
+    @Override
+    public long get_size()
+    {
+        return 0;
+    }
 }
 class EMLFileNode  extends FileNode
 {
@@ -195,7 +201,9 @@ class EMLTreeCellRenderer implements TreeCellRenderer
     EMLTreeCellRenderer()
     {
         jcb = new JCheckBox();
+        jcb.setOpaque(false);
         jlb = new JLabel();
+        jlb.setOpaque(false);
         jlb.setForeground(Main.ui.get_foreground() );
         jlb.setBackground(Main.ui.get_background() );
     }
@@ -234,12 +242,24 @@ class EMLTreeCellRenderer implements TreeCellRenderer
 
 
 
-class EMLProfileManager extends ProfileManager
+class EMLProfileManager extends FileImportProfileManager
 {
    
-    @Override
-    void fill_profile_combo( JComboBox cb ) throws IOException
+   ComboProfileOptsPanel opts_panel;
+
+    public EMLProfileManager(PanelImportMailbox dialog)
     {
+        super(dialog);
+
+        this.opts_panel = new ComboProfileOptsPanel(dialog);
+        dialog.set_opts_panel( opts_panel );
+
+    }
+
+    @Override
+    void init_options_gui( ) throws IOException
+    {
+        JComboBox cb = opts_panel.get_combo();
         cb.removeAllItems();
        
         NamePathEntry tbpe = new NamePathEntry( null, UserMain.Txt("Select_mail_directory_manually") );
@@ -254,6 +274,20 @@ class EMLProfileManager extends ProfileManager
     }
 
     @Override
+    void handle_build_tree( JTree tree) throws IOException
+    {
+        if (opts_panel.getNpe() != null)
+        {
+            handle_build_tree(opts_panel.getNpe(), tree );
+        }
+        if (opts_panel.getPath() != null)
+        {
+            handle_build_tree(opts_panel.getPath(), tree );
+        }
+    }
+
+
+  
     void handle_build_tree(String path, JTree tree) throws IOException
     {
         EMLRootNode node = null;
@@ -265,7 +299,7 @@ class EMLProfileManager extends ProfileManager
         tree.setRootVisible(true);
     }
 
-    @Override
+   
     void handle_build_tree( NamePathEntry npe, JTree tree ) throws IOException
     {
         

@@ -30,6 +30,8 @@ import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataListener;
+import org.jdesktop.fuse.InjectedResource;
+import org.jdesktop.fuse.ResourceInjector;
 
 // Preferences
 
@@ -196,11 +198,16 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     int login_retries;
     private boolean in_init;
 
+    @InjectedResource
+    private String gui_default_station = "";
+   
 
     /** Creates new form LoginPanel */
     public LoginPanel(UserMain _main)
     {
         in_init = true;
+        ResourceInjector.get().inject(this);
+
         initComponents();
         
         BT_SSL.setSelected(Main.get_bool_prop(Preferences.SERVER_SSL, true));
@@ -919,7 +926,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     {
         ArrayList<StationEntry> st_list = new ArrayList<StationEntry>();
 
-        String default_station = Main.get_prop(Preferences.DEFAULT_STATION);
+        String default_station = Main.get_prop(Preferences.DEFAULT_STATION, gui_default_station);
         if (default_station != null && default_station.length() > 0)
         {
             try
@@ -940,6 +947,8 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                 // NO SCANNING
                 if (only_this)
                 {
+                    CB_SERVER.setEnabled(false);
+                    
                     UserMain.self.hide_busy();
                     return st_list;
                 }
@@ -1021,13 +1030,39 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
 
         SQLConnect sqc = new SQLConnect(st.get_ip(), Main.server_port, BT_SSL.isSelected() );
 
+
+        String default_station = Main.get_prop(Preferences.DEFAULT_STATION, gui_default_station);
+        ParseToken pt = new ParseToken(default_station);
+        long fix_mandant = pt.GetLongValue("FM:");
+        String fix_mandant_name = pt.GetString("FN:");
+
+
+
         SQLResult<Mandant> ma_res = sqc.init_mandant_list();
         if (ma_res != null)
         {
             for (int i = 0; i < ma_res.size(); i++)
             {
                 Mandant mandant = ma_res.get(i);
+
+                // CHECK IF WE WANT FIX ID?
+                if (fix_mandant > 0 && mandant.getId() != fix_mandant)
+                    continue;
+
+                // CHECK IF WE WANT FIX OR NAME?
+                if (fix_mandant_name != null && fix_mandant_name.length() > 0)
+                {
+                    if (fix_mandant_name.compareTo(mandant.getName()) != 0)
+                        continue;
+                }
+
                 ma_list.add(mandant);
+
+                // IF WE HAVE FOUND AT LEAST ONE MANDANT WE CAN LOCK COMBO
+                if (fix_mandant > 0 || (fix_mandant_name != null && fix_mandant_name.length() > 0))
+                {
+                    CB_MANDANT.setEnabled(false);
+                }
             }
         }
         return ma_list;

@@ -45,6 +45,12 @@ public class CheckBoxListCellRenderer extends JButton implements ListCellRendere
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
     {
         cb = (JCheckBox)value;
+
+        if (!Main.ui.has_rendered_panels())
+        {
+            return cb;
+        }
+
         this.setSelected(cb.isSelected());
         if (cb.isSelected())       
             this.setIcon(pressed);

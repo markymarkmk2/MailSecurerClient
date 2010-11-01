@@ -62,6 +62,7 @@ public abstract class ServerCall {
     public abstract boolean execute( StatementID sta, String qry );
 
     public abstract ResultSetID executeQuery( StatementID sta, String qry );
+    public abstract ResultSetID executeQuery( StatementID sta, String qry, int max_rows );
 
     public abstract int executeUpdate( StatementID sta, String qry );
 

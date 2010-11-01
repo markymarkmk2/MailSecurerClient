@@ -69,6 +69,11 @@ public class UI_Pirates extends UI_Generic
         return small_font;
     }
     
+    @Override
+    public String toString()
+    {
+        return "Pirate";
+    }
     
     
     @Override

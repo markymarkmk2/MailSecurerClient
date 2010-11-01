@@ -33,6 +33,18 @@ abstract class FileNode  extends DefaultMutableTreeNode implements SwitchableNod
         }
         model = _model;
     }
+
+    @Override
+    public long get_size()
+    {
+        File mbox = node;
+        if (mbox != null)
+        {
+            return mbox.length();
+        }
+        return 0;
+    }
+
     abstract String get_mbox_name();
 
     @Override

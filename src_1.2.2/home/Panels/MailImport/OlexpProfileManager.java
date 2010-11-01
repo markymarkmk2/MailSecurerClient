@@ -20,12 +20,24 @@ import javax.swing.tree.DefaultTreeModel;
  *
  * @author mw
  */
-class OlexpProfileManager extends ProfileManager
+class OlexpProfileManager extends FileImportProfileManager
 {
 
-    @Override
-    void fill_profile_combo( JComboBox cb ) throws IOException
+    ComboProfileOptsPanel opts_panel;
+
+    public OlexpProfileManager(PanelImportMailbox dialog)
     {
+        super(dialog);
+
+        this.opts_panel = new ComboProfileOptsPanel(dialog);
+        dialog.set_opts_panel( opts_panel );
+
+    }
+
+    @Override
+    void init_options_gui( ) throws IOException
+    {
+        JComboBox cb = opts_panel.get_combo();
         cb.removeAllItems();
 
         try
@@ -69,6 +81,20 @@ class OlexpProfileManager extends ProfileManager
     }
 
     @Override
+    void handle_build_tree( JTree tree) throws IOException
+    {
+        if (opts_panel.getNpe() != null)
+        {
+            handle_build_tree(opts_panel.getNpe(), tree );
+        }
+        if (opts_panel.getPath() != null)
+        {
+            handle_build_tree(opts_panel.getPath(), tree );
+        }
+    }
+
+
+   
     void handle_build_tree(String path, JTree tree) throws IOException
     {
         OlexpRootNode node = null;
@@ -78,7 +104,7 @@ class OlexpProfileManager extends ProfileManager
         tree.setModel(model);
         tree.setCellRenderer( new OlexpTreeCellRenderer() );
     }
-    @Override
+    
     void handle_build_tree(NamePathEntry npe_profile, JTree tree) throws IOException
     {
         OlexpRootNode node = null;

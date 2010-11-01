@@ -31,22 +31,6 @@ public class UI_Native extends UI_Generic
 
     public UI_Native()
     {
-        try
-        {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        }
-        catch (ClassNotFoundException classNotFoundException)
-        {
-        }
-        catch (InstantiationException instantiationException)
-        {
-        }
-        catch (IllegalAccessException illegalAccessException)
-        {
-        }
-        catch (UnsupportedLookAndFeelException unsupportedLookAndFeelException)
-        {
-        }
     }
 
 
@@ -87,6 +71,11 @@ public class UI_Native extends UI_Generic
         return small_font;
     }
     
+    @Override
+    public String toString()
+    {
+        return "Native";
+    }
     
     
     @Override
@@ -94,6 +83,23 @@ public class UI_Native extends UI_Generic
     {
         try
         {
+            try
+            {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
+            catch (ClassNotFoundException classNotFoundException)
+            {
+            }
+            catch (InstantiationException instantiationException)
+            {
+            }
+            catch (IllegalAccessException illegalAccessException)
+            {
+            }
+            catch (UnsupportedLookAndFeelException unsupportedLookAndFeelException)
+            {
+            }
+
             if (verbose)
                 uidftest();
            

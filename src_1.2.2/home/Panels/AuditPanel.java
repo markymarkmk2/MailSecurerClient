@@ -20,6 +20,7 @@ import dimm.home.ServerConnect.ResultSetID;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StatementID;
 import dimm.home.UserMain;
+import dimm.home.Utilities.SwingWorker;
 import home.shared.SQL.SQLArrayResult;
 import home.shared.SQL.SQLResult;
 import home.shared.hibernate.Mandant;
@@ -337,6 +338,12 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
         String cmd  = TXT_CMD.getText();
         String from = TXT_FROM.getText();
         String till = TXT_TILL.getText();
+        Object cnt_str = CB_RESULT_CNT.getSelectedItem();
+        if (cnt_str == null)
+            cnt_str = CB_RESULT_CNT.getItemAt(0);
+
+        int cnt = Integer.parseInt(cnt_str.toString());
+
 
 
 
@@ -365,12 +372,13 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
                 qry += " and ts<'" + l + "'";
         }
 
+
         qry += " order by ts desc";
 
         ServerCall sql = UserMain.sqc().get_sqc();
         ConnectionID cid = sql.open_audit("");
         StatementID sid = sql.createStatement(cid);
-        ResultSetID rid = sql.executeQuery(sid, qry);
+        ResultSetID rid = sql.executeQuery(sid, qry, cnt);
         SQLArrayResult resa = sql.get_sql_array_result(rid);
         
 
@@ -391,15 +399,32 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
 
     void search()
     {
-        try
+        SwingWorker sw = new SwingWorker()
         {
-            // TODO add your handling code here:
-            _search();
-        }
-        catch (ParseException ex)
-        {
-            UserMain.errm_ok(my_dlg, UserMain.Txt("Invalid_search_criteria"));
-        }
+
+            @Override
+            public Object construct()
+            {
+                try
+                {
+                    // TODO add your handling code here:
+                    UserMain.self.show_busy(my_dlg, UserMain.Txt("Searching") + "..." );
+                    _search();
+                }
+                catch (ParseException ex)
+                {
+                    UserMain.self.hide_busy();
+                    UserMain.errm_ok(my_dlg, UserMain.Txt("Invalid_search_criteria"));
+                }
+                finally
+                {
+                    UserMain.self.hide_busy();
+
+                }
+                return null;
+            }
+        };
+        sw.start();
     }
 
     
@@ -496,6 +521,8 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
         CB_SHOW_ARGS = new javax.swing.JCheckBox();
         jLabel5 = new javax.swing.JLabel();
         TXT_CMD = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        CB_RESULT_CNT = new javax.swing.JComboBox();
         BT_EXPORT = new javax.swing.JButton();
 
         LOG_PANEL.setMinimumSize(new java.awt.Dimension(600, 200));
@@ -564,6 +591,10 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
 
         jLabel5.setText(UserMain.Txt("Command")); // NOI18N
 
+        jLabel6.setText(UserMain.Txt("Results")); // NOI18N
+
+        CB_RESULT_CNT.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "10", "100", "1000" }));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -590,9 +621,15 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)
                         .addComponent(BT_SEARCH))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(16, 16, 16)
-                        .addComponent(TXT_TILL, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(18, 18, 18)
+                                .addComponent(CB_RESULT_CNT, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addGap(16, 16, 16)
+                                .addComponent(TXT_TILL, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, 18)
                         .addComponent(CB_SHOW_ANSWER)))
                 .addContainerGap())
@@ -620,7 +657,9 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(TXT_CMD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TXT_CMD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(CB_RESULT_CNT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(13, Short.MAX_VALUE))
         );
 
@@ -652,7 +691,7 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(LOG_PANEL, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
+                .addComponent(LOG_PANEL, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK)
@@ -709,6 +748,7 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
     private javax.swing.JButton BT_OK;
     private javax.swing.JButton BT_SEARCH;
     private javax.swing.JComboBox CB_MANDANT;
+    private javax.swing.JComboBox CB_RESULT_CNT;
     private javax.swing.JCheckBox CB_SHOW_ANSWER;
     private javax.swing.JCheckBox CB_SHOW_ARGS;
     private javax.swing.JPanel LOG_PANEL;
@@ -722,6 +762,7 @@ public class AuditPanel extends GlossDialogPanel  implements MouseListener, Acti
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 

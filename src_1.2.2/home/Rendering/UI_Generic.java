@@ -8,6 +8,11 @@ package dimm.home.Rendering;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.NavigableSet;
@@ -80,16 +85,60 @@ class MyButtonUI extends BasicButtonUI
 public abstract class UI_Generic
 {
 
+    static ArrayList<UI_Generic> ui_list;
+
+    public static void set_ui_list()
+    {
+        ui_list = new ArrayList<UI_Generic>();
+        ui_list.add(new UI_Pirates());
+        ui_list.add(new UI_Native());
+
+        try
+        {
+            File ui_dir = new File("UI");
+            if (!ui_dir.exists())
+                return;
+
+            
+            File[] entries = ui_dir.listFiles();
+            for (int i = 0; i < entries.length; i++)
+            {
+                File file = entries[i];
+                if (file.getName().endsWith(".jar"))
+                {
+                    URL jarfile = file.toURI().toURL();
+
+                    URLClassLoader cl = URLClassLoader.newInstance(new URL[] {jarfile });
+                    Class loadedClass = cl.loadClass("de.gruppemedia.mailsecurer.UI.UI_User");
+
+                    Class<? extends UI_Generic> runClass = loadedClass.asSubclass(UI_Generic.class);
+                    Constructor<? extends UI_Generic> ctor = runClass.getConstructor();
+                    
+                    UI_Generic ui = ctor.newInstance();
+                    
+                    ui_list.add(ui);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    public static ArrayList<String> get_ui_names()
+    {
+        ArrayList<String> list = new ArrayList<String>();
+        for (int i = 0; i < ui_list.size(); i++)
+        {
+            list.add( ui_list.get(i).toString() );
+        }
+        return list;
+    }
     public static UI_Generic create_ui( int ui_id )
     {
-        switch( ui_id )
-        {
-            case 0:    return new UI_Pirates();
-            case 1:    return new UI_Native();
-            case 2:    return new UI_Native();
-            case 3:    return new UI_Milk();
-            case 4:    return new UI_Bluesea();
-        }
+        if (ui_id < ui_list.size())
+            return ui_list.get(ui_id);
+        
         return new UI_Pirates();
     }
     public abstract Color get_table_header_color();
@@ -109,6 +158,13 @@ public abstract class UI_Generic
     static final Color brownish = new Color( 174, 145, 68 );
 
     static TreeMap<Object,Object> uid_save;
+
+
+
+    public static BasicButtonUI get_render_button_ui()
+    {
+        return new MyButtonUI();
+    }
 
     public static void save_uid()
     {

@@ -18,7 +18,7 @@ import javax.swing.UIManager;
  */
 public class Main
 {
-    public static String version_str = "1.3.8";
+    public static String version_str = "1.4.1";
     
 
     static Main me;
@@ -255,6 +255,10 @@ public class Main
 
         // FIRST SET OUT L&F
         //UI_Generic.save_uid();
+
+        // READ THEMES
+        UI_Generic.set_ui_list();
+
         ui = UI_Generic.create_ui( (int)Main.get_long_prop(Preferences.UI, 0l) );
         ui.set_ui(verbose);
 

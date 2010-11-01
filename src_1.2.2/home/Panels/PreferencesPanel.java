@@ -13,6 +13,7 @@ import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.Rendering.UI_Generic;
 import dimm.home.UserMain;
 import home.shared.Utilities.ParseToken;
+import java.util.ArrayList;
 import javax.swing.JButton;
 
 // Preferences
@@ -37,6 +38,13 @@ public class PreferencesPanel extends GlossDialogPanel
         initComponents();
         CB_CHECK_NEW.setSelected( Main.get_long_prop(Preferences.CHECK_NEWS) > 0);
 
+        COMBO_UI.removeAllItems();
+        ArrayList<String> ui_names = UI_Generic.get_ui_names();
+        for (int i = 0; i < ui_names.size(); i++)
+        {
+            String string = ui_names.get(i);
+            COMBO_UI.addItem(string);
+        }
 
         last_ui = (int)Main.get_long_prop(Preferences.UI, 0l);
         if (last_ui < COMBO_UI.getItemCount())
@@ -51,6 +59,7 @@ public class PreferencesPanel extends GlossDialogPanel
             String ip = pt.GetString("IP:");
             long po = pt.GetLongValue("PO:");
             boolean only_this = pt.GetBoolean("OT:");
+            
 
             if (ip != null && ip.length() > 0 && po > 0)
             {
@@ -154,8 +163,6 @@ public class PreferencesPanel extends GlossDialogPanel
         });
 
         jLabel1.setText(UserMain.Txt("Look_n_Feel")); // NOI18N
-
-        COMBO_UI.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Pirates", "Native" }));
 
         jLabel2.setText(UserMain.Txt("Language")); // NOI18N
 

@@ -330,6 +330,17 @@ class TBirdTreeNode implements MutableTreeNode, SwitchableNode
         return node.isFile();  // MSF-DIR AND FILE CONTAIN DATA
     }
 
+    @Override
+    public long get_size()
+    {
+        File mbox = get_mailbox();
+        if (mbox != null)
+        {
+            return mbox.length();
+        }
+        return 0;
+    }
+
    
 }
 class TBirdTreeModel extends DefaultTreeModel
@@ -380,10 +391,19 @@ class TBirdTreeCellRenderer implements TreeCellRenderer
 
 
 
-class TBirdProfileManager extends ProfileManager
+class TBirdProfileManager extends FileImportProfileManager
 {
+    ComboProfileOptsPanel opts_panel;
 
-    String build_appdata_path()
+    public TBirdProfileManager(PanelImportMailbox dialog)
+    {
+        super(dialog);
+        this.opts_panel = new ComboProfileOptsPanel(dialog);
+        dialog.set_opts_panel( opts_panel );
+
+    }
+
+    private String build_appdata_path()
     {
         /*
          # On Linux, the path is usually ~/.thunderbird/xxxxxxxx.default/
@@ -418,11 +438,10 @@ class TBirdProfileManager extends ProfileManager
 
     }
 
-    @Override
+    
     String get_type()
     {
         return CS_Constants.TYPE_TBIRD;
-
     }
 
 
@@ -439,10 +458,12 @@ IsRelative=1
 Path=Profiles/nl1ice4b.default
 
 
-*/
+*//*
+    
     @Override
-    void fill_profile_combo( JComboBox cb ) throws IOException
+    void init_options_gui( ) throws IOException
     {
+        JComboBox cb = opts_panel.get_combo();
         cb.removeAllItems();
         
         String tbird_appdata = build_appdata_path();
@@ -488,10 +509,93 @@ Path=Profiles/nl1ice4b.default
 
         cb.addItem(tbpe);
     }
+    */
+    @Override
+    void init_options_gui( ) throws IOException
+    {
+        final JComboBox cb = opts_panel.get_combo();
+        cb.removeAllItems();
+
+        UserMain.self.show_busy( dialog.getDlg(), UserMain.Txt("Loading") + "...");
+
+        Runnable r = new Runnable() {
+
+            @Override
+            public void run()
+            {
+
+                try
+                {
+                    String tbird_appdata = build_appdata_path();
+
+                    UserMain.debug_msg(1, "Checking TBird Appdata: " + tbird_appdata + "/profiles.ini");
+                    File prf = new File ( tbird_appdata + "/profiles.ini" );
+                    if (!prf.exists())
+                    {
+                        NamePathEntry tbpe = new NamePathEntry( null, UserMain.Txt("Select_mail_directory_manually") );
+                        cb.addItem(tbpe);
+
+                    }
+                    INIFile objINI = new INIFile(prf.getAbsolutePath());
+
+                    for (int i = 0; ; i++)
+                    {
+                        String name = objINI.getStringProperty("Profile" + i, "Name");
+                        String is_rel = objINI.getStringProperty("Profile" + i, "IsRelative");
+                        String path = objINI.getStringProperty("Profile" + i, "Path");
+                        if (name == null)
+                            break;
+
+                        if (is_rel.charAt(0) == '1')
+                        {
+                            path = tbird_appdata + "/" + path;
+                        }
+
+
+                        if (new File(path).exists())
+                        {
+                            NamePathEntry tbpe = new NamePathEntry( path , name );
+                            cb.addItem(tbpe);
+                        }
+
+                    }
+
+                    NamePathEntry tbpe = new NamePathEntry( null, UserMain.Txt("Select_mail_directory_manually") );
+
+                    cb.addItem(tbpe);
+                }
+                catch (Exception exc)
+                {
+                }
+                finally
+                {
+                    UserMain.self.hide_busy();
+                }
+
+
+            }
+        };
+
+        Thread thr = new Thread(r);
+        thr.start();
+    }
 
     @Override
+    void handle_build_tree( JTree tree) throws IOException
+    {
+        if (opts_panel.getNpe() != null)
+        {
+            handle_build_tree(opts_panel.getNpe(), tree );
+        }
+        if (opts_panel.getPath() != null)
+        {
+            handle_build_tree(opts_panel.getPath(), tree );
+        }
+    }
+    
     void handle_build_tree(NamePathEntry npe, JTree tree) throws IOException
     {
+
         ArrayList<String>mail_root_dirs = new ArrayList<String>();
 
         File panacea = new File( npe.path + "/panacea.dat");
@@ -590,7 +694,7 @@ Path=Profiles/nl1ice4b.default
         }
     }
 
-    @Override
+   
     void handle_build_tree(String path, JTree tree) throws IOException
     {
         // WE HAVE AN ABSOLUTE MAILPATH, JUST TRY TO BUILD TBIRD TREE
