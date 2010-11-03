@@ -87,6 +87,16 @@ public class UserMain extends javax.swing.JFrame implements LogListener
         return false;
     }
 
+    public static Color get_nice_gray()
+    {
+        return Main.ui.get_nice_gray();
+    }
+
+    public static boolean get_bool_prop( String s, boolean b )
+    {
+        return Main.get_bool_prop(s, b);
+    }
+
     // PANELS
     NavigationHeader navPanel ;
     PanelVerwaltung pn_verwaltung;

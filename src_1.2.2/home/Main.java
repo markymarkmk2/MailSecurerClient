@@ -10,6 +10,7 @@ package dimm.home;
 
 import dimm.home.Rendering.UI_Generic;
 import dimm.home.native_libs.NativeLoader;
+import java.io.File;
 import javax.swing.UIManager;
 
 /**
@@ -18,7 +19,7 @@ import javax.swing.UIManager;
  */
 public class Main
 {
-    public static String version_str = "1.4.1";
+    public static String version_str = "1.4.2";
     
 
     static Main me;
@@ -30,6 +31,7 @@ public class Main
     public static final String PREFS_PATH = "";
     public static final String UPDATE_PATH = "update/";
     public static final String LOG_PATH = "logs/";
+    public static final String CACHE_PATH = "cache/";
 
     public static boolean enable_distributor;
 
@@ -59,6 +61,17 @@ public class Main
         me = this;
 
         prefs = new Preferences();
+
+        File f = new File( LOG_PATH );
+        if (!f.exists())
+            f.mkdirs();
+
+        if (get_bool_prop(Preferences.CACHE_MAILFILES, false))
+        {
+            f = new File( CACHE_PATH );
+            if (!f.exists())
+                f.mkdirs();
+        }
     }
 
     static void print_system_property( String key )

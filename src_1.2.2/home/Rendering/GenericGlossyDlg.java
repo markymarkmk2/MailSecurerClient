@@ -227,4 +227,5 @@ public class GenericGlossyDlg extends JDialog
     private javax.swing.JPanel PN_PANELS;
     private javax.swing.JPanel PN_TITLE;
     // End of variables declaration//GEN-END:variables
+
 }

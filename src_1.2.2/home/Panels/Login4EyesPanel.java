@@ -161,11 +161,7 @@ public class Login4EyesPanel extends GlossDialogPanel
     }//GEN-LAST:event_BT_ABORTActionPerformed
 
     private void PF_PWDMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PF_PWDMouseClicked
-        // TODO add your handling code here:
-        if (UserMain.self.is_touchscreen())
-        {
-            UserMain.self.show_vkeyboard( this.my_dlg, PF_PWD, false);
-        }        
+
     }//GEN-LAST:event_PF_PWDMouseClicked
     
     

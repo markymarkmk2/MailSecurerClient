@@ -139,7 +139,7 @@ public abstract class UI_Generic
         if (ui_id < ui_list.size())
             return ui_list.get(ui_id);
         
-        return new UI_Pirates();
+        return new UI_Native();
     }
     public abstract Color get_table_header_color();
     public abstract Color get_selected_color();

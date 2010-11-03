@@ -62,6 +62,7 @@ public class Preferences
     public static final String HTML_HQ_RENDERER = "HTMLHQRenderer";
     public static final String SERVER_SSL = "ServerSSL";
     public static final String UI = "UI";
+    public static final String CACHE_MAILFILES = "CacheMailfiles";
 
     
     java.util.Properties props;
@@ -103,6 +104,7 @@ public class Preferences
         prop_names.add( HTML_HQ_RENDERER );
         prop_names.add( SERVER_SSL );
         prop_names.add( UI );
+        prop_names.add( CACHE_MAILFILES );
         
                 
         read_props();

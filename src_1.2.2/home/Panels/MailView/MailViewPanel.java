@@ -14,6 +14,7 @@ package dimm.home.Panels.MailView;
 import dimm.home.Main;
 import dimm.home.Panels.LogicFilter;
 import dimm.home.Panels.Login4EyesPanel;
+import dimm.home.Preferences;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
@@ -37,6 +38,8 @@ import home.shared.filter.GroupEntry;
 import home.shared.filter.LogicEntry;
 import home.shared.filter.VarTypeEntry;
 import home.shared.hibernate.Role;
+import home.shared.mail.EncodedMailInputStream;
+import home.shared.mail.EncodedMailOutputStream;
 import home.shared.mail.RFCMimeMail;
 import java.awt.Component;
 import java.awt.FileDialog;
@@ -51,6 +54,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -80,9 +84,9 @@ import javax.swing.table.TableRowSorter;
 class MailPreviewDlg extends GenericGlossyDlg
 {
     UserMain main;
-    MailPreviewDlg( UserMain parent, RFCMimeMail mail)
+    MailPreviewDlg( UserMain parent, RFCMimeMail mail, String uid)
     {
-        super( parent, true, new MailPreviewPanel(mail));
+        super( parent, true, new MailPreviewPanel(mail, uid));
         main = parent;
 
         this.set_next_location(parent);
@@ -299,7 +303,7 @@ class SizeStrCellRenderer implements TableCellRenderer
         if (alt_colors && (row & 1) != 0)
         {
             label.setOpaque(true);
-            label.setBackground(Main.ui.get_nice_gray());
+            label.setBackground(UserMain.get_nice_gray());
         }
         else
         {
@@ -328,6 +332,9 @@ class MailTableModel extends AbstractTableModel
     static final int SUBJECT_COL = 4;
     static final int SIZE_COL = 5;
     static final int _4EYES_COL = 6;
+    static final int UID_COL = 7;
+    static final int SHOW_COLUMNS = 7;
+
 
     MailViewPanel pnl;
     ArrayList<ArrayList<String>> result_array;
@@ -358,6 +365,7 @@ class MailTableModel extends AbstractTableModel
         field_list.add(CS_Constants.FLD_SUBJECT);
         field_list.add(CS_Constants.FLD_SIZE);
         field_list.add(CS_Constants.VFLD_4EYES);
+        field_list.add(CS_Constants.FLD_UID_NAME);
 
         _4eyes_protected = UserMain.Txt("Protected_by_4-eyes_principle");
 
@@ -411,7 +419,9 @@ class MailTableModel extends AbstractTableModel
     {
         if (field_list == null)
             return 0;
-        return field_list.size();
+
+        // DONT SHOW UID_ID
+        return SHOW_COLUMNS;
     }
 
     Role get_4_eyes_model( int rowIndex )
@@ -467,6 +477,11 @@ class MailTableModel extends AbstractTableModel
             return new Long(size);
         }
         return val;
+    }
+
+    String get_uid( int row )
+    {
+        return result_array.get(row).get(UID_COL);
     }
 }
 
@@ -1001,7 +1016,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             {
                 UserMain.self.show_busy(my_dlg, UserMain.Txt("Loading_mail") + "...");
 
-                File tmp_file = run_download_mail(row, null);
+                File tmp_file = run_download_mail(row, null, true);
 
                 sw = null;
 
@@ -1009,8 +1024,9 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
                 if (tmp_file != null)
                 {
-                    run_open_mail( row, tmp_file );
-                    tmp_file.delete();
+                    run_open_mail( row, tmp_file, true );
+                    if (!Main.get_bool_prop(Preferences.CACHE_MAILFILES, false))
+                        tmp_file.delete();
                 }
 
                 
@@ -1057,15 +1073,17 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                 while (true)
                 {
 
-                    File tmp_file = run_download_mail(work_row, null);
+                    File tmp_file = run_download_mail(work_row, null, true);
 
 
                     //UserMain.self.hide_busy();
 
                     if (tmp_file != null)
                     {
-                        run_preview_mail( row, tmp_file );
-                        tmp_file.delete();
+                        run_preview_mail( row, tmp_file, true );
+
+                        if (!Main.get_bool_prop(Preferences.CACHE_MAILFILES, false))
+                            tmp_file.delete();
                     }
                     synchronized( preview_list )
                     {
@@ -1111,13 +1129,13 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             {
                 UserMain.self.show_busy(my_dlg, UserMain.Txt("Loading_mail") + "...");
 
-                File tmp_file = run_download_mail(row, null);
+                File tmp_file = run_download_mail(row, null, true);
 
                 sw = null;
 
                 UserMain.self.hide_busy();
 
-                if (tmp_file != null)
+                if (tmp_file != null && tmp_file.exists())
                 {
                     GlossDialogPanel pnl = new GlossDialogPanel()
                     {
@@ -1136,7 +1154,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                     byte[] buff = new byte[ (int)tmp_file.length() ];
                     try
                     {
-                        FileInputStream fis = new FileInputStream(tmp_file);
+                        InputStream fis = new FileInputStream(tmp_file);
+                        fis = new EncodedMailInputStream(fis);
                         fis.read(buff);
                         fis.close();
                     }
@@ -1144,8 +1163,11 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                     {
                     }
                     String txt = new String(buff);
-                    txta.setText(txt);                    
-                    tmp_file.delete();
+                    txta.setText(txt);
+
+                    if (!Main.get_bool_prop(Preferences.CACHE_MAILFILES, false))
+                        tmp_file.delete();
+                    
                     dlg.setSize(400, 400);
                     dlg.setVisible(true);
                 }
@@ -1273,7 +1295,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                     idx++;
                 }
             }
-            run_download_mail(row, f.getAbsolutePath());
+            run_download_mail(row, f.getAbsolutePath(), false);
             if (open_in_client)
             {
                 String[] cmd = null;
@@ -1411,25 +1433,43 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     }
 
 
-    File run_download_mail( int row, String file_name )
+    File run_download_mail( int row, String file_name, boolean encoded )
     {
         
         ServerInputStream sis = null;
-        BufferedOutputStream baos = null;
+        OutputStream baos = null;
         File tmp_file = null;
 
         try
         {
             if (file_name == null)
             {
-                tmp_file = File.createTempFile("dlml", ".tmp", new File("."));
-                tmp_file.deleteOnExit();
+                if (Main.get_bool_prop(Preferences.CACHE_MAILFILES, false))
+                {
+                    String uid = model.get_uid(row);
+                    tmp_file = new File(Main.CACHE_PATH + uid + ".tmp" );
+                    if (tmp_file.exists())
+                        return tmp_file;
+
+                    tmp_file.deleteOnExit();
+                }
+                else
+                {
+                    tmp_file = File.createTempFile("dlml", ".tmp", new File("."));
+                    tmp_file.deleteOnExit();
+                }
             }
             else
+            {
                 tmp_file = new File(file_name);
+            }
 
             FileOutputStream fos = new FileOutputStream( tmp_file );
             baos = new BufferedOutputStream(fos);
+            if (encoded)
+            {
+                baos = new EncodedMailOutputStream( baos );
+            }
 
 
             FunctionCallConnect fcc = UserMain.fcc();
@@ -1486,31 +1526,29 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     }
 
 
-    void run_preview_mail( int row, File file )
+    void run_preview_mail( int row, File file, boolean encoded )
     {
-        BufferedInputStream bais = null;
+        InputStream bais = null;
 
         try
         {
             FileInputStream fis = new FileInputStream( file );
             bais = new BufferedInputStream(fis);
+            if (encoded)
+            {
+                bais = new EncodedMailInputStream(bais);
+            }
 
             // CREATE AND PARSE MAIL
             RFCMimeMail mmsg = new RFCMimeMail();
             mmsg.parse(bais);
 
             // CREATE AND ADD PANEL
-            MailPreviewPanel panel = new MailPreviewPanel(mmsg);
+            MailPreviewPanel panel = new MailPreviewPanel(mmsg, model.get_uid(row));
+            panel.setDlg(my_dlg);
             JComponent pnl = panel.get_SPL_MAIL();
-            
-            PN_PREVIEW.removeAll();
-            javax.swing.GroupLayout PN_PREVIEWLayout = new javax.swing.GroupLayout(PN_PREVIEW);
-            PN_PREVIEW.setLayout(PN_PREVIEWLayout);
-            PN_PREVIEWLayout.setHorizontalGroup(
-                    PN_PREVIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(pnl, javax.swing.GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE));
-            PN_PREVIEWLayout.setVerticalGroup(
-                    PN_PREVIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(pnl, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE));
 
+            SCP_PREVIEW.setViewportView(pnl);
             PN_PREVIEW.repaint();
 
         }
@@ -1535,23 +1573,29 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     }
 
     
-    void run_open_mail( int row, File file )
+    void run_open_mail( int row, File file, boolean encoded )
     {
         String subject = "Unknown";
         if ( row >= 0)
             subject = table.getModel().getValueAt(row, MailTableModel.SUBJECT_COL).toString();
         
-        BufferedInputStream bais = null;
+        InputStream bais = null;
 
         try
         {
             FileInputStream fis = new FileInputStream( file );
             bais = new BufferedInputStream(fis);
+            if (encoded)
+            {
+                bais = new EncodedMailInputStream(bais);
+            }
+
+
           
             RFCMimeMail mmsg = new RFCMimeMail();           
             mmsg.parse(bais);
 
-            MailPreviewDlg dlg = new MailPreviewDlg(UserMain.self, mmsg);
+            MailPreviewDlg dlg = new MailPreviewDlg(UserMain.self, mmsg, model.get_uid(row));
             bais.close();
             bais = null;
 
@@ -1614,7 +1658,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         CB_VIEW_CONTENT = new javax.swing.JCheckBox();
         SPL_VIEW = new javax.swing.JSplitPane();
         PN_PREVIEW = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        SCP_PREVIEW = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
         SCP_TABLE = new javax.swing.JScrollPane();
         BT_OPEN_IN_MAIL = new GlossButton();
@@ -1797,11 +1841,11 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         PN_PREVIEW.setLayout(PN_PREVIEWLayout);
         PN_PREVIEWLayout.setHorizontalGroup(
             PN_PREVIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
+            .addComponent(SCP_PREVIEW, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
         );
         PN_PREVIEWLayout.setVerticalGroup(
             PN_PREVIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
+            .addComponent(SCP_PREVIEW, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
         );
 
         SPL_VIEW.setRightComponent(PN_PREVIEW);
@@ -2136,7 +2180,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
         last_dir = last_file.getParentFile();
 
-        run_open_mail( -1, last_file );
+        run_open_mail( -1, last_file, false );
     }//GEN-LAST:event_BT_OPEN_EMLActionPerformed
 
     private void CB_VIEW_CONTENTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_VIEW_CONTENTActionPerformed
@@ -2188,6 +2232,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     private javax.swing.JPanel PN_PREVIEW;
     private javax.swing.JPanel PN_SIMPLE;
     private javax.swing.JScrollPane SCP_LIST;
+    private javax.swing.JScrollPane SCP_PREVIEW;
     private javax.swing.JScrollPane SCP_TABLE;
     private javax.swing.JSplitPane SPL_VIEW;
     private javax.swing.JTabbedPane TBP_SEARCH;
@@ -2196,7 +2241,6 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 
 
@@ -2214,6 +2258,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                 
                 open_mail( row );
             }
+
         }
         else if (e.getClickCount() == 1)
         {

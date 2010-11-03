@@ -23,10 +23,13 @@ Common.shadowDirection=60
 Common.lightColor=#616161
 Common.darkColor=#202020
 
+LoginPanel.gui_default_station=
+
 
 ################################################################################
 # SPLASH
 ################################################################################
+SplashDlg.hide_preferences=false
 SplashDlg.glowPicture=/dimm/home/resources/img_black/logo_glow.png
 SplashDlg.noglowPicture=/dimm/home/resources/img_black/logo_noglow.png
 

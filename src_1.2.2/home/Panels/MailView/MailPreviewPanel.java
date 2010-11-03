@@ -10,10 +10,15 @@
  */
 package dimm.home.Panels.MailView;
 
+import dimm.home.Main;
+import dimm.home.Preferences;
+import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.Rendering.GlossTable;
 import dimm.home.UserMain;
+import dimm.home.Utilities.CmdExecutor;
+import dimm.home.native_libs.NativeLoader;
 import home.shared.CS_Constants;
 import home.shared.mail.RFCMimeMail;
 import java.awt.Component;
@@ -38,6 +43,7 @@ import javax.mail.Part;
 import javax.mail.internet.MimeMessage;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JTextArea;
 import javax.swing.table.AbstractTableModel;
 import org.lobobrowser.html.gui.HtmlPanel;
 import org.lobobrowser.html.parser.*;
@@ -185,22 +191,22 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
 {
 
     String search_id;
-    Component last_renderer_component;
     RFCMimeMail msg;
     String html_txt;
     String plain_txt;
     GlossTable tb_header;
     GlossTable tb_att;
     boolean test_flying_saucer = true;
+    String uid;
 
     /** Creates new form MailViewPanel */
-    public MailPreviewPanel( RFCMimeMail msg )
+    public MailPreviewPanel( RFCMimeMail msg, String uid )
     {
         this.msg = msg;
+        this.uid = uid;
 
         initComponents();
 
-        last_renderer_component = SCP_TXTA;
 
         html_txt = msg.get_html_content();                
         plain_txt = msg.get_text_content();
@@ -208,21 +214,19 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
 
         if (html_txt != null)
         {
-
             Component r = create_html_renderer();
             set_renderer( r );
         }
         else
         {
-            
-            TXTA_MAIL.setText(plain_txt);
-            TXTA_MAIL.setCaretPosition(0);
+            Component r = create_text_renderer();
+            set_renderer( r );
         }
 
         set_table_models();        
     }
     
-    Component create_html_renderer()
+    final Component create_html_renderer()
     {
         
         Component renderer = null;
@@ -241,7 +245,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         return renderer;
     }
 
-    void set_renderer( Component renderer )
+    final void set_renderer( Component renderer )
     {
         add_view_panel(renderer);
         if (my_dlg != null)
@@ -326,8 +330,9 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
     }
   
 
-    Component create_text_renderer()
+    final Component create_text_renderer()
     {
+        JTextArea TXTA_MAIL = new JTextArea();
         TXTA_MAIL.setText(plain_txt);
         TXTA_MAIL.setCaretPosition(0);
         return TXTA_MAIL;
@@ -446,25 +451,16 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
 
     void add_view_panel( Component new_renderer_pane )
     {
-        PN_VIEW.remove(last_renderer_component);
-
-
         // FALLBACK TO TEXT IF HTML CANNOT RENDER
         if (new_renderer_pane == null)
         {
             new_renderer_pane = create_text_renderer();
         }
 
-        javax.swing.GroupLayout PN_VIEWLayout = new javax.swing.GroupLayout(PN_VIEW);
-        PN_VIEW.setLayout(PN_VIEWLayout);
-        PN_VIEWLayout.setHorizontalGroup(
-                PN_VIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(new_renderer_pane, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE));
-        PN_VIEWLayout.setVerticalGroup(
-                PN_VIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addComponent(new_renderer_pane, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE));
-
-
-        last_renderer_component = new_renderer_pane;
+        SCP_PREVIEW.setViewportView(new_renderer_pane);
+        SCP_PREVIEW.getViewport().setOpaque(false);
     }
+
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -482,8 +478,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         SCP_HEADER = new javax.swing.JScrollPane();
         SCP_ATTACHMENT = new javax.swing.JScrollPane();
         PN_VIEW = new javax.swing.JPanel();
-        SCP_TXTA = new javax.swing.JScrollPane();
-        TXTA_MAIL = new javax.swing.JTextArea();
+        SCP_PREVIEW = new javax.swing.JScrollPane();
 
         BT_CLOSE.setText(UserMain.getString("Schliessen")); // NOI18N
         BT_CLOSE.addActionListener(new java.awt.event.ActionListener() {
@@ -514,19 +509,15 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
 
         SPL_MAIL.setTopComponent(jPanel1);
 
-        TXTA_MAIL.setColumns(20);
-        TXTA_MAIL.setRows(5);
-        SCP_TXTA.setViewportView(TXTA_MAIL);
-
         javax.swing.GroupLayout PN_VIEWLayout = new javax.swing.GroupLayout(PN_VIEW);
         PN_VIEW.setLayout(PN_VIEWLayout);
         PN_VIEWLayout.setHorizontalGroup(
             PN_VIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SCP_TXTA, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
+            .addComponent(SCP_PREVIEW, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
         );
         PN_VIEWLayout.setVerticalGroup(
             PN_VIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SCP_TXTA, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+            .addComponent(SCP_PREVIEW, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
         );
 
         SPL_MAIL.setBottomComponent(PN_VIEW);
@@ -564,9 +555,8 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
     private javax.swing.JPanel PN_VIEW;
     private javax.swing.JScrollPane SCP_ATTACHMENT;
     private javax.swing.JScrollPane SCP_HEADER;
-    private javax.swing.JScrollPane SCP_TXTA;
+    private javax.swing.JScrollPane SCP_PREVIEW;
     private javax.swing.JSplitPane SPL_MAIL;
-    private javax.swing.JTextArea TXTA_MAIL;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSplitPane jSplitPane2;
     // End of variables declaration//GEN-END:variables
@@ -615,46 +605,113 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
 
     }
 
+    static File create_temp_file(String uid, int row)
+    {
+        File tmp_file = null;
+        try
+        {
+            if (Main.get_bool_prop(Preferences.CACHE_MAILFILES, false))
+            {
+                tmp_file = new File(Main.CACHE_PATH + uid + "_" + row + ".tmp");
+                if (tmp_file.exists())
+                {
+                    return tmp_file;
+
+
+                }
+                tmp_file.deleteOnExit();
+            }
+            else
+            {
+                tmp_file = File.createTempFile("dlml", ".tmp", new File("."));
+                tmp_file.deleteOnExit();
+            }
+        }
+        catch (IOException iOException)
+        {
+        }
+        return tmp_file;
+    }
+
     static File last_dir = null;
     private void store_attachment( int row )
     {
+        MailOpenStorePanel pnl = new MailOpenStorePanel();
+        GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
+        if (getDlg() != null)
+            dlg.setLocation( getDlg().get_next_location() );
+        else
+            dlg.setLocation( tb_att.getLocationOnScreen().x + 30, tb_att.getLocationOnScreen().y + 30 + 30*row );
+
+        boolean wants_open = false;
+
         Part p = msg.get_attachment(row);
 
-        FileDialog fd = new FileDialog(my_dlg);
-        fd.setMode(FileDialog.SAVE);
-
-        fd.setLocation(my_dlg.getLocationOnScreen().x + 20, my_dlg.getLocationOnScreen().y + 20 );
-
-
-        if (last_dir != null)
-        {
-            fd.setDirectory(last_dir.getAbsolutePath());
-        }
         try
         {
-            fd.setFile(p.getFileName());
+            if (p.getFileName() != null && p.getFileName().length() > 0)
+            {
+                dlg.setVisible(true);
+
+                if (!pnl.isOkay())
+                {
+                    return;
+                }
+                wants_open = pnl.wants_open();
+            }
         }
         catch (MessagingException messagingException)
         {
-            fd.setFile("Attachment.att");
         }
 
 
-        fd.setVisible(true);
+        File trg_file = null;
+        if (!wants_open)
+        {
 
-        String f_name = fd.getFile();
-        if (f_name == null)
-            return;
+            FileDialog fd = new FileDialog(my_dlg);
+            fd.setMode(FileDialog.SAVE);
 
-        File trg_file = new File(fd.getDirectory(), f_name );
+            fd.setLocation(my_dlg.getLocationOnScreen().x + 20, my_dlg.getLocationOnScreen().y + 20 );
+
+
+            if (last_dir != null)
+            {
+                fd.setDirectory(last_dir.getAbsolutePath());
+            }
+            try
+            {
+                fd.setFile(p.getFileName());
+            }
+            catch (MessagingException messagingException)
+            {
+                fd.setFile("Attachment.att");
+            }
+
+
+            fd.setVisible(true);
+
+            String f_name = fd.getFile();
+            if (f_name == null)
+                return;
+
+            trg_file = new File(fd.getDirectory(), f_name );
+            
+            if (trg_file.exists())
+            {
+                if (!UserMain.errm_ok_cancel(my_dlg, UserMain.Txt("Do_you_want_to_overwrite_this_file")))
+                    return;
+            }
+        }
+        else
+        {
+            trg_file =  create_temp_file( uid, row );
+            trg_file.deleteOnExit();
+        }
+
 
         last_dir = trg_file.getParentFile();
 
-        if (trg_file.exists())
-        {
-            if (!UserMain.errm_ok_cancel(my_dlg, UserMain.Txt("Do_you_want_to_overwrite_this_file")))
-                return;
-        }
 
         BufferedOutputStream bos = null;
         BufferedInputStream bis = null;
@@ -702,6 +759,30 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
                 {
                 }
             }
+        }
+        if (wants_open)
+        {
+            String[] cmd = null;
+            if (NativeLoader.is_win())
+            {
+                cmd = new String[3];
+                cmd[0] = "cmd";
+                cmd[1] = "/c";
+                cmd[2] = trg_file.getAbsolutePath();
+            }
+            if (NativeLoader.is_osx())
+            {
+                cmd = new String[2];
+                cmd[0] = "open";
+                cmd[1] = trg_file.getAbsolutePath();
+            }
+            if (cmd != null)
+            {
+                CmdExecutor exe = new CmdExecutor(cmd);
+                exe.set_no_debug(false);
+                exe.exec();
+            }
+
         }
     }
     JComponent get_SPL_MAIL()
