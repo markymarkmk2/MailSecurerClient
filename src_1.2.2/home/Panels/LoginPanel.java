@@ -25,6 +25,7 @@ import home.shared.SQL.OptCBEntry;
 import home.shared.SQL.UserSSOEntry;
 import home.shared.hibernate.Mandant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
@@ -44,7 +45,7 @@ class MailSecurerComboModel implements ComboBoxModel
     public MailSecurerComboModel( ArrayList<StationEntry> st_list )
     {
         this.st_list = st_list;
-        if (st_list.size() == 0)
+        if (st_list.isEmpty())
             act_st_idx = -1;
         else
             act_st_idx = 0;
@@ -68,7 +69,7 @@ class MailSecurerComboModel implements ComboBoxModel
    @Override
     public Object getSelectedItem()
     {
-       if (st_list.size() == 0)
+       if (st_list.isEmpty())
            return null;
         StationEntry da = st_list.get(act_st_idx);
         if (da != null)
@@ -99,7 +100,7 @@ class MailSecurerComboModel implements ComboBoxModel
     }
    StationEntry get_act_station()
    {
-        if (st_list.size() == 0)
+        if (st_list.isEmpty())
            return null;
        return st_list.get(act_st_idx);
    }
@@ -147,7 +148,7 @@ class MandantComboModel implements ComboBoxModel
    @Override
     public Object getSelectedItem()
     {
-       if (ma_list.size() == 0)
+       if (ma_list.isEmpty())
            return null;
 
         Mandant da = ma_list.get(act_ma_idx);
@@ -165,7 +166,7 @@ class MandantComboModel implements ComboBoxModel
    @Override
     public Object getElementAt( int index )
     {
-       if (ma_list.size() == 0)
+       if (ma_list.isEmpty())
            return null;
        
         return ma_list.get(index).getName();
@@ -183,7 +184,7 @@ class MandantComboModel implements ComboBoxModel
 
    Mandant get_act_mandant()
    {
-       if (ma_list.size() == 0)
+       if (ma_list.isEmpty())
            return null;
        return ma_list.get(act_ma_idx);
    }
@@ -287,12 +288,12 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         {
             if (CB_MANDANT.isVisible())
             {
-                ma = ((MandantComboModel)CB_MANDANT.getModel()).get_act_mandant();
                 if (CB_MANDANT.getModel().getSize() == 0)
                 {
                     UserMain.errm_ok(UserMain.getString("This_MailSecurer_has_not_any_valid_companies_yet"));
                     return false;
                 }
+                ma = ((MandantComboModel)CB_MANDANT.getModel()).get_act_mandant();
             }
         }
 
@@ -836,10 +837,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         String mail_list = pt.GetString("MA:");
         String[] mail_array = mail_list.split(",");
         ArrayList<String> mail_aliases = new ArrayList<String>();
-        for (int i = 0; i < mail_array.length; i++)
-        {
-            mail_aliases.add( mail_array[i] );
-        }
+        mail_aliases.addAll(Arrays.asList(mail_array));
 
         String sso_token = pt.GetString("SSO:");
         UserSSOEntry sso_entry = null;
@@ -1016,7 +1014,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         }
         UserMain.self.hide_busy();
 
-        if (st_list.size() == 0)
+        if (st_list.isEmpty())
         {
             UserMain.errm_ok(my_dlg, UserMain.Txt("No_Stations_could_be_found"));
         }

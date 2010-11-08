@@ -26,7 +26,11 @@ public class Login4EyesPanel extends GlossDialogPanel
 
         GenericGlossyDlg dlg = new GenericGlossyDlg(null, true, pnl);
 
-        dlg.setLocation(UserMain.self.getLocationOnScreen().x + 200, UserMain.self.getLocationOnScreen().y + 50);
+        if (UserMain.self.isVisible())
+            dlg.setLocation(UserMain.self.getLocationOnScreen().x + 200, UserMain.self.getLocationOnScreen().y + 50);
+        else
+            dlg.setLocationRelativeTo(null);
+        
         dlg.setTitle(UserMain.getString("4_eyes_login_for_role") + " " + r.getName());
         dlg.setVisible(true);
 

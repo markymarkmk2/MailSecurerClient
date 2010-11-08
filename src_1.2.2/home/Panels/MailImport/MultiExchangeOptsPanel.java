@@ -66,9 +66,6 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
                 String str = new String(buff, 0, len);
                 ParseToken pt = new ParseToken(str);
                 TXT_DOMAIN.setText(pt.GetString("DO:"));
-                TXT_SERVER.setText(pt.GetString("SV:"));
-                TXT_USER.setText(pt.GetString("US:"));
-                TXTP_PWD.setText(pt.GetString("PW:"));
             }
             catch (IOException iOException)
             {
@@ -165,14 +162,8 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel2 = new javax.swing.JLabel();
-        LB_PATH = new javax.swing.JLabel();
-        TXT_SERVER = new javax.swing.JTextField();
         TXT_DOMAIN = new javax.swing.JTextField();
         LB_PATH1 = new javax.swing.JLabel();
-        TXT_USER = new javax.swing.JTextField();
-        TXTP_PWD = new javax.swing.JPasswordField();
-        LB_PATH2 = new javax.swing.JLabel();
         LB_PATH3 = new javax.swing.JLabel();
         CB_VERSION = new javax.swing.JComboBox();
         BT_CONNECT = new javax.swing.JButton();
@@ -187,13 +178,7 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
         jScrollPane2 = new javax.swing.JScrollPane();
         TXTA_USER_LIST = new javax.swing.JTextArea();
 
-        jLabel2.setText(UserMain.getString("Exchange-Server")); // NOI18N
-
-        LB_PATH.setText(UserMain.getString("Username")); // NOI18N
-
         LB_PATH1.setText(UserMain.getString("Domain")); // NOI18N
-
-        LB_PATH2.setText(UserMain.getString("Password")); // NOI18N
 
         LB_PATH3.setText(UserMain.getString("Exchangeversion")); // NOI18N
 
@@ -244,11 +229,11 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
         PN_USER_LIST.setLayout(PN_USER_LISTLayout);
         PN_USER_LISTLayout.setHorizontalGroup(
             PN_USER_LISTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
         );
         PN_USER_LISTLayout.setVerticalGroup(
             PN_USER_LISTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -258,12 +243,7 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(LB_PATH2)
                     .addComponent(LB_PATH1)
-                    .addComponent(LB_PATH)
-                    .addComponent(LB_PATH3)
-                    .addComponent(jLabel3)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(38, 38, 38)
@@ -271,18 +251,17 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addComponent(BT_ALL_BOXES)))
+                        .addComponent(BT_ALL_BOXES))
+                    .addComponent(jLabel3)
+                    .addComponent(LB_PATH3))
                 .addGap(37, 37, 37)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(PN_MBOX_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+                    .addComponent(CB_VERSION, 0, 243, Short.MAX_VALUE)
+                    .addComponent(CB_ACCOUNT, 0, 243, Short.MAX_VALUE)
+                    .addComponent(PN_MBOX_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
                     .addComponent(PN_USER_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(CB_VERSION, 0, 250, Short.MAX_VALUE)
-                    .addComponent(TXTP_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
-                    .addComponent(TXT_USER, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
-                    .addComponent(TXT_DOMAIN, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
-                    .addComponent(TXT_SERVER, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
-                    .addComponent(CB_ACCOUNT, 0, 250, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(TXT_DOMAIN, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(BT_CONNECT)
                 .addContainerGap())
         );
@@ -291,29 +270,17 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(TXT_SERVER, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(BT_CONNECT))
+                    .addComponent(BT_CONNECT)
+                    .addComponent(jLabel3)
+                    .addComponent(CB_ACCOUNT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(TXT_DOMAIN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LB_PATH1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(TXT_USER, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(LB_PATH))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(TXTP_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(LB_PATH2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(CB_VERSION, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LB_PATH3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(CB_ACCOUNT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -321,11 +288,11 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
                         .addComponent(BT_ALL_USERS))
                     .addComponent(PN_USER_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel1)
                         .addComponent(BT_ALL_BOXES))
-                    .addComponent(PN_MBOX_LIST, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(PN_MBOX_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -367,19 +334,13 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
     javax.swing.JButton BT_CONNECT;
     javax.swing.JComboBox CB_ACCOUNT;
     javax.swing.JComboBox CB_VERSION;
-    javax.swing.JLabel LB_PATH;
     javax.swing.JLabel LB_PATH1;
-    javax.swing.JLabel LB_PATH2;
     javax.swing.JLabel LB_PATH3;
     javax.swing.JPanel PN_MBOX_LIST;
     javax.swing.JPanel PN_USER_LIST;
     javax.swing.JTextArea TXTA_USER_LIST;
-    javax.swing.JPasswordField TXTP_PWD;
     javax.swing.JTextField TXT_DOMAIN;
-    javax.swing.JTextField TXT_SERVER;
-    javax.swing.JTextField TXT_USER;
     javax.swing.JLabel jLabel1;
-    javax.swing.JLabel jLabel2;
     javax.swing.JLabel jLabel3;
     javax.swing.JLabel jLabel4;
     javax.swing.JScrollPane jScrollPane2;
@@ -417,8 +378,10 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
 
     private void handle_user_list_clicked()
     {
-        String role_filter_compressed = "";
-        final String cmd = "ListUsers CMD:match_filter MA:" + UserMain.self.get_act_mandant().getId() + " AC:" + accm.get_act_id() + " FLC:'" + role_filter_compressed + "'";
+
+        sel_user_list = new ArrayList<String>();
+
+        final String cmd = "ListUsers CMD:native_users MA:" + UserMain.self.get_act_mandant().getId() + " AC:" + accm.get_act_id();
 
         if (sw != null)
         {
@@ -441,30 +404,33 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
                     if (o instanceof ArrayList<?>)
                     {
                         ArrayList<String> list = (ArrayList<String>)o;
-                        UserListPanel pnl = new UserListPanel(list);
+
+                        boolean[] checked_val_array = new boolean[list.size()];
+                        for (int i = 0; i < list.size(); i++)
+                        {
+                            checked_val_array[i] = true;
+                        }
+
+                        MultiCheckboxPanel pnl = new MultiCheckboxPanel( list.toArray(new String[0]), checked_val_array, UserMain.Txt("Users") );
+
                         GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
                         dlg.set_next_location(panel.getDlg());
                         dlg.setVisible(true);
 
-                        sel_user_list = pnl.get_selected_users();
-                        if (sel_user_list.size() == list.size())
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < list.size(); i++)
                         {
-                            TXTA_USER_LIST.setText(UserMain.Txt("All_Users"));
-                        }
-                        else
-                        {
-                            StringBuffer sb = new StringBuffer();
-                            for (int i = 0; i < sel_user_list.size(); i++)
-                            {
-                                String string = sel_user_list.get(i);
-                                if (i > 0)
-                                    sb.append("\n");
-                                sb.append(string);
+                            if (!pnl.get_val_array()[i])
+                                continue;
 
-                            }
-                            TXTA_USER_LIST.setText( sb.toString() );
-                        }
+                            String string = list.get(i);
+                            if (sb.length() > 0)
+                                sb.append("\n");
+                            sb.append(string);
+                            sel_user_list.add(string);
 
+                        }
+                        TXTA_USER_LIST.setText( sb.toString() );
                     }
                 }
                 else

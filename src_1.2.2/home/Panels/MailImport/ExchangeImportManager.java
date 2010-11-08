@@ -201,6 +201,16 @@ class ExchangeImportManager extends ProfileManager
     {
         return CS_Constants.TYPE_EXCHANGE;
     }
+    private ExchangeVersionType getExchangeVersionType()
+    {
+        ExchangeVersionType exv[] = ExchangeEnvironmentSettings.get_exch_versions();
+
+        if (opts_panel.CB_VERSION.getSelectedIndex() >= 0)
+            return exv[opts_panel.CB_VERSION.getSelectedIndex()];
+
+        return ExchangeVersionType.EXCHANGE_2007;
+    }
+
 
     
     @Override
@@ -232,8 +242,10 @@ class ExchangeImportManager extends ProfileManager
                     String server = opts_panel.TXT_SERVER.getText();
                     String pwd = new String( opts_panel.TXTP_PWD.getPassword() );
 
+                    ExchangeVersionType ev = getExchangeVersionType();
+                    
                     ExchangeServicePortType port = ExchangeAuthenticator.open_exchange_port( user, pwd, domain, server );
-                    ExchangeEnvironmentSettings settings = new ExchangeEnvironmentSettings( ExchangeEnvironmentSettings.get_cultures()[0], ExchangeVersionType.EXCHANGE_2007_SP_1 );
+                    ExchangeEnvironmentSettings settings = new ExchangeEnvironmentSettings( ExchangeEnvironmentSettings.get_cultures()[0], ev );
 
                     // Test out the new ItemTypeDAO functionality.
                     ItemTypeDAO itemTypeDAO = new ItemTypeDAO(settings);
@@ -279,7 +291,7 @@ class ExchangeImportManager extends ProfileManager
 
         if (baseFolderType.getChildFolderCount() > 0)
         {
-            List<BaseFolderType>folders =  itemTypeDAO.GetFolders(port, baseFolderType.getFolderId() );
+            List<BaseFolderType>folders =  itemTypeDAO.GetFoldersbyParent(port, baseFolderType.getFolderId() );
 
             for (Iterator<BaseFolderType> it = folders.iterator(); it.hasNext();)
             {
@@ -313,6 +325,12 @@ class ExchangeImportManager extends ProfileManager
             long total_size = 0;
             long act_size = 0;
 
+            String user = opts_panel.TXT_USER.getText();
+            String domain = opts_panel.TXT_DOMAIN.getText();
+            String server = opts_panel.TXT_SERVER.getText();
+            String pwd = new String( opts_panel.TXTP_PWD.getPassword() );
+
+
             for (int i = 0; i < node_list.size(); i++)
             {
                 total_size += node_list.get(i).get_size();
@@ -345,10 +363,30 @@ class ExchangeImportManager extends ProfileManager
             DiskArchive da = dacm.get_selected_da();
             int da_id = da.getId();
 
+            String exch_opts = "";
+            ExchangeVersionType ev = getExchangeVersionType();
+            if (ev != null)
+            {
+                String xml_list = ParseToken.BuildCompressedObjectString( ev );
+                exch_opts = " EV:" + xml_list;
+            }
+
             // SEND UPLOAD REQUEST
             // IMPORT MAIL RETURNS A HANDLE FOR AN OPEN STREAM
             String xml_list = ParseToken.BuildCompressedObjectString( folder_list );
-            String ret = UserMain.fcc().get_sqc().send("import_exchange_folder MA:" + mandant_id + " DA:" + da_id + " FD:" + xml_list);
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("import_exchange MD:folder");
+            sb.append(" MA:").append(mandant_id);
+            sb.append(" DA:").append(da_id);
+            sb.append(" US:").append(user);
+            sb.append(" PW:").append(pwd);
+            sb.append(" DO:").append(domain);
+            sb.append(" SV:").append(server);
+            sb.append(" FD:").append(xml_list);
+            sb.append(exch_opts);
+
+            String ret = UserMain.fcc().get_sqc().send( sb.toString() );
 
             // CHECK FOR ERROR
             int idx = ret.indexOf(':');

@@ -39,13 +39,13 @@ class SQLListContainer<T>
     }
     public SQLListContainer(Class lc, String table_name )
     {
-        this( lc, table_name, null );
+        this( lc, table_name, " where mid=" );
     }
     void fill(SQLConnect sqc, int m_id)
     {
         StatementID sta = sqc.create_lazy_statement();
         
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append( "select * from ");
         sb.append(table_name);
         if (mid_link != null)
@@ -62,6 +62,14 @@ class SQLListContainer<T>
         sqc.sqc.close(rs);
         sqc.sqc.close(sta);
     }
+}
+class SQLListMandantContainer<T> extends SQLListContainer<T>
+{
+    SQLListMandantContainer()
+    {
+        super( Mandant.class, "mandant", null );
+    }
+
 }
 
 /**
@@ -91,7 +99,7 @@ public class SQLConnect extends Connect implements SQLObjectGetter
         build_sql_res_list();
     }
 
-    void build_sql_res_list()
+    final void build_sql_res_list()
     {
         sql_res_list = new ArrayList<SQLListContainer>();
 
@@ -99,9 +107,10 @@ public class SQLConnect extends Connect implements SQLObjectGetter
 
         // LIST OF PARAM ARRAYS
 
-        sql_res_list.add( new SQLListContainer<Mandant>(Mandant.class, "mandant", null));
+        sql_res_list.add( new SQLListMandantContainer<Mandant>());
+
         sql_res_list.add( new SQLListContainer<DiskArchive>(DiskArchive.class, "disk_archive") );
-        sql_res_list.add( new SQLListContainer<DiskSpace>(DiskSpace.class, "disk_space") );
+        sql_res_list.add( new SQLListContainer<DiskSpace>(DiskSpace.class, "disk_space", null));
         sql_res_list.add( new SQLListContainer<Hotfolder>(Hotfolder.class, "hotfolder") );
         sql_res_list.add( new SQLListContainer<ImapFetcher>(ImapFetcher.class, "imap_fetcher") );
         sql_res_list.add( new SQLListContainer<Milter>(Milter.class, "milter") );

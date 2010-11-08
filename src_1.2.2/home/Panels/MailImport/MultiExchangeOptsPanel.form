@@ -16,15 +16,10 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+          <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="LB_PATH2" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="LB_PATH1" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="LB_PATH" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="LB_PATH3" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
@@ -35,19 +30,18 @@
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="BT_ALL_BOXES" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="LB_PATH3" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="PN_MBOX_LIST" pref="250" max="32767" attributes="0"/>
+                  <Component id="CB_VERSION" pref="243" max="32767" attributes="0"/>
+                  <Component id="CB_ACCOUNT" alignment="0" pref="243" max="32767" attributes="0"/>
+                  <Component id="PN_MBOX_LIST" pref="243" max="32767" attributes="0"/>
                   <Component id="PN_USER_LIST" alignment="0" max="32767" attributes="0"/>
-                  <Component id="CB_VERSION" alignment="0" pref="250" max="32767" attributes="0"/>
-                  <Component id="TXTP_PWD" alignment="0" pref="250" max="32767" attributes="1"/>
-                  <Component id="TXT_USER" alignment="0" pref="250" max="32767" attributes="1"/>
-                  <Component id="TXT_DOMAIN" alignment="0" pref="250" max="32767" attributes="1"/>
-                  <Component id="TXT_SERVER" alignment="0" pref="250" max="32767" attributes="1"/>
-                  <Component id="CB_ACCOUNT" alignment="0" pref="250" max="32767" attributes="0"/>
+                  <Component id="TXT_DOMAIN" alignment="0" pref="243" max="32767" attributes="1"/>
               </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
               <Component id="BT_CONNECT" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
@@ -58,9 +52,9 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="TXT_SERVER" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="BT_CONNECT" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="CB_ACCOUNT" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -69,23 +63,8 @@
               </Group>
               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="TXT_USER" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="LB_PATH" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="TXTP_PWD" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="LB_PATH2" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="CB_VERSION" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="LB_PATH3" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="CB_ACCOUNT" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
@@ -96,12 +75,12 @@
                   <Component id="PN_USER_LIST" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+              <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="BT_ALL_BOXES" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="PN_MBOX_LIST" min="-2" pref="100" max="-2" attributes="0"/>
+                  <Component id="PN_MBOX_LIST" pref="100" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
@@ -109,39 +88,12 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JLabel" name="jLabel2">
-      <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="dimm/home/MA_Properties.properties" key="Exchange-Server" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JLabel" name="LB_PATH">
-      <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="dimm/home/MA_Properties.properties" key="Username" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="TXT_SERVER">
-    </Component>
     <Component class="javax.swing.JTextField" name="TXT_DOMAIN">
     </Component>
     <Component class="javax.swing.JLabel" name="LB_PATH1">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="dimm/home/MA_Properties.properties" key="Domain" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="TXT_USER">
-    </Component>
-    <Component class="javax.swing.JPasswordField" name="TXTP_PWD">
-    </Component>
-    <Component class="javax.swing.JLabel" name="LB_PATH2">
-      <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="dimm/home/MA_Properties.properties" key="Password" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -232,12 +184,12 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jScrollPane2" alignment="0" pref="250" max="32767" attributes="1"/>
+              <Component id="jScrollPane2" alignment="0" pref="243" max="32767" attributes="1"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jScrollPane2" alignment="0" pref="77" max="32767" attributes="0"/>
+              <Component id="jScrollPane2" alignment="0" pref="103" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>

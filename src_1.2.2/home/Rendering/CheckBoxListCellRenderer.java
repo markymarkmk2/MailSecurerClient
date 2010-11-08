@@ -83,8 +83,7 @@ public class CheckBoxListCellRenderer extends JButton implements ListCellRendere
             g.setColor(Main.ui.get_brownisch());
         
         g.drawString(txt, txt_start, getHeight() - 2);
-        
-        
+                
                 
     }
     

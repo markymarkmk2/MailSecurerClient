@@ -222,6 +222,7 @@ public class MultiCheckboxPanel extends GlossDialogPanel implements MouseListene
             boolean b = val_array[i];
             String s = name_list[i];
             JCheckBox cb = new JCheckBox(s, b);
+            cb.setSize(50, 20);
             list_model.addElement(cb);
         }
         JL_LIST.setCellRenderer( new CheckBoxListCellRenderer() );
@@ -250,6 +251,8 @@ public class MultiCheckboxPanel extends GlossDialogPanel implements MouseListene
         PN_BUTTONS = new javax.swing.JPanel();
         BT_ABORT = new javax.swing.JButton();
         BT_OK = new javax.swing.JButton();
+        BT_SEL_ALL = new javax.swing.JButton();
+        BT_UNSEL_ALL = new javax.swing.JButton();
         SCP_LIST = new javax.swing.JScrollPane();
         JL_LIST = new javax.swing.JList();
 
@@ -268,12 +271,29 @@ public class MultiCheckboxPanel extends GlossDialogPanel implements MouseListene
             }
         });
 
+        BT_SEL_ALL.setText("+");
+        BT_SEL_ALL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_SEL_ALLActionPerformed(evt);
+            }
+        });
+
+        BT_UNSEL_ALL.setText("-");
+        BT_UNSEL_ALL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_UNSEL_ALLActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PN_BUTTONSLayout = new javax.swing.GroupLayout(PN_BUTTONS);
         PN_BUTTONS.setLayout(PN_BUTTONSLayout);
         PN_BUTTONSLayout.setHorizontalGroup(
             PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
-                .addContainerGap(250, Short.MAX_VALUE)
+                .addComponent(BT_SEL_ALL)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BT_UNSEL_ALL)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 162, Short.MAX_VALUE)
                 .addComponent(BT_ABORT)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK)
@@ -287,7 +307,9 @@ public class MultiCheckboxPanel extends GlossDialogPanel implements MouseListene
             .addGroup(PN_BUTTONSLayout.createSequentialGroup()
                 .addGroup(PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK)
-                    .addComponent(BT_ABORT))
+                    .addComponent(BT_ABORT)
+                    .addComponent(BT_SEL_ALL)
+                    .addComponent(BT_UNSEL_ALL))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -302,14 +324,14 @@ public class MultiCheckboxPanel extends GlossDialogPanel implements MouseListene
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(PN_BUTTONS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(PN_BUTTONS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(16, 16, 16)
                 .addComponent(PN_BUTTONS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -328,9 +350,34 @@ public class MultiCheckboxPanel extends GlossDialogPanel implements MouseListene
         okay = true;
         my_dlg.setVisible(false);
 }//GEN-LAST:event_BT_OKActionPerformed
+
+    private void BT_SEL_ALLActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_SEL_ALLActionPerformed
+    {//GEN-HEADEREND:event_BT_SEL_ALLActionPerformed
+        // TODO add your handling code here:
+        for (int i = 0; i < list_model.size(); i++)
+        {
+            ((JCheckBox)list_model.get(i)).setSelected(true);
+        }
+        JL_LIST.repaint();
+    }//GEN-LAST:event_BT_SEL_ALLActionPerformed
+
+    private void BT_UNSEL_ALLActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_UNSEL_ALLActionPerformed
+    {//GEN-HEADEREND:event_BT_UNSEL_ALLActionPerformed
+        // TODO add your handling code here:
+        // TODO add your handling code here:
+        for (int i = 0; i < list_model.size(); i++)
+        {
+            ((JCheckBox)list_model.get(i)).setSelected(false);
+        }
+        JL_LIST.repaint();
+
+}//GEN-LAST:event_BT_UNSEL_ALLActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JButton BT_OK;
+    private javax.swing.JButton BT_SEL_ALL;
+    private javax.swing.JButton BT_UNSEL_ALL;
     private javax.swing.JList JL_LIST;
     private javax.swing.JPanel PN_BUTTONS;
     private javax.swing.JScrollPane SCP_LIST;

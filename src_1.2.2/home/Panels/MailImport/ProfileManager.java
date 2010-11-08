@@ -83,6 +83,11 @@ abstract class ProfileManager
         return node_list;
     }
 
+    boolean has_tree_select()
+    {
+        return true;
+    }
+
 
 
 

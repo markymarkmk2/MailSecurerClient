@@ -5,7 +5,6 @@
 
 package dimm.home.Panels.MailImport;
 
-import com.microsoft.schemas.exchange.services._2006.types.BaseFolderIdType;
 import com.microsoft.schemas.exchange.services._2006.types.ExchangeVersionType;
 import dimm.home.Models.DiskArchiveComboModel;
 import dimm.home.UserMain;
@@ -14,7 +13,6 @@ import home.shared.Utilities.ParseToken;
 import home.shared.exchange.util.ExchangeEnvironmentSettings;
 import home.shared.hibernate.DiskArchive;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.swing.JTree;
 
 
@@ -72,20 +70,28 @@ class ExchangeMultiImportManager extends ProfileManager
     @Override
     int run_import( JTree tree )
     {
-        return run_import();
+        run_import();
+        return 0;
     }
-    
-    int run_import( )
+
+    private ExchangeVersionType getExchangeVersionType()
     {
-        int files_uploaded = 0;
+        ExchangeVersionType exv[] = ExchangeEnvironmentSettings.get_exch_versions();
+
+        if (opts_panel.CB_VERSION.getSelectedIndex() >= 0)
+            return exv[opts_panel.CB_VERSION.getSelectedIndex()];
+
+        return ExchangeVersionType.EXCHANGE_2007;
+    }
+
+    
+    void run_import( )
+    {
         try
         {
-            files_uploaded = 0;
-
             dialog.import_status_list.add(UserMain.Txt("Connecting_server"));
-            long total_size = 0;
-            long act_size = 0;
             
+            String domain = opts_panel.TXT_DOMAIN.getText();
 
 
             int mandant_id = UserMain.sqc().get_act_mandant_id();
@@ -114,8 +120,26 @@ class ExchangeMultiImportManager extends ProfileManager
                     folder_opts += " UF:1";
                 }
             }
+            String exch_opts = "";
+            ExchangeVersionType ev = getExchangeVersionType();
+            if (ev != null)
+            {
+                String xml_list = ParseToken.BuildCompressedObjectString( ev );
+                exch_opts = " EV:" + xml_list;
+            }
 
-            String ret = UserMain.fcc().get_sqc().send("import_exchange MD:folder MA:" + mandant_id + " DA:" + da_id + " AC:" + opts_panel.accm.get_act_id() +  user_opts + folder_opts);
+            StringBuilder sb = new StringBuilder();
+            sb.append("import_exchange MD:users");
+            sb.append(" MA:").append(mandant_id);
+            sb.append(" DA:").append(da_id);
+            sb.append(" AC:").append(opts_panel.accm.get_act_id());
+            sb.append(" DO:").append(domain);
+            sb.append(user_opts);
+            sb.append(folder_opts);
+            sb.append(exch_opts);
+
+
+            String ret = UserMain.fcc().get_sqc().send( sb.toString() );
 
             // CHECK FOR ERROR
             int idx = ret.indexOf(':');
@@ -136,6 +160,12 @@ class ExchangeMultiImportManager extends ProfileManager
             UserMain.errm_ok(dialog.getDlg(), UserMain.Txt("Unknown_error_during_import") + " "+ ex.getMessage());
         }
         dialog.finished = true;
-        return files_uploaded;
     }
+
+    @Override
+    boolean has_tree_select()
+    {
+        return false;
+    }
+
 }

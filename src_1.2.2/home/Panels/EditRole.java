@@ -278,7 +278,7 @@ class SimpleSearchTableModel extends AbstractTableModel implements MouseListener
             int col = tb.columnAtPoint(e.getPoint());
             if (col == DELETE_COL && row >= 0 && row < model.getChildren().size())
             {
-                model.getChildren().remove(row);
+                model.getChildren().remove(model.getChildren().get(row));
                 fireTableDataChanged();
             }
         }
@@ -317,7 +317,7 @@ class SimpleSearchEditor extends  DefaultCellEditor
  
  @author  Administrator
  */
-public class EditRole extends GenericEditPanel
+public final class EditRole extends GenericEditPanel
 {
     RoleOverview vbox_overview;
     RoleTableModel model;
@@ -467,7 +467,7 @@ public class EditRole extends GenericEditPanel
 
     JComboBox CB_CONDITION;
     
-    void create_simple_search_table()
+    final void create_simple_search_table()
     {
         simple_search_table = new GlossTable(true);
         simple_search_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -520,7 +520,7 @@ public class EditRole extends GenericEditPanel
    
 
 
-    void create_option_buttons()
+    final void create_option_buttons()
     {
         javax.swing.GroupLayout PN_OPTSLayout = new javax.swing.GroupLayout(PN_OPTS);
         PN_OPTS.setLayout(PN_OPTSLayout);
@@ -1042,7 +1042,7 @@ public class EditRole extends GenericEditPanel
         int local_row = simple_search_table.getSelectedRow();
         if (local_row >= 0)
         {
-            simple_search_tablemodel.model.getChildren().remove(local_row);
+            simple_search_tablemodel.model.getChildren().remove( simple_search_tablemodel.model.getChildren().get(local_row));
             simple_search_tablemodel.fireTableDataChanged();
         }
 }//GEN-LAST:event_BT_DELActionPerformed

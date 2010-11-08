@@ -242,9 +242,21 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
 
     private void handle_check()
     {
+
+        // BUILD DA COMBO
+        SQLResult<DiskArchive> da_res = UserMain.sqc().get_da_result();
+        DiskArchiveComboModel dacm = new DiskArchiveComboModel(da_res);
+        CB_VAULT.setModel(dacm);
+
+
+        // IF WE CANNOT DETERMINE AMOUNT OF DATA, WE JUST LEAVE
+        if (! manager.has_tree_select())
+            return;
+
+
         ArrayList<SwitchableNode> list = manager.alloc_tree_node_array(JT_DIR);
 
-        if (list.size() == 0)
+        if (list.isEmpty() )
         {
             TXTP_CONFIRM.setText(UserMain.Txt("You_have_not_selected_any_data_to_import"));
             return;
@@ -383,6 +395,8 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         };
         JT_DIR.addMouseListener(ml);
         timer = new Timer(1000, this);
+
+        
     }
 
     void mySingleClick( int selRow, TreePath selPath )
