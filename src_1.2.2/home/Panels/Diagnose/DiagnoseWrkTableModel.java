@@ -6,6 +6,7 @@
 package dimm.home.Panels.Diagnose;
 
 import dimm.home.UserMain;
+import home.shared.Utilities.ParseToken;
 import java.awt.Insets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import javax.swing.table.TableColumnModel;
 abstract class WorkerRenderer
 {
     String name;
+    final int DATA_COL = 3;
 
     public WorkerRenderer( String name )
     {
@@ -40,16 +42,52 @@ class ExchangeImportRenderer extends WorkerRenderer
         super( "ExchangeImportServer" );
     }
 
+   /*         stb.append("EXIMA");
+        stb.append(i);
+        stb.append(":");
+        stb.append(mbie.mandant.getId());
+        stb.append(" EXISI");
+        stb.append(i);
+        stb.append(":");
+        stb.append(mbie.size);
+        stb.append(" EXIST");
+        stb.append(i);
+        stb.append(":");
+        stb.append(mbie.get_status());
+        stb.append(" EXITM");
+        stb.append(i);
+        stb.append(":");
+        stb.append(mbie.total_msg);
+        stb.append("\n");
+*/
     @Override
     Object get_value( ArrayList<String> list, int column )
     {
-        if (column < list.size())
-            return list.get(column);
-
-        switch (column)
+        if (column == DATA_COL)
         {
-            case 0: return list.get(0);
+            StringBuilder sb = new StringBuilder();
+            ParseToken pt = new ParseToken(list.get(column));
+            for (int i = 0; ;i++)
+            {
+                long ma_id = pt.GetLongValue("EXIMA" + i + ":");
+                if (ma_id <= 0)
+                    break;
+                if (i > 0)
+                    sb.append("; ");
+                
+                long size = pt.GetLongValue("EXISI" + i + ":");
+                String status = pt.GetString("EXIST" + i + ":");
+                String mb_per_s = pt.GetString("EXISP" + i + ":");
+                long act_msg = pt.GetLongValue("EXIAM" + i + ":");
+                long total_msg = pt.GetLongValue("EXITM" + i + ":");
+
+                sb.append("Job ").append(Integer.toString(i + 1)).append(": ").append(status).append(" ").append(act_msg).append("/").append(total_msg).append(" (").append(mb_per_s).append("MB/s)");
+            }
+
+
+            return sb.toString();
         }
+
 
         return "";
     }
@@ -66,8 +104,8 @@ public final class DiagnoseWrkTableModel extends AbstractTableModel
 
 
 
-    String[] col_names = {UserMain.getString("Name"), UserMain.getString("Ok"), UserMain.getString("Status"), UserMain.getString("Used"), UserMain.getString("MaxCapacity"), UserMain.getString("PartitionFree"), UserMain.getString("PartitionUsed"), UserMain.getString("LastUsed")};
-    Class[] col_classes = {String.class, Boolean.class, String.class, String.class, String.class, String.class, String.class, String.class  };
+    String[] col_names = {UserMain.getString("Name"), UserMain.getString("Ok"), UserMain.getString("Status"), UserMain.getString("Details")};
+    Class[] col_classes = {String.class, Boolean.class, String.class, String.class, JButton.class,  };
 
     public DiagnoseWrkTableModel(StorageDiagnose _panel, ArrayList<ArrayList<String>> result_list)
     {
@@ -76,6 +114,10 @@ public final class DiagnoseWrkTableModel extends AbstractTableModel
 
         edit_bt = create_table_button(  "/dimm/home/images/web_edit.png", panel );
         sdf = new SimpleDateFormat("dd.MM.yyy");
+
+
+        renderers = new ArrayList<WorkerRenderer>();
+        renderers.add( new ExchangeImportRenderer() );
 
     }
 
@@ -148,9 +190,16 @@ public final class DiagnoseWrkTableModel extends AbstractTableModel
     {
         ArrayList<String> dse = wrk_list.get(rowIndex);
 
-        Object o = get_wrk_renderer( dse, columnIndex );
+        switch( columnIndex)
+        {
+            case 0: return dse.get(0);
+            case 1: return dse.get(1).charAt(0) == '1' ? true : false;
+            case 2: return dse.get(2);
+            case 3: return get_wrk_renderer( dse, columnIndex );
+            case 4: return edit_bt;
 
-        return o;
+        }
+        return "";
     }
 
     public int get_edit_column()
@@ -172,6 +221,12 @@ public final class DiagnoseWrkTableModel extends AbstractTableModel
     {
         String worker = list.get(0);
         WorkerRenderer renderer = get_renderer( worker );
+        if (renderer == null)
+        {
+            if (columnIndex < list.size())
+                return list.get(columnIndex);
+            return "";
+        }
 
         return renderer.get_value(list, columnIndex);
     }

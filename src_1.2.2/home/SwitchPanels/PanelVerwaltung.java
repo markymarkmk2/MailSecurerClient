@@ -15,6 +15,7 @@ import dimm.home.Panels.ImapFetcherOverview;
 import dimm.home.Panels.MilterOverview;
 import dimm.home.Panels.ProxyOverview;
 import dimm.home.Panels.RoleOverview;
+import dimm.home.Panels.SmtpListenerOverview;
 import dimm.home.Rendering.FlatBackgroundTitle;
 import dimm.home.Rendering.GhostButton;
 import dimm.home.Rendering.SwitchSpringPanel;
@@ -107,6 +108,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         BT_PROXY = new GhostButton();
         BT_HOTFOLDER = new GhostButton();
         BT_BACKUP = new GhostButton();
+        BT_SMTPLISTENER = new GhostButton();
         PN_HEADER = new javax.swing.JPanel();
 
         setOpaque(false);
@@ -184,7 +186,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_IMAPFETCHER, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, 170, 50));
 
-        BT_MILTER.setFont(new java.awt.Font("Arial", 0, 14));
+        BT_MILTER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_MILTER.setForeground(new java.awt.Color(201, 201, 201));
         BT_MILTER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/smtp.png"))); // NOI18N
         BT_MILTER.setText(UserMain.Txt("Milter")); // NOI18N
@@ -200,7 +202,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_MILTER, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 200, 170, 50));
 
-        BT_PROXY.setFont(new java.awt.Font("Arial", 0, 14));
+        BT_PROXY.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         BT_PROXY.setForeground(new java.awt.Color(201, 201, 201));
         BT_PROXY.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/proxy.png"))); // NOI18N
         BT_PROXY.setText(UserMain.Txt("Mail_Proxy")); // NOI18N
@@ -214,9 +216,9 @@ public class PanelVerwaltung extends SwitchSpringPanel
                 BT_PROXYActionPerformed(evt);
             }
         });
-        PN_BUTTONS.add(BT_PROXY, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 200, 190, 50));
+        PN_BUTTONS.add(BT_PROXY, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 200, 150, 50));
 
-        BT_HOTFOLDER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_HOTFOLDER.setFont(new java.awt.Font("Arial", 0, 14));
         BT_HOTFOLDER.setForeground(new java.awt.Color(201, 201, 201));
         BT_HOTFOLDER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/hotfolder.png"))); // NOI18N
         BT_HOTFOLDER.setText(UserMain.Txt("Hotfolder")); // NOI18N
@@ -232,7 +234,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
         });
         PN_BUTTONS.add(BT_HOTFOLDER, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 320, 170, 50));
 
-        BT_BACKUP.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_BACKUP.setFont(new java.awt.Font("Arial", 0, 14));
         BT_BACKUP.setForeground(new java.awt.Color(201, 201, 201));
         BT_BACKUP.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/archiv.png"))); // NOI18N
         BT_BACKUP.setText(UserMain.Txt("Backup")); // NOI18N
@@ -247,6 +249,22 @@ public class PanelVerwaltung extends SwitchSpringPanel
             }
         });
         PN_BUTTONS.add(BT_BACKUP, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 320, 170, 50));
+
+        BT_SMTPLISTENER.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        BT_SMTPLISTENER.setForeground(new java.awt.Color(201, 201, 201));
+        BT_SMTPLISTENER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/dimm/home/images/smtp.png"))); // NOI18N
+        BT_SMTPLISTENER.setText(UserMain.Txt("SMTPListener")); // NOI18N
+        BT_SMTPLISTENER.setToolTipText(UserMain.Txt("Postfix_/_Sendmail_Listener")); // NOI18N
+        BT_SMTPLISTENER.setBorderPainted(false);
+        BT_SMTPLISTENER.setContentAreaFilled(false);
+        BT_SMTPLISTENER.setFocusPainted(false);
+        BT_SMTPLISTENER.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        BT_SMTPLISTENER.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_SMTPLISTENERActionPerformed(evt);
+            }
+        });
+        PN_BUTTONS.add(BT_SMTPLISTENER, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 200, 170, 50));
 
         PN_HEADER.setOpaque(false);
         PN_HEADER.setLayout(new javax.swing.BoxLayout(PN_HEADER, javax.swing.BoxLayout.LINE_AXIS));
@@ -366,6 +384,17 @@ public class PanelVerwaltung extends SwitchSpringPanel
 
     }//GEN-LAST:event_BT_BACKUPActionPerformed
 
+    private void BT_SMTPLISTENERActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_SMTPLISTENERActionPerformed
+    {//GEN-HEADEREND:event_BT_SMTPLISTENERActionPerformed
+        // TODO add your handling code here:
+        if (check_selected())
+        {
+            TimingTargetAdapter tt = make_spring_button_dlg( new SmtpListenerOverview(main, true),  get_dlg_pos(),  UserMain.getString("SMTPListener") );
+            spring_button_action(evt.getSource(), tt);
+        }
+
+    }//GEN-LAST:event_BT_SMTPLISTENERActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ACCOUNTCONN;
     private javax.swing.JButton BT_BACKUP;
@@ -375,6 +404,7 @@ public class PanelVerwaltung extends SwitchSpringPanel
     private javax.swing.JButton BT_MILTER;
     private javax.swing.JButton BT_PROXY;
     private javax.swing.JButton BT_ROLE;
+    private javax.swing.JButton BT_SMTPLISTENER;
     private javax.swing.JPanel PN_BUTTONS;
     private javax.swing.JPanel PN_HEADER;
     // End of variables declaration//GEN-END:variables

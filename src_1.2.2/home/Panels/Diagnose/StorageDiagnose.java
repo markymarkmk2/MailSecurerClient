@@ -11,6 +11,7 @@
 
 package dimm.home.Panels.Diagnose;
 
+import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.Rendering.GlossTable;
@@ -131,12 +132,36 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
         // REGISTER TABLE TO SCROLLPANEL
         ds_table.embed_to_scrollpanel( SCP_TABLE );
 
+
+        wrk_table = new GlossTable();
+
+        ArrayList<ArrayList<String>> result_list = new ArrayList<ArrayList<String>>();
+        wrk_model = new DiagnoseWrkTableModel(this, result_list);
+        wrk_table.setModel(wrk_model);
+        RowSorter wrk_sorter = new TableRowSorter(wrk_model);
+        wrk_table.setRowSorter(wrk_sorter);
+        wrk_table.addMouseListener(this);
+
+        // REGISTER TABLE TO SCROLLPANEL
+        wrk_table.embed_to_scrollpanel( SCP_WRK_TABLE );
+
+
+
         timer = new Timer(5000, this);
         actionPerformed(null);
         timer.start();
 
 
     }
+
+    @Override
+    public void setDlg( GenericGlossyDlg dlg )
+    {
+        super.setDlg(dlg);
+        dlg.setModal(false);
+    }
+
+
 
     void read_status()
     {
@@ -204,7 +229,7 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
             if (last_ret == null || last_ret.compareTo(ret) != 0)
             {
                 last_ret = ret;
-                Object o = ParseToken.DeCompressObject(ret.substring(3)).toString();
+                Object o = ParseToken.DeCompressObject(ret.substring(3));
                 if (o instanceof ArrayList)
                 {
                     ArrayList<ArrayList<String>> result_list = (ArrayList<ArrayList<String>>) o;

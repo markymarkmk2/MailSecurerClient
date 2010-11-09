@@ -15,6 +15,7 @@ import javax.swing.JButton;
 import home.shared.hibernate.DiskArchive;
 import home.shared.hibernate.Milter;
 import dimm.home.Models.DiskArchiveComboModel;
+import home.shared.CS_Constants;
 import home.shared.Utilities.Validator;
 
 
@@ -82,6 +83,8 @@ public class EditMilter extends GenericEditPanel
 
                 TXT_SERVER2.setText( object.getOutServer());
                 TXT_PORT2.setText( object.getOutPort().toString());
+
+                BT_DISABLED.setSelected( object_is_disabled() );
             }
             catch (Exception exc)
             {
@@ -364,16 +367,16 @@ public class EditMilter extends GenericEditPanel
 
         flags = get_object_flags();
 
-        return ((flags & MilterOverview.DISABLED) == MilterOverview.DISABLED);
+        return ((flags & CS_Constants.ML_DISABLED) == CS_Constants.ML_DISABLED);
     }
     void set_object_disabled( boolean f)
     {
         int flags = get_object_flags();
 
         if (f)
-            set_object_flag( MilterOverview.DISABLED );
+            set_object_flag( CS_Constants.ML_DISABLED );
         else
-            clr_object_flag( MilterOverview.DISABLED );
+            clr_object_flag( CS_Constants.ML_DISABLED );
     }
 
     

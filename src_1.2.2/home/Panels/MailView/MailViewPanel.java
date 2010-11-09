@@ -73,6 +73,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.AbstractTableModel;
@@ -87,6 +88,15 @@ class MailPreviewDlg extends GenericGlossyDlg
     MailPreviewDlg( UserMain parent, RFCMimeMail mail, String uid)
     {
         super( parent, true, new MailPreviewPanel(mail, uid));
+        main = parent;
+
+        this.set_next_location(parent);
+
+        this.setSize( 700, 600);
+    }
+    MailPreviewDlg( UserMain parent, MailPreviewPanel panel)
+    {
+        super( parent, true,panel);
         main = parent;
 
         this.set_next_location(parent);
@@ -1575,9 +1585,12 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     
     void run_open_mail( int row, File file, boolean encoded )
     {
-        String subject = "Unknown";
+        String _subject = "Unknown";
         if ( row >= 0)
-            subject = table.getModel().getValueAt(row, MailTableModel.SUBJECT_COL).toString();
+            _subject = table.getModel().getValueAt(row, MailTableModel.SUBJECT_COL).toString();
+
+        final String subject = _subject;
+
         
         InputStream bais = null;
 
@@ -1592,19 +1605,30 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
 
           
-            RFCMimeMail mmsg = new RFCMimeMail();           
+            final RFCMimeMail mmsg = new RFCMimeMail();
             mmsg.parse(bais);
-
-            MailPreviewDlg dlg = new MailPreviewDlg(UserMain.self, mmsg, model.get_uid(row));
             bais.close();
             bais = null;
 
-            UserMain.self.hide_busy();
+            final MailPreviewPanel panel = new MailPreviewPanel(mmsg, model.get_uid(row));
 
-            dlg.setModal(false);
-            dlg.setTitle(subject);
-            dlg.setLocation( my_dlg.getLocation().x + 20,my_dlg.getLocation().y + 20);
-            dlg.setVisible(true);
+            SwingUtilities.invokeLater( new Runnable() {
+
+                @Override
+                public void run()
+                {
+                    UserMain.self.hide_busy();
+                    MailPreviewDlg dlg = new MailPreviewDlg(UserMain.self, panel);
+
+
+                    dlg.setModal(false);
+                    dlg.setTitle(subject);
+                    dlg.setLocation( my_dlg.getLocation().x + 20,my_dlg.getLocation().y + 20);
+                    dlg.setVisible(true);
+                }
+            });
+
+
 
         }
         catch (Exception iOException)

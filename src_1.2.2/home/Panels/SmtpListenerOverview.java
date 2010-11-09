@@ -16,7 +16,6 @@ import javax.swing.JButton;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableColumnModel;
 
-import home.shared.hibernate.*;
 import dimm.home.Rendering.GlossDialogPanel;
 import dimm.home.ServerConnect.ConnectionID;
 import dimm.home.ServerConnect.ResultSetID;
@@ -24,17 +23,18 @@ import dimm.home.ServerConnect.ServerCall;
 import dimm.home.ServerConnect.StatementID;
 import home.shared.CS_Constants;
 import home.shared.SQL.SQLArrayResult;
+import home.shared.hibernate.SmtpServer;
 
 
-class MilterTableModel extends OverviewModel
+class SmtpListenerTableModel extends OverviewModel
 {
     
-    public MilterTableModel(UserMain _main, MilterOverview _dlg)
+    public SmtpListenerTableModel(UserMain _main, SmtpListenerOverview _dlg)
     {
         super( _main, _dlg );
 
-        String[] _col_names = {"Id",UserMain.getString("Typ"), UserMain.getString("Server"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
-        Class[] _col_classes = {String.class,  String.class,  String.class,  Boolean.class, JButton.class, JButton.class};
+        String[] _col_names = {"Id",UserMain.getString("Server"), UserMain.getString("Disabled"), UserMain.getString("Bearbeiten"), UserMain.getString("Löschen")};
+        Class[] _col_classes = {String.class,  String.class,  Boolean.class, JButton.class, JButton.class};
         set_columns( _col_names, _col_classes );
 
     }
@@ -42,24 +42,10 @@ class MilterTableModel extends OverviewModel
     @Override
     public String get_qry(long mandanten_id)
     {
-        String qry = "select * from milter where mid=" + mandanten_id + " order by id";
+        String qry = "select * from smtp_server where mid=" + mandanten_id + " order by id";
         return qry;
     }
 
-    String get_type_str( String type)
-    {
-        MilterOverview mo_dlg = (MilterOverview)dlg;
-
-        for (int i = 0; i < mo_dlg.get_mt_entry_list().length; i++)
-        {
-            MilterOverview.MilterTypeEntry mte = mo_dlg.get_mt_entry_list()[i];
-            if (mte.type.compareTo(type)== 0)
-            {
-                return mte.name;
-            }
-        }
-        return "unknown";
-    }
 
 
     @Override
@@ -68,27 +54,28 @@ class MilterTableModel extends OverviewModel
         if (sqlResult == null)
             return null;
 
-        Milter milter = new Milter();
-        milter = (Milter)sqlResult.get(rowIndex);
+        SmtpServer smtp_server = (SmtpServer)sqlResult.get(rowIndex);
 
         switch (columnIndex)
         {
             case 0:
-                return milter.getId(); // ID
+                return smtp_server.getId(); // ID
             case 1:
-                return get_type_str( milter.getType());
+            {
+                if (smtp_server.getServer().length()> 0)
+                      return smtp_server.getServer() + ":" + smtp_server.getPort();
+                return  "*:" + smtp_server.getPort();
+            }
             case 2:
-                return milter.getOutServer() + ":" + milter.getOutPort();
-            case 3:
                 int flags = sqlResult.getInt(rowIndex, "Flags");
-                return (flags & CS_Constants.ML_DISABLED) == CS_Constants.ML_DISABLED; // DISABLED
+                return (flags & CS_Constants.SL_DISABLED) == CS_Constants.SL_DISABLED; // DISABLED
             default:
                 return super.getValueAt(rowIndex, columnIndex);
         }
     }
-     public Milter get_object( int index )
+    public SmtpServer get_object( int index )
     {
-        return (Milter) sqlResult.get(index);
+        return (SmtpServer) sqlResult.get(index);
     }
 
 
@@ -97,43 +84,15 @@ class MilterTableModel extends OverviewModel
  *
  * @author  mw
  */
-public class MilterOverview extends SQLOverviewDialog implements PropertyChangeListener
+public class SmtpListenerOverview extends SQLOverviewDialog implements PropertyChangeListener
 {
-        
-
-    public class MilterTypeEntry
-    {
-        String type;
-        String name;
-
-        MilterTypeEntry( String t, String n)
-        {
-            type = t;
-            name = n;
-        }
-
-        @Override
-        public String toString()
-        {
-            return name;
-        }
-    }
-
-    MilterTypeEntry[] mt_entry_list =
-    {
-        new MilterTypeEntry("sendmail","Sendmail"),
-        new MilterTypeEntry("postfix","Postfix")
-    };
-    public MilterTypeEntry[] get_mt_entry_list()
-    {
-        return mt_entry_list;
-    }
+    
 
 
     /** Creates new form NewJDialog */
-    public MilterOverview(UserMain parent, boolean modal)
+    public SmtpListenerOverview(UserMain parent, boolean modal)
     {
-        super(parent, "in_server", modal);
+        super(parent, "server", modal);
         initComponents();
 
         main = parent;
@@ -142,7 +101,7 @@ public class MilterOverview extends SQLOverviewDialog implements PropertyChangeL
         PN_TITLE.add(titlePanel);
         titlePanel.installListeners();
 
-        model = new MilterTableModel(main, this);
+        model = new SmtpListenerTableModel(main, this);
         table = new GlossTable();
 
         table.setModel(model);
@@ -159,9 +118,9 @@ public class MilterOverview extends SQLOverviewDialog implements PropertyChangeL
         create_sql_worker();
     }
 
-    MilterTableModel get_object_model()
+    SmtpListenerTableModel get_object_model()
     {
-        return (MilterTableModel) model;
+        return (SmtpListenerTableModel) model;
     }
 
 
@@ -200,7 +159,7 @@ public class MilterOverview extends SQLOverviewDialog implements PropertyChangeL
         ResultSetID rid = sql.executeQuery(sid, qry);
         SQLArrayResult resa = sql.get_sql_array_result(rid);
 
-        SQLResult<Milter>  res = new SQLResult<Milter>(UserMain.sqc(), resa, new Milter().getClass());
+        SQLResult<SmtpServer>  res = new SQLResult<SmtpServer>(UserMain.sqc(), resa, new SmtpServer().getClass());
 
         model.setSqlResult(res);
         table.tableChanged(new TableModelEvent(table.getModel()) );
@@ -217,7 +176,7 @@ public class MilterOverview extends SQLOverviewDialog implements PropertyChangeL
     @Override
     protected GlossDialogPanel get_edit_panel( int row )
     {
-        return new EditMilter( row, this );
+        return new EditSmtpListener( row, this );
     }
 
 
