@@ -293,7 +293,7 @@ public class PanelSystem extends SwitchSpringPanel
         // TODO add your handling code here:
         if (check_selected())
         {
-            TimingTargetAdapter tt = make_spring_button_dlg( new LogConfigPanel(),  get_dlg_pos(),  UserMain.getString("Log_Configuration") );
+            TimingTargetAdapter tt = make_spring_button_dlg( new LogConfigPanel(true),  get_dlg_pos(),  UserMain.getString("Log_Configuration") );
             spring_button_action(evt.getSource(), tt);
         }
 

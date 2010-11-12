@@ -187,6 +187,13 @@ class OlexpRootNode extends DefaultMutableTreeNode implements SwitchableNode
         return 0;
     }
 
+    @Override
+    public String toString()
+    {
+        return "";
+    }
+
+
 }
 
 

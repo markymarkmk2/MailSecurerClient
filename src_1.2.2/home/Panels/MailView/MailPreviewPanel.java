@@ -35,16 +35,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.mail.Address;
 import javax.mail.MessagingException;
 import javax.mail.Part;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JTextArea;
 import javax.swing.table.AbstractTableModel;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.lobobrowser.html.gui.HtmlPanel;
 import org.lobobrowser.html.parser.*;
 import org.lobobrowser.html.test.SimpleHtmlRendererContext;
@@ -90,12 +96,25 @@ class MailHeaderModel extends AbstractTableModel
         }
         else
         {
+            Address adr;
             if (row < from.length)
-                return from[row].toString();
+                adr = from[row];
             else
-                return to[row - from.length].toString();
+                adr = to[row - from.length];
+
+            String ret = adr.toString();
+            try
+            {
+                ret = MimeUtility.decodeText(adr.toString());
+            }
+            catch (Exception ex)
+            {
+            }
+            return ret;
         }
     }
+
+
 
     @Override
     public boolean isCellEditable( int row, int column )
@@ -151,8 +170,11 @@ class MailAttachmentModel extends AbstractTableModel
                 {
                     name = attachment.getDescription();
                 }
+                if (name != null)
+                    name = MimeUtility.decodeText(name);
+
             }
-            catch (MessagingException messagingException)
+            catch (Exception messagingException)
             {
             }
             return name;

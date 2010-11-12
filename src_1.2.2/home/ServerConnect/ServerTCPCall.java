@@ -925,6 +925,8 @@ public class ServerTCPCall extends ServerCall
         catch (Exception ex)
         {
             last_ex = ex;
+            UserMain.errm_ok(UserMain.Txt("Diese_Version_ist_nicht_mehr_kompatibel_zum_MailSecurer-Server"));
+
             ex.printStackTrace();
             return null;
         }

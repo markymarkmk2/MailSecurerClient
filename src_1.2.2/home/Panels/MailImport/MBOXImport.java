@@ -109,6 +109,13 @@ class MBOXRootNode extends DefaultMutableTreeNode implements SwitchableNode
     {
         return 0;
     }
+
+    @Override
+    public String toString()
+    {
+        return new File(path).getName();
+    }
+
 }
 class MBOXFileNode  extends FileNode
 {
@@ -222,6 +229,8 @@ class MBOXProfileManager extends FileImportProfileManager
     @Override
     void init_options_gui( ) throws IOException
     {
+        opts_panel.set_info_text(UserMain.Txt("Please_select_the_folder_with_MBox_files"));
+
         JComboBox cb = opts_panel.get_combo();
         cb.removeAllItems();
        

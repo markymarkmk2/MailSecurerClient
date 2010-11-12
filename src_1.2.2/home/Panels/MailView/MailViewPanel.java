@@ -62,6 +62,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.internet.MimeUtility;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
@@ -486,6 +487,14 @@ class MailTableModel extends AbstractTableModel
             long size = Long.parseLong(val, 16);
             return new Long(size);
         }
+        try
+        {
+            val = MimeUtility.decodeText(val);
+        }
+        catch (Exception ex)
+        {
+        }
+
         return val;
     }
 

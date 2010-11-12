@@ -21,6 +21,7 @@ import home.shared.hibernate.Mandant;
 import home.shared.hibernate.Milter;
 import home.shared.hibernate.Proxy;
 import home.shared.hibernate.Role;
+import home.shared.hibernate.SmtpServer;
 import java.util.ArrayList;
 
 
@@ -120,6 +121,7 @@ public class SQLConnect extends Connect implements SQLObjectGetter
         sql_res_list.add( new SQLListContainer<Role>(Role.class, "role") );
         sql_res_list.add( new SQLListContainer<Role>(MailUser.class, "mail_user") );
         sql_res_list.add( new SQLListContainer<Backup>(Backup.class, "backup") );
+        sql_res_list.add( new SQLListContainer<Backup>(SmtpServer.class, "smtp_server") );
     }
 
     
@@ -350,6 +352,10 @@ public class SQLConnect extends Connect implements SQLObjectGetter
     public SQLResult<Role> get_role_result()
     {
         return get_sql_list_container(Role.class).list;
+    }
+    public SQLResult<SmtpServer> get_smtp_server_result()
+    {
+        return get_sql_list_container(SmtpServer.class).list;
     }
     public SQLResult<AccountConnector> get_account_result()
     {

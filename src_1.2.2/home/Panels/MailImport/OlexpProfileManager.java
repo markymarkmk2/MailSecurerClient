@@ -37,6 +37,7 @@ class OlexpProfileManager extends FileImportProfileManager
     @Override
     void init_options_gui( ) throws IOException
     {
+        opts_panel.set_info_text(UserMain.Txt("Please_select_the_Outlook-Express_profile_folder"));
         JComboBox cb = opts_panel.get_combo();
         cb.removeAllItems();
 
@@ -103,6 +104,7 @@ class OlexpProfileManager extends FileImportProfileManager
         model.setRoot(node);
         tree.setModel(model);
         tree.setCellRenderer( new OlexpTreeCellRenderer() );
+        tree.setRootVisible(true);
     }
     
     void handle_build_tree(NamePathEntry npe_profile, JTree tree) throws IOException
@@ -113,6 +115,7 @@ class OlexpProfileManager extends FileImportProfileManager
         model.setRoot(node);
         tree.setModel(model);
         tree.setCellRenderer( new OlexpTreeCellRenderer() );
+        tree.setRootVisible(true);
     }
 
     String build_user_profile_path()

@@ -8,6 +8,7 @@ package dimm.home.Panels.MailImport;
 import com.ice.jni.registry.Registry;
 import com.ice.jni.registry.RegistryException;
 import com.ice.jni.registry.RegistryKey;
+import com.ice.jni.registry.RegistryValue;
 import dimm.home.Main;
 import dimm.home.UserMain;
 import home.shared.Utilities.SizeStr;
@@ -119,6 +120,20 @@ class OutlookRootNode extends DefaultMutableTreeNode implements SwitchableNode
 
     }
 
+    private char[] byte_to_char( byte[] data )
+    {
+        int c = 0;
+        char[] ret = new char[data.length / 2];
+        for (int i = 0; i < data.length; i+=2)
+        {
+            char ch = (char)data[i+1];
+            ch <<= 8;
+            ch += data[i];
+
+            ret[i/2] = ch;
+        }
+        return ret;
+    }
 
     // DATA FROM REGISTRY
     OutlookRootNode( DefaultTreeModel _model, NamePathEntry npe_profile )
@@ -132,6 +147,11 @@ class OutlookRootNode extends DefaultMutableTreeNode implements SwitchableNode
             RegistryKey regkey = Registry.HKEY_CURRENT_USER;
             RegistryKey key = Registry.openSubkey(regkey, "Software\\Microsoft\\Windows NT\\CurrentVersion\\Windows Messaging Subsystem\\" + root.path, RegistryKey.ACCESS_ALL);
 
+            if (key == null)
+            {
+                key = Registry.openSubkey(regkey, "Software\\Microsoft\\Windows NT\\CurrentVersion\\Windows Messaging Subsystem\\Profiles\\" + root.path, RegistryKey.ACCESS_ALL);
+            }
+
             int nkeys = key.getNumberSubkeys();
 
             for (int i = 0; i < nkeys; i++)
@@ -140,29 +160,74 @@ class OutlookRootNode extends DefaultMutableTreeNode implements SwitchableNode
 
                 RegistryKey ol_scheissname_key = Registry.openSubkey(key, ol_scheissname, RegistryKey.ACCESS_ALL);
 
-                String store_path = ol_scheissname_key.getStringValue("001e6700");
-                String store_name = ol_scheissname_key.getStringValue("001e3001");
 
-                store_path = NativeLoader.resolve_win_path(store_path);
-                int len = store_path.length();
-                while (len > 0)
+                try
                 {
-                    if (store_path.charAt(len - 1) == '\\')
+                    String store_path = ol_scheissname_key.getStringValue("001e6700");
+                    String store_name = ol_scheissname_key.getStringValue("001e3001");
+
+                    store_path = NativeLoader.resolve_win_path(store_path);
+                    int len = store_path.length();
+                    while (len > 0)
                     {
-                        store_path = store_path.substring(0 , len -1);
-                        len--;
-                        continue;
+                        if (store_path.charAt(len - 1) == '\\')
+                        {
+                            store_path = store_path.substring(0 , len -1);
+                            len--;
+                            continue;
+                        }
+                        break;
                     }
-                    break;
+                    
+
+
+                    NamePathEntry pe = new NamePathEntry(store_path, store_name);
+
+                    OutlookVersionNode child = new OutlookVersionNode( model, store_path, store_name);
+                    child.setParent(this);
+                    children.add( child );
                 }
+                catch (Exception registryException)
+                {
+                }
+               try
+                {
+                    RegistryValue rg_store_path = ol_scheissname_key.getValue("001f6700");
+                    RegistryValue rg_store_name = ol_scheissname_key.getValue("001f3001"); 
+                    String store_path = new String( byte_to_char( rg_store_path.getByteData() ) ).trim();
+                    String store_name = new String( byte_to_char( rg_store_name.getByteData() ) ).trim();
+
+                    store_path = NativeLoader.conv_win_to_utf8( store_path );
+                    store_name = NativeLoader.conv_win_to_utf8( store_name );
+
+
+                    store_path = NativeLoader.resolve_win_path(store_path);
+                    int len = store_path.length();
+                    while (len > 0)
+                    {
+                        if (store_path.charAt(len - 1) == '\\')
+                        {
+                            store_path = store_path.substring(0 , len -1);
+                            len--;
+                            continue;
+                        }
+                        break;
+                    }
+
+
+
+                    NamePathEntry pe = new NamePathEntry(store_path, store_name);
+
+                    OutlookVersionNode child = new OutlookVersionNode( model, store_path, store_name);
+                    child.setParent(this);
+                    children.add( child );
+                }
+                catch (Exception registryException)
+                {
+                }
+
+
                 ol_scheissname_key.closeKey();
-
-
-                NamePathEntry pe = new NamePathEntry(store_path, store_name);
-
-                OutlookVersionNode child = new OutlookVersionNode( model, store_path, store_name);
-                child.setParent(this);
-                children.add( child );
             }
             key.closeKey();
         }
@@ -214,6 +279,13 @@ class OutlookRootNode extends DefaultMutableTreeNode implements SwitchableNode
     {
         return 0;
     }
+
+    @Override
+    public String toString()
+    {
+        return "";
+    }
+
 }
 class OutlookVersionNode  extends DefaultMutableTreeNode implements SwitchableNode
 {
@@ -383,6 +455,8 @@ class OutlookProfileManager extends FileImportProfileManager
     @Override
     void init_options_gui( ) throws IOException
     {
+        opts_panel.set_info_text(UserMain.Txt("Please_select_the_Outlook_profile_folder"));
+
         JComboBox cb = opts_panel.get_combo();
         cb.removeAllItems();
         cb.removeAllItems();
@@ -450,7 +524,7 @@ class OutlookProfileManager extends FileImportProfileManager
         model.setRoot(node);
         tree.setModel(model);
         tree.setCellRenderer( new OutlookTreeCellRenderer() );
-        tree.setRootVisible(false);
+        tree.setRootVisible(true);
     }
     
     void handle_build_tree(NamePathEntry npe_profile, JTree tree) throws IOException
@@ -461,7 +535,7 @@ class OutlookProfileManager extends FileImportProfileManager
         model.setRoot(node);
         tree.setModel(model);
         tree.setCellRenderer( new OutlookTreeCellRenderer() );
-        tree.setRootVisible(false);
+        tree.setRootVisible(true);
     }
 
 

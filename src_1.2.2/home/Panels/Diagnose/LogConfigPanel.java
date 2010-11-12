@@ -184,10 +184,13 @@ public class LogConfigPanel extends GlossDialogPanel implements MouseListener,  
     LogConfigTableModel model;
 
     ArrayList<LogConfigEntry> save_entry_list;
+    private boolean with_write_config;
 
     /** Creates new form GetMailAddressPanel */
-    public LogConfigPanel( )
+    public LogConfigPanel( boolean with_write_config)
     {
+
+        this.with_write_config = with_write_config;
         initComponents();
         
         table = new GlossTable();        
@@ -431,6 +434,8 @@ public class LogConfigPanel extends GlossDialogPanel implements MouseListener,  
         ArrayList<LogConfigEntry> entry_list = model.get_entry_list();
         String cstr = ParseToken.BuildCompressedObjectString(entry_list);
 
-        String ret = fcc.call_abstract_function("show_log CMD:set_config CFG:" + cstr , FunctionCallConnect.SHORT_TIMEOUT );
+        // WRITE AND STORE
+        String write_config = (with_write_config ? " WC:1" : "");
+        String ret = fcc.call_abstract_function("show_log CMD:set_config CFG:" + cstr + write_config, FunctionCallConnect.SHORT_TIMEOUT );
     }
 }

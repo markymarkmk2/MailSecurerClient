@@ -90,7 +90,7 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
     DiagnoseDSTableModel ds_model;
     DiagnoseWrkTableModel wrk_model;
 
-    ArrayList<DS_StatusEntry> dse_list;
+    
     Timer timer;
 
 
@@ -98,7 +98,6 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
     public StorageDiagnose( int ma_id)
     {
         this.ma_id = ma_id;
-        dse_list = new ArrayList<DS_StatusEntry>();
 
         initComponents();
 
@@ -123,6 +122,7 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
         }
         ds_table = new GlossTable();
 
+        ArrayList<DS_StatusEntry> dse_list = new ArrayList<DS_StatusEntry>();
         ds_model = new DiagnoseDSTableModel(this, dse_list);
         ds_table.setModel(ds_model);
         RowSorter sorter = new TableRowSorter(ds_model);
@@ -147,7 +147,7 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
 
 
 
-        timer = new Timer(5000, this);
+        timer = new Timer(1000, this);
         actionPerformed(null);
         timer.start();
 
@@ -163,9 +163,9 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
 
 
 
-    void read_status()
+    void read_disk_status()
     {
-        dse_list.clear();
+        ArrayList<DS_StatusEntry> dse_list = new ArrayList<DS_StatusEntry>();
 
         SQLResult<Mandant> mr = UserMain.sqc().get_mandant_result();
         for (int i = 0; i < mr.size(); i++)
@@ -187,15 +187,17 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
                         continue;
                 }
 
-                read_status( da );
+                read_status( dse_list, da );
             }
         }
+        ds_model.set_dse_list(dse_list);
+
     }
 
 
-    static String last_ret = null;
+    static String last_worker_status_ret = null;
     
-    boolean read_status( DiskArchive da )
+    boolean read_status( ArrayList<DS_StatusEntry> dse_list, DiskArchive da )
     {         
 
         String ret = UserMain.fcc().call_abstract_function("ListVaultData CMD:status MA:" + ma_id + " DA:" + da.getId() );
@@ -222,13 +224,17 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
             else
                 System.out.println("Missing DS: " + line);
         }
-
-        ret = UserMain.fcc().call_abstract_function("GETWORKERSTATUS MA:" + ma_id );
+        return true;
+    }
+    
+    void read_worker_status()
+    {
+        String ret = UserMain.fcc().call_abstract_function("GETWORKERSTATUS MA:" + ma_id );
         if (ret != null && ret.charAt(0) == '0')
         {
-            if (last_ret == null || last_ret.compareTo(ret) != 0)
+            if (last_worker_status_ret == null || last_worker_status_ret.compareTo(ret) != 0)
             {
-                last_ret = ret;
+                last_worker_status_ret = ret;
                 Object o = ParseToken.DeCompressObject(ret.substring(3));
                 if (o instanceof ArrayList)
                 {
@@ -237,11 +243,12 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
                 }
             }
         }
+    }
 
-        
-
+    void read_lic_status()
+    {
         String lic_txt = "";
-        ret = UserMain.fcc().call_abstract_function("LicenseConfig CMD:CHECK PRD:MailSecurer" );
+        String ret = UserMain.fcc().call_abstract_function("LicenseConfig CMD:CHECK PRD:MailSecurer" );
         if (ret != null && ret.charAt(0) == '0')
         {
             ParseToken pt = new ParseToken(ret.substring(3));
@@ -257,10 +264,8 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
         }
         TXT_LIC.setText(lic_txt);
 
-        return true;
-
-
     }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -437,6 +442,7 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
     }
 
     SwingWorker sw;
+    int cnt = 0;
     @Override
     public void actionPerformed( ActionEvent e )
     {
@@ -452,11 +458,19 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
             {
                 try
                 {
-                    read_status();
+                    read_worker_status();
+
+                    if (cnt %5 == 0)
+                    {
+                        read_disk_status();
+                        read_lic_status();
+                    }
                 }
                 catch (Exception e)
                 {
                 }
+                cnt++;
+                
                 return null;
             }
         };

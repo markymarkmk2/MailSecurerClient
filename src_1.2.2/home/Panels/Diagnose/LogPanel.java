@@ -45,6 +45,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
+import javax.swing.border.EmptyBorder;
 
 /**
  *
@@ -151,6 +152,7 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         LOG_TEXT.setFont( new Font("Courier", Font.PLAIN, 11 ) );
         LOG_TEXT.setForeground( new Color( 255, 128, 0));  // AMBER
         LOG_TEXT.setBackground(Color.black);
+        LOG_TEXT.setBorder( new EmptyBorder(0,0,0,0));
 
         custom_scroll_pane = new CustomScrollPane( this, LOG_TEXT );
         custom_scroll_pane.setBackground(Color.black);

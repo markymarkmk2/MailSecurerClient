@@ -33,6 +33,10 @@ public class ComboProfileOptsPanel extends javax.swing.JPanel
 
     }
 
+    public void set_info_text( String t )
+    {
+        LB_INFO.setText(t);
+    }
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -42,14 +46,14 @@ public class ComboProfileOptsPanel extends javax.swing.JPanel
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        LB_INFO = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         CB_PROFILE = new javax.swing.JComboBox();
         LB_PATH = new javax.swing.JLabel();
         TXT_PATH = new javax.swing.JTextField();
         BT_SET_PATH = new javax.swing.JButton();
 
-        jLabel1.setText(UserMain.getString("Please_select_the_Thunderbird-Profile_folder")); // NOI18N
+        LB_INFO.setText(UserMain.getString("Please_select_the_Thunderbird-Profile_folder")); // NOI18N
 
         jLabel2.setText(UserMain.getString("Profile")); // NOI18N
 
@@ -76,7 +80,7 @@ public class ComboProfileOptsPanel extends javax.swing.JPanel
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
+                    .addComponent(LB_INFO)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(LB_PATH)
@@ -94,7 +98,7 @@ public class ComboProfileOptsPanel extends javax.swing.JPanel
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(LB_INFO)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(CB_PROFILE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -111,7 +115,6 @@ public class ComboProfileOptsPanel extends javax.swing.JPanel
     private void CB_PROFILEActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_PROFILEActionPerformed
     {//GEN-HEADEREND:event_CB_PROFILEActionPerformed
         // TODO add your handling code here:
-        build_tree_callback();
         if (CB_PROFILE.getSelectedItem() != null)
         {
             NamePathEntry nbpe = (NamePathEntry) CB_PROFILE.getSelectedItem();
@@ -126,6 +129,8 @@ public class ComboProfileOptsPanel extends javax.swing.JPanel
                 BT_SET_PATH.setEnabled(false);
             }
         }
+        build_tree_callback();
+
     }//GEN-LAST:event_CB_PROFILEActionPerformed
 
     boolean is_manual_path()
@@ -168,9 +173,9 @@ public class ComboProfileOptsPanel extends javax.swing.JPanel
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_SET_PATH;
     private javax.swing.JComboBox CB_PROFILE;
+    private javax.swing.JLabel LB_INFO;
     private javax.swing.JLabel LB_PATH;
     private javax.swing.JTextField TXT_PATH;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
 
@@ -237,7 +242,7 @@ public class ComboProfileOptsPanel extends javax.swing.JPanel
         }
         panel.set_enable_next(true);
 
-        CB_PROFILE.setSelectedIndex(0);
+        //CB_PROFILE.setSelectedIndex(0);
 
         is_in_fill_cb = false;
 

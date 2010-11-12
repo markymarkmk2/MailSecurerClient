@@ -513,6 +513,8 @@ Path=Profiles/nl1ice4b.default
     @Override
     void init_options_gui( ) throws IOException
     {
+        opts_panel.set_info_text(UserMain.Txt("Please_select_the_Thunderbird_profile_folder"));
+
         final JComboBox cb = opts_panel.get_combo();
         cb.removeAllItems();
 
@@ -663,6 +665,12 @@ Path=Profiles/nl1ice4b.default
             catch (Exception exception)
             {
                 exception.printStackTrace();
+            }
+
+            if (mail_root_dirs.isEmpty())
+            {
+                UserMain.errm_ok(dialog.getDlg(), UserMain.Txt("Bitte_waehlen_Sie_den_Ordner_manuell_aus"));
+                return;
             }
             TBirdTreeModel model = new TBirdTreeModel();
 
