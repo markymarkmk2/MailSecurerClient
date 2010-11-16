@@ -63,7 +63,11 @@ public class NativeLoader
             {
                 try
                 {
-                    InputStream in = this.getClass().getResourceAsStream("/dimm/home/native_libs/" + dll_name + ".dll");
+                    InputStream in;
+                    if (is_win64())
+                        in = this.getClass().getResourceAsStream("/dimm/home/native_libs/" + dll_name + "64.dll");
+                    else
+                        in = this.getClass().getResourceAsStream("/dimm/home/native_libs/" + dll_name + ".dll");
                     File tempFile = File.createTempFile("dll_name", ".dll");
                     tempFile.deleteOnExit();
 
@@ -104,6 +108,10 @@ public class NativeLoader
     public static boolean is_win()
     {
         return (System.getProperty("os.name").startsWith("Win"));
+    }
+    public static boolean is_win64()
+    {
+        return (System.getProperty("os.arch").endsWith("64"));
     }
 
     public static boolean is_linux()
