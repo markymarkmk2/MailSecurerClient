@@ -166,7 +166,6 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
         LB_PATH1 = new javax.swing.JLabel();
         LB_PATH3 = new javax.swing.JLabel();
         CB_VERSION = new javax.swing.JComboBox();
-        BT_CONNECT = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         CB_ACCOUNT = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
@@ -183,13 +182,6 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
         LB_PATH3.setText(UserMain.getString("Exchangeversion")); // NOI18N
 
         CB_VERSION.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        BT_CONNECT.setText(UserMain.Txt("Connect")); // NOI18N
-        BT_CONNECT.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_CONNECTActionPerformed(evt);
-            }
-        });
 
         jLabel3.setText(UserMain.Txt("Realm")); // NOI18N
 
@@ -233,7 +225,7 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
         );
         PN_USER_LISTLayout.setVerticalGroup(
             PN_USER_LISTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -261,16 +253,13 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
                     .addComponent(PN_MBOX_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
                     .addComponent(PN_USER_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(TXT_DOMAIN, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(BT_CONNECT)
-                .addContainerGap())
+                .addGap(93, 93, 93))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BT_CONNECT)
                     .addComponent(jLabel3)
                     .addComponent(CB_ACCOUNT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -292,16 +281,10 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel1)
                         .addComponent(BT_ALL_BOXES))
-                    .addComponent(PN_MBOX_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
+                    .addComponent(PN_MBOX_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void BT_CONNECTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_CONNECTActionPerformed
-    {//GEN-HEADEREND:event_BT_CONNECTActionPerformed
-        // TODO add your handling code here:
-         build_tree_callback();
-    }//GEN-LAST:event_BT_CONNECTActionPerformed
 
     private void TXTA_USER_LISTMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_TXTA_USER_LISTMouseClicked
     {//GEN-HEADEREND:event_TXTA_USER_LISTMouseClicked
@@ -331,7 +314,6 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
     // Variables declaration - do not modify//GEN-BEGIN:variables
     javax.swing.JCheckBox BT_ALL_BOXES;
     javax.swing.JCheckBox BT_ALL_USERS;
-    javax.swing.JButton BT_CONNECT;
     javax.swing.JComboBox CB_ACCOUNT;
     javax.swing.JComboBox CB_VERSION;
     javax.swing.JLabel LB_PATH1;

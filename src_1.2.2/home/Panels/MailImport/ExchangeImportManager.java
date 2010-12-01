@@ -216,7 +216,7 @@ class ExchangeImportManager extends ProfileManager
     @Override
     void handle_build_tree( final JTree tree) throws IOException
     {
-        UserMain.self.show_busy(dialog.getDlg(), UserMain.Txt("Connecting") + "...", true);
+        UserMain.self.show_busy(dialog.getDlg(), UserMain.Txt("Verbinden") + "...", true);
 
         SwingWorker sw = new SwingWorker()
         {
@@ -247,9 +247,13 @@ class ExchangeImportManager extends ProfileManager
                     ExchangeServicePortType port = ExchangeAuthenticator.open_exchange_port( user, pwd, domain, server );
                     ExchangeEnvironmentSettings settings = new ExchangeEnvironmentSettings( ExchangeEnvironmentSettings.get_cultures()[0], ev );
 
+                    UserMain.self.show_busy(dialog.getDlg(), UserMain.Txt("Authentifizieren") + "...", true);
+
                     // Test out the new ItemTypeDAO functionality.
                     ItemTypeDAO itemTypeDAO = new ItemTypeDAO(settings);
                     itemTypeDAO.getFolderItems(port);
+
+                    UserMain.self.show_busy(dialog.getDlg(), UserMain.Txt("Abrufen") + "...", true);
 
                     List<BaseFolderType>folders =  itemTypeDAO.GetFolders( port );
 
@@ -269,7 +273,7 @@ class ExchangeImportManager extends ProfileManager
                 {
                     exc.printStackTrace();
                     UserMain.self.hide_busy();
-                    UserMain.errm_ok(dialog.getDlg(), exc.getMessage());
+                    UserMain.errm_ok(dialog.getDlg(), UserMain.Txt("Abrufen_der_Ordnerstruktur_schlug_fehl"));
                 }
                 finally
                 {

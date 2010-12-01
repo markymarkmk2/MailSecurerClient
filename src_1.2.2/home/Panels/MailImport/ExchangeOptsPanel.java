@@ -91,7 +91,7 @@ public class ExchangeOptsPanel extends javax.swing.JPanel
 
         jLabel2.setText(UserMain.getString("Exchange-Server")); // NOI18N
 
-        LB_PATH.setText(UserMain.getString("Username")); // NOI18N
+        LB_PATH.setText(UserMain.getString("Username_wo_domain")); // NOI18N
 
         LB_PATH1.setText(UserMain.getString("Domain")); // NOI18N
 
@@ -127,7 +127,7 @@ public class ExchangeOptsPanel extends javax.swing.JPanel
                     .addComponent(TXT_USER, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
                     .addComponent(TXT_DOMAIN, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
                     .addComponent(TXT_SERVER, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
                 .addComponent(BT_CONNECT)
                 .addContainerGap())
         );

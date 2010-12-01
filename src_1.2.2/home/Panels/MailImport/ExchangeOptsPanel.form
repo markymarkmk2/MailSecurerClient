@@ -33,7 +33,7 @@
                   <Component id="TXT_DOMAIN" alignment="0" pref="157" max="32767" attributes="1"/>
                   <Component id="TXT_SERVER" alignment="0" pref="157" max="32767" attributes="1"/>
               </Group>
-              <EmptySpace pref="82" max="32767" attributes="0"/>
+              <EmptySpace pref="51" max="32767" attributes="0"/>
               <Component id="BT_CONNECT" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -84,7 +84,7 @@
     <Component class="javax.swing.JLabel" name="LB_PATH">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="dimm/home/MA_Properties.properties" key="Username" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="dimm/home/MA_Properties.properties" key="Username_wo_domain" replaceFormat="UserMain.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>

@@ -183,7 +183,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
 
     public static String get_version_str()
     {
-        return Main.version_str;
+        return Main.get_version_str();
     }    
     //private long firmen_id = 1;
 
@@ -217,7 +217,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
         return sqc.get_act_mandant_id();
     }
 
-    public void restart_gui()
+    public final void restart_gui()
     {
         restart_gui( Main.get_prop(Preferences.COUNTRYCODE, "DE") );
     }
@@ -816,7 +816,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
                         errm_dlg.setVisible(true);
 
                         boolean ret = errm_dlg.isOkay();
-                        ret_list.add( new Boolean(ret));
+                        ret_list.add( ret);
 
                         errm_dlg.dispose();
                     }

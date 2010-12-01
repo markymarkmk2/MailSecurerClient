@@ -35,12 +35,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.mail.Address;
 import javax.mail.MessagingException;
 import javax.mail.Part;
@@ -50,7 +46,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JTextArea;
 import javax.swing.table.AbstractTableModel;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.lobobrowser.html.gui.HtmlPanel;
 import org.lobobrowser.html.parser.*;
 import org.lobobrowser.html.test.SimpleHtmlRendererContext;
@@ -627,14 +622,14 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
 
     }
 
-    static File create_temp_file(String uid, int row)
+    static File create_temp_file(String uid, int row, String extension)
     {
         File tmp_file = null;
         try
         {
             if (Main.get_bool_prop(Preferences.CACHE_MAILFILES, false))
             {
-                tmp_file = new File(Main.CACHE_PATH + uid + "_" + row + ".tmp");
+                tmp_file = new File(Main.CACHE_PATH + uid + "_" + row + extension);
                 if (tmp_file.exists())
                 {
                     return tmp_file;
@@ -645,7 +640,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             }
             else
             {
-                tmp_file = File.createTempFile("dlml", ".tmp", new File("."));
+                tmp_file = File.createTempFile("dlml", extension, new File("."));
                 tmp_file.deleteOnExit();
             }
         }
@@ -669,23 +664,25 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
 
         Part p = msg.get_attachment(row);
 
-        try
+        if (NativeLoader.is_win() || NativeLoader.is_osx())
         {
-            if (p.getFileName() != null && p.getFileName().length() > 0)
+            try
             {
-                dlg.setVisible(true);
-
-                if (!pnl.isOkay())
+                if (p.getFileName() != null && p.getFileName().length() > 0)
                 {
-                    return;
+                    dlg.setVisible(true);
+
+                    if (!pnl.isOkay())
+                    {
+                        return;
+                    }
+                    wants_open = pnl.wants_open();
                 }
-                wants_open = pnl.wants_open();
+            }
+            catch (MessagingException messagingException)
+            {
             }
         }
-        catch (MessagingException messagingException)
-        {
-        }
-
 
         File trg_file = null;
         if (!wants_open)
@@ -727,7 +724,20 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         }
         else
         {
-            trg_file =  create_temp_file( uid, row );
+            String extension = ".tmp";
+
+            try
+            {
+                int ext_idx = p.getFileName().lastIndexOf(".");
+                if (ext_idx > 0)
+                {
+                    extension = p.getFileName().substring(ext_idx);
+                }
+            }
+            catch (MessagingException messagingException)
+            {
+            }
+            trg_file =  create_temp_file( uid, row, extension );
             trg_file.deleteOnExit();
         }
 
@@ -794,9 +804,11 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             }
             if (NativeLoader.is_osx())
             {
-                cmd = new String[2];
+                cmd = new String[4];
                 cmd[0] = "open";
-                cmd[1] = trg_file.getAbsolutePath();
+                cmd[1] = "-a";
+                cmd[2] = "Preview";
+                cmd[3] = trg_file.getAbsolutePath();
             }
             if (cmd != null)
             {

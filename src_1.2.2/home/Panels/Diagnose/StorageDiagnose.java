@@ -481,6 +481,7 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
     public void deactivate()
     {
         timer.stop();
+        last_worker_status_ret = null;
     }
 
 

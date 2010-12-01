@@ -12,10 +12,10 @@
 package dimm.home.Panels.Diagnose;
 
 import dimm.home.Rendering.CustomScrollPane;
-import dimm.home.Rendering.CustomScrollPaneDialog;
 import dimm.home.Rendering.GenericGlossyDlg;
 import dimm.home.Rendering.GlossButton;
 import dimm.home.Rendering.GlossDialogPanel;
+import dimm.home.Rendering.GlossTable;
 import dimm.home.ServerConnect.FunctionCallConnect;
 import dimm.home.ServerConnect.InStreamID;
 import dimm.home.ServerConnect.ServerInputStream;
@@ -24,13 +24,7 @@ import dimm.home.Utilities.SwingWorker;
 import home.shared.Utilities.LogConfigEntry;
 import home.shared.Utilities.LogListener;
 import home.shared.Utilities.ParseToken;
-import java.awt.Color;
 import java.awt.FileDialog;
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -39,18 +33,194 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import javax.swing.AbstractAction;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
 import javax.swing.JTextArea;
+import javax.swing.RowSorter;
 import javax.swing.Timer;
-import javax.swing.border.EmptyBorder;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
  * @author mw
  */
+
+class LogLine
+{
+    String date;
+    String time;
+    String mode;
+    String source;
+    String msg;
+    long offset;
+
+    LogLine( long _offset, String line)
+    {
+        offset = _offset;
+        parse( line );
+    }
+
+    void parse( String line )
+    {
+        date = "";
+        time = "";
+        mode = "";
+        source = "";
+        msg = "";
+        
+        try
+        {
+            int idx = line.indexOf(' ');
+            date = line.substring(0, idx);
+            int last_idx = idx + 1;
+            idx = line.indexOf(": ", last_idx);
+            time = line.substring(last_idx, idx);
+            last_idx = idx + 1;
+            idx = line.indexOf(':', last_idx);
+            mode = line.substring(last_idx, idx).trim();
+            last_idx = idx + 1;
+            idx = line.indexOf(':', last_idx);
+            source = line.substring(last_idx, idx).trim();
+            last_idx = idx + 1;
+            msg = line.substring(last_idx).trim();
+        }
+        catch (Exception e)
+        {
+            date = "";
+            time = "";
+            mode = "";
+            source = "";
+            msg = line;
+        }
+    }
+
+    @Override
+    public String toString()
+    {
+        return date + " " + time + " " + mode + " " + source + " " + msg;
+    }
+}
+class SyncLogLine extends LogLine
+{
+    SyncLogLine( long _offset, String line)
+    {
+        super( _offset, line );
+    }
+//Wed May 02 10:47:17 2007 debug  : Finishing sync job 8
+
+    @Override
+    void parse( String line )
+    {
+        date = "";
+        time = "";
+        mode = "";
+        source = "";
+        msg = "";
+
+        try
+        {
+            int idx = line.indexOf(' ');
+            date = line.substring(0, idx);
+            int last_idx = idx + 1;
+            idx = line.indexOf(" ", last_idx);
+            date += " " + line.substring(last_idx, idx);
+            last_idx = idx + 1;
+            idx = line.indexOf(" ", last_idx);
+            date += " " + line.substring(last_idx, idx);
+            last_idx = idx + 1;
+            idx = line.indexOf(" ", last_idx);
+            time = line.substring(last_idx, idx);
+            last_idx = idx + 1;
+            idx = line.indexOf(" ", last_idx);
+            date += " " + line.substring(last_idx, idx);
+            last_idx = idx + 1;
+            idx = line.indexOf(" ", last_idx);
+            date += " " + line.substring(last_idx, idx);
+            last_idx = idx + 1;
+
+            idx = line.indexOf(": ", last_idx);
+            mode = line.substring(last_idx, idx).trim();
+            last_idx = idx + 1;
+            source = "Sync";
+            msg = line.substring(last_idx);
+        }
+        catch (Exception e)
+        {
+            date = "";
+            time = "";
+            mode = "";
+            source = "";
+            msg = line;
+        }
+    }
+
+}
+class LogModel extends AbstractTableModel
+{
+    ArrayList<LogLine> line_list;
+    LogPanel panel;
+
+
+    String[] col_names = {UserMain.getString("Date"), UserMain.getString("Time"), UserMain.getString("Level"), UserMain.getString("Mode"), UserMain.getString("Message")};
+    Class[] col_classes = {String.class, String.class, String.class,  String.class,  String.class};
+
+
+    public LogModel( ArrayList<LogLine> line_list, LogPanel panel )
+    {
+        this.line_list = line_list;
+        this.panel = panel;
+    }
+
+    @Override
+    public String getColumnName(int column)
+    {
+        return col_names[column];
+    }
+
+    @Override
+    public Class<?> getColumnClass(int columnIndex)
+    {
+        return col_classes[columnIndex];
+    }
+
+
+    @Override
+    public int getRowCount()
+    {
+        return line_list.size();
+    }
+
+    @Override
+    public int getColumnCount()
+    {
+        return 5;
+    }
+
+    @Override
+    public Object getValueAt( int rowIndex, int columnIndex )
+    {
+        if (rowIndex * 100 / getRowCount() > 90)
+            panel.lazy_load();
+
+        if (rowIndex >=getRowCount())
+            return "";
+
+        LogLine line = line_list.get(rowIndex);
+
+        switch (columnIndex)
+        {
+            case 0: return line.date;
+            case 1: return line.time;
+            case 2: return line.mode;
+            case 3: return line.source;
+            case 4: return line.msg;
+        }
+        return "";
+    }
+
+}
 
 class LogEntry
 {
@@ -88,13 +258,15 @@ class TightTextArea extends JTextArea
     }
 }
 
-public class LogPanel extends GlossDialogPanel  implements MouseListener, ActionListener, CustomScrollPaneDialog
+public class LogPanel extends GlossDialogPanel  implements MouseListener, ActionListener
 {
-    long offset;
+    //long offset;
     boolean end_was_reached;
 
-    static final long LINES_PER_CALL = 1000;
-    JTextArea LOG_TEXT;
+
+    //static final long LINES_PER_CALL = 1000;
+    static final int BYTE_PER_CALL = 10240;
+    GlossTable log_table;
 
 
     CustomScrollPane custom_scroll_pane;
@@ -104,22 +276,23 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
     boolean logdump_active = false;
 
     ArrayList<LogConfigEntry> config_list;
+    private long log_file_size;
+    
+    private long last_fetched_offset;
+
+    LogModel model;
 
 
     public LogPanel()
     {
         fixed_log_type = null;
 
-
         this.end_was_reached = false;
-        this.offset = 0;
+       // this.offset = 0;
 
 
         initComponents();
-
-
-        CB_LOG_SOURCE.removeAllItems();
-
+        
         do_inits();
     }
 
@@ -143,45 +316,32 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
 
 
 
+    boolean inside_init = false;
+
     private void do_inits()
     {
-        LOG_TEXT = new TightTextArea/*JTextArea*/(7);
-        LOG_TEXT.setEditable(false);
-        LOG_TEXT.setTabSize(4);
-        LOG_TEXT.setAutoscrolls(false);
-        LOG_TEXT.setFont( new Font("Courier", Font.PLAIN, 11 ) );
-        LOG_TEXT.setForeground( new Color( 255, 128, 0));  // AMBER
-        LOG_TEXT.setBackground(Color.black);
-        LOG_TEXT.setBorder( new EmptyBorder(0,0,0,0));
+        inside_init = true;
 
-        custom_scroll_pane = new CustomScrollPane( this, LOG_TEXT );
-        custom_scroll_pane.setBackground(Color.black);
+        log_table = new GlossTable();
+
+        log_table.embed_to_scrollpanel(this.jScrollPane1);
         
-        LOG_PANEL.add(custom_scroll_pane);
-
         config_list = read_config_list();
 
 
+        CB_LOG_SOURCE.removeAllItems();
 
         for (int i = 0; i < config_list.size(); i++)
         {
             LogConfigEntry tck = config_list.get(i);
             add_log_entry( UserMain.Txt( tck.typ ), tck.typ );
         }
-
-        /*add_log_entry("Debug",  LogListener.DBG );
-        add_log_entry("Warning",  LogListener.WRN );
-        add_log_entry("Error",  LogListener.ERR );
-        add_log_entry("Info",  LogListener.INFO );
-*/
-        add_log_entry("Library", LogListener.L4J );
+       
         add_log_entry("BackupServer",  LogListener.SYNC );
-        
-        reset_text_pos();
 
-        set_text(read_next_block());
+        inside_init = false;
 
-        LOG_TEXT.addMouseListener(this);        
+        fetch_first_block();
 
         timer = new Timer(2000, this);
         timer.start();
@@ -191,10 +351,7 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
     {
         FunctionCallConnect fcc = UserMain.fcc();
 
-
-        String ret = fcc.call_abstract_function("show_log CMD:get_config" , FunctionCallConnect.SHORT_TIMEOUT );
-
-        
+        String ret = fcc.call_abstract_function("show_log CMD:get_config" , FunctionCallConnect.SHORT_TIMEOUT );        
 
         if (ret != null && fcc.get_last_err_code() == 0)
         {
@@ -211,60 +368,52 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         return null;
     }
 
-
-    void reset_text_pos()
-    {
-        offset = 0;
-        end_was_reached = false;
-        if (LOG_TEXT != null)
-            LOG_TEXT.setText("");
-    }
-    boolean inside_add_text = false;
-    @Override
-    public void add_text()
-    {
-        if (inside_add_text)
-            return;
-
-        inside_add_text = true;
-        append_text(read_next_block());
-        inside_add_text = false;
-    }
-
-    void append_text( String text )
-    {
-        if (text == null)
-            return;
-
-        if (LOG_TEXT != null)
-            LOG_TEXT.append(text );
-
-        custom_scroll_pane.doLayout();
-    }
-    void set_text( String text )
-    {
-        if (LOG_TEXT != null)
-            LOG_TEXT.setText(text );
-
-    }
-
     String get_log_type()
     {
         if (fixed_log_type != null)
             return fixed_log_type;
+
+        if ( CB_LOG_SOURCE.getItemCount() == 0)
+            return null;
 
         String log_type = "L4J";
         if (CB_LOG_SOURCE != null && CB_LOG_SOURCE.getSelectedItem() != null)
         {
             log_type = ((LogEntry)CB_LOG_SOURCE.getSelectedItem()).get_cmd();
         }
-
-
+        else 
+        {
+            log_type = ((LogEntry) CB_LOG_SOURCE.getItemAt(0)).get_cmd();
+        }
 
         return log_type;
     }
 
-    String read_next_block()
+    boolean read_status()
+    {
+        String log_type = get_log_type();
+
+        if ( log_type == null)
+            return false;
+
+        FunctionCallConnect fcc = UserMain.fcc();
+
+        String ret = fcc.call_abstract_function("show_log CMD:read_status LG:" + log_type, FunctionCallConnect.MEDIUM_TIMEOUT );
+
+        if (ret == null)
+            return false;
+        if (ret.charAt(0) != '0')
+            return false;
+
+        ParseToken pt = new ParseToken(ret.substring(3));
+
+        log_file_size = pt.GetLongValue("SI:");
+       
+
+        return true;
+    }
+
+    String read_next_block( long offset, int size)
     {
         if (end_was_reached)
             return null;
@@ -277,139 +426,270 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         FunctionCallConnect fcc = UserMain.fcc();
 
 
-        String ret = fcc.call_abstract_function("show_log CMD:read LG:" + log_type + " LI:" + LINES_PER_CALL + " OF:" + offset , FunctionCallConnect.MEDIUM_TIMEOUT );
+        String ret = fcc.call_abstract_function("show_log CMD:read_block LG:" + log_type + " SI:" + size + " OF:" + offset , FunctionCallConnect.MEDIUM_TIMEOUT );
 
 
-        if (ret != null )
+        if (ret == null )
         {
-            if (ret.charAt(0) == '0')
+            return null;
+           }
+        if (ret.charAt(0) != '0')
             {
-                ret = ret.substring(3);
-                offset += ret.length() + 1;
-                return ret;
+            return null;
             }
-            if (ret.startsWith("42:"))
-                            end_was_reached = true;
-         /*   else
-            {
-                //LOG_TEXT.setText(ret);
-            }*/
+        ParseToken pt = new ParseToken(ret.substring(3));
+        log_file_size = pt.GetLongValue("SI:");
+        
 
+        String xml = pt.GetString("SB:");
+        Object o = ParseToken.DeCompressObject(xml);
+        if (o instanceof String)
+        {
+            String sb = (String) o;
+            return sb;
         }
         return null;
     }
-
-    String read_nlines_block( long lines, long loffset)
+    
+    // REVERSE THE LINES OF THE LOG
+    ArrayList<LogLine> parse_line_list( long offset, String data, boolean is_sync)
     {
-        if (end_was_reached)
-            return null;
-        String log_type = get_log_type();
+        ArrayList<LogLine> line_list = new ArrayList<LogLine>();
 
-        if ( log_type == null)
-            return null;
+        if (data == null)
+            return line_list;
 
-        FunctionCallConnect fcc = UserMain.fcc();
-
-
-        String ret = fcc.call_abstract_function("show_log CMD:read LG:" + log_type + " LI:" + lines + " OF:" + loffset , FunctionCallConnect.MEDIUM_TIMEOUT );
-
-        if (ret != null)
+        
+        int last_line_start = 0;
+        for( int i = 0; i < data.length(); i++)
         {
-            if (ret.charAt(0) == '0')
+            char ch = data.charAt(i);
+            if (ch == '\n')
             {
-                ret = ret.substring(3);
-                offset += ret.length() + 1;
-                return ret;
+                if (i - last_line_start > 0)
+                {
+                    String s = data.substring(last_line_start, i);
+                    LogLine line = null;
+                    if (!is_sync)
+                        line = new LogLine(offset + last_line_start, s);
+                    else
+                        line = new SyncLogLine(offset + last_line_start, s);
+                    line_list.add(0, line);
+                }
+                last_line_start = i + 1;
             }
+        }
+        if (last_line_start < data.length())
+        {
+            String s = data.substring(last_line_start);
+            LogLine line = null;
+            if (!is_sync)
+                line = new LogLine(offset + last_line_start, s);
             else
+                line = new SyncLogLine(offset + last_line_start, s);
+
+            line_list.add(0, line);
+        }
+
+        return line_list;
+    }
+    boolean is_sync()
+    {
+        return get_log_type().compareTo( LogListener.SYNC) == 0;
+    }
+
+
+    boolean fetch_first_block()
+    {
+        if (inside_init)
+            return false;
+        
+        ArrayList<LogLine> line_list = new ArrayList<LogLine>();
+        end_was_reached = false;
+
+        if (read_status())
+        {
+
+
+            long loffset = log_file_size - BYTE_PER_CALL;
+            if (loffset < 0)
+                loffset = 0;
+            String data = read_next_block( loffset, BYTE_PER_CALL );
+
+            
+
+            line_list = parse_line_list( loffset, data, is_sync() );
+        }
+
+
+        //RowSorter sorter = new TableRowSorter(model);
+
+        model = new LogModel(line_list, this);
+        log_table.setModel(model);
+        //log_table.setRowSorter(sorter);
+
+        log_table.setShowGrid(false);
+        log_table.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        
+        log_table.getColumnModel().getColumn(0).setMaxWidth(70);
+        log_table.getColumnModel().getColumn(1).setMaxWidth(70);
+        log_table.getColumnModel().getColumn(2).setMaxWidth(60);
+        log_table.getColumnModel().getColumn(3).setMaxWidth(60);
+        log_table.getColumnModel().getColumn(4).setPreferredWidth(180);
+        
+        last_fetched_offset =  log_file_size;
+
+        return true;
+    }
+
+    boolean check_update_log()
+    {
+        long last_log_file_size = log_file_size;
+        if (!read_status())
+            return false;
+
+        return (last_log_file_size != log_file_size);
+    }
+
+
+    boolean in_lazy_load = false;
+    boolean lazy_load()
+    {
+        if (in_lazy_load)
+            return false;
+
+        if (end_was_reached)
+            return true;
+
+        in_lazy_load = true;
+
+        try
+        {
+            int byte_to_fetch = BYTE_PER_CALL;
+            long loffset = model.line_list.get(model.getRowCount() - 1).offset  - byte_to_fetch;
+            if (loffset < 0)
             {
-                if (ret.startsWith("42:"))
-                            end_was_reached = true;
-/*                else
-                    LOG_TEXT.setText(ret);*/
+                loffset = 0;
+                byte_to_fetch = (int) model.line_list.get(model.getRowCount() - 1).offset;
             }
 
+            System.out.println("Fetching " + byte_to_fetch + " byte from " + loffset);
+            String data = read_next_block(loffset, byte_to_fetch);
+
+
+            // PARSE TO LINELIST
+            ArrayList<LogLine> line_list = parse_line_list( loffset, data, is_sync());
+
+            merge_to_log_list(line_list);
+
+            if (loffset == 0)
+            {
+                this.end_was_reached = true;
+            }
+        }
+        catch (Exception e)
+        {
+        }
+
+        in_lazy_load = false;
+
+        return true;
+
+    }
+
+    void merge_to_log_list(ArrayList<LogLine> line_list )
+    {
+        // AND MERGE THE LAST ENTRY TO THE FIRST ENTRY OF THIS BLOCK
+        ArrayList<LogLine> model_line_list = model.line_list;
+        LogLine last_line = model_line_list.get( model_line_list.size() - 1);
+        LogLine first_line = model_line_list.get( 0 );
+        LogLine new_first_line =  line_list.get(0);
+        LogLine new_last_line = line_list.get( line_list.size() - 1);
+
+        // IS THE NEW LOGDATA NEWER THAN THE EXISTING DATA
+        if (new_last_line.offset >= first_line.offset)
+        {
+            if (first_line.offset + first_line.toString().length() == new_last_line.offset)
+            {
+                String line = first_line.toString() + new_last_line.toString();
+                first_line.parse( line );                
+            }
+            if (new_last_line.offset == first_line.offset)
+                line_list.remove(new_last_line);
+
+            // INSART AT BEGINNING
+            for (int i = line_list.size() - 1; i >= 0; i--)
+            {
+                LogLine logLine = line_list.get(i);
+                model_line_list.add(0, logLine);
+            }
+        }
+        // IS THE NEW LOGDATA OLDER THAN THE EXISTING DATA
+        else if(new_first_line.offset <= last_line.offset)
+        {
+            if (new_first_line.offset + new_first_line.toString().length() == last_line.offset)
+            {
+                String line = new_first_line.toString() + last_line.toString();
+                last_line.parse( line );
+                
+            }
+            if (new_first_line.offset == last_line.offset)
+                line_list.remove(new_first_line);
+
+            // APPEND TO LIST
+            for (int i = 0; i <  line_list.size(); i++)
+            {
+                LogLine logLine = line_list.get(i);
+                model_line_list.add( logLine);
+            }
         }
         else
         {
-            offset = 0;
-        }
-        return null;
-    }
-
-    int update_log()
-    {
-        
-        boolean found_last_top = false;
-        int insert_index = 0;
-        int line_len = LOG_TEXT.getText().indexOf('\n');
-        if (line_len < 0)
-            line_len = LOG_TEXT.getText().length();
-
-        String last_top = LOG_TEXT.getText().substring(0, line_len ).trim();
-
-
-        if (line_len == 0)
-            return 0;
-
-        long get_line_cnt = 5;
-        while(!found_last_top)
-        {
-
-            // GET LINES UNTIL WE REACH LAST TOP
-            String new_top = read_nlines_block( get_line_cnt, 0);
-            if (new_top == null || new_top.length() == 0)
-                break;
-
-            // UPPER LIMIT ?
-            if (get_line_cnt > LINES_PER_CALL)
+            // MERGE INTO FIRST FOUND 
+            for (int i = 0; i < model_line_list.size(); i++)
             {
-                // SET AS NEW START
-                LOG_TEXT.setText(new_top);
-                break;
-            }
-
-            // IS LAST LINE IDENTICAL TO THIS LINE?
-            java.util.StringTokenizer stok = new java.util.StringTokenizer( new_top, "\n\r" );
-            if ( stok.hasMoreElements() )
-            {
-                if (last_top.compareTo( stok.nextToken() ) == 0)
-                    return 0;
-            }
-
-            get_line_cnt += 250;
-            
-
-            stok = new java.util.StringTokenizer( new_top, "\n\r" );
-
-            ArrayList<String> new_lines = new ArrayList<String>();
-
-            while( stok.hasMoreElements() )
-            {
-                String tk = stok.nextToken().trim();
-                new_lines.add(tk);
-                if (last_top.compareTo( tk ) == 0)
+                LogLine logLine = model_line_list.get(i);
+                if (logLine.offset < new_first_line.offset)
                 {
-
-                    found_last_top = true;
-                    for (int i = 0; i < new_lines.size(); i++)
+                    for (int l = line_list.size() - 1; l >= 0; l--)
                     {
-                        String string = new_lines.get(i);
-                        LOG_TEXT.insert( string, insert_index );
-                        insert_index += string.length();
-                        LOG_TEXT.insert( "\n", insert_index );
-                        insert_index ++;
+                        LogLine new_ll = line_list.get(l);
+                        model_line_list.add( i, new_ll);
                     }
-
                     break;
                 }
+
             }
         }
-        if (found_last_top)
-            return 0;
 
-        return 1;
+        model.fireTableDataChanged();
+
     }
+    boolean update_log()
+    {
+        long missing_length = log_file_size - last_fetched_offset;
+
+        // TOO MUCH DATA MISSING, WE START FROM SCRATCH
+        if (missing_length > BYTE_PER_CALL)
+        {
+            return fetch_first_block();
+        }
+
+        // READ NEW APPENDED DATA
+        String data = read_next_block( last_fetched_offset, (int)missing_length );
+
+        long loffset = last_fetched_offset;
+
+        // PARSE TO LINELIST
+        ArrayList<LogLine> line_list = parse_line_list( loffset, data, is_sync() );
+
+        merge_to_log_list( line_list );
+
+        return true;
+    }
+   
+   
+
     void get_log_dump( final File file )
     {
         if (logdump_active)
@@ -520,15 +800,22 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
 
         CB_LOG_SOURCE = new javax.swing.JComboBox();
         LOG_PANEL = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
         BT_OK = new GlossButton();
         jLabel1 = new javax.swing.JLabel();
         BT_DUMP = new GlossButton();
         BT_FILTER = new javax.swing.JButton();
 
+        CB_LOG_SOURCE.setMaximumRowCount(20);
         CB_LOG_SOURCE.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "default" }));
         CB_LOG_SOURCE.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CB_LOG_SOURCEActionPerformed(evt);
+            }
+        });
+        CB_LOG_SOURCE.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                CB_LOG_SOURCEPropertyChange(evt);
             }
         });
 
@@ -536,7 +823,19 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         LOG_PANEL.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         LOG_PANEL.setMinimumSize(new java.awt.Dimension(600, 200));
         LOG_PANEL.setPreferredSize(new java.awt.Dimension(600, 200));
-        LOG_PANEL.setLayout(new java.awt.GridLayout(1, 0));
+
+        jScrollPane1.setOpaque(false);
+
+        javax.swing.GroupLayout LOG_PANELLayout = new javax.swing.GroupLayout(LOG_PANEL);
+        LOG_PANEL.setLayout(LOG_PANELLayout);
+        LOG_PANELLayout.setHorizontalGroup(
+            LOG_PANELLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 637, Short.MAX_VALUE)
+        );
+        LOG_PANELLayout.setVerticalGroup(
+            LOG_PANELLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+        );
 
         BT_OK.setText(UserMain.getString("OK")); // NOI18N
         BT_OK.addActionListener(new java.awt.event.ActionListener() {
@@ -568,7 +867,7 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(LOG_PANEL, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(LOG_PANEL, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 641, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
@@ -577,7 +876,7 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
                         .addComponent(BT_DUMP)
                         .addGap(18, 18, 18)
                         .addComponent(BT_FILTER)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 153, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 200, Short.MAX_VALUE)
                         .addComponent(BT_OK)))
                 .addContainerGap())
         );
@@ -585,7 +884,7 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(LOG_PANEL, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
+                .addComponent(LOG_PANEL, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK)
@@ -646,15 +945,8 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
     {//GEN-HEADEREND:event_CB_LOG_SOURCEActionPerformed
         // TODO add your handling code here:
                 // SET NEW TEXT
-        if (LOG_TEXT == null)
-            return;
-        
 
-        reset_text_pos();
-
-        set_text( read_next_block() );
-
-        custom_scroll_pane.reset_scroll();
+        fetch_first_block();
 
 
     }//GEN-LAST:event_CB_LOG_SOURCEActionPerformed
@@ -670,6 +962,12 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
 
     }//GEN-LAST:event_BT_FILTERActionPerformed
 
+    private void CB_LOG_SOURCEPropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_CB_LOG_SOURCEPropertyChange
+    {//GEN-HEADEREND:event_CB_LOG_SOURCEPropertyChange
+        // TODO add your handling code here:
+        fetch_first_block();
+    }//GEN-LAST:event_CB_LOG_SOURCEPropertyChange
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_DUMP;
@@ -678,6 +976,7 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
     private javax.swing.JComboBox CB_LOG_SOURCE;
     private javax.swing.JPanel LOG_PANEL;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -707,10 +1006,10 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
     {
         if ((mouseEvent.getModifiers() & MouseEvent.BUTTON3_MASK) == MouseEvent.BUTTON3_MASK)
         {
-            if (mouseEvent.getComponent() == LOG_TEXT)
+            if (mouseEvent.getComponent() == log_table)
             {
                 JPopupMenu pop = new JPopupMenu();
-                pop.add( new AbstractAction("Copy")
+               /* pop.add( new AbstractAction("Copy")
                 {
                     @Override
                     public void actionPerformed(ActionEvent e)
@@ -732,7 +1031,7 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
                     }
                 });
 
-                pop.show(mouseEvent.getComponent(), mouseEvent.getX(), mouseEvent.getY() );
+                pop.show(mouseEvent.getComponent(), mouseEvent.getX(), mouseEvent.getY() );*/
             }
         }
 
@@ -750,7 +1049,10 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
             return;
 
         timer.stop();
-        update_log();
+
+        if (check_update_log())
+            update_log();
+        
         timer.restart();
     }
 
