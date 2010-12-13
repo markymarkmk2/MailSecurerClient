@@ -1466,7 +1466,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                 if (Main.get_bool_prop(Preferences.CACHE_MAILFILES, false))
                 {
                     String uid = model.get_uid(row);
-                    tmp_file = new File(Main.CACHE_PATH + uid + ".tmp" );
+                    tmp_file = new File(Main.get_cache_path(), uid + ".tmp" );
                     if (tmp_file.exists())
                         return tmp_file;
 

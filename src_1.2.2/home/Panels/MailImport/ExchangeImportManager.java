@@ -35,6 +35,7 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
+import javax.xml.stream.XMLInputFactory;
 
 
 
@@ -241,11 +242,17 @@ class ExchangeImportManager extends ProfileManager
                     String domain = opts_panel.TXT_DOMAIN.getText();
                     String server = opts_panel.TXT_SERVER.getText();
                     String pwd = new String( opts_panel.TXTP_PWD.getPassword() );
+                    
+   //                 XMLInputFactory newFactory = XMLInputFactory.newFactory();
+                    /*newFactory.setProperty("com.ctc.wstx.validateTextChars", false);
+                    System.setProperty("com.ctc.wstx.validateTextChars", "false");*/
+
 
                     ExchangeVersionType ev = getExchangeVersionType();
                     
                     ExchangeServicePortType port = ExchangeAuthenticator.open_exchange_port( user, pwd, domain, server );
                     ExchangeEnvironmentSettings settings = new ExchangeEnvironmentSettings( ExchangeEnvironmentSettings.get_cultures()[0], ev );
+
 
                     UserMain.self.show_busy(dialog.getDlg(), UserMain.Txt("Authentifizieren") + "...", true);
 
@@ -287,7 +294,19 @@ class ExchangeImportManager extends ProfileManager
 
     private void add_exchange_folder( DefaultTreeModel model, ExchangeNode node, ItemTypeDAO itemTypeDAO, ExchangeServicePortType port, BaseFolderType baseFolderType ) throws IOException
     {
-        List<ItemType> mails = itemTypeDAO.getFolderItems( port, baseFolderType.getFolderId() );
+        List<ItemType> mails;
+
+        try
+        {
+            mails = itemTypeDAO.getFolderItems( port, baseFolderType.getFolderId() );
+        }
+        catch (Exception exc)
+        {
+            exc.printStackTrace(System.err);
+            UserMain.self.show_busy(UserMain.Txt("Abrufen_der_Ordnerinhalts_schlug_fehl:") + " " + baseFolderType.getDisplayName());
+            return;
+        }
+
 
         ExchangeNode child_node = new ExchangeNode( baseFolderType.getDisplayName(), baseFolderType.getFolderId(), model, mails );
 
@@ -295,7 +314,17 @@ class ExchangeImportManager extends ProfileManager
 
         if (baseFolderType.getChildFolderCount() > 0)
         {
-            List<BaseFolderType>folders =  itemTypeDAO.GetFoldersbyParent(port, baseFolderType.getFolderId() );
+            List<BaseFolderType> folders = null;
+            try
+            {
+                folders = itemTypeDAO.GetFoldersbyParent(port, baseFolderType.getFolderId());
+            }
+            catch (IOException iOException)
+            {
+                iOException.printStackTrace(System.err);
+                UserMain.self.show_busy(UserMain.Txt("Abrufen_der_Unterordner_schlug_fehl:") + " " + baseFolderType.getDisplayName());
+                return;
+            }
 
             for (Iterator<BaseFolderType> it = folders.iterator(); it.hasNext();)
             {

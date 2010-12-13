@@ -629,7 +629,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         {
             if (Main.get_bool_prop(Preferences.CACHE_MAILFILES, false))
             {
-                tmp_file = new File(Main.CACHE_PATH + uid + "_" + row + extension);
+                tmp_file = new File(Main.get_cache_path(), uid + "_" + row + extension);
                 if (tmp_file.exists())
                 {
                     return tmp_file;
@@ -693,19 +693,22 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
 
             fd.setLocation(my_dlg.getLocationOnScreen().x + 20, my_dlg.getLocationOnScreen().y + 20 );
 
+            String attachment_name = "Attachment.att";
+            try
+            {
+                attachment_name = p.getFileName();
+            }
+            catch (MessagingException messagingException)
+            {
+            }
 
             if (last_dir != null)
             {
                 fd.setDirectory(last_dir.getAbsolutePath());
             }
-            try
-            {
-                fd.setFile(p.getFileName());
-            }
-            catch (MessagingException messagingException)
-            {
-                fd.setFile("Attachment.att");
-            }
+        
+            fd.setFile(attachment_name);
+          
 
 
             fd.setVisible(true);
@@ -713,6 +716,8 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             String f_name = fd.getFile();
             if (f_name == null)
                 return;
+
+            f_name = correct_mac_suffix_bug( f_name, attachment_name );
 
             trg_file = new File(fd.getDirectory(), f_name );
             
@@ -822,5 +827,16 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
     JComponent get_SPL_MAIL()
     {
         return SPL_MAIL;
+    }
+
+    // MAC FILESELECTER DIALOG DELETES SUFFIX IF "HIDE SUFFIXES" IS SELECTED
+    private String correct_mac_suffix_bug( String f_name, String attachment_name )
+    {
+        if (attachment_name.lastIndexOf(".") >= 0  && (f_name.lastIndexOf('.') != attachment_name.lastIndexOf(".")))
+        {
+            int suffidx = attachment_name.lastIndexOf('.');
+            f_name = f_name + attachment_name.substring(suffidx);
+        }
+        return f_name;
     }
 }

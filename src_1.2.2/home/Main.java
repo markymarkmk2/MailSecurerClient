@@ -19,7 +19,7 @@ import javax.swing.UIManager;
  */
 public class Main
 {
-    private static String version_str = "1.4.7";
+    private static String version_str = "1.4.8";
     
 
     static Main me;
@@ -31,7 +31,9 @@ public class Main
     public static final String PREFS_PATH = "";
     public static final String UPDATE_PATH = "update/";
     public static final String LOG_PATH = "logs/";
-    public static final String CACHE_PATH = "cache/";
+
+    private static String local_app_data_path = "MSClient";
+    
 
     public static boolean enable_distributor;
 
@@ -55,6 +57,7 @@ public class Main
     public static int server_port = 8050;
 
 
+
     /** Creates a new instance of Main */
     public Main()
     {
@@ -68,11 +71,48 @@ public class Main
 
         if (get_bool_prop(Preferences.CACHE_MAILFILES, false))
         {
-            f = new File( CACHE_PATH );
+            f = new File( get_cache_path() );
             if (!f.exists())
                 f.mkdirs();
         }
     }
+
+    public static String get_cache_path()
+    {
+        File f = new File( get_user_path(), "cache");
+        if (!f.exists())
+            f.mkdir();
+
+        return f.getAbsolutePath();
+    }
+
+    public static String get_user_path()
+    {
+        String programGroupName = local_app_data_path;
+
+        String userHome = System.getProperty("user.home");
+
+        File workingDirectoryPath  = new File(userHome, "."+ programGroupName);
+
+        if (NativeLoader.is_win())
+        {
+            String applicationData = System.getenv("APPDATA");
+            if (applicationData != null)
+            {
+                workingDirectoryPath = new File( applicationData, programGroupName);
+            }
+            else
+            {
+                workingDirectoryPath = new File( userHome, programGroupName);
+            }
+        }
+        if (!workingDirectoryPath.exists())
+        {
+            workingDirectoryPath.mkdir();
+        }
+        return workingDirectoryPath.getAbsolutePath();
+    }
+
 
     static void print_system_property( String key )
     {

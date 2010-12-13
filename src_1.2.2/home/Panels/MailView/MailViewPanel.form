@@ -44,7 +44,7 @@
                       <Component id="BT_VIEW_CONTENT" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="BT_OPEN_EML" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="150" max="32767" attributes="0"/>
+                      <EmptySpace pref="164" max="32767" attributes="0"/>
                       <Component id="BT_CLOSE" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                   </Group>
@@ -179,7 +179,7 @@
                       <Component id="BT_ADD" linkSize="1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="BT_DEL" linkSize="1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="653" max="32767" attributes="0"/>
+                      <EmptySpace pref="659" max="32767" attributes="0"/>
                       <Component id="BT_SIMPLESEARCH" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -196,7 +196,7 @@
                           <Component id="BT_SIMPLESEARCH" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="SCP_LIST" pref="111" max="32767" attributes="0"/>
+                      <Component id="SCP_LIST" pref="108" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -289,7 +289,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane1" alignment="0" pref="129" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="0" pref="126" max="32767" attributes="0"/>
                           <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>

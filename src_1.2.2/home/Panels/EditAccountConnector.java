@@ -109,6 +109,11 @@ public class EditAccountConnector extends GenericEditPanel
                 }
 
                 TXT_SEARCHFIELD.setText(object.getSearchattribute());
+                // THIS FIELD WAS APPENDED
+                if (object.getLdapfilter() == null)
+                    object.setLdapfilter("");
+
+                TXT_LDAPFILTER.setText(object.getLdapfilter());
 
                 if (is_ldap())
                 {
@@ -167,7 +172,7 @@ public class EditAccountConnector extends GenericEditPanel
 
         return 0;
     }
-    boolean is_ldap()
+    final boolean is_ldap()
     {
         AccountConnectorTypeEntry mte = (AccountConnectorTypeEntry) CB_TYPE.getSelectedItem();
         String type = mte.getType();
@@ -219,6 +224,8 @@ public class EditAccountConnector extends GenericEditPanel
         LB_MAILFIELDS = new javax.swing.JLabel();
         TXT_MAILFIELDS = new javax.swing.JTextField();
         TXT_SEARCHFIELD = new javax.swing.JTextField();
+        TXT_LDAPFILTER = new javax.swing.JTextField();
+        LB_SEARCHFIELD1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -405,6 +412,8 @@ public class EditAccountConnector extends GenericEditPanel
             }
         });
 
+        LB_SEARCHFIELD1.setText(UserMain.getString("LDAP_Filter")); // NOI18N
+
         javax.swing.GroupLayout PN_LDAPOPTLayout = new javax.swing.GroupLayout(PN_LDAPOPT);
         PN_LDAPOPT.setLayout(PN_LDAPOPTLayout);
         PN_LDAPOPTLayout.setHorizontalGroup(
@@ -412,12 +421,18 @@ public class EditAccountConnector extends GenericEditPanel
             .addGroup(PN_LDAPOPTLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(PN_LDAPOPTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(LB_MAILFIELDS)
-                    .addComponent(LB_SEARCHFIELD))
-                .addGap(39, 39, 39)
-                .addGroup(PN_LDAPOPTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TXT_MAILFIELDS, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                    .addComponent(TXT_SEARCHFIELD, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
+                    .addGroup(PN_LDAPOPTLayout.createSequentialGroup()
+                        .addGroup(PN_LDAPOPTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(LB_MAILFIELDS)
+                            .addComponent(LB_SEARCHFIELD))
+                        .addGap(39, 39, 39)
+                        .addGroup(PN_LDAPOPTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(TXT_MAILFIELDS, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                            .addComponent(TXT_SEARCHFIELD, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)))
+                    .addGroup(PN_LDAPOPTLayout.createSequentialGroup()
+                        .addComponent(LB_SEARCHFIELD1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(TXT_LDAPFILTER, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         PN_LDAPOPTLayout.setVerticalGroup(
@@ -430,7 +445,11 @@ public class EditAccountConnector extends GenericEditPanel
                 .addGroup(PN_LDAPOPTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(TXT_MAILFIELDS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LB_MAILFIELDS))
-                .addGap(61, 61, 61))
+                .addGap(8, 8, 8)
+                .addGroup(PN_LDAPOPTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(TXT_LDAPFILTER, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LB_SEARCHFIELD1))
+                .addGap(30, 30, 30))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(UserMain.getString("Options"))); // NOI18N
@@ -541,7 +560,7 @@ public class EditAccountConnector extends GenericEditPanel
                 .addComponent(BT_TEST)
                 .addGap(18, 18, 18)
                 .addComponent(BT_EDIT_USERS)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 197, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 205, Short.MAX_VALUE)
                 .addComponent(BT_ABORT)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK)
@@ -650,7 +669,7 @@ public class EditAccountConnector extends GenericEditPanel
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5)
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(PN_LDAPOPT, javax.swing.GroupLayout.Alignment.TRAILING, 0, 121, Short.MAX_VALUE)
+                    .addComponent(PN_LDAPOPT, javax.swing.GroupLayout.Alignment.TRAILING, 0, 122, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(PN_BUTTONS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -748,7 +767,8 @@ public class EditAccountConnector extends GenericEditPanel
         
         final String cmd = "TestLogin CMD:test MA:" + UserMain.self.get_act_mandant().getId() + " NM:'" + user_name + "' PW:'" + pwd + "' HO:" +
                 TXT_SERVER.getText() + " PO:" + TXT_PORT.getText() + " SB:" + TXT_LDAP_SB.getText() + " SA:" + TXT_SEARCHFIELD.getText() +
-                " ML:" + TXT_MAILFIELDS.getText() + " DO:" + TXT_DOMAINLIST.getText() + " TY:" + type + " FL:" + flags + " EX:" + object.getExcludefilter() + " LD:" + TXT_AD_DOMAIN.getText();
+                " ML:" + TXT_MAILFIELDS.getText() + " DO:" + TXT_DOMAINLIST.getText() + " TY:" + type + " FL:" + flags + " EX:" + object.getExcludefilter() + 
+                " LD:" + TXT_AD_DOMAIN.getText() + " LF:" + TXT_LDAPFILTER.getText();
 
         if (sw != null)
         {
@@ -1091,6 +1111,7 @@ public class EditAccountConnector extends GenericEditPanel
     private javax.swing.JLabel LB_PWD;
     private javax.swing.JLabel LB_PWD1;
     private javax.swing.JLabel LB_SEARCHFIELD;
+    private javax.swing.JLabel LB_SEARCHFIELD1;
     private javax.swing.JLabel LB_SERVER;
     private javax.swing.JLabel LB_USER;
     private javax.swing.JPanel PN_ACTION;
@@ -1105,6 +1126,7 @@ public class EditAccountConnector extends GenericEditPanel
     private javax.swing.JPasswordField TXTP_PWD1;
     private javax.swing.JTextField TXT_AD_DOMAIN;
     private javax.swing.JTextField TXT_DOMAINLIST;
+    private javax.swing.JTextField TXT_LDAPFILTER;
     private javax.swing.JTextField TXT_LDAP_SB;
     private javax.swing.JTextField TXT_MAILFIELDS;
     private javax.swing.JTextField TXT_PORT;
@@ -1150,7 +1172,7 @@ public class EditAccountConnector extends GenericEditPanel
         return ((flags & CS_Constants.ACCT_DISABLED) == CS_Constants.ACCT_DISABLED);
     }
 */
-    boolean test_flag( int test_flag )
+    final boolean test_flag( int test_flag )
     {
         int flags = get_object_flags();
         return ((flags & test_flag) == test_flag);
@@ -1274,6 +1296,10 @@ public class EditAccountConnector extends GenericEditPanel
                 return true;
             }
         }
+        if ( object.getLdapfilter() != null && TXT_LDAPFILTER.getText().compareTo( object.getLdapfilter()) != 0)
+            return true;
+
+
 
 
         return false;
@@ -1414,6 +1440,7 @@ public class EditAccountConnector extends GenericEditPanel
         object.setPwd(pwd);
         object.setDomainlist(TXT_DOMAINLIST.getText());
         object.setLdapdomain(TXT_AD_DOMAIN.getText());                
+        object.setLdapfilter(TXT_LDAPFILTER.getText());
     }
 
     @Override
