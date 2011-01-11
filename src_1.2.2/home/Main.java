@@ -19,7 +19,7 @@ import javax.swing.UIManager;
  */
 public class Main
 {
-    private static String version_str = "1.4.8";
+    private static String version_str = "1.5.0";
     
 
     static Main me;
@@ -130,6 +130,16 @@ public class Main
             System.out.println(Main.get_version_str());
             return;
         }
+
+        print_system_property( "java.version" );
+        print_system_property( "java.vendor" );
+        print_system_property( "java.home");
+        print_system_property( "java.class.path");
+        print_system_property( "os.name");
+        print_system_property( "os.arch");
+        print_system_property( "os.version");
+        print_system_property( "user.dir");
+
 
         System.out.println("Look and Feels:");
         UIManager.LookAndFeelInfo[] lfi = UIManager.getInstalledLookAndFeels();

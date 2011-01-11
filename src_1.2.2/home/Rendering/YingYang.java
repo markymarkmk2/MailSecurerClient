@@ -32,7 +32,7 @@ import org.jdesktop.fuse.ResourceInjector;
 
 public class YingYang extends JComponent implements ActionListener
 {
-    private static final int TICK_MS = 10;
+    private static final int TICK_MS = 25;
     private static final int IMG_WIDTH = 90;
     private static final int IMG_HEIGHT = 90;
     

@@ -86,7 +86,7 @@ class DiagnoseDSTableModel extends AbstractTableModel
 
 
 
-    String[] col_names = {UserMain.getString("DiskArchive"), UserMain.getString("Path"), UserMain.getString("Docs"), UserMain.getString("Used"), UserMain.getString("MaxCapacity"), UserMain.getString("PartitionFree"), UserMain.getString("PartitionUsed"), UserMain.getString("LastUsed")};
+    String[] col_names = {UserMain.getString("DiskArchive"), UserMain.getString("Path"), UserMain.getString("Docs"), UserMain.getString("Used"), UserMain.getString("MaxCapacity"), UserMain.getString("PartitionFree"), UserMain.getString("PartitionSize"), UserMain.getString("LastUsed")};
     Class[] col_classes = {String.class, String.class, String.class, String.class, String.class, String.class, String.class, String.class  };
 
     DiagnoseDSTableModel(StorageDiagnose _panel, ArrayList<DS_StatusEntry> dse_list)

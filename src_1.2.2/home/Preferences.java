@@ -189,7 +189,7 @@ public class Preferences
     
     public void read_props()
     {
-        File prop_file = new File( Main.PREFS_PATH + "preferences.dat" );
+        File prop_file = new File( Main.get_user_path(), "preferences.dat" );
         props = new java.util.Properties();        
         try
         {
@@ -209,7 +209,7 @@ public class Preferences
     }
     public boolean store_props()
     {        
-        File prop_file = new File(Main.PREFS_PATH + "preferences.dat");
+        File prop_file = new File(Main.get_user_path(), "preferences.dat");
         try
         {
             FileOutputStream ostr = new FileOutputStream( prop_file );

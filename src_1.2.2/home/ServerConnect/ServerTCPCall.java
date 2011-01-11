@@ -322,6 +322,7 @@ public class ServerTCPCall extends ServerCall
                 }
 
                 SSLSocket socket = (SSLSocket) factory.createSocket(ip, port);
+                
                 keep_s = socket;
 
                 if (keep_s instanceof SSLSocket)
@@ -698,6 +699,10 @@ public class ServerTCPCall extends ServerCall
         byte[] in_buff = new byte[TCP_LEN];
 
         int rlen = s.getInputStream().read(in_buff);
+        if (rlen <= 0)
+        {
+            rlen = s.getInputStream().read(in_buff);
+        }
         while (rlen > 0 && rlen < TCP_LEN)
         {
             int llen = s.getInputStream().read(in_buff, rlen, TCP_LEN - rlen);
@@ -712,7 +717,7 @@ public class ServerTCPCall extends ServerCall
         ping_connected = true;
         if (rlen <= 0)
         {
-            throw new Exception("Application not responding");
+            throw new Exception("Server not responding");
         }
         
         //System.out.println("Ping is " + ping  + " ms <" + str + ">");

@@ -19,35 +19,37 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="LB_USER" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="LB_PWD" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel4" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
+                  <Component id="jLabel2" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
+                  <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="BT_CHANGE_PWD" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="153" max="32767" attributes="0"/>
+                      <Component id="BT_SSL" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="171" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="BT_ABORT" linkSize="2" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="BT_OK" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="LB_USER" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="LB_PWD" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel4" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
-                          <Component id="jLabel2" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
-                          <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="CB_SERVER" alignment="0" pref="267" max="32767" attributes="1"/>
-                          <Component id="CB_MANDANT" alignment="0" pref="267" max="32767" attributes="1"/>
-                          <Component id="CB_USER" alignment="0" pref="267" max="32767" attributes="1"/>
-                          <Component id="TXT_USER" alignment="1" pref="267" max="32767" attributes="1"/>
-                          <Component id="PF_PWD" pref="267" max="32767" attributes="1"/>
-                          <Component id="BT_SSL" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                  <Component id="CB_MANDANT" alignment="0" pref="265" max="32767" attributes="1"/>
+                  <Component id="CB_SERVER" alignment="0" pref="265" max="32767" attributes="1"/>
+                  <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                      <Component id="PF_PWD" alignment="0" max="32767" attributes="1"/>
+                      <Component id="TXT_USER" alignment="0" max="32767" attributes="1"/>
+                      <Component id="CB_USER" alignment="0" pref="164" max="32767" attributes="1"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
+          </Group>
+          <Group type="102" attributes="0">
+              <EmptySpace min="10" pref="10" max="10" attributes="0"/>
+              <Component id="BT_CHANGE_PWD" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="232" pref="232" max="232" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -64,22 +66,22 @@
                   <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="CB_MANDANT" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="CB_USER" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="TXT_USER" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="LB_USER" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="PF_PWD" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="LB_PWD" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="BT_SSL" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -219,9 +221,7 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="BT_SSL">
       <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="dimm/home/MA_Properties.properties" key="SSL" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
-        </Property>
+        <Property name="text" type="java.lang.String" value=" "/>
         <Property name="opaque" type="boolean" value="false"/>
       </Properties>
       <Events>

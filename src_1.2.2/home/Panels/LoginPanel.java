@@ -213,6 +213,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         
         BT_SSL.setSelected(Main.get_bool_prop(Preferences.SERVER_SSL, true));
 
+
         CB_USER.removeAllItems();
         CB_USER.addItem(UserMain.getString("Anwender") );
         CB_USER.addItem(UserMain.getString("Verwaltung") );
@@ -248,7 +249,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     void set_lists_bg()
     {
         UserMain.self.show_busy(my_dlg, UserMain.Txt("Scanning") + "...");
-        SwingWorker sw = new SwingWorker() {
+        SwingWorker local_sw = new SwingWorker() {
 
             @Override
             public Object construct()
@@ -270,7 +271,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                 return null;
             }
         };
-        sw.start();
+        local_sw.start();
 
     }
     
@@ -279,6 +280,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         return true;
     }
 
+    SwingWorker sw;
     boolean do_login()
     {
         Mandant ma = null;
@@ -308,7 +310,8 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
 
         if (ma != null)
             ma_id = ma.getId();
-        
+
+
         UserMain.set_comm_params( ma_id, st.get_ip(), st.get_port() + ma_id + 1, BT_SSL.isSelected() );
 
 
@@ -478,7 +481,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             }
         });
 
-        BT_SSL.setText(UserMain.Txt("SSL")); // NOI18N
+        BT_SSL.setText(" ");
         BT_SSL.setOpaque(false);
         BT_SSL.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -495,29 +498,31 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(LB_USER)
+                    .addComponent(LB_PWD)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(BT_CHANGE_PWD)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 153, Short.MAX_VALUE)
+                        .addComponent(BT_SSL)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 171, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(BT_ABORT)
                             .addComponent(BT_OK, javax.swing.GroupLayout.Alignment.TRAILING)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(LB_USER)
-                            .addComponent(LB_PWD)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(CB_SERVER, 0, 267, Short.MAX_VALUE)
-                            .addComponent(CB_MANDANT, 0, 267, Short.MAX_VALUE)
-                            .addComponent(CB_USER, 0, 267, Short.MAX_VALUE)
-                            .addComponent(TXT_USER, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
-                            .addComponent(PF_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
-                            .addComponent(BT_SSL))))
+                    .addComponent(CB_MANDANT, 0, 265, Short.MAX_VALUE)
+                    .addComponent(CB_SERVER, 0, 265, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(PF_PWD, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(TXT_USER, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(CB_USER, javax.swing.GroupLayout.Alignment.LEADING, 0, 164, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(BT_CHANGE_PWD)
+                .addGap(232, 232, 232))
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {BT_ABORT, BT_OK});
@@ -605,24 +610,48 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             UserMain.errm_ok(UserMain.getString("Bitte_geben_Sie_ein_Passwort_ein"));
             return;
         }
-                        
-        boolean logged_in = do_login();
-        if (logged_in)
+               
+        if (sw != null)
+            return;
+
+        UserMain.self.show_busy(my_dlg, UserMain.Txt("Connecting") + "...");
+
+        sw = new SwingWorker() 
         {
-            this.setVisible(false);
-            
-            if (BT_SSL.isSelected() != Main.get_bool_prop(Preferences.SERVER_SSL, true))
+
+            @Override
+            public Object construct()
             {
-                Main.get_prefs().set_prop(Preferences.SERVER_SSL, BT_SSL.isSelected() ? "1" : "0");
-                Main.get_prefs().store_props();
+                
+                boolean logged_in = do_login();
+                
+                if (logged_in)
+                {
+                    setVisible(false);
+                    boolean dirty = false;
+
+                    if (BT_SSL.isSelected() != Main.get_bool_prop(Preferences.SERVER_SSL, true))
+                    {
+                        dirty = true;
+                    }
+                    if (dirty)
+                    {
+                        Main.get_prefs().set_prop(Preferences.SERVER_SSL, BT_SSL.isSelected() ? "1" : "0");                
+                        Main.get_prefs().store_props();
+                    }
+                }
+                if (login_retries >= 8)
+                {
+                    setVisible(false);                   
+                }
+                sw = null;
+                UserMain.self.hide_busy();
+                return null;
             }
-            return;
-        }
-        if (login_retries >= 8)
-        {
-            this.setVisible(false);
-            return;
-        }            
+        } ;
+        sw.start();
+
+                   
     }//GEN-LAST:event_BT_OKActionPerformed
 
     private void BT_ABORTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_ABORTActionPerformed

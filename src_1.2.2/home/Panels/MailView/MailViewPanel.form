@@ -20,18 +20,18 @@
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="SPL_VIEW" pref="787" max="32767" attributes="0"/>
+                      <Component id="SPL_VIEW" pref="786" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                       <Component id="CB_ENTRIES" min="-2" pref="78" max="-2" attributes="0"/>
-                      <EmptySpace pref="552" max="32767" attributes="0"/>
+                      <EmptySpace pref="551" max="32767" attributes="0"/>
                       <Component id="CB_VIEW_CONTENT" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
-                  <Component id="TBP_SEARCH" alignment="0" pref="797" max="32767" attributes="0"/>
+                  <Component id="TBP_SEARCH" alignment="0" pref="796" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="BT_TOGGLE_SELECTION" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -44,7 +44,7 @@
                       <Component id="BT_VIEW_CONTENT" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="BT_OPEN_EML" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="164" max="32767" attributes="0"/>
+                      <EmptySpace pref="163" max="32767" attributes="0"/>
                       <Component id="BT_CLOSE" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                   </Group>
@@ -55,7 +55,7 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
-              <Component id="TBP_SEARCH" pref="176" max="32767" attributes="0"/>
+              <Component id="TBP_SEARCH" min="-2" pref="154" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -63,7 +63,7 @@
                   <Component id="CB_VIEW_CONTENT" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="SPL_VIEW" pref="382" max="32767" attributes="0"/>
+              <Component id="SPL_VIEW" pref="408" max="32767" attributes="0"/>
               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="BT_CLOSE" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -179,11 +179,11 @@
                       <Component id="BT_ADD" linkSize="1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="BT_DEL" linkSize="1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="659" max="32767" attributes="0"/>
+                      <EmptySpace pref="658" max="32767" attributes="0"/>
                       <Component id="BT_SIMPLESEARCH" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
-                  <Component id="SCP_LIST" alignment="0" pref="792" max="32767" attributes="0"/>
+                  <Component id="SCP_LIST" alignment="0" pref="791" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -196,7 +196,7 @@
                           <Component id="BT_SIMPLESEARCH" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="SCP_LIST" pref="108" max="32767" attributes="0"/>
+                      <Component id="SCP_LIST" pref="86" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -279,7 +279,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="716" max="32767" attributes="1"/>
+                      <Component id="jScrollPane1" pref="715" max="32767" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -289,7 +289,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane1" alignment="0" pref="126" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="0" pref="104" max="32767" attributes="0"/>
                           <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -379,12 +379,12 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="SCP_PREVIEW" alignment="0" pref="785" max="32767" attributes="0"/>
+                  <Component id="SCP_PREVIEW" alignment="0" pref="784" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="SCP_PREVIEW" alignment="0" pref="177" max="32767" attributes="0"/>
+                  <Component id="SCP_PREVIEW" alignment="0" pref="203" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -405,7 +405,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="SCP_TABLE" alignment="0" pref="785" max="32767" attributes="0"/>
+                  <Component id="SCP_TABLE" alignment="0" pref="784" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
