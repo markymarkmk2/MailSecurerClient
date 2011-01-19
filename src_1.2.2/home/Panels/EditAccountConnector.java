@@ -244,6 +244,7 @@ public class EditAccountConnector extends GenericEditPanel
         BT_ABORT = new GlossButton();
         BT_TEST = new GlossButton();
         BT_EDIT_USERS = new GlossButton();
+        BT_HELP = new GlossButton();
 
         setDoubleBuffered(false);
         setOpaque(false);
@@ -551,6 +552,13 @@ public class EditAccountConnector extends GenericEditPanel
             }
         });
 
+        BT_HELP.setText(UserMain.Txt("?")); // NOI18N
+        BT_HELP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_HELPActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PN_BUTTONSLayout = new javax.swing.GroupLayout(PN_BUTTONS);
         PN_BUTTONS.setLayout(PN_BUTTONSLayout);
         PN_BUTTONSLayout.setHorizontalGroup(
@@ -560,7 +568,9 @@ public class EditAccountConnector extends GenericEditPanel
                 .addComponent(BT_TEST)
                 .addGap(18, 18, 18)
                 .addComponent(BT_EDIT_USERS)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 205, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
+                .addComponent(BT_HELP)
+                .addGap(18, 18, 18)
                 .addComponent(BT_ABORT)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK)
@@ -577,7 +587,8 @@ public class EditAccountConnector extends GenericEditPanel
                     .addComponent(BT_OK)
                     .addComponent(BT_ABORT)
                     .addComponent(BT_TEST)
-                    .addComponent(BT_EDIT_USERS))
+                    .addComponent(BT_EDIT_USERS)
+                    .addComponent(BT_HELP))
                 .addContainerGap())
         );
 
@@ -932,7 +943,9 @@ public class EditAccountConnector extends GenericEditPanel
         TXT_MAILFIELDS.setVisible(search_attr_visible);
         LB_SEARCHFIELD.setVisible(search_attr_visible);
         LB_MAILFIELDS.setVisible(search_attr_visible);
-        PN_LDAPOPT.setVisible(search_attr_visible);
+
+        // NOW THE USER FIELDS AND FILTER ARE ONLY VALID WITH LDAP
+        PN_LDAPOPT.setVisible(is_ldap());
 
         // OPTION USER IS MAIL-ADRESS -> mark@dimm.de
         if (!user_is_mail)
@@ -1093,10 +1106,17 @@ public class EditAccountConnector extends GenericEditPanel
 
     }//GEN-LAST:event_TXTA_AC_EXCLUDEMouseClicked
 
+    private void BT_HELPActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_HELPActionPerformed
+    {//GEN-HEADEREND:event_BT_HELPActionPerformed
+        // TODO add your handling code here:
+        open_help(this.getClass().getSimpleName());
+}//GEN-LAST:event_BT_HELPActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JCheckBox BT_DISABLED;
     private javax.swing.JButton BT_EDIT_USERS;
+    private javax.swing.JButton BT_HELP;
     private javax.swing.JButton BT_IMPORT_CERT;
     private javax.swing.JButton BT_OK;
     private javax.swing.JButton BT_TEST;

@@ -417,6 +417,7 @@ public final class EditRole extends GenericEditPanel
             object.setMandant(UserMain.sqc().get_act_mandant());
             role_filter_save = "";
             set_flag(CS_Constants.ROLE_ACM_COMPRESSED);
+            set_flag(CS_Constants.ROLE_ACM_SIMPLE);
         }
 
         CB_ACCOUNT.setModel(accm);
@@ -435,8 +436,9 @@ public final class EditRole extends GenericEditPanel
             {
                 if (TBP_SEARCH.getSelectedIndex() == SIMPLE_SEARCH)
                 {
-                    set_flag(CS_Constants.ROLE_ACM_SIMPLE);
-                     set_new_filter_vals(  simple_search_tablemodel.get_compressed_xml_list_data() );
+                     set_flag(CS_Constants.ROLE_ACM_SIMPLE);
+                     
+                     set_new_filter_vals(simple_search_tablemodel.get_compressed_xml_list_data()  );
                 }
                 else
                 {
@@ -611,6 +613,7 @@ public final class EditRole extends GenericEditPanel
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
         BT_MATCH_USERS = new GlossButton();
+        BT_HELP1 = new GlossButton();
 
         setDoubleBuffered(false);
         setOpaque(false);
@@ -761,7 +764,7 @@ public final class EditRole extends GenericEditPanel
                 .addComponent(BT_ADD)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BT_DEL)
-                .addContainerGap(327, Short.MAX_VALUE))
+                .addContainerGap(331, Short.MAX_VALUE))
             .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
         );
 
@@ -774,7 +777,7 @@ public final class EditRole extends GenericEditPanel
                     .addComponent(BT_ADD)
                     .addComponent(BT_DEL))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE))
+                .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
         );
 
         TBP_SEARCH.addTab(UserMain.Txt("Simple_Filter"), PN_SIMPLE); // NOI18N
@@ -803,7 +806,7 @@ public final class EditRole extends GenericEditPanel
             PN_COMPLEXLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PN_COMPLEXLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -846,7 +849,7 @@ public final class EditRole extends GenericEditPanel
                     .addComponent(jLabel3)
                     .addComponent(CB_ACCOUNT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(TBP_SEARCH, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+                .addComponent(TBP_SEARCH, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(PN_OPTS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -888,6 +891,13 @@ public final class EditRole extends GenericEditPanel
             }
         });
 
+        BT_HELP1.setText(UserMain.Txt("?")); // NOI18N
+        BT_HELP1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_HELP1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PN_BUTTONSLayout = new javax.swing.GroupLayout(PN_BUTTONS);
         PN_BUTTONS.setLayout(PN_BUTTONSLayout);
         PN_BUTTONSLayout.setHorizontalGroup(
@@ -895,7 +905,9 @@ public final class EditRole extends GenericEditPanel
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(BT_MATCH_USERS)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 109, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
+                .addComponent(BT_HELP1)
+                .addGap(18, 18, 18)
                 .addComponent(BT_ABORT)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK)
@@ -911,7 +923,8 @@ public final class EditRole extends GenericEditPanel
                 .addGroup(PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK)
                     .addComponent(BT_ABORT)
-                    .addComponent(BT_MATCH_USERS))
+                    .addComponent(BT_MATCH_USERS)
+                    .addComponent(BT_HELP1))
                 .addContainerGap())
         );
 
@@ -1054,6 +1067,12 @@ public final class EditRole extends GenericEditPanel
        edit_complex_user_filter();
        
     }//GEN-LAST:event_TXTA_FILTERMouseClicked
+
+    private void BT_HELP1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_HELP1ActionPerformed
+    {//GEN-HEADEREND:event_BT_HELP1ActionPerformed
+        // TODO add your handling code here:
+        open_help(this.getClass().getSimpleName());
+}//GEN-LAST:event_BT_HELP1ActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1062,6 +1081,7 @@ public final class EditRole extends GenericEditPanel
     private javax.swing.JButton BT_ADD;
     private javax.swing.JButton BT_DEL;
     private javax.swing.JCheckBox BT_DISABLED;
+    private javax.swing.JButton BT_HELP1;
     private javax.swing.JButton BT_MATCH_USERS;
     private javax.swing.JButton BT_OK;
     private javax.swing.JComboBox CB_ACCOUNT;

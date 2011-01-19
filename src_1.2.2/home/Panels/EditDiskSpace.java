@@ -193,6 +193,7 @@ public class EditDiskSpace extends GenericEditPanel
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
         BT_REINDEX = new GlossButton();
+        BT_HELP1 = new GlossButton();
 
         setDoubleBuffered(false);
         setOpaque(false);
@@ -264,7 +265,7 @@ public class EditDiskSpace extends GenericEditPanel
                                     .addComponent(TXT_CAP, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(CB_CAP_DIM, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
         PN_ACTIONLayout.setVerticalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -287,7 +288,7 @@ public class EditDiskSpace extends GenericEditPanel
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(CB_STATUS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                 .addComponent(BT_DISABLED)
                 .addContainerGap())
         );
@@ -322,6 +323,13 @@ public class EditDiskSpace extends GenericEditPanel
             }
         });
 
+        BT_HELP1.setText(UserMain.Txt("?")); // NOI18N
+        BT_HELP1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_HELP1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PN_BUTTONSLayout = new javax.swing.GroupLayout(PN_BUTTONS);
         PN_BUTTONS.setLayout(PN_BUTTONSLayout);
         PN_BUTTONSLayout.setHorizontalGroup(
@@ -329,7 +337,9 @@ public class EditDiskSpace extends GenericEditPanel
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(BT_REINDEX)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 242, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 193, Short.MAX_VALUE)
+                .addComponent(BT_HELP1)
+                .addGap(18, 18, 18)
                 .addComponent(BT_ABORT)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK)
@@ -345,7 +355,8 @@ public class EditDiskSpace extends GenericEditPanel
                 .addGroup(PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK)
                     .addComponent(BT_ABORT)
-                    .addComponent(BT_REINDEX))
+                    .addComponent(BT_REINDEX)
+                    .addComponent(BT_HELP1))
                 .addContainerGap())
         );
 
@@ -416,11 +427,18 @@ public class EditDiskSpace extends GenericEditPanel
         TXT_PATH.setText(gfc.get_act_file().getAbsolutePath());
 
     }//GEN-LAST:event_BT_PATHSELECTActionPerformed
+
+    private void BT_HELP1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_HELP1ActionPerformed
+    {//GEN-HEADEREND:event_BT_HELP1ActionPerformed
+        // TODO add your handling code here:
+        open_help(this.getClass().getSimpleName());
+}//GEN-LAST:event_BT_HELP1ActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JCheckBox BT_DISABLED;
+    private javax.swing.JButton BT_HELP1;
     private javax.swing.JButton BT_OK;
     private javax.swing.JButton BT_PATHSELECT;
     private javax.swing.JButton BT_REINDEX;

@@ -66,6 +66,10 @@ public class ServerTCPCall extends ServerCall
         status = s;
     }
 
+    public String get_ip()
+    {
+        return server;
+    }
     public ServerTCPCall( String _server, int _port, boolean use_ssl )
     {
         System.setProperty("javax.net.ssl.trustStore", "jxws.ts");

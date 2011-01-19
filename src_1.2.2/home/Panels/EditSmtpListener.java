@@ -125,6 +125,7 @@ public class EditSmtpListener extends GenericEditPanel
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
+        BT_HELP1 = new GlossButton();
 
         setDoubleBuffered(false);
         setOpaque(false);
@@ -321,12 +322,21 @@ public class EditSmtpListener extends GenericEditPanel
             }
         });
 
+        BT_HELP1.setText(UserMain.Txt("?")); // NOI18N
+        BT_HELP1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_HELP1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PN_BUTTONSLayout = new javax.swing.GroupLayout(PN_BUTTONS);
         PN_BUTTONS.setLayout(PN_BUTTONSLayout);
         PN_BUTTONSLayout.setHorizontalGroup(
             PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
-                .addContainerGap(356, Short.MAX_VALUE)
+                .addContainerGap(301, Short.MAX_VALUE)
+                .addComponent(BT_HELP1)
+                .addGap(18, 18, 18)
                 .addComponent(BT_ABORT)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK)
@@ -341,7 +351,8 @@ public class EditSmtpListener extends GenericEditPanel
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK)
-                    .addComponent(BT_ABORT))
+                    .addComponent(BT_ABORT)
+                    .addComponent(BT_HELP1))
                 .addContainerGap())
         );
 
@@ -436,12 +447,19 @@ public class EditSmtpListener extends GenericEditPanel
         TXT_PORT1.setText( "" + EditAccountConnector.get_dflt_port( "smtp", true ) );
     }//GEN-LAST:event_RB_SSLActionPerformed
 
+    private void BT_HELP1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_HELP1ActionPerformed
+    {//GEN-HEADEREND:event_BT_HELP1ActionPerformed
+        // TODO add your handling code here:
+        open_help(this.getClass().getSimpleName());
+}//GEN-LAST:event_BT_HELP1ActionPerformed
+
     SwingWorker sw = null;
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JCheckBox BT_DISABLED;
+    private javax.swing.JButton BT_HELP1;
     private javax.swing.JButton BT_OK;
     private javax.swing.JComboBox CB_VAULT;
     private javax.swing.JPanel PN_ACTION;

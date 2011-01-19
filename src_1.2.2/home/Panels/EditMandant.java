@@ -313,6 +313,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
+        BT_HELP1 = new GlossButton();
 
         setDoubleBuffered(false);
         setOpaque(false);
@@ -774,12 +775,21 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             }
         });
 
+        BT_HELP1.setText(UserMain.Txt("?")); // NOI18N
+        BT_HELP1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_HELP1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PN_BUTTONSLayout = new javax.swing.GroupLayout(PN_BUTTONS);
         PN_BUTTONS.setLayout(PN_BUTTONSLayout);
         PN_BUTTONSLayout.setHorizontalGroup(
             PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
-                .addContainerGap(403, Short.MAX_VALUE)
+                .addContainerGap(348, Short.MAX_VALUE)
+                .addComponent(BT_HELP1)
+                .addGap(18, 18, 18)
                 .addComponent(BT_ABORT)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK)
@@ -794,7 +804,8 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK)
-                    .addComponent(BT_ABORT))
+                    .addComponent(BT_ABORT)
+                    .addComponent(BT_HELP1))
                 .addContainerGap())
         );
 
@@ -1149,10 +1160,17 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         }
     }//GEN-LAST:event_BT_TEST_ENCRYPTIONActionPerformed
 
+    private void BT_HELP1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_HELP1ActionPerformed
+    {//GEN-HEADEREND:event_BT_HELP1ActionPerformed
+        // TODO add your handling code here:
+        open_help(this.getClass().getSimpleName());
+}//GEN-LAST:event_BT_HELP1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JButton BT_ADD_HEADER;
     private javax.swing.JCheckBox BT_DISABLED;
+    private javax.swing.JButton BT_HELP1;
     private javax.swing.JCheckBox BT_IMAP_ENABLED;
     private javax.swing.JButton BT_IMPORT_CERT;
     private javax.swing.JButton BT_OK;

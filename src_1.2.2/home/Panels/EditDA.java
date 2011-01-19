@@ -127,6 +127,7 @@ public class EditDA extends GenericEditPanel
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
         BT_REINDEX = new GlossButton();
+        BT_HELP1 = new GlossButton();
 
         setDoubleBuffered(false);
         setOpaque(false);
@@ -182,7 +183,7 @@ public class EditDA extends GenericEditPanel
                         .addGap(18, 18, 18))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_ACTIONLayout.createSequentialGroup()
                         .addComponent(BT_DISABLED)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 244, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 246, Short.MAX_VALUE)
                         .addComponent(BT_DISKSPACES)
                         .addContainerGap())))
         );
@@ -197,7 +198,7 @@ public class EditDA extends GenericEditPanel
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(CB_TYPE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 71, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_DISKSPACES)
                     .addComponent(BT_DISABLED))
@@ -234,6 +235,13 @@ public class EditDA extends GenericEditPanel
             }
         });
 
+        BT_HELP1.setText(UserMain.Txt("?")); // NOI18N
+        BT_HELP1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_HELP1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PN_BUTTONSLayout = new javax.swing.GroupLayout(PN_BUTTONS);
         PN_BUTTONS.setLayout(PN_BUTTONSLayout);
         PN_BUTTONSLayout.setHorizontalGroup(
@@ -241,7 +249,9 @@ public class EditDA extends GenericEditPanel
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(BT_REINDEX)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 143, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 94, Short.MAX_VALUE)
+                .addComponent(BT_HELP1)
+                .addGap(18, 18, 18)
                 .addComponent(BT_ABORT)
                 .addGap(18, 18, 18)
                 .addComponent(BT_OK)
@@ -257,7 +267,8 @@ public class EditDA extends GenericEditPanel
                 .addGroup(PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK)
                     .addComponent(BT_ABORT)
-                    .addComponent(BT_REINDEX))
+                    .addComponent(BT_REINDEX)
+                    .addComponent(BT_HELP1))
                 .addContainerGap())
         );
 
@@ -340,12 +351,19 @@ public class EditDA extends GenericEditPanel
         dlg.setVisible(true);
 
     }//GEN-LAST:event_BT_REINDEXActionPerformed
+
+    private void BT_HELP1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_HELP1ActionPerformed
+    {//GEN-HEADEREND:event_BT_HELP1ActionPerformed
+        // TODO add your handling code here:
+        open_help(this.getClass().getSimpleName());
+}//GEN-LAST:event_BT_HELP1ActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JCheckBox BT_DISABLED;
     private javax.swing.JButton BT_DISKSPACES;
+    private javax.swing.JButton BT_HELP1;
     private javax.swing.JButton BT_OK;
     private javax.swing.JButton BT_REINDEX;
     private javax.swing.JComboBox CB_TYPE;

@@ -59,6 +59,7 @@ public class EditHeaderMailVariable extends GlossDialogPanel
         BT_OK = new javax.swing.JButton();
         BT_ABORT = new javax.swing.JButton();
         CB_EMAIL = new javax.swing.JCheckBox();
+        BT_HELP1 = new GlossButton();
 
         LB_FELD.setText("jLabel1");
 
@@ -79,14 +80,23 @@ public class EditHeaderMailVariable extends GlossDialogPanel
 
         CB_EMAIL.setText(UserMain.Txt("Is_eMail")); // NOI18N
 
+        BT_HELP1.setText(UserMain.Txt("?")); // NOI18N
+        BT_HELP1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_HELP1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(BT_HELP1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(BT_ABORT)
                         .addGap(18, 18, 18)
                         .addComponent(BT_OK))
@@ -113,7 +123,8 @@ public class EditHeaderMailVariable extends GlossDialogPanel
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK)
-                    .addComponent(BT_ABORT))
+                    .addComponent(BT_ABORT)
+                    .addComponent(BT_HELP1))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -133,9 +144,16 @@ public class EditHeaderMailVariable extends GlossDialogPanel
         // TODO add your handling code here:
     }//GEN-LAST:event_BT_ABORTActionPerformed
 
+    private void BT_HELP1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_HELP1ActionPerformed
+    {//GEN-HEADEREND:event_BT_HELP1ActionPerformed
+        // TODO add your handling code here:
+        UserMain.open_help_panel(this.getClass().getSimpleName());
+}//GEN-LAST:event_BT_HELP1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
+    private javax.swing.JButton BT_HELP1;
     private javax.swing.JButton BT_OK;
     private javax.swing.JCheckBox CB_EMAIL;
     private javax.swing.JLabel LB_FELD;

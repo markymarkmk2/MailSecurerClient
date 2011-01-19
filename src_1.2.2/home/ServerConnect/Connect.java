@@ -41,4 +41,9 @@ public class Connect
     {
         sqc.close();
     }
+
+    public String get_ip()
+    {
+        return ((ServerTCPCall)sqc).get_ip();
+    }
 }

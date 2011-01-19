@@ -298,6 +298,7 @@ public class EditBackup  extends GenericEditPanel
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jSeparator1 = new javax.swing.JSeparator();
         PN_SCHEDULE = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         CB_DAY1 = new javax.swing.JCheckBox();
@@ -341,8 +342,8 @@ public class EditBackup  extends GenericEditPanel
         BT_TEST_AGENT = new GlossButton();
         jLabel6 = new javax.swing.JLabel();
         TXTF_VALID_FROM = new javax.swing.JFormattedTextField();
-        jSeparator1 = new javax.swing.JSeparator();
         BT_START = new GlossButton();
+        BT_HELP1 = new GlossButton();
 
         PN_SCHEDULE.setOpaque(false);
 
@@ -710,6 +711,13 @@ public class EditBackup  extends GenericEditPanel
             }
         });
 
+        BT_HELP1.setText(UserMain.Txt("?")); // NOI18N
+        BT_HELP1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_HELP1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -718,7 +726,6 @@ public class EditBackup  extends GenericEditPanel
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(PN_CYCLE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 718, Short.MAX_VALUE)
                     .addComponent(CB_BACKUP_SYS)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -734,15 +741,15 @@ public class EditBackup  extends GenericEditPanel
                                     .addComponent(jLabel6))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(CB_VAULT, 0, 259, Short.MAX_VALUE)
-                                    .addComponent(TXTF_VALID_FROM, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
+                                    .addComponent(CB_VAULT, 0, 285, Short.MAX_VALUE)
+                                    .addComponent(TXTF_VALID_FROM, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(CB_MODE, javax.swing.GroupLayout.Alignment.LEADING, 0, 186, Short.MAX_VALUE)
-                                            .addComponent(TXT_AGENT, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE))
+                                            .addComponent(CB_MODE, javax.swing.GroupLayout.Alignment.LEADING, 0, 212, Short.MAX_VALUE)
+                                            .addComponent(TXT_AGENT, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE))
                                         .addGap(18, 18, 18)
                                         .addComponent(TXT_AGENT_PORT, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(TXT_PATH, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE))
+                                    .addComponent(TXT_PATH, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE))
                                 .addGap(18, 18, 18))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(BT_START)
@@ -750,7 +757,9 @@ public class EditBackup  extends GenericEditPanel
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(layout.createSequentialGroup()
-                                    .addGap(259, 259, 259)
+                                    .addGap(182, 182, 182)
+                                    .addComponent(BT_HELP1)
+                                    .addGap(18, 18, 18)
                                     .addComponent(BT_ABORT)
                                     .addGap(18, 18, 18)
                                     .addComponent(BT_OK))
@@ -797,9 +806,7 @@ public class EditBackup  extends GenericEditPanel
                     .addComponent(TXTF_VALID_FROM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(CB_BACKUP_SYS)
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 5, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(29, 29, 29)
                 .addComponent(PN_SCHEDULE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(PN_CYCLE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -807,7 +814,8 @@ public class EditBackup  extends GenericEditPanel
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK)
                     .addComponent(BT_ABORT)
-                    .addComponent(BT_START))
+                    .addComponent(BT_START)
+                    .addComponent(BT_HELP1))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -879,9 +887,17 @@ public class EditBackup  extends GenericEditPanel
         //UserMain.fcc().call_abstract_function("backup CMD:start MA:" + object.getMandant().getId() + " DA:" + object.getDiskArchive().getId() + " BS:" + object.getId());
     }//GEN-LAST:event_BT_STARTActionPerformed
 
+    private void BT_HELP1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_HELP1ActionPerformed
+    {//GEN-HEADEREND:event_BT_HELP1ActionPerformed
+        // TODO add your handling code here:
+        open_help(this.getClass().getSimpleName());
+}//GEN-LAST:event_BT_HELP1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
+    private javax.swing.JButton BT_HELP;
+    private javax.swing.JButton BT_HELP1;
     private javax.swing.JButton BT_OK;
     private javax.swing.JButton BT_PATH;
     private javax.swing.JButton BT_START;

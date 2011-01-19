@@ -28,7 +28,9 @@
                       <Component id="BT_DUMP" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="BT_FILTER" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="200" max="32767" attributes="0"/>
+                      <EmptySpace pref="145" max="32767" attributes="0"/>
+                      <Component id="BT_HELP1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="BT_OK" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -48,6 +50,7 @@
                   <Component id="CB_LOG_SOURCE" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                   <Component id="BT_DUMP" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="BT_FILTER" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="BT_HELP1" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -149,6 +152,22 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_FILTERActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new GlossButton()"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JButton" name="BT_HELP1">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="dimm/home/MA_Properties.properties" key="?" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_HELP1ActionPerformed"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new GlossButton()"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>

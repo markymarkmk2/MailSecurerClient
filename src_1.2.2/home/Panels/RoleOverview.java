@@ -72,7 +72,7 @@ class RoleTableModel extends OverviewModel
             }
             case 3:
                 int flags = sqlResult.getInt(rowIndex, "Flags");
-                return new Boolean((flags & CS_Constants.ROLE_DISABLED) == CS_Constants.ROLE_DISABLED); // DISABLED
+                return (flags & CS_Constants.ROLE_DISABLED) == CS_Constants.ROLE_DISABLED; // DISABLED
             default:
                 return super.getValueAt(rowIndex, columnIndex);
         }

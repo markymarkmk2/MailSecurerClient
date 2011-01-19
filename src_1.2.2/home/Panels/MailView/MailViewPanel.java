@@ -519,7 +519,12 @@ class SimpleSearchEntryModel extends GroupEntry
     {
         if (list != null)
             children = list;
-    }    
+    }
+
+    void set_new_filter( ArrayList<LogicEntry> al )
+    {
+        children = al;
+    }
 }
 class ConditionCBEntry
 {
@@ -590,10 +595,17 @@ class SimpleSearchTableModel extends AbstractTableModel implements MouseListener
 
     public String get_compressed_xml_list_data()
     {
-        String xml = null;
-        CXStream xstr = new CXStream();
-
         ArrayList<LogicEntry> al = new ArrayList<LogicEntry>();
+
+        if (pnl.get_quick_search().length() > 0)
+        {
+            ExprEntry ee = new ExprEntry(null, CS_Constants.VFLD_ALL, pnl.get_quick_search(), OPERATION.CONTAINS, TYPE.STRING, false, false);
+            // ALL ARE ADDED AS "AND"
+            al.add(ee);
+        }
+
+
+
 
         // ADD ONLY VALID ENTRIES
         for (int i = 0; i < model.getChildren().size(); i++)
@@ -757,6 +769,20 @@ class SimpleSearchTableModel extends AbstractTableModel implements MouseListener
     public void mouseExited( MouseEvent e )
     {        
     }
+
+    void set_filter( String filter )
+    {
+        Object o = ParseToken.DeCompressObject(filter);
+        if (o instanceof ArrayList)
+        {
+            ArrayList<LogicEntry> al = (ArrayList<LogicEntry>) o;
+            model.set_new_filter( al );
+
+            fireTableDataChanged();
+
+        }
+
+    }
 }
 class SimpleSearchEditor extends  DefaultCellEditor
 {
@@ -816,6 +842,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
      public static final int MAX_FETCH_SIZE = 5000;
 
+    static String last_filter;
+
     /** Creates new form MailViewPanel */
     public MailViewPanel()
     {
@@ -844,6 +872,9 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         simple_search_table.embed_to_scrollpanel( SCP_LIST );
 
         simple_search_tablemodel = new SimpleSearchTableModel(this, new SimpleSearchEntryModel(null));
+        if (last_filter != null)
+            simple_search_tablemodel.set_filter(last_filter);
+        
         simple_search_table.setModel(simple_search_tablemodel);
         simple_search_table.addMouseListener(simple_search_tablemodel);
 
@@ -888,6 +919,9 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             {
                 simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_VALUE).getCellEditor().stopCellEditing();
                 last_filter = simple_search_tablemodel.get_compressed_xml_list_data();
+                TXTA_FILTER.setText(LogicFilter.get_nice_filter_text(last_filter));
+                TXTA_FILTER.setCaretPosition(0);
+
                 do_filter_search();
             }
         });
@@ -913,7 +947,18 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             CB_ENTRIES.addItem("100000");
             CB_ENTRIES.addItem("1000000");
         }
+
+        TXT_QUICKSEARCH.requestFocusInWindow();
     }
+
+    @Override
+    public void setVisible( boolean aFlag )
+    {
+        super.setVisible(aFlag);
+        if (aFlag)
+            TXT_QUICKSEARCH.requestFocusInWindow();
+    }
+
 
     int get_entries()
     {
@@ -1705,22 +1750,25 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        BT_CLOSE = new GlossButton();
-        BT_EXPORT = new GlossButton();
-        CB_ENTRIES = new javax.swing.JComboBox();
-        jLabel4 = new javax.swing.JLabel();
-        BT_RESTORE = new GlossButton();
-        BT_TOGGLE_SELECTION = new GlossButton();
         TBP_SEARCH = new javax.swing.JTabbedPane();
         PN_SIMPLE = new javax.swing.JPanel();
+        TXT_QUICKSEARCH = new javax.swing.JTextField();
         BT_ADD = new GlossButton();
         BT_DEL = new GlossButton();
         SCP_LIST = new javax.swing.JScrollPane();
         BT_SIMPLESEARCH = new GlossButton();
+        BT_FILTERS = new GlossButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        CB_ENTRIES = new javax.swing.JComboBox();
         PN_COMPLEX = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         TXTA_FILTER = new javax.swing.JTextArea();
+        BT_CLOSE = new GlossButton();
+        BT_EXPORT = new GlossButton();
+        BT_RESTORE = new GlossButton();
+        BT_TOGGLE_SELECTION = new GlossButton();
         BT_VIEW_CONTENT = new javax.swing.JButton();
         BT_OPEN_EML = new javax.swing.JButton();
         CB_VIEW_CONTENT = new javax.swing.JCheckBox();
@@ -1731,47 +1779,15 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         SCP_TABLE = new javax.swing.JScrollPane();
         BT_OPEN_IN_MAIL = new GlossButton();
 
-        BT_CLOSE.setText(UserMain.getString("Schliessen")); // NOI18N
-        BT_CLOSE.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_CLOSEActionPerformed(evt);
-            }
-        });
-
-        BT_EXPORT.setText(UserMain.getString("Export_Mail")); // NOI18N
-        BT_EXPORT.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_EXPORTActionPerformed(evt);
-            }
-        });
-
-        CB_ENTRIES.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "10", "100", "1000" }));
-        CB_ENTRIES.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CB_ENTRIESActionPerformed(evt);
-            }
-        });
-
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/MA_Properties"); // NOI18N
-        jLabel4.setText(bundle.getString("Entries")); // NOI18N
-
-        BT_RESTORE.setText(UserMain.Txt("Restore_Mail")); // NOI18N
-        BT_RESTORE.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_RESTOREActionPerformed(evt);
-            }
-        });
-
-        BT_TOGGLE_SELECTION.setText(UserMain.Txt("Select_onoff")); // NOI18N
-        BT_TOGGLE_SELECTION.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BT_TOGGLE_SELECTIONActionPerformed(evt);
-            }
-        });
-
         PN_SIMPLE.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 PN_SIMPLEFocusGained(evt);
+            }
+        });
+
+        TXT_QUICKSEARCH.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TXT_QUICKSEARCHActionPerformed(evt);
             }
         });
 
@@ -1802,6 +1818,26 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             }
         });
 
+        BT_FILTERS.setText(UserMain.getString("Filters")); // NOI18N
+        BT_FILTERS.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        BT_FILTERS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_FILTERSActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText(UserMain.Txt("Quicksearch")); // NOI18N
+
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("dimm/home/MA_Properties"); // NOI18N
+        jLabel4.setText(bundle.getString("Entries")); // NOI18N
+
+        CB_ENTRIES.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "10", "100", "1000" }));
+        CB_ENTRIES.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CB_ENTRIESActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PN_SIMPLELayout = new javax.swing.GroupLayout(PN_SIMPLE);
         PN_SIMPLE.setLayout(PN_SIMPLELayout);
         PN_SIMPLELayout.setHorizontalGroup(
@@ -1811,10 +1847,20 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                 .addComponent(BT_ADD)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BT_DEL)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 658, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(BT_FILTERS)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addComponent(TXT_QUICKSEARCH, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 155, Short.MAX_VALUE)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(CB_ENTRIES, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(BT_SIMPLESEARCH)
                 .addContainerGap())
-            .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 791, Short.MAX_VALUE)
+            .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 781, Short.MAX_VALUE)
         );
 
         PN_SIMPLELayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {BT_ADD, BT_DEL});
@@ -1826,7 +1872,12 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                 .addGroup(PN_SIMPLELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_ADD)
                     .addComponent(BT_DEL)
-                    .addComponent(BT_SIMPLESEARCH))
+                    .addComponent(BT_SIMPLESEARCH)
+                    .addComponent(BT_FILTERS)
+                    .addComponent(jLabel1)
+                    .addComponent(TXT_QUICKSEARCH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(CB_ENTRIES, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE))
         );
@@ -1860,7 +1911,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                 .addContainerGap()
                 .addComponent(jLabel5)
                 .addGap(32, 32, 32)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 715, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 705, Short.MAX_VALUE)
                 .addContainerGap())
         );
         PN_COMPLEXLayout.setVerticalGroup(
@@ -1874,6 +1925,34 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         );
 
         TBP_SEARCH.addTab(UserMain.getString("Complex_Search"), PN_COMPLEX); // NOI18N
+
+        BT_CLOSE.setText(UserMain.getString("Schliessen")); // NOI18N
+        BT_CLOSE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_CLOSEActionPerformed(evt);
+            }
+        });
+
+        BT_EXPORT.setText(UserMain.getString("Export_Mail")); // NOI18N
+        BT_EXPORT.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_EXPORTActionPerformed(evt);
+            }
+        });
+
+        BT_RESTORE.setText(UserMain.Txt("Restore_Mail")); // NOI18N
+        BT_RESTORE.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_RESTOREActionPerformed(evt);
+            }
+        });
+
+        BT_TOGGLE_SELECTION.setText(UserMain.Txt("Select_onoff")); // NOI18N
+        BT_TOGGLE_SELECTION.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_TOGGLE_SELECTIONActionPerformed(evt);
+            }
+        });
 
         BT_VIEW_CONTENT.setText("        ");
         BT_VIEW_CONTENT.setBorderPainted(false);
@@ -1913,7 +1992,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         );
         PN_PREVIEWLayout.setVerticalGroup(
             PN_PREVIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SCP_PREVIEW, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
+            .addComponent(SCP_PREVIEW, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
         );
 
         SPL_VIEW.setRightComponent(PN_PREVIEW);
@@ -1946,17 +2025,6 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(SPL_VIEW, javax.swing.GroupLayout.DEFAULT_SIZE, 786, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(32, 32, 32)
-                        .addComponent(CB_ENTRIES, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 551, Short.MAX_VALUE)
-                        .addComponent(CB_VIEW_CONTENT)
-                        .addContainerGap())
-                    .addComponent(TBP_SEARCH, javax.swing.GroupLayout.DEFAULT_SIZE, 796, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(BT_TOGGLE_SELECTION)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(BT_EXPORT)
@@ -1968,21 +2036,23 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                         .addComponent(BT_VIEW_CONTENT)
                         .addGap(18, 18, 18)
                         .addComponent(BT_OPEN_EML)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 163, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
+                        .addComponent(CB_VIEW_CONTENT)
+                        .addGap(18, 18, 18)
                         .addComponent(BT_CLOSE)
-                        .addGap(10, 10, 10))))
+                        .addGap(10, 10, 10))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(TBP_SEARCH, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 786, Short.MAX_VALUE)
+                            .addComponent(SPL_VIEW, javax.swing.GroupLayout.DEFAULT_SIZE, 786, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(TBP_SEARCH, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(CB_ENTRIES, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(CB_VIEW_CONTENT))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(SPL_VIEW, javax.swing.GroupLayout.DEFAULT_SIZE, 408, Short.MAX_VALUE)
+                .addComponent(SPL_VIEW, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_CLOSE)
@@ -1991,7 +2061,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                     .addComponent(BT_RESTORE)
                     .addComponent(BT_OPEN_IN_MAIL)
                     .addComponent(BT_VIEW_CONTENT)
-                    .addComponent(BT_OPEN_EML))
+                    .addComponent(BT_OPEN_EML)
+                    .addComponent(CB_VIEW_CONTENT))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -2101,7 +2172,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         }
     }//GEN-LAST:event_BT_RESTOREActionPerformed
 
-    static String last_filter;
+    
     private void TXTA_FILTERMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_TXTA_FILTERMouseClicked
     {//GEN-HEADEREND:event_TXTA_FILTERMouseClicked
         // TODO add your handling code here:
@@ -2202,7 +2273,9 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         boolean b1 = simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_VALUE).getCellEditor().stopCellEditing();
         boolean b2 = BT_SIMPLESEARCH.requestFocusInWindow();
         last_filter = simple_search_tablemodel.get_compressed_xml_list_data();
-        
+        TXTA_FILTER.setText(LogicFilter.get_nice_filter_text(last_filter));
+        TXTA_FILTER.setCaretPosition(0);
+
         do_filter_search();
 
     }//GEN-LAST:event_BT_SIMPLESEARCHActionPerformed
@@ -2282,12 +2355,28 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
     }//GEN-LAST:event_BT_OPEN_IN_MAILActionPerformed
 
+    private void BT_FILTERSActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_FILTERSActionPerformed
+    {//GEN-HEADEREND:event_BT_FILTERSActionPerformed
+        // TODO add your handling code here:
+        ViewFilterSaveDlg pnl = new ViewFilterSaveDlg(this, last_filter);
+        GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
+        dlg.set_next_location(BT_FILTERS);
+        dlg.setVisible(true);
+    }//GEN-LAST:event_BT_FILTERSActionPerformed
+
+    private void TXT_QUICKSEARCHActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_TXT_QUICKSEARCHActionPerformed
+    {//GEN-HEADEREND:event_TXT_QUICKSEARCHActionPerformed
+        // TODO add your handling code here:
+        BT_SIMPLESEARCHActionPerformed(evt);
+    }//GEN-LAST:event_TXT_QUICKSEARCHActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ADD;
     private javax.swing.JButton BT_CLOSE;
     private javax.swing.JButton BT_DEL;
     private javax.swing.JButton BT_EXPORT;
+    private javax.swing.JButton BT_FILTERS;
     private javax.swing.JButton BT_OPEN_EML;
     private javax.swing.JButton BT_OPEN_IN_MAIL;
     private javax.swing.JButton BT_RESTORE;
@@ -2305,6 +2394,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     private javax.swing.JSplitPane SPL_VIEW;
     private javax.swing.JTabbedPane TBP_SEARCH;
     private javax.swing.JTextArea TXTA_FILTER;
+    private javax.swing.JTextField TXT_QUICKSEARCH;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
@@ -2503,6 +2594,23 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             ArrayList<ArrayList<String>> ret_arr = (ArrayList<ArrayList<String>>)o;
             result_array.addAll(ret_arr);
         }
+    }
+
+    void set_filter( String filter )
+    {
+        last_filter = filter;
+        simple_search_tablemodel.set_filter(filter);
+
+        TXTA_FILTER.setText(LogicFilter.get_nice_filter_text(last_filter));
+        TXTA_FILTER.setCaretPosition(0);
+        TXT_QUICKSEARCH.setText("");
+        
+        do_filter_search();
+
+    }
+    String get_quick_search()
+    {
+        return TXT_QUICKSEARCH.getText();
     }
 
 }

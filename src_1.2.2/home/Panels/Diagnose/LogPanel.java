@@ -804,7 +804,8 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         BT_OK = new GlossButton();
         jLabel1 = new javax.swing.JLabel();
         BT_DUMP = new GlossButton();
-        BT_FILTER = new javax.swing.JButton();
+        BT_FILTER = new GlossButton();
+        BT_HELP1 = new GlossButton();
 
         CB_LOG_SOURCE.setMaximumRowCount(20);
         CB_LOG_SOURCE.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "default" }));
@@ -860,6 +861,13 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
             }
         });
 
+        BT_HELP1.setText(UserMain.Txt("?")); // NOI18N
+        BT_HELP1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_HELP1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -876,7 +884,9 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
                         .addComponent(BT_DUMP)
                         .addGap(18, 18, 18)
                         .addComponent(BT_FILTER)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 200, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 145, Short.MAX_VALUE)
+                        .addComponent(BT_HELP1)
+                        .addGap(18, 18, 18)
                         .addComponent(BT_OK)))
                 .addContainerGap())
         );
@@ -891,7 +901,8 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
                     .addComponent(jLabel1)
                     .addComponent(CB_LOG_SOURCE, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(BT_DUMP)
-                    .addComponent(BT_FILTER))
+                    .addComponent(BT_FILTER)
+                    .addComponent(BT_HELP1))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -968,10 +979,18 @@ public class LogPanel extends GlossDialogPanel  implements MouseListener, Action
         fetch_first_block();
     }//GEN-LAST:event_CB_LOG_SOURCEPropertyChange
 
+    private void BT_HELP1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_HELP1ActionPerformed
+    {//GEN-HEADEREND:event_BT_HELP1ActionPerformed
+        // TODO add your handling code here:
+        UserMain.open_help_panel(this.getClass().getSimpleName());
+}//GEN-LAST:event_BT_HELP1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_DUMP;
     private javax.swing.JButton BT_FILTER;
+    private javax.swing.JButton BT_HELP;
+    private javax.swing.JButton BT_HELP1;
     private javax.swing.JButton BT_OK;
     private javax.swing.JComboBox CB_LOG_SOURCE;
     private javax.swing.JPanel LOG_PANEL;

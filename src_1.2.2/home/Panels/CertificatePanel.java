@@ -481,6 +481,7 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
         BT_IMPORT = new GlossButton();
         BT_IMPORT_CA = new GlossButton();
         BT_NEW_KEY = new GlossButton();
+        BT_HELP = new GlossButton();
 
         BT_OKAY.setText(UserMain.Txt("Close")); // NOI18N
         BT_OKAY.addActionListener(new java.awt.event.ActionListener() {
@@ -517,6 +518,13 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
             }
         });
 
+        BT_HELP.setText(UserMain.Txt("?")); // NOI18N
+        BT_HELP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_HELPActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -527,7 +535,9 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
                     .addComponent(SCP_TABLE, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 652, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(BT_IMPORT_CA)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 448, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 397, Short.MAX_VALUE)
+                        .addComponent(BT_HELP)
+                        .addGap(18, 18, 18)
                         .addComponent(BT_OKAY))
                     .addComponent(BT_NEW_KEY)
                     .addComponent(BT_CSR)
@@ -550,7 +560,9 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
                 .addComponent(BT_IMPORT)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(BT_OKAY)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(BT_OKAY)
+                        .addComponent(BT_HELP))
                     .addComponent(BT_IMPORT_CA))
                 .addContainerGap())
         );
@@ -695,9 +707,16 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
         }
     }//GEN-LAST:event_BT_NEW_KEYActionPerformed
 
+    private void BT_HELPActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_HELPActionPerformed
+    {//GEN-HEADEREND:event_BT_HELPActionPerformed
+        // TODO add your handling code here:
+        UserMain.open_help_panel(this.getClass().getSimpleName());
+}//GEN-LAST:event_BT_HELPActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_CSR;
+    private javax.swing.JButton BT_HELP;
     private javax.swing.JButton BT_IMPORT;
     private javax.swing.JButton BT_IMPORT_CA;
     private javax.swing.JButton BT_NEW_KEY;

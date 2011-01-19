@@ -39,6 +39,7 @@ import dimm.home.ServerConnect.SQLConnect;
 import dimm.home.ServerConnect.ServerCall;
 import dimm.home.SwitchPanels.PanelTools;
 import dimm.home.Utilities.SwingWorker;
+import dimm.home.native_libs.NativeLoader;
 import home.shared.CS_Constants.USERMODE;
 import home.shared.SQL.UserSSOEntry;
 import home.shared.Utilities.LogListener;
@@ -95,6 +96,51 @@ public class UserMain extends javax.swing.JFrame implements LogListener
     public static boolean get_bool_prop( String s, boolean b )
     {
         return Main.get_bool_prop(s, b);
+    }
+
+    public static void open_help_panel( String class_name )
+    {
+        String server = fcc.get_ip();
+
+        int port = (int)Main.get_long_prop( Preferences.HTTPD_PORT, 0, 8000);
+
+
+        String url =  "https://" + server + ":" + port + "/de.mailsecurer.webclient.Login/ManualHandler?panel=" +class_name;
+
+        // OSX HAS NO ACROBAT READER, WE HAVE TO READ MANUAL IN HTML, WHAT A BIG SHIT !!!!!!!
+        if (NativeLoader.is_osx())
+            url += "&mode=html";
+
+        browse(url);
+
+    }
+    static void browse( String url )
+    {
+        if (!java.awt.Desktop.isDesktopSupported())
+        {
+            System.err.println("Desktop is not supported (fatal)");
+            return;
+        }
+
+        java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
+
+        if (!desktop.isSupported(java.awt.Desktop.Action.BROWSE))
+        {
+            System.err.println("Desktop doesn't support the browse action (fatal)");
+            return;
+        }
+
+
+        try
+        {
+            java.net.URI uri = new java.net.URI(url);
+            desktop.browse(uri);
+        }
+        catch (Exception e)
+        {
+            System.err.println(e.getMessage());
+        }
+
     }
 
     // PANELS

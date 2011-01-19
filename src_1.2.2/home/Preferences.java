@@ -63,6 +63,7 @@ public class Preferences
     public static final String SERVER_SSL = "ServerSSL";
     public static final String UI = "UI";
     public static final String CACHE_MAILFILES = "CacheMailfiles";
+    public static final String HTTPD_PORT = "HttpdPort";
 
     
     java.util.Properties props;
@@ -105,6 +106,7 @@ public class Preferences
         prop_names.add( SERVER_SSL );
         prop_names.add( UI );
         prop_names.add( CACHE_MAILFILES );
+        prop_names.add( HTTPD_PORT );
         
                 
         read_props();
@@ -187,7 +189,7 @@ public class Preferences
     }
     
     
-    public void read_props()
+    public final void read_props()
     {
         File prop_file = new File( Main.get_user_path(), "preferences.dat" );
         props = new java.util.Properties();        

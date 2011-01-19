@@ -450,6 +450,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         jPanel2 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         TXTA_STATUS = new javax.swing.JTextArea();
+        BT_HELP1 = new GlossButton();
 
         BT_NEXT.setText(UserMain.getString("Next")); // NOI18N
         BT_NEXT.addActionListener(new java.awt.event.ActionListener() {
@@ -532,7 +533,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 .addComponent(RD_EXCHANGE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(RD_EXCHANGE_MULTI)
-                .addContainerGap(193, Short.MAX_VALUE))
+                .addContainerGap(190, Short.MAX_VALUE))
         );
 
         TP_PANE.addTab(UserMain.getString("Source_type"), PN_SELECT); // NOI18N
@@ -548,7 +549,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         PN_TREELayout.setVerticalGroup(
             PN_TREELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_TREELayout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -592,7 +593,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -643,7 +644,7 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout PN_STATUSLayout = new javax.swing.GroupLayout(PN_STATUS);
@@ -665,6 +666,13 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
 
         TP_PANE.addTab(UserMain.getString("Status"), PN_STATUS); // NOI18N
 
+        BT_HELP1.setText(UserMain.Txt("?")); // NOI18N
+        BT_HELP1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_HELP1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -673,6 +681,8 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(BT_HELP1)
+                        .addGap(18, 18, 18)
                         .addComponent(BT_ABORT)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(BT_BACK)
@@ -693,7 +703,8 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_NEXT)
                     .addComponent(BT_BACK)
-                    .addComponent(BT_ABORT))
+                    .addComponent(BT_ABORT)
+                    .addComponent(BT_HELP1))
                 .addContainerGap())
         );
 
@@ -730,9 +741,16 @@ public class PanelImportMailbox extends GlossDialogPanel implements MouseListene
         this.setVisible(false);
     }//GEN-LAST:event_BT_ABORTActionPerformed
 
+    private void BT_HELP1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_HELP1ActionPerformed
+    {//GEN-HEADEREND:event_BT_HELP1ActionPerformed
+        // TODO add your handling code here:
+        UserMain.open_help_panel(this.getClass().getSimpleName());
+}//GEN-LAST:event_BT_HELP1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     javax.swing.JButton BT_ABORT;
     javax.swing.JButton BT_BACK;
+    javax.swing.JButton BT_HELP1;
     javax.swing.JButton BT_NEXT;
     javax.swing.JComboBox CB_VAULT;
     javax.swing.JTree JT_DIR;
