@@ -20,8 +20,8 @@ public class Connect
     public Connect()
     {
 //        sqc = new ServerWSDLCall();
-        String ip = Main.get_prop(Preferences.SERVER_IP, Main.server_ip );
-        int port = (int)Main.get_long_prop(Preferences.SERVER_PORT, (long)Main.server_port );
+        String ip = Main.get_prop(Preferences.SERVER_IP, Main.get_ip() );
+        int port = (int)Main.get_long_prop(Preferences.SERVER_PORT, (long)Main.get_port() );
         boolean use_ssl = Main.get_bool_prop(Preferences.SERVER_SSL, true );
         sqc = new ServerTCPCall(ip, port, use_ssl);
         sqc.init();

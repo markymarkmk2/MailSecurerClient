@@ -312,7 +312,23 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             ma_id = ma.getId();
 
 
-        UserMain.set_comm_params( ma_id, st.get_ip(), st.get_port() + ma_id + 1, BT_SSL.isSelected() );
+        // DEFAULT PORT IS BASE PORT + 1 + MA_ID
+        int port = st.get_port() + ma_id + 1;
+        String ip = st.get_ip();
+
+        // ALLOW MODIFIED PORT AND IP
+        FunctionCallConnect fcc = new FunctionCallConnect(st.get_ip(), st.get_port(), BT_SSL.isSelected());
+        String answer =  fcc.call_abstract_function("GETSETOPTION CMD:GETTCP MA:" + ma_id );
+        if (answer != null && answer.length() > 3 && answer.charAt(0) == '0')
+        {
+            ParseToken pt = new ParseToken(answer.substring(3));
+            port = (int)pt.GetLongValue("PO:");
+            ip = pt.GetString("IP:");
+        }
+        fcc.close();
+
+
+        UserMain.set_comm_params( ma_id, ip, port, BT_SSL.isSelected() );
 
 
         boolean ret = _do_login(ma_id);
@@ -1055,7 +1071,12 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     {
         ArrayList<Mandant> ma_list = new ArrayList<Mandant>();
 
-        SQLConnect sqc = new SQLConnect(st.get_ip(), Main.server_port, BT_SSL.isSelected() );
+        int port = st.get_port();
+        if (port <= 0)
+            port = Main.get_port();
+
+
+        SQLConnect sqc = new SQLConnect(st.get_ip(), port, BT_SSL.isSelected() );
 
 
         String default_station = Main.get_prop(Preferences.DEFAULT_STATION, gui_default_station);

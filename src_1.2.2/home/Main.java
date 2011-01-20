@@ -48,13 +48,21 @@ public class Main
     }
 
 
+    public static int get_port()
+    {
+        return server_port;
+    }
+    public static String get_ip()
+    {
+        return server_ip;
+    }
 
     // public static final String SERVER_UPDATEWORKER_PATH = "/websense/v5/update/";
     Preferences prefs;
     public static UI_Generic ui;
 
-    public static String server_ip = "127.0.0.1";
-    public static int server_port = 8050;
+    private static String server_ip = "127.0.0.1";
+    private static int server_port = 8050;
 
 
 

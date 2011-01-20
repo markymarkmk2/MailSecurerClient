@@ -284,6 +284,7 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
         jLabel5 = new javax.swing.JLabel();
         PN_DISKSPACES = new javax.swing.JPanel();
         SCP_TABLE = new javax.swing.JScrollPane();
+        BT_HELP1 = new GlossButton();
 
         jLabel4.setText(UserMain.Txt("Mandant")); // NOI18N
 
@@ -328,6 +329,13 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
             .addComponent(SCP_TABLE, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
         );
 
+        BT_HELP1.setText(UserMain.Txt("?")); // NOI18N
+        BT_HELP1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_HELP1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -346,7 +354,9 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
                                 .addComponent(jLabel5)
                                 .addGap(18, 18, 18)
                                 .addComponent(TXT_LIC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 472, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 417, Short.MAX_VALUE)
+                                .addComponent(BT_HELP1)
+                                .addGap(18, 18, 18)
                                 .addComponent(BT_OKAY, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -368,7 +378,8 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OKAY)
                     .addComponent(jLabel5)
-                    .addComponent(TXT_LIC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TXT_LIC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BT_HELP1))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -379,8 +390,15 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
         my_dlg.setVisible(false);
     }//GEN-LAST:event_BT_OKAYActionPerformed
 
+    private void BT_HELP1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_HELP1ActionPerformed
+    {//GEN-HEADEREND:event_BT_HELP1ActionPerformed
+        // TODO add your handling code here:
+        UserMain.open_help_panel(this.getClass().getSimpleName());
+}//GEN-LAST:event_BT_HELP1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BT_HELP1;
     private javax.swing.JButton BT_OKAY;
     private javax.swing.JComboBox CB_MANDANT;
     private javax.swing.JPanel PN_DISKSPACES;

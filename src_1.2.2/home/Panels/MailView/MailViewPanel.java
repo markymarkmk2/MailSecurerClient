@@ -1761,6 +1761,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         jLabel1 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         CB_ENTRIES = new javax.swing.JComboBox();
+        BT_HELP1 = new GlossButton();
         PN_COMPLEX = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -1838,6 +1839,13 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             }
         });
 
+        BT_HELP1.setText(UserMain.Txt("?")); // NOI18N
+        BT_HELP1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_HELP1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PN_SIMPLELayout = new javax.swing.GroupLayout(PN_SIMPLE);
         PN_SIMPLE.setLayout(PN_SIMPLELayout);
         PN_SIMPLELayout.setHorizontalGroup(
@@ -1853,7 +1861,9 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(TXT_QUICKSEARCH, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 155, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(BT_HELP1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 84, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(CB_ENTRIES, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1877,7 +1887,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                     .addComponent(jLabel1)
                     .addComponent(TXT_QUICKSEARCH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(CB_ENTRIES, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
+                    .addComponent(jLabel4)
+                    .addComponent(BT_HELP1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(SCP_LIST, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE))
         );
@@ -2032,11 +2043,11 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                         .addComponent(BT_RESTORE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(BT_OPEN_IN_MAIL)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(BT_VIEW_CONTENT)
-                        .addGap(18, 18, 18)
+                        .addGap(10, 10, 10)
                         .addComponent(BT_OPEN_EML)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(BT_VIEW_CONTENT)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
                         .addComponent(CB_VIEW_CONTENT)
                         .addGap(18, 18, 18)
                         .addComponent(BT_CLOSE)
@@ -2061,8 +2072,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                     .addComponent(BT_RESTORE)
                     .addComponent(BT_OPEN_IN_MAIL)
                     .addComponent(BT_VIEW_CONTENT)
-                    .addComponent(BT_OPEN_EML)
-                    .addComponent(CB_VIEW_CONTENT))
+                    .addComponent(CB_VIEW_CONTENT)
+                    .addComponent(BT_OPEN_EML))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -2370,6 +2381,12 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         BT_SIMPLESEARCHActionPerformed(evt);
     }//GEN-LAST:event_TXT_QUICKSEARCHActionPerformed
 
+    private void BT_HELP1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_HELP1ActionPerformed
+    {//GEN-HEADEREND:event_BT_HELP1ActionPerformed
+        // TODO add your handling code here:
+        UserMain.open_help_panel(this.getClass().getSimpleName());
+}//GEN-LAST:event_BT_HELP1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ADD;
@@ -2377,6 +2394,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     private javax.swing.JButton BT_DEL;
     private javax.swing.JButton BT_EXPORT;
     private javax.swing.JButton BT_FILTERS;
+    private javax.swing.JButton BT_HELP1;
     private javax.swing.JButton BT_OPEN_EML;
     private javax.swing.JButton BT_OPEN_IN_MAIL;
     private javax.swing.JButton BT_RESTORE;

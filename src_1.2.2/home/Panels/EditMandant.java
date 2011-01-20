@@ -1135,7 +1135,6 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
     private void BT_TEST_ENCRYPTIONActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_TEST_ENCRYPTIONActionPerformed
     {//GEN-HEADEREND:event_BT_TEST_ENCRYPTIONActionPerformed
         // TODO add your handling code here:
-        String server_pwd = UserMain.fcc().call_abstract_function("GETSETOPTION CMD:GET NAME:EncryptionPassword", ServerCall.SHORT_CMD_TO);
         SingleTextEditPanel pnl = new SingleTextEditPanel(UserMain.Txt("Passwort"));
 
         GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
@@ -1147,9 +1146,9 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         if (pnl.isOkay())
         {
             String user_pwd = pnl.getText();
+            String ret = UserMain.fcc().call_abstract_function("GETSETOPTION CMD:CHECKENC MA:" + object.getId() + " PWD:" + user_pwd, ServerCall.SHORT_CMD_TO);
 
-            String dec_passwd = CryptTools.crypt_internal( server_pwd, UserMain.self, CryptTools.ENC_MODE.DECRYPT);
-            if (dec_passwd != null && dec_passwd.compareTo(user_pwd) == 0)
+            if (ret != null && ret.length() > 0 && ret.charAt(0) == '0')
             {
                 UserMain.info_ok(this.my_dlg, UserMain.Txt("Das_Passwort_ist_korrekt") );
             }

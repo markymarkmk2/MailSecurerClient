@@ -362,6 +362,7 @@ public class LicensePanel extends GlossDialogPanel implements MouseListener,  Pr
         jLabel1.setText(UserMain.getString("Hardware-ID")); // NOI18N
 
         TXT_HWID.setEditable(false);
+        TXT_HWID.setFont(new java.awt.Font("Courier New", 0, 11)); // NOI18N
 
         jLabel2.setText(UserMain.Txt("Licensestatus")); // NOI18N
 
@@ -385,7 +386,7 @@ public class LicensePanel extends GlossDialogPanel implements MouseListener,  Pr
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(TXT_LIC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 80, Short.MAX_VALUE)
                         .addComponent(BT_NEW_LIC)
                         .addGap(18, 18, 18)
                         .addComponent(BT_OKAY)))

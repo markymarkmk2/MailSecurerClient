@@ -27,11 +27,11 @@
                       <Component id="BT_RESTORE" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="BT_OPEN_IN_MAIL" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="BT_VIEW_CONTENT" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                       <Component id="BT_OPEN_EML" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="56" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="BT_VIEW_CONTENT" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="68" max="32767" attributes="0"/>
                       <Component id="CB_VIEW_CONTENT" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="BT_CLOSE" min="-2" max="-2" attributes="0"/>
@@ -62,8 +62,8 @@
                   <Component id="BT_RESTORE" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="BT_OPEN_IN_MAIL" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="BT_VIEW_CONTENT" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="BT_OPEN_EML" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="CB_VIEW_CONTENT" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="BT_OPEN_EML" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
@@ -103,7 +103,9 @@
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="TXT_QUICKSEARCH" min="-2" pref="174" max="-2" attributes="0"/>
-                      <EmptySpace pref="155" max="32767" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="BT_HELP1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="84" max="32767" attributes="0"/>
                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="CB_ENTRIES" min="-2" pref="78" max="-2" attributes="0"/>
@@ -127,6 +129,7 @@
                           <Component id="TXT_QUICKSEARCH" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="CB_ENTRIES" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="BT_HELP1" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="SCP_LIST" pref="86" max="32767" attributes="0"/>
@@ -235,6 +238,19 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CB_ENTRIESActionPerformed"/>
               </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="BT_HELP1">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="dimm/home/MA_Properties.properties" key="?" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_HELP1ActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new GlossButton()"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>

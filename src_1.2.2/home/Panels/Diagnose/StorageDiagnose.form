@@ -31,7 +31,9 @@
                               <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="TXT_LIC" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="472" max="32767" attributes="0"/>
+                              <EmptySpace pref="417" max="32767" attributes="0"/>
+                              <Component id="BT_HELP1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="BT_OKAY" min="-2" pref="98" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -62,6 +64,7 @@
                   <Component id="BT_OKAY" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="TXT_LIC" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="BT_HELP1" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -175,5 +178,18 @@
         </Container>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JButton" name="BT_HELP1">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="dimm/home/MA_Properties.properties" key="?" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BT_HELP1ActionPerformed"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new GlossButton()"/>
+      </AuxValues>
+    </Component>
   </SubComponents>
 </Form>
