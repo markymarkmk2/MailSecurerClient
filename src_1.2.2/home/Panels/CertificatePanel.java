@@ -627,7 +627,7 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
             String cert = ParseToken.BuildCompressedObjectString( bb );
             // DATA IS VALID NOW
             FunctionCallConnect fcc = UserMain.fcc();
-            String ret = fcc.call_abstract_function("certificate CMD:import AL:mailsecurer KS:mailsecurer CERT:\"" + cert + "\"", FunctionCallConnect.MEDIUM_TIMEOUT );
+            String ret = fcc.call_abstract_function("certificate CMD:import TC:1 AL:mailsecurer KS:mailsecurer CERT:\"" + cert + "\"", FunctionCallConnect.MEDIUM_TIMEOUT );
             if (ret != null && ret.length() > 0 && ret.charAt(0) == '0')
             {
                 UserMain.info_ok(my_dlg, UserMain.Txt("Certificate_was_imported_successful" ));

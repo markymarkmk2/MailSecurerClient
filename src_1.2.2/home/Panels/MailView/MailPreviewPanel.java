@@ -416,7 +416,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             // schedules the document to be rendered in the
             // GUI thread.
             htmlPanel.setDocument(document, ctx);
-
+            
 
             // We pack the JFrame to demonstrate the
             // validity of HtmlPanel's preferred size.
@@ -468,14 +468,30 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
 
     void add_view_panel( Component new_renderer_pane )
     {
+        PN_VIEW.removeAll();
+
         // FALLBACK TO TEXT IF HTML CANNOT RENDER
         if (new_renderer_pane == null)
         {
+            PN_VIEW.add(SCP_PREVIEW);
             new_renderer_pane = create_text_renderer();
+            SCP_PREVIEW.setViewportView(new_renderer_pane);
+            SCP_PREVIEW.getViewport().setOpaque(false);
         }
-
-        SCP_PREVIEW.setViewportView(new_renderer_pane);
-        SCP_PREVIEW.getViewport().setOpaque(false);
+        else
+        {
+        javax.swing.GroupLayout PN_VIEWLayout = new javax.swing.GroupLayout(PN_VIEW);
+        PN_VIEW.setLayout(PN_VIEWLayout);
+        PN_VIEWLayout.setHorizontalGroup(
+            PN_VIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(new_renderer_pane, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
+        );
+        PN_VIEWLayout.setVerticalGroup(
+            PN_VIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(new_renderer_pane, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+        );
+            PN_VIEW.add(new_renderer_pane);
+        }
     }
 
 
@@ -504,8 +520,8 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             }
         });
 
-        SPL_MAIL.setDividerLocation(70);
-        SPL_MAIL.setDividerSize(3);
+        SPL_MAIL.setDividerLocation(50);
+        SPL_MAIL.setDividerSize(2);
         SPL_MAIL.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
         jSplitPane2.setDividerLocation(400);
@@ -521,7 +537,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
+            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
         );
 
         SPL_MAIL.setTopComponent(jPanel1);
@@ -534,7 +550,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         );
         PN_VIEWLayout.setVerticalGroup(
             PN_VIEWLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SCP_PREVIEW, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+            .addComponent(SCP_PREVIEW, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
         );
 
         SPL_MAIL.setBottomComponent(PN_VIEW);
@@ -543,11 +559,11 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(SPL_MAIL, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
-                    .addComponent(BT_CLOSE, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(SPL_MAIL, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
+                    .addComponent(BT_CLOSE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
