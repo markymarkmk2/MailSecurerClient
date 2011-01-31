@@ -170,6 +170,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
     
     public static String WANT_DB_CHANGE_TXT;
 
+    public static final String MS_WEBSITE = "www.mailsecurer.de";
 
     public static int APPL_X_SIZE = 800;
     public static int APPL_Y_SIZE = 600;
@@ -235,7 +236,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
 
     public void call_navigation_click()
     {
-        UserMain.info_ok("TODO: Website");
+        browse( MS_WEBSITE );
     }
 
     public USERMODE getUserLevel()
@@ -587,6 +588,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
     }
     public static void set_comm_params( int mandant_id, String ip, int port, boolean ssl )
     {
+        //System.err.println("Setting comm: " + mandant_id + " " + ip + " " + port);
         if (sqc != null)
             sqc.close();
 
