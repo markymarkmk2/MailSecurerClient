@@ -54,7 +54,7 @@
     </Component>
     <Container class="javax.swing.JSplitPane" name="SPL_MAIL">
       <Properties>
-        <Property name="dividerLocation" type="int" value="50"/>
+        <Property name="dividerLocation" type="int" value="70"/>
         <Property name="dividerSize" type="int" value="2"/>
         <Property name="orientation" type="int" value="0"/>
       </Properties>
@@ -76,7 +76,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jSplitPane2" alignment="0" pref="49" max="32767" attributes="0"/>
+                  <Component id="jSplitPane2" alignment="0" pref="69" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -126,7 +126,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="SCP_PREVIEW" alignment="0" pref="301" max="32767" attributes="0"/>
+                  <Component id="SCP_PREVIEW" alignment="0" pref="281" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>

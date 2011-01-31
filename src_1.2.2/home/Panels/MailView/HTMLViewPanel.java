@@ -21,7 +21,6 @@ import java.net.URLConnection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
-import javax.swing.SwingUtilities;
 import org.lobobrowser.html.parser.*;
 import org.lobobrowser.html.test.*;
 import org.lobobrowser.html.gui.*;

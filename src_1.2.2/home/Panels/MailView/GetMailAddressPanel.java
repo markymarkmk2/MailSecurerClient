@@ -29,28 +29,32 @@ public class GetMailAddressPanel extends GlossDialogPanel
     private boolean okay = false;
 
     /** Creates new form GetMailAddressPanel */
-    public GetMailAddressPanel( ArrayList<String> list)
+    public GetMailAddressPanel(  ArrayList<String> to_list)
     {
         initComponents();
-        CB_MAILLIST.removeAllItems();
+        CB_TO_MAILLIST.removeAllItems();
 
-        if (list != null)
+        if (to_list != null)
         {
-            for (int i = 0; i < list.size(); i++)
+            for (int i = 0; i < to_list.size(); i++)
             {
-                CB_MAILLIST.addItem( list.get(i) );
+                CB_TO_MAILLIST.addItem( to_list.get(i) );
             }
         }
     }
 
-    String get_mail()
+
+    String get_to_mail()
     {
-        if (CB_MAILLIST.getSelectedItem() != null)
-            return CB_MAILLIST.getSelectedItem().toString();
+        JTextComponent tc = (JTextComponent) CB_TO_MAILLIST.getEditor().getEditorComponent();
+        if (tc != null && tc.getText() != null && tc.getText().length() > 0)
+            return tc.getText();
 
-        JTextComponent tc = (JTextComponent) CB_MAILLIST.getEditor().getEditorComponent();
+        if (CB_TO_MAILLIST.getSelectedItem() != null)
+            return CB_TO_MAILLIST.getSelectedItem().toString();
 
-        return tc.getText();
+       
+        return "";
     }
 
     /** This method is called from within the constructor to
@@ -62,15 +66,10 @@ public class GetMailAddressPanel extends GlossDialogPanel
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        CB_MAILLIST = new javax.swing.JComboBox();
         BT_OKAY = new GlossButton();
         BT_ABORT = new GlossButton();
-
-        jLabel1.setText(UserMain.Txt("EMailaddress")); // NOI18N
-
-        CB_MAILLIST.setEditable(true);
-        CB_MAILLIST.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jLabel2 = new javax.swing.JLabel();
+        CB_TO_MAILLIST = new javax.swing.JComboBox();
 
         BT_OKAY.setText(UserMain.Txt("OK")); // NOI18N
         BT_OKAY.addActionListener(new java.awt.event.ActionListener() {
@@ -86,6 +85,11 @@ public class GetMailAddressPanel extends GlossDialogPanel
             }
         });
 
+        jLabel2.setText(UserMain.Txt("To")); // NOI18N
+
+        CB_TO_MAILLIST.setEditable(true);
+        CB_TO_MAILLIST.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -94,9 +98,9 @@ public class GetMailAddressPanel extends GlossDialogPanel
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(CB_MAILLIST, 0, 232, Short.MAX_VALUE))
+                        .addComponent(jLabel2)
+                        .addGap(30, 30, 30)
+                        .addComponent(CB_TO_MAILLIST, 0, 211, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -111,9 +115,9 @@ public class GetMailAddressPanel extends GlossDialogPanel
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(CB_MAILLIST, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                    .addComponent(jLabel2)
+                    .addComponent(CB_TO_MAILLIST, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OKAY, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(BT_ABORT, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -131,8 +135,8 @@ public class GetMailAddressPanel extends GlossDialogPanel
     private void BT_OKAYActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_OKAYActionPerformed
     {//GEN-HEADEREND:event_BT_OKAYActionPerformed
         // TODO add your handling code here:
-        String m = get_mail();
-        if (!Validator.is_valid_email(m))
+        
+        if (!Validator.is_valid_email(get_to_mail()))
         {
             UserMain.errm_ok(UserMain.getString("Die_Mailadresse_ist_nicht_okay"));
             return;
@@ -147,8 +151,8 @@ public class GetMailAddressPanel extends GlossDialogPanel
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JButton BT_OKAY;
-    private javax.swing.JComboBox CB_MAILLIST;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JComboBox CB_TO_MAILLIST;
+    private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
 
     /**
