@@ -23,6 +23,7 @@ import dimm.home.Utilities.SwingWorker;
 import home.shared.CS_Constants.USERMODE;
 import home.shared.SQL.OptCBEntry;
 import home.shared.SQL.UserSSOEntry;
+import home.shared.Utilities.Validator;
 import home.shared.hibernate.Mandant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -322,8 +323,18 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         if (answer != null && answer.length() > 3 && answer.charAt(0) == '0')
         {
             ParseToken pt = new ParseToken(answer.substring(3));
-            port = (int)pt.GetLongValue("PO:");
-            ip = pt.GetString("IP:");
+            int _port = (int)pt.GetLongValue("PO:");
+            if (_port != 0)
+            {
+                port = _port;
+            }
+            
+            String _ip = pt.GetString("IP:");
+            // ONLY USE REAL IPS
+            if (!_ip.equals("127.0.0.1") && _ip.length() > 0)
+            {
+                ip = _ip;
+            }
         }
         fcc.close();
 
@@ -796,8 +807,10 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         
         FunctionCallConnect fcc = UserMain.fcc();
 
+                
         String ret = fcc.call_abstract_function("auth_user CMD:admin MA:" + m_id + " NM:'" + nname + "' PW:'" + pwd + "'", FunctionCallConnect.MEDIUM_TIMEOUT );
 
+                
         if (ret == null)
         {
             UserMain.errm_ok(UserMain.getString("Die_Authentifizierung_ist_fehlgeschlagen"));
