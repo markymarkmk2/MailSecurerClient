@@ -104,8 +104,6 @@ public class GlossTable extends JTable
             setOpaque(false);
             setGridColor(Main.ui.get_nice_gray());
             getTableHeader().setOpaque(true);
-            setRowHeight(20);
-            setRowMargin(4);
         }
         else
         {
@@ -113,6 +111,8 @@ public class GlossTable extends JTable
             setShowVerticalLines(false);
             setShowHorizontalLines(true);
         }
+        setRowHeight(20);
+        setRowMargin(4);
     }
 
 

@@ -558,8 +558,9 @@ public class UserMain extends javax.swing.JFrame implements LogListener
         navPanel.enable_button(PBC_ADMIN, false);
         navPanel.enable_button(PBC_TOOLS, false);
         navPanel.enable_button(PBC_SYSTEM, false);
-        navPanel.enable_button(PBC_SEARCH, true);
+        navPanel.enable_button(PBC_SEARCH, false);
         navPanel.add_button(getString("Anmelden"), PBC_LOGIN, null);
+        navPanel.enable_button(PBC_LOGIN, true);
         
         Dimension auto_size = this.getSize();
         navPanel.setSize(auto_size);
@@ -620,7 +621,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
         update_panels();
     }
 
-    void update_panels()
+    public void update_panels()
     {
         if (this.getUserLevel() != USERMODE.UL_DUMMY)
         {
@@ -629,7 +630,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
                 navPanel.enable_button(PBC_ADMIN, false);
                 navPanel.enable_button(PBC_TOOLS, false);
                 navPanel.enable_button(PBC_SYSTEM, true);
-                navPanel.enable_button(PBC_SEARCH, true );
+                navPanel.enable_button(PBC_SEARCH, false );
             }
             else if (this.getUserLevel() == USERMODE.UL_ADMIN)
             {
@@ -655,7 +656,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
             navPanel.enable_button(PBC_ADMIN, false);
             navPanel.enable_button(PBC_TOOLS, false);
             navPanel.enable_button(PBC_SYSTEM, false);
-            navPanel.enable_button(PBC_SEARCH, true );
+            navPanel.enable_button(PBC_SEARCH, false );
             switch_to_panel( PBC_LOGIN );
         }
         navPanel.update_active_panel();        
@@ -666,7 +667,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
     public void switch_to_panel( int id)
     {
         navPanel.switch_to_panel( id);
-        this.repaint();
+        navPanel.update_active_panel();
     }
 
     public int get_act_panel_id()

@@ -247,6 +247,9 @@
                       <ResourceString bundle="dimm/home/MA_Properties.properties" key="Eigener_Webserver" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CB_OWN_HTTPDActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="BT_TEST_ENCRYPTION">
                   <Properties>

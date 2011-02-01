@@ -860,6 +860,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             @Override
             public void run()
             {
+                main.update_panels();
                 main.switch_to_panel(UserMain.PBC_ADMIN);
             }
         });
@@ -928,6 +929,8 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             @Override
             public void run()
             {
+                main.update_panels();
+
                 if (main.getUserLevel() == USERMODE.UL_ADMIN )
                     main.switch_to_panel(UserMain.PBC_ADMIN);
                 else
@@ -970,6 +973,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             @Override
             public void run()
             {
+                main.update_panels();
                 main.switch_to_panel(UserMain.PBC_SYSTEM);
             }
         });

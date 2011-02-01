@@ -363,6 +363,11 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         });
 
         CB_OWN_HTTPD.setText(UserMain.Txt("Eigener_Webserver")); // NOI18N
+        CB_OWN_HTTPD.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CB_OWN_HTTPDActionPerformed(evt);
+            }
+        });
 
         BT_TEST_ENCRYPTION.setText(UserMain.Txt("Test_Encryptionpassword")); // NOI18N
         BT_TEST_ENCRYPTION.addActionListener(new java.awt.event.ActionListener() {
@@ -1126,10 +1131,25 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         TXT_IMAP_PORT.setText( (CB_IMAP_SSL.isSelected() ? "993" : "143" ));
     }//GEN-LAST:event_CB_IMAP_SSLActionPerformed
 
+    void show_act_httpd_port()
+    {
+        int port = 8000;
+        if ( CB_OWN_HTTPD.isSelected() )
+        {
+            port = 8001 + object.getId();
+        }
+        UserMain.info_ok(this.my_dlg, UserMain.Txt("Das_Webinterface_dieses_Mandanten_erreichen_Sie_unter") + " " + UserMain.fcc().get_ip() + ":" + port );
+    }
+
     private void CB_HTTPDActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_HTTPDActionPerformed
     {//GEN-HEADEREND:event_CB_HTTPDActionPerformed
         // TODO add your handling code here:
         CB_OWN_HTTPD.setVisible( CB_HTTPD.isSelected() );
+
+        if (CB_HTTPD.isSelected())
+        {
+            show_act_httpd_port();
+        }
     }//GEN-LAST:event_CB_HTTPDActionPerformed
 
     private void BT_TEST_ENCRYPTIONActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_TEST_ENCRYPTIONActionPerformed
@@ -1164,6 +1184,12 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         // TODO add your handling code here:
         open_help(this.getClass().getSimpleName());
 }//GEN-LAST:event_BT_HELP1ActionPerformed
+
+    private void CB_OWN_HTTPDActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_OWN_HTTPDActionPerformed
+    {//GEN-HEADEREND:event_CB_OWN_HTTPDActionPerformed
+        // TODO add your handling code here:
+        show_act_httpd_port();
+    }//GEN-LAST:event_CB_OWN_HTTPDActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
