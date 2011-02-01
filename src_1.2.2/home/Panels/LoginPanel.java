@@ -269,6 +269,28 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                 }
                 UserMain.self.hide_busy();
 
+                if (st_list.isEmpty())
+                {
+                    if (UserMain.errm_ok_cancel(my_dlg, UserMain.Txt("Es_wurde_kein_Mailsecurer_gefunden,_wollen_Sie_die_IP_manuell_eingeben?")))
+                    {
+                        PreferencesPanel pnk = new PreferencesPanel();
+                        GenericGlossyDlg dlg = new GenericGlossyDlg(main, true, pnk);
+                        dlg.setVisible(true);
+
+                        if (pnk.isOkay())
+                        {
+                            SwingUtilities.invokeLater( new Runnable() {
+
+                                @Override
+                                public void run()
+                                {
+                                     set_lists_bg();
+                                }
+                            });
+                        }
+                    }
+                }
+
                 return null;
             }
         };
@@ -999,6 +1021,9 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                 String name = pt.GetString("NAME:");
                 String ip = pt.GetString("IP:");
                 int port = (int) pt.GetLongValue("PO:");
+                if (port == 0)
+                    port = Main.get_port();
+                
                 boolean only_this = pt.GetBoolean("OT:");
 
                 StationEntry st = new StationEntry(name, station, version, ip, port);
@@ -1015,7 +1040,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+                e.printStackTrace(System.err);
                 UserMain.errm_ok(my_dlg, UserMain.Txt("Error_parsing_station_entry_from_preferences"));
             }
         }
@@ -1048,6 +1073,8 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                     String name = pt.GetString("NAME:");
                     String ip = pt.GetString("IP:");
                     int port = (int) pt.GetLongValue("PO:");
+                    if (port == 0)
+                        port = Main.get_port();
 
                     StationEntry st = new StationEntry(name, station, version, ip, port);
 
@@ -1072,7 +1099,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
         UserMain.self.hide_busy();
 

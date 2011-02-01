@@ -62,14 +62,10 @@ public class PreferencesPanel extends GlossDialogPanel
             String ip = pt.GetString("IP:");
             long po = pt.GetLongValue("PO:");
             boolean only_this = pt.GetBoolean("OT:");
-            
-
-            if (ip != null && ip.length() > 0 && po > 0)
-            {
-                TXT_SERVER_IP.setText(ip);
+            TXT_SERVER_IP.setText(ip);
+            if (po > 0)
                 TXT_SERVER_PORT.setText(Long.toString(po) );
-                CB_NO_SCANNING.setSelected(only_this);
-            }
+            CB_NO_SCANNING.setSelected(only_this);
         }
 
         String l_code = Main.get_prop( Preferences.COUNTRYCODE, "DE");
@@ -102,7 +98,7 @@ public class PreferencesPanel extends GlossDialogPanel
 
 
         String ds = "";
-        if (TXT_SERVER_IP.getText().length() > 0 && TXT_SERVER_PORT.getText().length() > 0)
+        if (TXT_SERVER_IP.getText().length() > 0)
         {
             ds = "NAME:MailSecurer IP:" + TXT_SERVER_IP.getText() + " PO:" + TXT_SERVER_PORT.getText();
             ds += " OT:" + (CB_NO_SCANNING.isSelected() ? "1":"0");
@@ -156,6 +152,8 @@ public class PreferencesPanel extends GlossDialogPanel
         CB_NO_SCANNING = new javax.swing.JCheckBox();
         CB_CACHE_MAILS = new javax.swing.JCheckBox();
         jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
 
         BT_OK.setText(UserMain.Txt("Okay")); // NOI18N
         BT_OK.addActionListener(new java.awt.event.ActionListener() {
@@ -194,6 +192,10 @@ public class PreferencesPanel extends GlossDialogPanel
 
         jLabel6.setText(UserMain.Txt("Cache_Mails")); // NOI18N
 
+        jLabel7.setText(UserMain.Txt("No_Scan_for_Servers")); // NOI18N
+
+        jLabel8.setText("(default 8050)");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -201,29 +203,37 @@ public class PreferencesPanel extends GlossDialogPanel
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(BT_ABORT)
-                        .addGap(18, 18, 18)
-                        .addComponent(BT_OK))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel1)
-                            .addComponent(jLabel3)
                             .addComponent(jLabel4)
                             .addComponent(jLabel5)
-                            .addComponent(jLabel6))
-                        .addGap(20, 20, 20)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel3))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(CB_CHECK_NEW)
-                            .addComponent(COMBO_UI, 0, 187, Short.MAX_VALUE)
-                            .addComponent(COMBO_LANG, 0, 187, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(TXT_SERVER_PORT, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(CB_NO_SCANNING))
-                            .addComponent(TXT_SERVER_IP, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(CB_CACHE_MAILS))))
+                                .addGap(20, 20, 20)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(COMBO_UI, 0, 243, Short.MAX_VALUE)
+                                    .addComponent(COMBO_LANG, 0, 243, Short.MAX_VALUE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(TXT_SERVER_PORT, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel8))
+                                    .addComponent(TXT_SERVER_IP, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(CB_CACHE_MAILS)
+                                    .addComponent(CB_NO_SCANNING)
+                                    .addComponent(CB_CHECK_NEW))
+                                .addGap(214, 214, 214))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(BT_ABORT)
+                        .addGap(18, 18, 18)
+                        .addComponent(BT_OK)))
                 .addContainerGap())
         );
 
@@ -240,11 +250,7 @@ public class PreferencesPanel extends GlossDialogPanel
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(COMBO_UI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(CB_CHECK_NEW))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(43, 43, 43)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(TXT_SERVER_IP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -252,11 +258,19 @@ public class PreferencesPanel extends GlossDialogPanel
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(TXT_SERVER_PORT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(CB_NO_SCANNING))
+                    .addComponent(jLabel8))
                 .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel7)
+                    .addComponent(CB_NO_SCANNING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(CB_CACHE_MAILS)
                     .addComponent(jLabel6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(CB_CHECK_NEW)
+                    .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK)
@@ -298,6 +312,8 @@ public class PreferencesPanel extends GlossDialogPanel
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     // End of variables declaration//GEN-END:variables
 
     @Override
