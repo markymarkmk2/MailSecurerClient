@@ -236,7 +236,8 @@ public class UserMain extends javax.swing.JFrame implements LogListener
 
     public void call_navigation_click()
     {
-        browse( MS_WEBSITE );
+        String website = Main.get_prop(Preferences.WEBSITE, MS_WEBSITE);
+        browse( website );
     }
 
     public USERMODE getUserLevel()
@@ -309,6 +310,8 @@ public class UserMain extends javax.swing.JFrame implements LogListener
 
     static public String getString(String string)
     {
+        if (string == null)
+            return "";
         try
         {
             if (bundle != null)
@@ -345,7 +348,7 @@ public class UserMain extends javax.swing.JFrame implements LogListener
     static public void init_text_interface(String lcode)
     {
         if (lcode == null || lcode.length() == 0)            
-            lcode = Main.get_prop( Preferences.COUNTRYCODE, "EN" );                 
+            lcode = Main.get_prop( Preferences.COUNTRYCODE, "DE" );
         
         if (lcode.compareTo("DE") == 0)
         {
@@ -603,8 +606,8 @@ public class UserMain extends javax.swing.JFrame implements LogListener
 
     public boolean is_touchscreen()
     {
-        long ts = Main.get_long_prop( Preferences.TOUCHSCREEN, 0L );           
-        return ts > 0 ? true : false;
+     /*   long ts = Main.get_long_prop( Preferences.TOUCHSCREEN, 0L );*/
+        return /*ts > 0 ? true :*/ false;
     }
 
     private void handle_login()

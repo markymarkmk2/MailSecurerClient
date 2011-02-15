@@ -19,7 +19,7 @@ import javax.swing.UIManager;
  */
 public class Main
 {
-    private static String version_str = "1.5.1";
+    private static String version_str = "1.5.2";
     
 
     static Main me;
@@ -536,14 +536,5 @@ public class Main
         return null;
     }
 
-    static public boolean is_proxy_enabled()
-    {
-        String px_enable = get_prop(Preferences.PXENABLE);
-        if (px_enable != null && px_enable.length() > 0 && px_enable.charAt(0) == '1')
-        {
-            return true;
-        }
-
-        return false;
-    }
+    
 }

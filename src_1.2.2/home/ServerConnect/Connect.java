@@ -5,9 +5,6 @@
 
 package dimm.home.ServerConnect;
 
-import dimm.home.Main;
-import dimm.home.Preferences;
-
 /**
  *
  * @author mw
@@ -16,7 +13,7 @@ public class Connect
 {
 
     ServerCall sqc;
-
+/*
     public Connect()
     {
 //        sqc = new ServerWSDLCall();
@@ -25,7 +22,7 @@ public class Connect
         boolean use_ssl = Main.get_bool_prop(Preferences.SERVER_SSL, true );
         sqc = new ServerTCPCall(ip, port, use_ssl);
         sqc.init();
-    }
+    }*/
     public Connect(String ip, int port, boolean ssl )
     {
 //        sqc = new ServerWSDLCall();

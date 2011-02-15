@@ -22,7 +22,7 @@
                   <Component id="LB_USER" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="LB_PWD" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel4" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
+                  <Component id="LB_MANDANT" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
                   <Component id="jLabel2" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
                   <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
@@ -63,7 +63,7 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="LB_MANDANT" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="CB_MANDANT" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
@@ -202,7 +202,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CB_SERVERActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel4">
+    <Component class="javax.swing.JLabel" name="LB_MANDANT">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="dimm/home/MA_Properties.properties" key="Mandant" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>

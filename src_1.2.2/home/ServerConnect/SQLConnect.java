@@ -87,13 +87,13 @@ public class SQLConnect extends Connect implements SQLObjectGetter
     ArrayList<SQLListContainer> sql_res_list;
 
 
-
+/*
     public SQLConnect()
     {
         super();
         build_sql_res_list();
 
-    }
+    }*/
     public SQLConnect(String ip, int port, boolean ssl)
     {
         super(ip, port, ssl);

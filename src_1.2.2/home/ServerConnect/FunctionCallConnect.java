@@ -18,11 +18,11 @@ public class FunctionCallConnect extends Connect
     public static final int MEDIUM_TIMEOUT = 30;
     public static final int LONG_TIMEOUT = 600;
     public static final int NO_TIMEOUT = 0;
-    
+    /*
     public FunctionCallConnect()
     {
         super();
-    }
+    }*/
     public FunctionCallConnect(String ip, int port, boolean ssl)
     {
         super(ip, port, ssl);

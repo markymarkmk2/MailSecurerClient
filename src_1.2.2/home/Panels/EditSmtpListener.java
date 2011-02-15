@@ -80,6 +80,9 @@ public class EditSmtpListener extends GenericEditPanel
             TXT_USER.setText(object.getUsername());
             TXTP_PWD.setText(object.getPassword());
 
+            CB_SMTP_AUTH.setSelected( !test_flag( CS_Constants.SL_NO_SMTP_AUTH) );
+            CB_SMTP_AUTHActionPerformed(null);
+
             
         }
         else
@@ -113,15 +116,17 @@ public class EditSmtpListener extends GenericEditPanel
         CB_VAULT = new javax.swing.JComboBox();
         TXT_PORT1 = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        LB_USER = new javax.swing.JLabel();
         TXT_USER = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
+        LB_PWD = new javax.swing.JLabel();
         TXTP_PWD = new javax.swing.JPasswordField();
         jPanel1 = new javax.swing.JPanel();
         RB_INSECURE = new javax.swing.JRadioButton();
         RB_TLS_IV_AVAIL = new javax.swing.JRadioButton();
         RB_TLS_FORCE = new javax.swing.JRadioButton();
         RB_SSL = new javax.swing.JRadioButton();
+        jLabel13 = new javax.swing.JLabel();
+        CB_SMTP_AUTH = new javax.swing.JCheckBox();
         PN_BUTTONS = new javax.swing.JPanel();
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
@@ -166,7 +171,7 @@ public class EditSmtpListener extends GenericEditPanel
 
         jLabel4.setText(UserMain.getString("Port")); // NOI18N
 
-        jLabel5.setText(UserMain.getString("User")); // NOI18N
+        LB_USER.setText(UserMain.getString("User")); // NOI18N
 
         TXT_USER.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -179,7 +184,7 @@ public class EditSmtpListener extends GenericEditPanel
             }
         });
 
-        jLabel6.setText(UserMain.getString("Password")); // NOI18N
+        LB_PWD.setText(UserMain.getString("Password")); // NOI18N
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(UserMain.Txt("Security"))); // NOI18N
 
@@ -245,6 +250,14 @@ public class EditSmtpListener extends GenericEditPanel
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jLabel13.setText(UserMain.Txt("Authentification")); // NOI18N
+
+        CB_SMTP_AUTH.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CB_SMTP_AUTHActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PN_ACTIONLayout = new javax.swing.GroupLayout(PN_ACTION);
         PN_ACTION.setLayout(PN_ACTIONLayout);
         PN_ACTIONLayout.setHorizontalGroup(
@@ -256,22 +269,29 @@ public class EditSmtpListener extends GenericEditPanel
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel4)
-                            .addComponent(jLabel6)
+                            .addComponent(jLabel13)
                             .addComponent(jLabel3))
-                        .addGap(61, 61, 61)
+                        .addGap(33, 33, 33)
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(CB_VAULT, 0, 196, Short.MAX_VALUE)
-                            .addComponent(TXTP_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
-                            .addComponent(TXT_USER, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
-                            .addComponent(TXT_PORT1, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
-                            .addComponent(TXT_SERVER1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE))
-                        .addGap(10, 10, 10))
-                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 281, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                                .addComponent(CB_SMTP_AUTH)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_ACTIONLayout.createSequentialGroup()
+                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(CB_VAULT, javax.swing.GroupLayout.Alignment.LEADING, 0, 200, Short.MAX_VALUE)
+                                    .addComponent(TXT_PORT1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                                    .addComponent(TXT_SERVER1, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, PN_ACTIONLayout.createSequentialGroup()
+                                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(LB_USER)
+                                            .addComponent(LB_PWD))
+                                        .addGap(23, 23, 23)
+                                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(TXT_USER)
+                                            .addComponent(TXTP_PWD, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE))))
+                                .addGap(10, 10, 10)))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(BT_DISABLED, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         PN_ACTIONLayout.setVerticalGroup(
@@ -289,20 +309,24 @@ public class EditSmtpListener extends GenericEditPanel
                             .addComponent(jLabel4)
                             .addComponent(TXT_PORT1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(CB_SMTP_AUTH, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(TXT_USER, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(LB_USER))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel6)
-                            .addComponent(TXTP_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(CB_VAULT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addComponent(BT_DISABLED)))
-                .addContainerGap())
+                            .addComponent(TXTP_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(LB_PWD))))
+                .addGap(18, 18, 18)
+                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(CB_VAULT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addGap(18, 18, 18)
+                .addComponent(BT_DISABLED)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         PN_BUTTONS.setDoubleBuffered(false);
@@ -360,16 +384,19 @@ public class EditSmtpListener extends GenericEditPanel
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(PN_ACTION, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(PN_BUTTONS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(PN_BUTTONS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(PN_ACTION, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(PN_ACTION, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(PN_BUTTONS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -453,6 +480,17 @@ public class EditSmtpListener extends GenericEditPanel
         open_help(this.getClass().getSimpleName());
 }//GEN-LAST:event_BT_HELP1ActionPerformed
 
+    private void CB_SMTP_AUTHActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_SMTP_AUTHActionPerformed
+    {//GEN-HEADEREND:event_CB_SMTP_AUTHActionPerformed
+        // TODO add your handling code here:
+        boolean sa = CB_SMTP_AUTH.isSelected();
+
+        LB_PWD.setVisible(sa);
+        LB_USER.setVisible(sa);
+        TXT_USER.setVisible(sa);
+        TXTP_PWD.setVisible(sa);
+}//GEN-LAST:event_CB_SMTP_AUTHActionPerformed
+
     SwingWorker sw = null;
     
     
@@ -461,7 +499,10 @@ public class EditSmtpListener extends GenericEditPanel
     private javax.swing.JCheckBox BT_DISABLED;
     private javax.swing.JButton BT_HELP1;
     private javax.swing.JButton BT_OK;
+    private javax.swing.JCheckBox CB_SMTP_AUTH;
     private javax.swing.JComboBox CB_VAULT;
+    private javax.swing.JLabel LB_PWD;
+    private javax.swing.JLabel LB_USER;
     private javax.swing.JPanel PN_ACTION;
     private javax.swing.JPanel PN_BUTTONS;
     private javax.swing.JRadioButton RB_INSECURE;
@@ -473,11 +514,10 @@ public class EditSmtpListener extends GenericEditPanel
     private javax.swing.JTextField TXT_SERVER1;
     private javax.swing.JTextField TXT_USER;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 
@@ -599,6 +639,9 @@ public class EditSmtpListener extends GenericEditPanel
             return true;
         }
 
+        if (test_flag(CS_Constants.SL_NO_SMTP_AUTH) != !CB_SMTP_AUTH.isSelected())
+            return true;
+
         
         return false;
     }
@@ -613,15 +656,18 @@ public class EditSmtpListener extends GenericEditPanel
     protected boolean is_plausible()
     {
 
-        if (!Validator.is_valid_name( TXT_USER.getText(), 80))
+        if (CB_SMTP_AUTH.isSelected())
         {
-            UserMain.errm_ok(UserMain.getString("Der_User_ist_nicht_okay"));
-            return false;
-        }
-        if (get_pwd().length() == 0 || get_pwd().length() > 80)
-        {
-            UserMain.errm_ok(UserMain.getString("Das_Passwort_ist_nicht_okay"));
-            return false;
+            if (!Validator.is_valid_name( TXT_USER.getText(), 80))
+            {
+                UserMain.errm_ok(UserMain.getString("Der_User_ist_nicht_okay"));
+                return false;
+            }
+            if (get_pwd().length() == 0 || get_pwd().length() > 80)
+            {
+                UserMain.errm_ok(UserMain.getString("Das_Passwort_ist_nicht_okay"));
+                return false;
+            }
         }
 
 
@@ -662,12 +708,13 @@ public class EditSmtpListener extends GenericEditPanel
 
         object.setFlags("0");
         set_flag( BT_DISABLED.isSelected(), CS_Constants.IMF_DISABLED);
+        set_flag( !CB_SMTP_AUTH.isSelected(), CS_Constants.SL_NO_SMTP_AUTH);
         if (RB_TLS_IV_AVAIL.isSelected())
-            set_flag(true, CS_Constants.IMF_USE_TLS_IF_AVAIL);
+            set_flag(true, CS_Constants.SL_USE_TLS_IF_AVAIL);
         if (RB_TLS_FORCE.isSelected())
-            set_flag(true, CS_Constants.IMF_USE_TLS_FORCE);
+            set_flag(true, CS_Constants.SL_USE_TLS_FORCE);
         if (RB_SSL.isSelected())
-            set_flag(true, CS_Constants.IMF_USE_SSL);
+            set_flag(true, CS_Constants.SL_SSL);
 
         object.setDiskArchive( dacm.get_selected_da());
         object.setUsername( user );

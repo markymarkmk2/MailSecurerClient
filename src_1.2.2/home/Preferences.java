@@ -28,18 +28,6 @@ public class Preferences
 {
 
     ArrayList<String> prop_names;
-    public static final String PORT = "Port";
-    public static final String SERVER = "Server";
-    public static final String DB_CONNECT = "DBConnectStr";
-    public static final String DB_USER = "DBUser";
-    public static final String DB_PWD = "DBPwd";
-    public static final String DB_CLASSNAME = "DBClassName";
-    public static final String VPN_SERVER = "VPNServer";
-    public static final String VPN_PORT = "VPNPort";
-    public static final String SONGPATH = "SongPath";
-    public static final String PXENABLE = "ProxyEnable";
-    public static final String PXSERVER = "ProxyServer";
-    public static final String PXPORT = "ProxyPort";
     public static final String DEFAULT_USER = "DefaultUser";
     public static final String DEFAULT_STATION = "DefaultStation";
     public static final String X_POS = "XPos";
@@ -47,13 +35,7 @@ public class Preferences
     public static final String COUNTRYCODE = "CountryCode";
     public static final String CHECK_NEWS = "CheckNews";
     public static final String WEBSITE = "Website";
-    public static final String TOUCHSCREEN = "TouchScreen";
-    public static final String UPDATESERVER = "UpdateServer";
-    public static final String MALLORCAPROXYSERVER = "MallorcaProxyServer";
-    public static final String TS_DEVICE_ID = "TSDeviceID";
     public static final String VKEY_ALPHA = "VKeyboardAlpha";
-    public static final String SERVER_IP = "ServerIP";
-    public static final String SERVER_PORT = "ServerPort";
     public static final String HTML_HQ_RENDERER = "HTMLHQRenderer";
     public static final String SERVER_SSL = "ServerSSL";
     public static final String UI = "UI";
@@ -68,18 +50,6 @@ public class Preferences
     {
         prop_names = new ArrayList<String>();
 
-        prop_names.add(PORT);
-        prop_names.add(SERVER);
-        prop_names.add(PXENABLE);
-        prop_names.add(PXSERVER);
-        prop_names.add(PXPORT);
-        prop_names.add(DB_CONNECT);
-        prop_names.add(DB_USER);
-        prop_names.add(DB_PWD);
-        prop_names.add(DB_CLASSNAME);
-        prop_names.add(VPN_SERVER);
-        prop_names.add(VPN_PORT);
-        prop_names.add(SONGPATH);
         prop_names.add(DEFAULT_USER);
         prop_names.add(DEFAULT_STATION);
         prop_names.add(X_POS);
@@ -87,14 +57,8 @@ public class Preferences
         prop_names.add(COUNTRYCODE);
         prop_names.add(CHECK_NEWS);
         prop_names.add(WEBSITE);
-        prop_names.add(TOUCHSCREEN);
-        prop_names.add(UPDATESERVER);
-        prop_names.add(MALLORCAPROXYSERVER);
-        prop_names.add(TS_DEVICE_ID);
         prop_names.add(VKEY_ALPHA);
 
-        prop_names.add(SERVER_IP);
-        prop_names.add(SERVER_PORT);
         prop_names.add(HTML_HQ_RENDERER);
         prop_names.add(SERVER_SSL);
         prop_names.add(UI);

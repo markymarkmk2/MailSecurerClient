@@ -286,19 +286,28 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel11" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel14" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel13" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="LB_PWD" min="-2" max="-2" attributes="0"/>
+                                          <Component id="LB_USER" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="1" attributes="0">
+                                          <Component id="TXT_SMTP_USER" pref="217" max="32767" attributes="1"/>
+                                          <Component id="TXTP_SMTP_PWD" alignment="0" pref="217" max="32767" attributes="1"/>
+                                      </Group>
+                                  </Group>
                                   <Component id="TXT_MAILFROM" alignment="1" pref="274" max="32767" attributes="1"/>
                                   <Component id="TXT_SMTP_HOST" alignment="0" pref="274" max="32767" attributes="1"/>
-                                  <Component id="TXTP_SMTP_PWD" alignment="0" pref="274" max="32767" attributes="1"/>
-                                  <Component id="TXT_SMTP_USER" alignment="0" pref="274" max="32767" attributes="1"/>
-                                  <Component id="TXT_SMTP_PORT" alignment="0" pref="274" max="32767" attributes="1"/>
                                   <Component id="TXT_MAILTO" alignment="1" pref="274" max="32767" attributes="1"/>
+                                  <Component id="TXT_SMTP_PORT" alignment="0" min="-2" pref="66" max="-2" attributes="1"/>
+                                  <Component id="CB_SMTP_AUTH" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="PN_SECURITY" min="-2" max="-2" attributes="0"/>
@@ -324,17 +333,22 @@
                                   <Component id="TXT_SMTP_PORT" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="jLabel13" max="32767" attributes="1"/>
+                                  <Component id="CB_SMTP_AUTH" alignment="1" max="32767" attributes="1"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="TXT_SMTP_USER" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="LB_USER" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="LB_PWD" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="TXTP_SMTP_PWD" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="TXT_MAILFROM" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -344,7 +358,7 @@
                                   <Component id="jLabel14" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="TXT_MAILTO" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="69" max="32767" attributes="0"/>
+                              <EmptySpace pref="67" max="32767" attributes="0"/>
                               <Component id="BT_TEST" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -376,7 +390,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="TXT_SMTP_PORT">
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel10">
+            <Component class="javax.swing.JLabel" name="LB_USER">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="dimm/home/MA_Properties.properties" key="Username" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
@@ -385,7 +399,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="TXT_SMTP_USER">
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel11">
+            <Component class="javax.swing.JLabel" name="LB_PWD">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="dimm/home/MA_Properties.properties" key="Password" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
@@ -568,6 +582,18 @@
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="TXT_MAILTOMouseClicked"/>
               </Events>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="CB_SMTP_AUTH">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CB_SMTP_AUTHActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel13">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="dimm/home/MA_Properties.properties" key="Authentification" replaceFormat="UserMain.Txt(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
             </Component>
           </SubComponents>
         </Container>

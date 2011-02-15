@@ -251,7 +251,7 @@ public class HTMLViewPanel extends GlossDialogPanel {
     private void BT_WEBActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_WEBActionPerformed
     {//GEN-HEADEREND:event_BT_WEBActionPerformed
         // TODO add your handling code here:
-        String website = Main.get_prop(Preferences.WEBSITE, "www.gruppemedia.de");
+        String website = Main.get_prop(Preferences.WEBSITE, UserMain.MS_WEBSITE);
         String[] cmd = {"cmd", "/c start " + website };
         final CmdExecutor exe = new CmdExecutor(cmd);
         

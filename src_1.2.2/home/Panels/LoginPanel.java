@@ -463,7 +463,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
         PF_PWD = new javax.swing.JPasswordField();
         jLabel2 = new javax.swing.JLabel();
         CB_SERVER = new javax.swing.JComboBox();
-        jLabel4 = new javax.swing.JLabel();
+        LB_MANDANT = new javax.swing.JLabel();
         CB_MANDANT = new javax.swing.JComboBox();
         BT_SSL = new javax.swing.JCheckBox();
         jLabel3 = new javax.swing.JLabel();
@@ -522,7 +522,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             }
         });
 
-        jLabel4.setText(UserMain.Txt("Mandant")); // NOI18N
+        LB_MANDANT.setText(UserMain.Txt("Mandant")); // NOI18N
 
         CB_MANDANT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -550,7 +550,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                     .addComponent(LB_USER)
                     .addComponent(LB_PWD)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(LB_MANDANT, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addGap(6, 6, 6)
@@ -585,7 +585,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
                     .addComponent(CB_SERVER, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
+                    .addComponent(LB_MANDANT)
                     .addComponent(CB_MANDANT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -623,6 +623,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             TXT_USER.setVisible(true);
             LB_USER.setVisible(true);
              CB_MANDANT.setVisible(true);
+             LB_MANDANT.setVisible(true);
              TXT_USER.requestFocus();
         }
         if (CB_USER.getSelectedIndex() == 1) // MULTIADMIN
@@ -631,11 +632,13 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
             TXT_USER.setVisible(true);
             LB_USER.setVisible(true);
             CB_MANDANT.setVisible(true);
+            LB_MANDANT.setVisible(true);
             TXT_USER.requestFocus();
         }
         if (CB_USER.getSelectedIndex() == 2) // SYSADMIN
         {
             CB_MANDANT.setVisible(false);
+            LB_MANDANT.setVisible(false);
             BT_CHANGE_PWD.setVisible(false);
             TXT_USER.setVisible(true);
             LB_USER.setVisible(true);
@@ -806,6 +809,7 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     private javax.swing.JComboBox CB_MANDANT;
     private javax.swing.JComboBox CB_SERVER;
     private javax.swing.JComboBox CB_USER;
+    private javax.swing.JLabel LB_MANDANT;
     private javax.swing.JLabel LB_PWD;
     private javax.swing.JLabel LB_USER;
     private javax.swing.JPasswordField PF_PWD;
@@ -813,7 +817,6 @@ public class LoginPanel extends GlossDialogPanel implements CommContainer
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     // End of variables declaration//GEN-END:variables
 
     @Override

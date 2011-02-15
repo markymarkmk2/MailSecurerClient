@@ -20,12 +20,16 @@ import java.io.OutputStream;
  */
 public class StreamConnect extends Connect
 {
-
+/*
     public StreamConnect()
     {
         super();
     }
-
+*/
+    public StreamConnect(String ip, int port, boolean ssl)
+    {
+        super(ip, port, ssl);
+    }
 
     public OutputStream open_out_stream( String file ) throws IOException
     {
@@ -39,7 +43,7 @@ public class StreamConnect extends Connect
     public static void main( String[] args )
     {
 
-        StreamConnect sc = new StreamConnect();
+        StreamConnect sc = new StreamConnect("192.168.1.145", 12345, true);
 
         try
         {
