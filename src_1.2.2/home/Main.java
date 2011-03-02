@@ -19,7 +19,7 @@ import javax.swing.UIManager;
  */
 public class Main
 {
-    private static String version_str = "1.5.2";
+    private static String version_str = "1.5.3";
     
 
     static Main me;
@@ -55,6 +55,17 @@ public class Main
     public static String get_ip()
     {
         return server_ip;
+    }
+
+    public static void sleep( int i )
+    {
+        try
+        {
+            Thread.sleep(i);
+        }
+        catch (InterruptedException interruptedException)
+        {
+        }
     }
 
     // public static final String SERVER_UPDATEWORKER_PATH = "/websense/v5/update/";

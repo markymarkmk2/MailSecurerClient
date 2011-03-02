@@ -40,6 +40,7 @@ import home.shared.filter.VarTypeEntry;
 import home.shared.hibernate.Role;
 import home.shared.mail.EncodedMailInputStream;
 import home.shared.mail.EncodedMailOutputStream;
+import home.shared.mail.RFCMailAddress;
 import home.shared.mail.RFCMimeMail;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -57,6 +58,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -345,6 +347,7 @@ class MailTableModel extends AbstractTableModel
     static final int SIZE_COL = 5;
     static final int _4EYES_COL = 6;
     static final int UID_COL = 7;
+    static final int BCC_COL = 8;
     static final int SHOW_COLUMNS = 7;
 
 
@@ -380,6 +383,7 @@ class MailTableModel extends AbstractTableModel
         field_list.add(CS_Constants.FLD_SIZE);
         field_list.add(CS_Constants.VFLD_4EYES);
         field_list.add(CS_Constants.FLD_UID_NAME);
+        field_list.add(CS_Constants.FLD_BCC);
 
         _4eyes_protected = UserMain.Txt("Protected_by_4-eyes_principle");
 
@@ -498,6 +502,7 @@ class MailTableModel extends AbstractTableModel
         try
         {
             val = MimeUtility.decodeText(val);
+            val = decode_undetected_utf8( val );
         }
         catch (Exception ex)
         {
@@ -509,6 +514,28 @@ class MailTableModel extends AbstractTableModel
     String get_uid( int row )
     {
         return result_array.get(row).get(UID_COL);
+    }
+    String get_bcc( int row )
+    {
+        return result_array.get(row).get(BCC_COL);
+    }
+
+    private String decode_undetected_utf8( String val )
+    {
+        // TRY TO DETECT UNDECODED 2-BYTE UTF-8
+        if (val.indexOf('Ã') == -1)
+           return val;
+
+        try
+        {
+            byte[] arr = val.getBytes("iso-8859-1");
+            String ret = new String(arr, "utf-8");
+            return ret;
+        }
+        catch (UnsupportedEncodingException unsupportedEncodingException)
+        {
+        }
+        return val;
     }
 }
 
@@ -1674,6 +1701,10 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             // CREATE AND PARSE MAIL
             RFCMimeMail mmsg = new RFCMimeMail();
             mmsg.parse(bais);
+            if (model.get_bcc(row) != null)
+            {
+                mmsg.getEmail_list().add(new RFCMailAddress(model.get_bcc(row), RFCMailAddress.ADR_TYPE.BCC));
+            }
 
             // CREATE AND ADD PANEL
             MailPreviewPanel panel = new MailPreviewPanel(mmsg, model.get_uid(row));

@@ -344,6 +344,7 @@ class ExchangeImportManager extends ProfileManager
         {
             return run_import(node_list);
         }
+        dialog.finished = true;
         return 0;
     }
 

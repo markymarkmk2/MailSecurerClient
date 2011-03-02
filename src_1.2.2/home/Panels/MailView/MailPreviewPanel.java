@@ -20,6 +20,7 @@ import dimm.home.UserMain;
 import dimm.home.Utilities.CmdExecutor;
 import dimm.home.native_libs.NativeLoader;
 import home.shared.CS_Constants;
+import home.shared.mail.RFCMailAddress;
 import home.shared.mail.RFCMimeMail;
 import java.awt.Component;
 import java.awt.EventQueue;
@@ -36,11 +37,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
-import java.util.StringTokenizer;
-import javax.mail.Address;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.mail.MessagingException;
 import javax.mail.Part;
-import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeUtility;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -62,45 +62,52 @@ class MailHeaderModel extends AbstractTableModel
 {
 
     RFCMimeMail msg;
-    Address[] from;
-    Address[] to;
+    String bcc;
+    /*ArrayList<String> from;
+    ArrayList<String> to;*/
 
     public MailHeaderModel( RFCMimeMail msg )
     {
         this.msg = msg;
+/*
+        from = new ArrayList<String>();
+        to = new ArrayList<String>();
         MimeMessage mime_msg = msg.getMsg();
-        try
+        for (int i = 0; i < msg.getEmail_list().size(); i++)
         {
-            from = mime_msg.getFrom();
-            to = mime_msg.getAllRecipients();
-        }
-        catch (MessagingException messagingException)
-        {
-        }
+            if (msg.getEmail_list().get(i).is_from())
+                from.add( msg.getEmail_list().get(i).get_mail() );
+            else
+                to.add( msg.getEmail_list().get(i).get_mail() );
+        }*/
     }
 
     @Override
     public Object getValueAt( int row, int column )
     {
+        RFCMailAddress mail = msg.getEmail_list().get(row);
         if (column == 0)
         {
-            if (row < from.length)
+
+            if (mail.getAdr_type() == RFCMailAddress.ADR_TYPE.FROM)
                 return "From:";
-            else
+            if (mail.getAdr_type() == RFCMailAddress.ADR_TYPE.TO)
                 return "To:";
+            if (mail.getAdr_type() == RFCMailAddress.ADR_TYPE.CC)
+                return "Cc:";
+            if (mail.getAdr_type() == RFCMailAddress.ADR_TYPE.BCC)
+                return "Bcc:";
+
+            return "?:";
         }
         else
         {
-            Address adr;
-            if (row < from.length)
-                adr = from[row];
-            else
-                adr = to[row - from.length];
+            String adr = mail.get_mail();
 
-            String ret = adr.toString();
+            String ret = adr;
             try
             {
-                ret = MimeUtility.decodeText(adr.toString());
+                ret = MimeUtility.decodeText(adr);
             }
             catch (Exception ex)
             {
@@ -119,13 +126,8 @@ class MailHeaderModel extends AbstractTableModel
 
     @Override
     public int getRowCount()
-    {
-        if (from == null)
-            return 0;
-        if (to == null)
-            return 0;
-
-        return from.length + to.length;
+    {       
+        return msg.getEmail_list().size();
     }
 
     @Override
@@ -225,6 +227,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         initComponents();
 
 
+
         html_txt = msg.get_html_content();                
         plain_txt = msg.get_text_content();
 
@@ -252,12 +255,12 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             String charset = null;
             if (html_part != null)
             {
-                charset = get_charset(html_part);
+                charset = RFCMimeMail.get_charset(html_part);
             }
             if (charset == null)
                 charset = "UTF-8";
 
-            renderer = create_lobobrowser_renderer(html_txt, charset);
+            renderer = create_lobobrowser_renderer(html_txt, "utf-8");
        
         return renderer;
     }
@@ -279,51 +282,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         }
     }
 
-    static public String get_charset( Part p )
-    {
-        if (p == null)
-            return null;
-
-        String mt;
-        try
-        {
-            mt = p.getContentType();
-        }
-        catch (MessagingException ex)
-        {
-            return null;
-        }
-        int atr_idx = mt.indexOf(';');
-        if (atr_idx == -1)
-            atr_idx = mt.indexOf('\n');
-        if (atr_idx == -1)
-            return "";
-
-
-        String attr = mt.substring(atr_idx) + 1;
-
-        String delim = "[/;\"=\n\r\t ]";
-        StringTokenizer st = new StringTokenizer(attr, delim);
-        String name = st.nextToken();
-        try
-        {
-            if (name.compareToIgnoreCase("charset") == 0)
-            {
-                String eq = st.nextToken("\"\n\r");
-                String val = eq;
-                if (st.hasMoreTokens())
-                    val = st.nextToken("\"\n\r");
-                
-                return javax.mail.internet.MimeUtility.javaCharset(val);
-            }
-        }
-        catch (Exception e)
-        {
-            System.out.println("Invalid Charset: " + mt);
-        }
-        return "UTF-8";
-    }
-
+  
     void set_table_models()
     {
         MailHeaderModel header_model = new MailHeaderModel(msg);
@@ -400,6 +359,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             htmlPanel.setPreferredWidth(800);
 
             ctx = new SimpleHtmlRendererContext(htmlPanel, new SimpleUserAgentContext());
+            Logger.getLogger("org.lobobrowser").setLevel(Level.SEVERE);
 
             // Note: This example does not perform incremental
             // rendering while loading the initial document.

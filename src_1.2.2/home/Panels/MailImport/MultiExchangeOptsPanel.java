@@ -43,8 +43,9 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
 
     MultiCheckboxPanel mailboxes;
 
+
     ArrayList<DistinguishedFolderIdNameType> folders;
-    boolean[] folder_checked_val_array;
+    //boolean[] folder_checked_val_array;
 
 
     /** Creates new form TBirdOptsPanel */
@@ -127,7 +128,7 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
        folders.add(DistinguishedFolderIdNameType.VOICEMAIL );
        folders.add(DistinguishedFolderIdNameType.PUBLICFOLDERSROOT );
 
-       folder_checked_val_array = new boolean[folders.size() + 1];
+       boolean[] folder_checked_val_array = new boolean[folders.size() + 1];
        String[] name_array = new String[folders.size() + 1];
 
        folder_checked_val_array[0] = true;
@@ -141,9 +142,9 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
             folder_checked_val_array[i + 1] = true;
        }
 
-        MultiCheckboxPanel pnl = new MultiCheckboxPanel(name_array, folder_checked_val_array, UserMain.Txt("Mailboxes") );
-        pnl.show_buttons(false);
-        PN_MBOX_LIST.add(pnl);
+        mailboxes = new MultiCheckboxPanel(name_array, folder_checked_val_array, UserMain.Txt("Mailboxes") );
+        mailboxes.show_buttons(false);
+        PN_MBOX_LIST.add(mailboxes);
 
 
     }
@@ -429,11 +430,14 @@ public class MultiExchangeOptsPanel extends javax.swing.JPanel
 
     boolean add_user_folders()
     {
+         boolean[] folder_checked_val_array = mailboxes.get_val_array();
         return folder_checked_val_array[0];
     }
     ArrayList<DistinguishedFolderIdNameType> get_selected_folder_id_list()
     {
         ArrayList<DistinguishedFolderIdNameType> list = new ArrayList<DistinguishedFolderIdNameType>();
+
+        boolean[] folder_checked_val_array = mailboxes.get_val_array();
 
         // INDEX 0 IS RESEVED FOR ALL USER FOLDERS
         for (int i = 1; i < folder_checked_val_array.length; i++)
