@@ -43,7 +43,6 @@ import home.shared.mail.EncodedMailOutputStream;
 import home.shared.mail.RFCMailAddress;
 import home.shared.mail.RFCMimeMail;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -627,10 +626,40 @@ class SimpleSearchTableModel extends AbstractTableModel implements MouseListener
 
         if (pnl.get_quick_search().length() > 0)
         {
+            /*
             ExprEntry ee = new ExprEntry(null, CS_Constants.VFLD_ALL, pnl.get_quick_search(), OPERATION.CONTAINS, TYPE.STRING, false, false);
             // ALL ARE ADDED AS "AND"
-            al.add(ee);
+            al.add(ee);*/
+            String[] fields = CS_Constants.VFLD_ALL.split(",");
+            String val = pnl.get_quick_search();
+
+            String[] vals;
+            // ADD ONLY VALID ENTRIES
+            if (val.charAt(0) == '\"')
+            {
+                vals = val.split("\"");
+            }
+            else
+            {
+                vals = val.split(" ");
+            }
+            for (int v = 0; v < vals.length; v++)
+            {
+                if (vals[v].length() == 0)
+                    continue;
+
+                GroupEntry ge = new GroupEntry(al, false, false);
+                for (int i = 0; i < fields.length; i++)
+                {
+                    String field = fields[i];
+                    // ALL ARE ADDED AS "OR"
+                    ExprEntry ee = new ExprEntry( ge.getChildren(), field, vals[v], ExprEntry.OPERATION.CONTAINS, ExprEntry.TYPE.STRING, /*neg*/false, /*is_or*/true );
+                    ge.getChildren().add(ee);
+                }
+                al.add(ge);
+            }
         }
+
 
 
 
@@ -1230,7 +1259,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                     }
                     synchronized( preview_list )
                     {
-                        if (preview_list.size() == 0)
+                        if (preview_list.isEmpty())
                         {
                             view_sw = null;
                             break;
@@ -1370,7 +1399,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     {
 
         // FIRST 80 CHARS, NO CONTROLCODES, NO SPECIAL CHARS
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         char last_char = 0;
         for (int i = 0; i < name.length(); i++)
@@ -1701,11 +1730,30 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             // CREATE AND PARSE MAIL
             RFCMimeMail mmsg = new RFCMimeMail();
             mmsg.parse(bais);
+            
+            // HANDLE BCC VISIBILITY
             if (model.get_bcc(row) != null)
             {
-                mmsg.getEmail_list().add(new RFCMailAddress(model.get_bcc(row), RFCMailAddress.ADR_TYPE.BCC));
-            }
+                // ADD BCC IF WE ARE ADMIN OR IF WE ARE  BCC OURSELF OR IF WE ARE SENDER
+                String bcc = model.get_bcc(row);
+                boolean show_bcc = false;
 
+                if (UserMain.self.user_has_role_option( OptCBEntry.ADMIN))
+                    show_bcc = true;
+
+
+                if (mmsg.is_in_email( UserMain.self.get_act_mailaliases(), RFCMailAddress.ADR_TYPE.FROM ))
+                    show_bcc = true;
+
+                if (mmsg.is_in_email( UserMain.self.get_act_mailaliases(), RFCMailAddress.ADR_TYPE.BCC ))
+                    show_bcc = true;
+
+                if (show_bcc)
+                {
+                    mmsg.getEmail_list().add(new RFCMailAddress( bcc, RFCMailAddress.ADR_TYPE.BCC));
+                }
+            }
+            
             // CREATE AND ADD PANEL
             MailPreviewPanel panel = new MailPreviewPanel(mmsg, model.get_uid(row));
             panel.setDlg(my_dlg);
@@ -1739,8 +1787,12 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     void run_open_mail( int row, File file, boolean encoded )
     {
         String _subject = "Unknown";
+        String uuid = "???";
         if ( row >= 0)
+        {
             _subject = table.getModel().getValueAt(row, MailTableModel.SUBJECT_COL).toString();
+             uuid = model.get_uid(row);
+        }
 
         final String subject = _subject;
 
@@ -1763,7 +1815,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             bais.close();
             bais = null;
 
-            final MailPreviewPanel panel = new MailPreviewPanel(mmsg, model.get_uid(row));
+            final MailPreviewPanel panel = new MailPreviewPanel(mmsg, uuid);
 
             SwingUtilities.invokeLater( new Runnable() {
 

@@ -30,6 +30,7 @@ import java.awt.event.MouseListener;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.CharArrayReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -37,6 +38,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.MessagingException;
@@ -62,7 +64,7 @@ class MailHeaderModel extends AbstractTableModel
 {
 
     RFCMimeMail msg;
-    String bcc;
+    //String bcc;
     /*ArrayList<String> from;
     ArrayList<String> to;*/
 
@@ -255,12 +257,12 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             String charset = null;
             if (html_part != null)
             {
-                charset = RFCMimeMail.get_charset(html_part);
+                charset = get_charset(html_part);
             }
             if (charset == null)
                 charset = "UTF-8";
 
-            renderer = create_lobobrowser_renderer(html_txt, "utf-8");
+            renderer = create_lobobrowser_renderer(html_txt, charset);
        
         return renderer;
     }
@@ -282,6 +284,50 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         }
     }
 
+     static public String get_charset( Part p )
+    {
+        if (p == null)
+            return null;
+
+        String mt;
+        try
+        {
+            mt = p.getContentType();
+        }
+        catch (MessagingException ex)
+        {
+            return null;
+        }
+        int atr_idx = mt.indexOf(';');
+        if (atr_idx == -1)
+            atr_idx = mt.indexOf('\n');
+        if (atr_idx == -1)
+            return "";
+
+
+        String attr = mt.substring(atr_idx) + 1;
+
+        String delim = "[/;\"=\n\r\t ]";
+        StringTokenizer st = new StringTokenizer(attr, delim);
+        String name = st.nextToken();
+        try
+        {
+            if (name.compareToIgnoreCase("charset") == 0)
+            {
+                String eq = st.nextToken("\"\n\r");
+                String val = eq;
+                if (st.hasMoreTokens())
+                    val = st.nextToken("\"\n\r");
+
+                return javax.mail.internet.MimeUtility.javaCharset(val);
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println("Invalid Charset: " + mt);
+        }
+        return "UTF-8";
+    }
   
     void set_table_models()
     {
@@ -318,7 +364,9 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
     {
         HtmlPanel htmlPanel = null;
         Reader reader = null;
-        InputStream in = null;
+
+        //UserMain.errm_ok(my_dlg, html_txt);
+        //InputStream in = null;
         try
         {
             Charset cset = null;
@@ -330,14 +378,15 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             {
                 cset = Charset.defaultCharset();
             }
-            in = new ByteArrayInputStream(html_txt.getBytes(cset));
+            //in = new ByteArrayInputStream(html_txt.getBytes(cset));
             String uri = "??";
             SimpleHtmlRendererContext ctx;
 
             // A Reader should be created with the correct charset,
             // which may be obtained from the Content-Type header
             // of an HTTP response.
-            reader = new InputStreamReader(in);
+            //reader = new InputStreamReader(in);
+            reader = new CharArrayReader(html_txt.toCharArray());
          
             // InputSourceImpl constructor with URI recommended
             // so the renderer can resolve page component URLs.
@@ -370,7 +419,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
 
             Document document = null;
             document = builder.parse(is);
-            in.close();
+            //in.close();
 
             // Set the document in the HtmlPanel. This method
             // schedules the document to be rendered in the
@@ -410,10 +459,10 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
         {
             try
             {
-                if (in != null)
+                /*if (in != null)
                 {
                     in.close();
-                }
+                }*/
                 if (reader != null)
                 {
                     reader.close();

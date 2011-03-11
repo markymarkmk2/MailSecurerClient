@@ -19,7 +19,7 @@ import javax.swing.UIManager;
  */
 public class Main
 {
-    private static String version_str = "1.5.3";
+    private static String version_str = "1.5.4";
     
 
     static Main me;
