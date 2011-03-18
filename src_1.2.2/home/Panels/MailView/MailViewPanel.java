@@ -1455,7 +1455,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             {
                 try
                 {
-                    f = File.createTempFile("mstemp", ".eml");
+                    f = File.createTempFile("mstemp", ".eml", new File(Main.get_tmp_path()));
                     f.deleteOnExit();
                 }
                 catch (IOException ex)
@@ -1636,7 +1636,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                 }
                 else
                 {
-                    tmp_file = File.createTempFile("dlml", ".tmp", new File("."));
+                    // TempFile may not be writable, write it to USER DIR
+                    tmp_file = File.createTempFile("dlml", ".tmp", new File(Main.get_tmp_path()));
                     tmp_file.deleteOnExit();
                 }
             }

@@ -178,8 +178,7 @@ public class Preferences
         try
         {
             FileInputStream istr = new FileInputStream(prop_file);
-            props.load(istr);
-            write_props = props;
+            props.load(istr);            
             istr.close();
         }
         catch (Exception exc)
@@ -189,11 +188,11 @@ public class Preferences
 
         prop_file = new File(Main.get_user_path(), "preferences.dat");
         user_props = new java.util.Properties();
+        write_props = user_props;
         try
         {
             FileInputStream istr = new FileInputStream(prop_file);
             user_props.load(istr);
-            write_props = user_props;
             istr.close();
         }
         catch (Exception exc)

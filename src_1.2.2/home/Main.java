@@ -19,7 +19,7 @@ import javax.swing.UIManager;
  */
 public class Main
 {
-    private static String version_str = "1.5.4";
+    private static String version_str = "1.5.5";
     
 
     static Main me;
@@ -99,6 +99,14 @@ public class Main
     public static String get_cache_path()
     {
         File f = new File( get_user_path(), "cache");
+        if (!f.exists())
+            f.mkdir();
+
+        return f.getAbsolutePath();
+    }
+    public static String get_tmp_path()
+    {
+        File f = new File( get_user_path(), "tmp");
         if (!f.exists())
             f.mkdir();
 

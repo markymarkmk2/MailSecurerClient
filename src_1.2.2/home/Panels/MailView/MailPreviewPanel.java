@@ -665,7 +665,7 @@ public class MailPreviewPanel extends GlossDialogPanel implements MouseListener
             }
             else
             {
-                tmp_file = File.createTempFile("dlml", extension, new File("."));
+                tmp_file = File.createTempFile("dlml", extension, new File(Main.get_tmp_path()));
                 tmp_file.deleteOnExit();
             }
         }
