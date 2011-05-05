@@ -61,8 +61,11 @@ public class EditDiskSpace extends GenericEditPanel
 
         object_overview = _overview;
         model = object_overview.get_object_model();
-        
+
+        is_inside_cb_status = true;
         CB_STATUS.removeAllItems();
+
+
         CB_MODE.removeAllItems();
         CB_CAP_DIM.removeAllItems();
 
@@ -89,15 +92,10 @@ public class EditDiskSpace extends GenericEditPanel
             save_object = new DiskSpace( object );
 
             String status = object.getStatus();
-            for (int i = 0; i < object_overview.get_ds_entry_list().length; i++)
-            {
-                DiskSpaceOverview.DiskSpaceTypeEntry mte = object_overview.get_ds_entry_list()[i];
-                if (mte.type.compareTo(status)== 0)
-                {
-                    CB_STATUS.setSelectedIndex(i);
-                    break;
-                }
-            }
+           
+            set_cb_status( status );
+            
+            
             TXT_PATH.setText(object.getPath());
             TXT_CAP.setText( get_capa_val( object.getMaxCapacity() ));
             CB_CAP_DIM.setSelectedItem(get_capa_dim( object.getMaxCapacity() ) );
@@ -124,9 +122,23 @@ public class EditDiskSpace extends GenericEditPanel
             BT_DISABLED.setSelected( false );
 
         }
+        is_inside_cb_status = false;
     }
 
-    String get_capa_dim( String cap)
+    final void set_cb_status( String status )
+    {
+        for (int i = 0; i < object_overview.get_ds_entry_list().length; i++)
+        {
+            DiskSpaceOverview.DiskSpaceTypeEntry mte = object_overview.get_ds_entry_list()[i];
+            if (mte.type.compareTo(status)== 0)
+            {
+                CB_STATUS.setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+
+    final String get_capa_dim( String cap)
     {
         int idx = cap.indexOf(' ');
         if (idx > 0)
@@ -136,7 +148,7 @@ public class EditDiskSpace extends GenericEditPanel
         return "";
     }
 
-    String get_capa_val( String cap)
+    final String get_capa_val( String cap)
     {
         if (cap == null)
             return "_";
@@ -226,6 +238,11 @@ public class EditDiskSpace extends GenericEditPanel
         jLabel4.setText(UserMain.getString("Status")); // NOI18N
 
         CB_STATUS.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        CB_STATUS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CB_STATUSActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText(UserMain.getString("Mode")); // NOI18N
 
@@ -433,6 +450,34 @@ public class EditDiskSpace extends GenericEditPanel
         // TODO add your handling code here:
         open_help(this.getClass().getSimpleName());
 }//GEN-LAST:event_BT_HELP1ActionPerformed
+
+    private boolean is_inside_cb_status = false;
+    
+    private void CB_STATUSActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_STATUSActionPerformed
+    {//GEN-HEADEREND:event_CB_STATUSActionPerformed
+        // TODO add your handling code here:
+        if (is_inside_cb_status)
+            return;
+
+        if (CB_STATUS.getSelectedIndex() < 0)
+            return;
+
+        is_inside_cb_status = true;
+
+        String old_status = object.getStatus();
+        if (old_status == null || old_status.compareTo(CS_Constants.DS_EMPTY) == 0)
+        {
+            CB_STATUS.setSelectedIndex(0);
+            UserMain.errm_ok(UserMain.Txt("Sie_koennen_nicht_den_Status_eines_leeren_DiskSpaces_veraendern"));
+        }
+        else if (CB_STATUS.getSelectedIndex() == 0)
+        {
+            UserMain.errm_ok(UserMain.Txt("Sie_koennen_nicht_den_Status_eines_DiskSpaces_zurücksetzen"));
+            set_cb_status(old_status);
+        }
+        is_inside_cb_status = false;
+
+    }//GEN-LAST:event_CB_STATUSActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -468,7 +513,7 @@ public class EditDiskSpace extends GenericEditPanel
         catch (NumberFormatException numberFormatException)
         {
             String object_name = object.getClass().getSimpleName();
-            Logger.getLogger("").log(Level.SEVERE, "Invalid flag for " + object_name+ " " + numberFormatException );
+            UserMain.errm_ok( "Invalid flag for " + object_name+ " " + numberFormatException );
         }
 
         return flags;
@@ -490,7 +535,7 @@ public class EditDiskSpace extends GenericEditPanel
         object.setFlags(Integer.toString(flags));
     }
 
-    boolean object_is_disabled()
+    final boolean object_is_disabled()
     {
         int flags = 0;
 
@@ -498,7 +543,7 @@ public class EditDiskSpace extends GenericEditPanel
 
         return ((flags & CS_Constants.DS_DISABLED) == CS_Constants.DS_DISABLED);
     }
-    int object_get_mode()
+    final int object_get_mode()
     {
         int flags = 0;
 
