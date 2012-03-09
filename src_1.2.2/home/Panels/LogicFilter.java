@@ -24,7 +24,9 @@ import home.shared.filter.LogicEntry;
 import home.shared.filter.VarTypeEntry;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.text.BadLocationException;
 
@@ -69,6 +71,8 @@ public class LogicFilter extends GlossDialogPanel
 {
     LogicEntryModel model;
 
+    static SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy  HH:mm");
+
     private boolean okay;
     ArrayList<VarTypeEntry> var_names;
     ArrayList<String> var_nice_names;
@@ -108,7 +112,7 @@ public class LogicFilter extends GlossDialogPanel
         COMBO_NAME.setSelectedIndex(0);
         set_operation( 0);
     }
-    void set_operation( int var_idx )
+    final void set_operation( int var_idx )
     {
         in_init = true;
         if (var_idx <0 || var_idx >= var_names.size())
@@ -172,7 +176,14 @@ public class LogicFilter extends GlossDialogPanel
     }
     public static String get_nice_txt( ExprEntry e)
     {
-        return (e.isNeg() ? UserMain.Txt("not") + " " : "") + UserMain.Txt(e.getName()) + " " + get_op_nice_txt( e.getOperation(), e.getType() ) + " " + e.getValue();
+        String value = e.getValue();
+        if (e.getType() == TYPE.TIMESTAMP)
+        {
+            Long l = Long.parseLong(e.getValue(), 16);
+            Date d = new Date(l);
+            value = sdf.format(d);
+        }
+        return (e.isNeg() ? UserMain.Txt("not") + " " : "") + UserMain.Txt(e.getName()) + " " + get_op_nice_txt( e.getOperation(), e.getType() ) + " " + value;
     }
     public static String get_nice_txt( LogicEntry e)
     {
@@ -225,7 +236,7 @@ public class LogicFilter extends GlossDialogPanel
     {
         ArrayList<LogicEntry> parent_list;
 
-        if (model.getChildren().size() == 0)
+        if (model.getChildren().isEmpty())
         {
             parent_list = model.getChildren();
         }
@@ -399,7 +410,7 @@ public class LogicFilter extends GlossDialogPanel
     }
 
 
-    void set_txta_display( )
+    final void set_txta_display( )
     {
         int pos = TXTA_LIST.getCaretPosition();
 

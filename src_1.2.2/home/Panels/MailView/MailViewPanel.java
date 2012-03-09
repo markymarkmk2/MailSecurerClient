@@ -8,7 +8,6 @@
  *
  * Created on 15.07.2009, 16:14:22
  */
-
 package dimm.home.Panels.MailView;
 
 import dimm.home.Main;
@@ -26,7 +25,6 @@ import dimm.home.UserMain;
 import dimm.home.Utilities.CXStream;
 import dimm.home.Utilities.CmdExecutor;
 import home.shared.Utilities.ParseToken;
-import home.shared.Utilities.SizeStr;
 import dimm.home.Utilities.SwingWorker;
 import dimm.home.native_libs.NativeLoader;
 import home.shared.CS_Constants;
@@ -34,18 +32,17 @@ import home.shared.SQL.OptCBEntry;
 import home.shared.filter.ExprEntry;
 import home.shared.filter.ExprEntry.OPERATION;
 import home.shared.filter.ExprEntry.TYPE;
-import home.shared.filter.GroupEntry;
-import home.shared.filter.LogicEntry;
 import home.shared.filter.VarTypeEntry;
 import home.shared.hibernate.Role;
 import home.shared.mail.EncodedMailInputStream;
 import home.shared.mail.EncodedMailOutputStream;
 import home.shared.mail.RFCMailAddress;
 import home.shared.mail.RFCMimeMail;
-import java.awt.Component;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedInputStream;
@@ -57,848 +54,102 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.mail.internet.MimeUtility;
+import javax.mail.MessagingException;
+import javax.mail.Part;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SpinnerDateModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
-
 
 class MailPreviewDlg extends GenericGlossyDlg
 {
+
     UserMain main;
-    MailPreviewDlg( UserMain parent, RFCMimeMail mail, String uid)
+
+    MailPreviewDlg( UserMain parent, RFCMimeMail mail, String uid )
     {
-        super( parent, true, new MailPreviewPanel(mail, uid));
+        super(parent, true, new MailPreviewPanel(mail, uid));
         main = parent;
 
         this.set_next_location(parent);
 
-        this.setSize( 700, 600);
+        this.setSize(700, 600);
     }
-    MailPreviewDlg( UserMain parent, MailPreviewPanel panel)
+
+    MailPreviewDlg( UserMain parent, MailPreviewPanel panel )
     {
-        super( parent, true,panel);
+        super(parent, true, panel);
         main = parent;
 
         this.set_next_location(parent);
 
-        this.setSize( 700, 600);
+        this.setSize(700, 600);
     }
 }
-
-
-class MBoxFilterOutputStream extends OutputStream
-{
-    byte[] FROM = {0,'F', 'r', 'o', 'm', ' ' };
-    OutputStream os;
-
-    public MBoxFilterOutputStream( OutputStream os)
-    {
-        this.os = os;
-    }
-
-    @Override
-    public void write( byte[] b ) throws IOException
-    {
-        this.write(b, 0, b.length);
-    }
-
-    boolean detect_mode = false;
-    int detect_cnt = 0;
-    @Override
-    public void write( byte[] b, int off, int len ) throws IOException
-    {
-        for( int i = off; i < len && detect_mode; i++)
-        {
-            this.write(b[i]);
-            off++;
-        }
-        
-        int act_idx = 0;
-        for (act_idx = off; act_idx < len; act_idx++)
-        {
-            // DETECT NL
-            if (b[act_idx] == '\n' || b[act_idx] == '\r')
-            {
-                // SAVE IT
-                FROM[0] = b[act_idx];
-                break;
-            }
-        }
-        // WRITE CLEAN STUFF
-        os.write(b, off, act_idx - off);
-
-        // WRITE REST IF DETECTED TO SINGLE BYTE FUNC
-        if (act_idx < len)
-        {
-            detect_mode = true;
-            detect_cnt = 0;
-            for( int i = act_idx; i < len; i++)
-                this.write(b[i]);
-        }
-
-    }
-
-    @Override
-    public void write( int b ) throws IOException
-    {
-        if (!detect_mode)
-        {
-            // DETECT NL
-            if (b == '\n' || b == '\r')
-            {
-                // SAVE IT
-                FROM[0] = (byte)b;
-                detect_mode = true;
-                detect_cnt = 0;
-            }
-        }
-        // WE ARE IN PROGRESS OF DETECTION
-        if (b == FROM[detect_cnt])
-        {
-            if (detect_cnt == FROM.length - 1)
-            {
-                os.write(FROM[0]);
-                os.write((byte)'>');
-                os.write(FROM, 1, FROM.length - 1);
-                detect_mode = false;
-                detect_cnt = 0;
-                return;
-            }
-            detect_cnt++;
-        }
-        else
-        {
-            // OKAY; REST OF FAILED DETECTION TO STREAM ( Fro, F, "From" )
-            if (detect_mode)
-            {
-                os.write(FROM, 0, detect_cnt);
-                detect_mode = false;
-                detect_cnt = 0;
-            }
-            os.write(b);
-        }
-    }
-
-    @Override
-    public void flush() throws IOException
-    {
-        super.flush();
-    }
-
-    @Override
-    public void close() throws IOException
-    {
-
-        flush();
-        os.close();
-        super.close();
-    }
-
-    void write_direct( String string ) throws IOException
-    {
-        os.write(string.getBytes());
-    }
-
-
-
-}
-class FieldComboEntry
-{
-    String field;
-
-    public FieldComboEntry( String field )
-    {
-        this.field = field;
-    }
-
-    @Override
-    public String toString()
-    {
-        return UserMain.Txt(field);
-    }
-
-    public String getField()
-    {
-        return field;
-    }    
-}
-
-class LongComparator implements Comparator<Long>
-{
-
-    @Override
-    public int compare( Long o1, Long o2 )
-    {
-        long l1 = o1.longValue();
-        long l2 = o2.longValue();
-        if (l1 > l2)
-            return -1;
-        if (l2 > l1)
-            return 1;
-        return 0;
-    }
-}
-class UnixTimeCellRenderer implements TableCellRenderer
-{
-    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy  HH:mm");
-    Date d = new Date(0);
-    JLabel label = new JLabel();
-
-    boolean alt_colors;
-
-    public UnixTimeCellRenderer( boolean alt_colors )
-    {
-        this.alt_colors = alt_colors;
-    }
-
-
-    @Override
-    public Component getTableCellRendererComponent( JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column )
-    {
-        label.setText( value.toString());
-        if (alt_colors && (row & 1) != 0)
-        {
-            label.setOpaque(true);
-            label.setBackground(Main.ui.get_nice_gray());
-        }
-        else
-        {
-            label.setOpaque(false);
-        }
-        if (value instanceof Long)
-        {
-            Long l = (Long)value;
-            d.setTime(l.longValue());
-            label.setText( sdf.format(d) );
-            return label;
-        }
-
-        return label;
-    }
-}
-
-class SizeStrCellRenderer implements TableCellRenderer
-{
-    JLabel label = new JLabel();
-    boolean alt_colors;
-
-    public SizeStrCellRenderer( boolean alt_colors )
-    {
-        this.alt_colors = alt_colors;
-    }
-
-    @Override
-    public Component getTableCellRendererComponent( JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column )
-    {
-        if (alt_colors && (row & 1) != 0)
-        {
-            label.setOpaque(true);
-            label.setBackground(UserMain.get_nice_gray());
-        }
-        else
-        {
-            label.setOpaque(false);
-        }
-
-        if (value instanceof Long)
-        {
-            Long l = (Long)value;
-            label.setText( SizeStr.format(l.doubleValue()) );
-            return label;
-        }
-        label.setText( value.toString());
-
-
-        return label;
-
-    }
-}
-class MailTableModel extends AbstractTableModel
-{
-    static final int DATE_COL = 0;
-    static final int FROM_COL = 1;
-    static final int TO_COL = 2;
-    static final int ATTACH_COL = 3;
-    static final int SUBJECT_COL = 4;
-    static final int SIZE_COL = 5;
-    static final int _4EYES_COL = 6;
-    static final int UID_COL = 7;
-    static final int BCC_COL = 8;
-    static final int SHOW_COLUMNS = 7;
-
-
-    MailViewPanel pnl;
-    ArrayList<ArrayList<String>> result_array;
-    int max_elems;
-    ArrayList<String> field_list;
-
-    JButton ic_attachment;
-    JButton ic_no_attachment;
-
-    String _4eyes_protected;
-
-    MailTableModel(MailViewPanel _pnl,  ArrayList<ArrayList<String>> ret_arr, int max_elems)
-    {
-        super();
-
-        pnl = _pnl;
-        result_array = ret_arr;
-        this.max_elems = max_elems;
-
-
-        ic_attachment = GlossTable.create_table_button("/dimm/home/images/ic_attachment.png");
-        ic_no_attachment = GlossTable.create_table_button(null);
-
-        field_list = new ArrayList<String>();
-
-        field_list.add(CS_Constants.FLD_DATE);
-        field_list.add(CS_Constants.FLD_FROM);
-        field_list.add(CS_Constants.FLD_TO);
-        field_list.add(CS_Constants.FLD_HAS_ATTACHMENT);
-        field_list.add(CS_Constants.FLD_SUBJECT);
-        field_list.add(CS_Constants.FLD_SIZE);
-        field_list.add(CS_Constants.VFLD_4EYES);
-        field_list.add(CS_Constants.FLD_UID_NAME);
-        field_list.add(CS_Constants.FLD_BCC);
-
-        _4eyes_protected = UserMain.Txt("Protected_by_4-eyes_principle");
-
-    }
-
-    @Override
-    public boolean isCellEditable( int row, int column )
-    {
-        return false;
-    }
-
-    ArrayList<String> get_field_list()
-    {
-
-        return field_list;
-    }
-
-    @Override
-    public String getColumnName(int column)
-    {
-        switch( column )
-        {
-            case DATE_COL: return UserMain.Txt("Date");
-            case FROM_COL: return UserMain.Txt("From");
-            case TO_COL: return UserMain.Txt("To");
-            case SUBJECT_COL: return UserMain.Txt("Subject");
-            case SIZE_COL: return UserMain.Txt("Size");
-        }
-        return "";
-    }
-
-    @Override
-    public Class<?> getColumnClass(int columnIndex)
-    {
-        if (columnIndex == ATTACH_COL || columnIndex == _4EYES_COL)
-            return JButton.class;
-
-        return String.class;
-    }
-
-    @Override
-    public int getRowCount()
-    {
-        if (result_array == null)
-            return 0;
-        return max_elems;
-    }
-
-    @Override
-    public int getColumnCount()
-    {
-        if (field_list == null)
-            return 0;
-
-        // DONT SHOW UID_ID
-        return SHOW_COLUMNS;
-    }
-
-    Role get_4_eyes_model( int rowIndex )
-    {
-        Role role = null;
-        String _4eyes_val = result_array.get(rowIndex).get(_4EYES_COL);
-        boolean is_4eyes = false;
-
-        if (_4eyes_val != null && _4eyes_val.length() > 0 && Character.isDigit(_4eyes_val.charAt(0)) )
-        {
-            is_4eyes = true;
-            try
-            {
-                role = UserMain.sqc().get_role(Integer.parseInt(_4eyes_val));
-            }
-            catch (Exception numberFormatException)
-            {
-                System.out.println("Invalid role col val: " + _4eyes_val);
-            }
-        }
-        return role;
-    }
-
-    
-
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex)
-    {
-        while (rowIndex >= result_array.size())
-        {
-            pnl.reload_result( result_array );
-        }
-
-        String val = result_array.get(rowIndex).get(columnIndex);
-
-        Role role = get_4_eyes_model( rowIndex );
-
-        if (columnIndex == SUBJECT_COL && role != null && !pnl.is4eyes_logged_in(role))
-        {
-            return _4eyes_protected;
-        }
-
-        if ( columnIndex == 0)
-        {
-            long time = Long.parseLong(val, 16);
-            return new Long(time);
-        }
-        else if (columnIndex == ATTACH_COL)
-        {
-            if (val != null && val.length() > 0 && val.charAt(0) == '1')
-                return ic_attachment;
-
-            return ic_no_attachment;
-        }            
-        else if (columnIndex == SIZE_COL)
-        {            
-            long size = Long.parseLong(val, 16);
-            return new Long(size);
-        }
-        try
-        {
-            val = MimeUtility.decodeText(val);
-            val = decode_undetected_utf8( val );
-        }
-        catch (Exception ex)
-        {
-        }
-
-        return val;
-    }
-
-    String get_uid( int row )
-    {
-        return result_array.get(row).get(UID_COL);
-    }
-    String get_bcc( int row )
-    {
-        return result_array.get(row).get(BCC_COL);
-    }
-
-    private String decode_undetected_utf8( String val )
-    {
-        // TRY TO DETECT UNDECODED 2-BYTE UTF-8
-        if (val.indexOf('Ã') == -1)
-           return val;
-
-        try
-        {
-            byte[] arr = val.getBytes("iso-8859-1");
-            String ret = new String(arr, "utf-8");
-            return ret;
-        }
-        catch (UnsupportedEncodingException unsupportedEncodingException)
-        {
-        }
-        return val;
-    }
-}
-
-
-
-class SimpleSearchEntryModel extends GroupEntry
-{
-    SimpleSearchEntryModel(ArrayList<LogicEntry> list)
-    {
-        if (list != null)
-            children = list;
-    }
-
-    void set_new_filter( ArrayList<LogicEntry> al )
-    {
-        children = al;
-    }
-}
-class ConditionCBEntry
-{
-    ExprEntry entry;
-
-    public ConditionCBEntry( ExprEntry entry )
-    {
-        this.entry = entry;
-    }
-
-    static String get_nice_txt( ExprEntry e )
-    {
-        return (e.isNeg() ? UserMain.Txt("not") + " " : "") + UserMain.Txt(e.getName()) + " " + LogicFilter.get_op_nice_txt( e.getOperation(), e.getType());
-    }
-    @Override
-    public String toString()
-    {
-        return get_nice_txt(entry);
-    }
-}
-class NegCBEntry
-{
-    boolean neg;
-
-    public NegCBEntry( boolean _neg )
-    {
-        this.neg = _neg;
-    }
-
-    public boolean isNeg()
-    {
-        return neg;
-    }
-
-    static String get_nice_txt( boolean n )
-    {
-        return n ? UserMain.Txt("not") + " " : "";
-    }
-    @Override
-    public String toString()
-    {
-        return get_nice_txt(neg);
-    }
-}
-class SimpleSearchTableModel extends AbstractTableModel implements MouseListener
-{
-    static int DELETE_COL = 3;
-
-    MailViewPanel pnl;
-    
-
-    SimpleDateFormat sdf;
-    JButton ic_delete;
-
-    SimpleSearchEntryModel model;
-
-    SimpleSearchTableModel(MailViewPanel _pnl,  SimpleSearchEntryModel _model)
-    {
-        super();
-
-        pnl = _pnl;
-        model = _model;
-
-        sdf = new SimpleDateFormat("dd.MM.yyyy  HH:mm");
-
-        ic_delete = GlossTable.create_table_button("/dimm/home/images/web_delete.png");     
-    }
-
-    public String get_compressed_xml_list_data()
-    {
-        ArrayList<LogicEntry> al = new ArrayList<LogicEntry>();
-
-        if (pnl.get_quick_search().length() > 0)
-        {
-            /*
-            ExprEntry ee = new ExprEntry(null, CS_Constants.VFLD_ALL, pnl.get_quick_search(), OPERATION.CONTAINS, TYPE.STRING, false, false);
-            // ALL ARE ADDED AS "AND"
-            al.add(ee);*/
-            String[] fields = CS_Constants.VFLD_ALL.split(",");
-            String val = pnl.get_quick_search();
-
-            String[] vals;
-            // ADD ONLY VALID ENTRIES
-            if (val.charAt(0) == '\"')
-            {
-                vals = val.split("\"");
-            }
-            else
-            {
-                vals = val.split(" ");
-            }
-            for (int v = 0; v < vals.length; v++)
-            {
-                if (vals[v].length() == 0)
-                    continue;
-
-                GroupEntry ge = new GroupEntry(al, false, false);
-                for (int i = 0; i < fields.length; i++)
-                {
-                    String field = fields[i];
-                    // ALL ARE ADDED AS "OR"
-                    ExprEntry ee = new ExprEntry( ge.getChildren(), field, vals[v], ExprEntry.OPERATION.CONTAINS, ExprEntry.TYPE.STRING, /*neg*/false, /*is_or*/true );
-                    ge.getChildren().add(ee);
-                }
-                al.add(ge);
-            }
-        }
-
-
-
-
-
-        // ADD ONLY VALID ENTRIES
-        for (int i = 0; i < model.getChildren().size(); i++)
-        {
-            LogicEntry logicEntry = model.getChildren().get(i);
-            if (logicEntry instanceof ExprEntry)
-            {
-                ExprEntry e = (ExprEntry)logicEntry;
-                if (e.getValue().length() > 0)
-                {
-                    ExprEntry ee = new ExprEntry( al, e.getName(), e.getValue(), e.getOperation(), e.getType(), e.isNeg(), e.isPrevious_is_or() );
-                    // ALL ARE ADDED AS "AND"
-                    al.add(ee);
-                }
-            }
-        }
-
-        String compressed_list_str = ParseToken.BuildCompressedObjectString(al);
-        return compressed_list_str;
-    }
-
-
-    @Override
-    public boolean isCellEditable( int row, int column )
-    {
-        if (column < DELETE_COL)
-            return true;
-        return false;
-        
-    }
-
-    @Override
-    public String getColumnName(int column)
-    {
-        switch( column )
-        {
-            case 0: return UserMain.Txt("Condition");
-            case 1: return "";
-            case 2: return UserMain.Txt("Value");
-        }
-        return "";
-    }
-
-    @Override
-    public Class<?> getColumnClass(int columnIndex)
-    {
-        if (columnIndex == DELETE_COL)
-            return JButton.class;
-        
-        return String.class;
-    }
-
-    @Override
-    public int getRowCount()
-    {
-        if (model == null)
-            return 0;
-        return model.getChildren().size();
-    }
-
-    @Override
-    public int getColumnCount()
-    {
-        return 4;
-    }
-
-    
-
-
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex)
-    {
-        LogicEntry le = model.getChildren().get(rowIndex);
-        if (le instanceof ExprEntry)
-        {
-            ExprEntry ee = (ExprEntry) le;
-            if (columnIndex == 0)
-            {
-                String txt = ConditionCBEntry.get_nice_txt( ee );
-                return txt;
-            }
-            if (columnIndex == 1)
-            {
-                String txt = NegCBEntry.get_nice_txt( ee.isNeg() );
-                return txt;
-            }
-            if (columnIndex == 2)
-            {
-                String txt = ee.getValue();
-                return txt;
-            }
-            if (columnIndex == DELETE_COL)
-            {
-                return ic_delete;
-            }
-        }
-        return "";
-    }
-
-    @Override
-    public void setValueAt( Object aValue, int rowIndex, int columnIndex )
-    {
-        LogicEntry le = model.getChildren().get(rowIndex);
-        if (le instanceof ExprEntry)
-        {
-            ExprEntry ee = (ExprEntry) le;
-            if (columnIndex == 0 && aValue instanceof ConditionCBEntry)
-            {
-                ConditionCBEntry ccbe = (ConditionCBEntry)aValue;
-                ee.setOperation( ccbe.entry.getOperation() );
-                ee.setType( ccbe.entry.getType());
-                ee.setName( ccbe.entry.getName());
-                ee.setNeg( ccbe.entry.isNeg());
-                ee.setPrevious_is_or( ccbe.entry.isPrevious_is_or() );
-            }
-            if (columnIndex == 1&& aValue instanceof NegCBEntry)
-            {
-                NegCBEntry ncb = (NegCBEntry)aValue;
-                ee.setNeg( ncb.isNeg() );
-            }
-            if (columnIndex == 2)
-            {
-                ee.setValue(aValue.toString());
-            }
-        }
-    }
-
-
-    @Override
-    public void mouseClicked( MouseEvent e )
-    {
-        if (e.getClickCount() == 1 && e.getSource() instanceof JTable)
-        {
-            JTable tb = (JTable)e.getSource();
-            int row = tb.rowAtPoint(e.getPoint());
-            int col = tb.columnAtPoint(e.getPoint());
-            if (col == DELETE_COL && row >= 0 && row < model.getChildren().size())
-            {
-                model.getChildren().remove(row);
-                fireTableDataChanged();
-            }
-        }
-    }
-
-    @Override
-    public void mousePressed( MouseEvent e )
-    {       
-    }
-
-    @Override
-    public void mouseReleased( MouseEvent e )
-    {       
-    }
-
-    @Override
-    public void mouseEntered( MouseEvent e )
-    {      
-    }
-
-    @Override
-    public void mouseExited( MouseEvent e )
-    {        
-    }
-
-    void set_filter( String filter )
-    {
-        Object o = ParseToken.DeCompressObject(filter);
-        if (o instanceof ArrayList)
-        {
-            ArrayList<LogicEntry> al = (ArrayList<LogicEntry>) o;
-            model.set_new_filter( al );
-
-            fireTableDataChanged();
-
-        }
-
-    }
-}
-class SimpleSearchEditor extends  DefaultCellEditor
-{
-    public SimpleSearchEditor( JComboBox cb )
-    {
-        super( cb );
-    }
-}
-
 
 class MailTableRowSorter extends TableRowSorter<MailTableModel>
 {
 
-    public MailTableRowSorter(MailTableModel m)
+    public MailTableRowSorter( MailTableModel m )
     {
         super(m);
     }
-
     LongComparator lc = new LongComparator();
 
     @Override
     public Comparator<?> getComparator( int column )
     {
         if (column == MailTableModel.DATE_COL || column == MailTableModel.SIZE_COL)
+        {
             return lc;
+        }
         return super.getComparator(column);
     }
-
 }
+
 /**
  *
  * @author mw
  */
 public class MailViewPanel extends GlossDialogPanel implements MouseListener, CellEditorListener
 {
+
     String search_id;
     GlossTable table;
     MailTableModel model;
-
     GlossTable simple_search_list;
     private static final int SIMPLE_SEARCH = 0;
     private static final int COMPLEX_SEARCH = 1;
     int search_mode = SIMPLE_SEARCH;
-
     GlossTable simple_search_table;
     SimpleSearchTableModel simple_search_tablemodel;
     TableCellEditor simple_condition_editor;
     TableCellEditor simple_val_editor;
     MailTableRowSorter sorter;
-
     public static final double DFLT_DIV_POS = 0.35;
     private static int SIMPLE_TAB_COL_CONDITION = 0;
     private static int SIMPLE_TAB_COL_NEG = 1;
     private static int SIMPLE_TAB_COL_VALUE = 2;
     private static int SIMPLE_TAB_COL_DELETE = 3;
-
-
-     public static final int MAX_FETCH_SIZE = 5000;
-
+    public static final int MAX_FETCH_SIZE = 5000;
     static String last_filter;
     int div_location;
 
@@ -911,65 +162,77 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         table.addMouseListener(this);
         // REGISTER TABLE TO SCROLLPANEL
-        table.embed_to_scrollpanel( SCP_TABLE );
+        table.embed_to_scrollpanel(SCP_TABLE);
 
         model = new MailTableModel(this, null, 0);
         table.setModel(model);
         sorter = new MailTableRowSorter(model);
         table.setRowSorter(sorter);
         table.setShowGrid(false);
-        
-        table.getColumnModel().getColumn(MailTableModel.DATE_COL).setCellRenderer( new UnixTimeCellRenderer(true) );
-        table.getColumnModel().getColumn(MailTableModel.SIZE_COL).setCellRenderer( new SizeStrCellRenderer(true) );
 
-       
+        table.getColumnModel().getColumn(MailTableModel.DATE_COL).setCellRenderer(new UnixTimeCellRenderer(true));
+        table.getColumnModel().getColumn(MailTableModel.SIZE_COL).setCellRenderer(new SizeStrCellRenderer(true));
+
+
 
 
         simple_search_table = new GlossTable(true);
         simple_search_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        simple_search_table.embed_to_scrollpanel( SCP_LIST );
+        simple_search_table.embed_to_scrollpanel(SCP_LIST);
 
         simple_search_tablemodel = new SimpleSearchTableModel(this, new SimpleSearchEntryModel(null));
         if (last_filter != null)
+        {
             simple_search_tablemodel.set_filter(last_filter);
-        
+        }
+
         simple_search_table.setModel(simple_search_tablemodel);
         simple_search_table.addMouseListener(simple_search_tablemodel);
 
         JComboBox CB_CONDITION = new JComboBox();
         CB_CONDITION.removeAllItems();
-        /*CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_FROM, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_TO, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_SUBJECT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_BODY, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_ATTACHMENT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );*/
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_FROM, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_TO, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_SUBJECT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_SUBJECT, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_MAIL, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_MAIL, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_TXT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_TXT, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.FLD_ATTACHMENT_NAME, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_ALL, "", OPERATION.CONTAINS, TYPE.STRING, false, false)) );
-        CB_CONDITION.addItem( new ConditionCBEntry( new ExprEntry(null, CS_Constants.VFLD_ALL, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)) );
+        CB_CONDITION.addItem(new ConditionCBEntry(new ExprEntry(null, CS_Constants.FLD_FROM, "", OPERATION.CONTAINS, TYPE.STRING, false, false)));
+        CB_CONDITION.addItem(new ConditionCBEntry(new ExprEntry(null, CS_Constants.FLD_TO, "", OPERATION.CONTAINS, TYPE.STRING, false, false)));
+        CB_CONDITION.addItem(new ConditionCBEntry(new ExprEntry(null, CS_Constants.FLD_SUBJECT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)));
+        CB_CONDITION.addItem(new ConditionCBEntry(new ExprEntry(null, CS_Constants.FLD_SUBJECT, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)));
+        CB_CONDITION.addItem(new ConditionCBEntry(new ExprEntry(null, CS_Constants.FLD_DATE, "", OPERATION.NUM_LT, TYPE.TIMESTAMP, false, false)));
+        CB_CONDITION.addItem(new ConditionCBEntry(new ExprEntry(null, CS_Constants.FLD_DATE, "", OPERATION.NUM_GT, TYPE.TIMESTAMP, false, false)));
+        CB_CONDITION.addItem(new ConditionCBEntry(new ExprEntry(null, CS_Constants.VFLD_MAIL, "", OPERATION.CONTAINS, TYPE.STRING, false, false)));
+        CB_CONDITION.addItem(new ConditionCBEntry(new ExprEntry(null, CS_Constants.VFLD_MAIL, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)));
+        CB_CONDITION.addItem(new ConditionCBEntry(new ExprEntry(null, CS_Constants.VFLD_TXT, "", OPERATION.CONTAINS, TYPE.STRING, false, false)));
+        CB_CONDITION.addItem(new ConditionCBEntry(new ExprEntry(null, CS_Constants.VFLD_TXT, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)));
+        CB_CONDITION.addItem(new ConditionCBEntry(new ExprEntry(null, CS_Constants.FLD_ATTACHMENT_NAME, "", OPERATION.CONTAINS, TYPE.STRING, false, false)));
+        CB_CONDITION.addItem(new ConditionCBEntry(new ExprEntry(null, CS_Constants.VFLD_ALL, "", OPERATION.CONTAINS, TYPE.STRING, false, false)));
+        CB_CONDITION.addItem(new ConditionCBEntry(new ExprEntry(null, CS_Constants.VFLD_ALL, "", OPERATION.CONTAINS_SUBSTR, TYPE.STRING, false, false)));
 
         JComboBox CB_NEG = new JComboBox();
-        CB_NEG.addItem( new NegCBEntry(false));
-        CB_NEG.addItem( new NegCBEntry(true));
+        CB_NEG.addItem(new NegCBEntry(false));
+        CB_NEG.addItem(new NegCBEntry(true));
 
-        JTextField TXT_VAL = new JTextField();
         simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_NEG).setMinWidth(30);
         simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_NEG).setMaxWidth(30);
         simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_DELETE).setMinWidth(30);
         simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_DELETE).setMaxWidth(30);
-        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_CONDITION).setCellEditor( new DefaultCellEditor(  CB_CONDITION ) );
-        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_NEG).setCellEditor( new DefaultCellEditor(  CB_NEG ) );
-        DefaultCellEditor txt_editor = new DefaultCellEditor( TXT_VAL);
+        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_CONDITION).setCellEditor(new DefaultCellEditor(CB_CONDITION));
+        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_NEG).setCellEditor(new DefaultCellEditor(CB_NEG));
+
+        JTextField TXT_VAL = new JTextField();
+        /*    final DefaultCellEditor txt_editor = new DefaultCellEditor( TXT_VAL);
         txt_editor.setClickCountToStart(1);
-        txt_editor.addCellEditorListener(this);
-        TXT_VAL.addActionListener( new ActionListener()
+        txt_editor.addCellEditorListener(this);*/
+
+        JSpinner Date_VAL = new JSpinner(new SpinnerDateModel());
+        javax.swing.JSpinner.DateEditor de = new javax.swing.JSpinner.DateEditor(
+                Date_VAL, "dd.MM.yyyy HH:mm");
+
+        de.getTextField().setHorizontalAlignment(JTextField.LEFT);
+        Date_VAL.setEditor(de);
+
+        final DefaultCellEditor value_editor = new ValueCellEditor(simple_search_tablemodel, TXT_VAL, Date_VAL);
+        value_editor.setClickCountToStart(1);
+        value_editor.addCellEditorListener(this);
+
+        ActionListener okAction = new ActionListener()
         {
 
             @Override
@@ -982,10 +245,58 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
                 do_filter_search();
             }
-        });
+        };
+        TXT_VAL.addActionListener(okAction);
+        de.getTextField().addActionListener(okAction);
+//        de.addKeyListener( new KeyListener() {
+//
+//            @Override
+//            public void keyTyped( KeyEvent e )
+//            {
+//                if (e.getKeyCode() == KeyEvent.VK_ENTER)
+//                {
+//                    simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_VALUE).getCellEditor().stopCellEditing();
+//                    last_filter = simple_search_tablemodel.get_compressed_xml_list_data();
+//                    TXTA_FILTER.setText(LogicFilter.get_nice_filter_text(last_filter));
+//                    TXTA_FILTER.setCaretPosition(0);
+//
+//                    do_filter_search();
+//                }
+//            }
+//
+//            @Override
+//            public void keyPressed( KeyEvent e )
+//            {}
+//
+//            @Override
+//            public void keyReleased( KeyEvent e )
+//            {}
+//        });
 
-        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_VALUE).setCellEditor( txt_editor  );
-       
+        simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_VALUE).setCellEditor(value_editor/*txt_editor */);
+
+//
+//        CB_CONDITION.addActionListener(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed( ActionEvent e )
+//            {
+//                JComboBox cb = (JComboBox)e.getSource();
+//                ConditionCBEntry cbe = (ConditionCBEntry) cb.getSelectedItem();
+//                simple_search_tablemodel.setValType( cbe.entry.getType() );
+//                if (cbe.entry.getType() == TYPE.TIMESTAMP)
+//                {
+//
+//                    simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_VALUE).setCellEditor( value_editor  );
+//                }
+//                else
+//                {
+//                    simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_VALUE).setCellEditor( txt_editor  );
+//                }
+//            }
+//        });
+//
+
         TBP_SEARCH.setSelectedIndex(SIMPLE_SEARCH);
 
         CB_VIEW_CONTENT.setSelected(true);
@@ -996,8 +307,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         {
             SPL_VIEW.setDividerLocation(1.0);
         }
-        
-        
+
+
         if (new File("unlimited_entries.txt").exists())
         {
             CB_ENTRIES.addItem("10000");
@@ -1007,7 +318,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
         TXT_QUICKSEARCH.requestFocusInWindow();
 
-       // SCP_LIST.setVisible(false);
+        // SCP_LIST.setVisible(false);
 
     }
 
@@ -1016,7 +327,9 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     {
         super.setVisible(aFlag);
         if (aFlag)
+        {
             TXT_QUICKSEARCH.requestFocusInWindow();
+        }
     }
 
     @Override
@@ -1038,9 +351,6 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
     }
 
-
-
-
     int get_entries()
     {
         int entries = 5;
@@ -1059,29 +369,29 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
         return entries;
     }
-  /*  void search_mail()
+    /*  void search_mail()
     {
 
 
-        String mail =  TXT_MAIL.getText();
-        String search_val = TXT_SEARCH.getText();
-        FieldComboEntry fld_entry= (FieldComboEntry)CB_FIELD.getSelectedItem();
-        String field_name = fld_entry.getField();
+    String mail =  TXT_MAIL.getText();
+    String search_val = TXT_SEARCH.getText();
+    FieldComboEntry fld_entry= (FieldComboEntry)CB_FIELD.getSelectedItem();
+    String field_name = fld_entry.getField();
 
-        int entries = get_entries();
-        int mandant = UserMain.self.get_act_mandant_id();
+    int entries = get_entries();
+    int mandant = UserMain.self.get_act_mandant_id();
 
-        String cmd = "SearchMail CMD:open MA:" + mandant + " EM:'" + mail + "' FL:'" + field_name + "' VL:'" + search_val + "' CNT:'" + entries + "' ";
- 
+    String cmd = "SearchMail CMD:open MA:" + mandant + " EM:'" + mail + "' FL:'" + field_name + "' VL:'" + search_val + "' CNT:'" + entries + "' ";
 
-        fill_model_with_search( cmd );
+
+    fill_model_with_search( cmd );
     }*/
 
     void fill_model_with_search( String cmd, int cnt )
     {
         FunctionCallConnect fcc = UserMain.fcc();
         int mandant = UserMain.self.get_act_mandant_id();
- 
+
         if (search_id != null)
         {
             // CLOSE EXISTING CALL;
@@ -1090,43 +400,51 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         }
 
         // OPEN SEARCH CALL
-        String open_ret = fcc.call_abstract_function( cmd, FunctionCallConnect.LONG_TIMEOUT);
+        String open_ret = fcc.call_abstract_function(cmd, FunctionCallConnect.LONG_TIMEOUT);
         if (open_ret.charAt(0) != '0')
         {
-            UserMain.errm_ok(my_dlg, "SearchMail open gave " + open_ret );
+            UserMain.errm_ok(my_dlg, "SearchMail open gave " + open_ret);
             return;
         }
         String[] l = open_ret.split(" ");
 
         search_id = l[1];
-        ArrayList<String>field_list = model.get_field_list();
+        ArrayList<String> field_list = model.get_field_list();
 
         ParseToken pt = new ParseToken(open_ret);
 
-        cnt = (int)pt.GetLongValue("N:");
-        
+        cnt = (int) pt.GetLongValue("N:");
+
         int fetch_size = cnt;
         if (cnt > MAX_FETCH_SIZE)
+        {
             fetch_size = MAX_FETCH_SIZE;
+        }
 
         if (cnt > 1000)
-            cmd =  "SearchMail CMD:get MA:" + mandant + " ID:" + search_id + " ROW:0 ROWS:" + fetch_size + " FLL:'";
+        {
+            cmd = "SearchMail CMD:get MA:" + mandant + " ID:" + search_id + " ROW:0 ROWS:" + fetch_size + " FLL:'";
+        }
         else
-            cmd =  "SearchMail CMD:get MA:" + mandant + " ID:" + search_id + " ROW:-1 FLL:'";
+        {
+            cmd = "SearchMail CMD:get MA:" + mandant + " ID:" + search_id + " ROW:-1 FLL:'";
+        }
 
-        for ( int i = 0; i < field_list.size(); i++ )
+        for (int i = 0; i < field_list.size(); i++)
         {
             if (i > 0)
+            {
                 cmd += ",";
+            }
             cmd += field_list.get(i);
         }
         cmd += "'";
 
-        String search_get_ret = fcc.call_abstract_function( cmd);
+        String search_get_ret = fcc.call_abstract_function(cmd);
 
         if (search_get_ret.charAt(0) != '0')
         {
-            UserMain.errm_ok(my_dlg, "SearchMail get gave " + search_get_ret );
+            UserMain.errm_ok(my_dlg, "SearchMail get gave " + search_get_ret);
             return;
         }
 
@@ -1135,14 +453,14 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
         if (o instanceof ArrayList)
         {
-            ArrayList<ArrayList<String>> ret_arr = (ArrayList<ArrayList<String>>)o;
+            ArrayList<ArrayList<String>> ret_arr = (ArrayList<ArrayList<String>>) o;
 
             model = new MailTableModel(this, ret_arr, cnt);
             sorter = new MailTableRowSorter(model);
             table.setRowSorter(sorter);
             table.setModel(model);
-            table.getColumnModel().getColumn(MailTableModel.DATE_COL).setCellRenderer( new UnixTimeCellRenderer(true) );
-            table.getColumnModel().getColumn(MailTableModel.SIZE_COL).setCellRenderer( new SizeStrCellRenderer(true) );
+            table.getColumnModel().getColumn(MailTableModel.DATE_COL).setCellRenderer(new UnixTimeCellRenderer(true));
+            table.getColumnModel().getColumn(MailTableModel.SIZE_COL).setCellRenderer(new SizeStrCellRenderer(true));
 
             model.fireTableDataChanged();
 
@@ -1154,6 +472,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
             table.getColumnModel().getColumn(MailTableModel.ATTACH_COL).setMinWidth(20);
             table.getColumnModel().getColumn(MailTableModel.ATTACH_COL).setMaxWidth(20);
+            table.getColumnModel().getColumn(MailTableModel.OPEN_ATTACH_COL).setMinWidth(20);
+            table.getColumnModel().getColumn(MailTableModel.OPEN_ATTACH_COL).setMaxWidth(20);
             table.getColumnModel().getColumn(MailTableModel.SUBJECT_COL).setPreferredWidth(180);
             table.getColumnModel().getColumn(MailTableModel.SIZE_COL).setMinWidth(30);
             table.getColumnModel().getColumn(MailTableModel.SIZE_COL).setMaxWidth(50);
@@ -1161,27 +481,32 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             table.getColumnModel().getColumn(MailTableModel._4EYES_COL).setMaxWidth(0);
         }
     }
-
     SwingWorker sw;
+
     void open_mail( final int row )
     {
-        if (!UserMain.self.check_for_role_option( my_dlg, OptCBEntry.READ))
+        if (!UserMain.self.check_for_role_option(my_dlg, OptCBEntry.READ))
         {
             return;
         }
 
         // CHECK FOR 4 EYES
-        Role role = model.get_4_eyes_model( row );
+        Role role = model.get_4_eyes_model(row);
         if (role != null)
         {
             if (!check_4eyes_login(role))
+            {
                 return;
+            }
         }
-        
-        if (sw != null)
-            return;
 
-        sw = new SwingWorker() {
+        if (sw != null)
+        {
+            return;
+        }
+
+        sw = new SwingWorker()
+        {
 
             @Override
             public Object construct()
@@ -1196,12 +521,14 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
                 if (tmp_file != null)
                 {
-                    run_open_mail( row, tmp_file, true );
+                    run_open_mail(row, tmp_file, true);
                     if (!Main.get_bool_prop(Preferences.CACHE_MAILFILES, false))
+                    {
                         tmp_file.delete();
+                    }
                 }
 
-                
+
                 return null;
             }
         };
@@ -1213,22 +540,24 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
     void preview_mail( final int row )
     {
-        if (!UserMain.self.check_for_role_option( my_dlg, OptCBEntry.READ))
+        if (!UserMain.self.check_for_role_option(my_dlg, OptCBEntry.READ))
         {
             return;
         }
         // CHECK FOR 4 EYES
-        Role role = model.get_4_eyes_model( row );
+        Role role = model.get_4_eyes_model(row);
         if (role != null)
         {
             if (!check_4eyes_login(role))
+            {
                 return;
+            }
         }
 
 
         if (view_sw != null)
         {
-            synchronized( preview_list)
+            synchronized (preview_list)
             {
                 preview_list.add(new Integer(row));
                 return;
@@ -1252,12 +581,14 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
                     if (tmp_file != null)
                     {
-                        run_preview_mail( row, tmp_file, true );
+                        run_preview_mail(row, tmp_file, true);
 
                         if (!Main.get_bool_prop(Preferences.CACHE_MAILFILES, false))
+                        {
                             tmp_file.delete();
+                        }
                     }
-                    synchronized( preview_list )
+                    synchronized (preview_list)
                     {
                         if (preview_list.isEmpty())
                         {
@@ -1268,7 +599,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                         preview_list.clear();
                     }
                 }
-                
+
                 return null;
             }
         };
@@ -1278,23 +609,28 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
     void raw_view_mail( final int row )
     {
-        if (!UserMain.self.check_for_role_option( my_dlg, OptCBEntry.READ))
+        if (!UserMain.self.check_for_role_option(my_dlg, OptCBEntry.READ))
         {
             return;
         }
         // CHECK FOR 4 EYES
-        Role role = model.get_4_eyes_model( row );
+        Role role = model.get_4_eyes_model(row);
         if (role != null)
         {
             if (!check_4eyes_login(role))
+            {
                 return;
+            }
         }
 
 
         if (sw != null)
+        {
             return;
+        }
 
-        sw = new SwingWorker() {
+        sw = new SwingWorker()
+        {
 
             @Override
             public Object construct()
@@ -1311,19 +647,20 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                 {
                     GlossDialogPanel pnl = new GlossDialogPanel()
                     {
+
                         @Override
                         public JButton get_default_button()
                         {
                             return null;
                         }
                     };
-                    JTextArea txta  = new JTextArea(132, 80);
-                    pnl.setLayout( new BoxLayout(pnl, 1));
+                    JTextArea txta = new JTextArea(132, 80);
+                    pnl.setLayout(new BoxLayout(pnl, 1));
                     JScrollPane jsp = new JScrollPane(txta);
-                    pnl.add( jsp );
-                    
+                    pnl.add(jsp);
+
                     GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
-                    byte[] buff = new byte[ (int)tmp_file.length() ];
+                    byte[] buff = new byte[(int) tmp_file.length()];
                     try
                     {
                         InputStream fis = new FileInputStream(tmp_file);
@@ -1338,8 +675,10 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                     txta.setText(txt);
 
                     if (!Main.get_bool_prop(Preferences.CACHE_MAILFILES, false))
+                    {
                         tmp_file.delete();
-                    
+                    }
+
                     dlg.setSize(400, 400);
                     dlg.setVisible(true);
                 }
@@ -1354,14 +693,16 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
     void export_mail( final File f, final int[] rows, final String format )
     {
-        if (!UserMain.self.check_for_role_option( my_dlg, OptCBEntry.READ))
+        if (!UserMain.self.check_for_role_option(my_dlg, OptCBEntry.READ))
         {
             return;
         }
 
 
-         if (sw != null)
+        if (sw != null)
+        {
             return;
+        }
 
         sw = new SwingWorker()
         {
@@ -1393,8 +734,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
         sw.start();
     }
-
     private static final String forbidden_sj_chars = ":<>*?\\/'\"|$`´\t\r\n";
+
     private String clean_fname( String name )
     {
 
@@ -1413,18 +754,21 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             else
             {
                 if (last_char != ' ')
+                {
                     sb.append(' ');
+                }
                 last_char = ' ';
             }
 
             if (i >= 79)
+            {
                 break;
+            }
         }
         return sb.toString();
     }
 
-
-    void run_export_mail( File dir, int[] rowi, boolean  open_in_client )
+    void run_export_mail( File dir, int[] rowi, boolean open_in_client )
     {
         int last_percent = -1;
         UserMain.self.show_busy_val(0);
@@ -1441,11 +785,13 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             row = sorter.convertRowIndexToModel(row);
 
             // CHECK FOR 4 EYES
-            Role role = model.get_4_eyes_model( row );
+            Role role = model.get_4_eyes_model(row);
             if (role != null)
             {
                 if (!check_4eyes_login(role))
+                {
                     continue;
+                }
             }
 
             String subject = table.getModel().getValueAt(row, MailTableModel.SUBJECT_COL).toString();
@@ -1477,7 +823,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             if (open_in_client)
             {
                 UserMain.self.hide_busy();
-                
+
                 String[] cmd = null;
                 if (NativeLoader.is_win())
                 {
@@ -1501,8 +847,6 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             }
         }
     }
-
-
 
     void run_export_mbox( File dir, int[] rowi )
     {
@@ -1535,19 +879,21 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                 row = sorter.convertRowIndexToModel(row);
 
                 // CHECK FOR 4 EYES
-                Role role = model.get_4_eyes_model( row );
+                Role role = model.get_4_eyes_model(row);
                 if (role != null)
                 {
                     if (!check_4eyes_login(role))
+                    {
                         continue;
+                    }
                 }
 
 
                 d.setTime(System.currentTimeMillis());
-                String timestamp = sdf.format( d );
-                mbfos.write_direct("From MailSecurer " + timestamp + "\n" );
+                String timestamp = sdf.format(d);
+                mbfos.write_direct("From MailSecurer " + timestamp + "\n");
                 run_download_mbox(row, mbfos);
-                mbfos.write_direct("\n" );
+                mbfos.write_direct("\n");
             }
         }
         catch (Exception ex)
@@ -1562,14 +908,14 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             }
             catch (IOException ex)
             {
-
             }
         }
     }
+
     void run_download_mbox( int row, MBoxFilterOutputStream mbfos )
     {
         ServerInputStream sis = null;
-        
+
         try
         {
 
@@ -1595,7 +941,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         catch (Exception iOException)
         {
             iOException.printStackTrace();
-            UserMain.errm_ok(my_dlg, "Fehler beim Abholen der Mail: " + iOException.getMessage() );
+            UserMain.errm_ok(my_dlg, "Fehler beim Abholen der Mail: " + iOException.getMessage());
         }
         finally
         {
@@ -1612,10 +958,9 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         }
     }
 
-
     File run_download_mail( int row, final String file_name, boolean encoded )
     {
-        
+
         ServerInputStream sis = null;
         OutputStream baos = null;
         File tmp_file = null;
@@ -1628,9 +973,11 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                 if (Main.get_bool_prop(Preferences.CACHE_MAILFILES, false))
                 {
                     String uid = model.get_uid(row);
-                    tmp_file = new File(Main.get_cache_path(), uid + ".tmp" );
+                    tmp_file = new File(Main.get_cache_path(), uid + ".tmp");
                     if (tmp_file.exists())
+                    {
                         return tmp_file;
+                    }
 
                     tmp_file.deleteOnExit();
                 }
@@ -1646,11 +993,11 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                 tmp_file = new File(file_name);
             }
 
-            FileOutputStream fos = new FileOutputStream( tmp_file );
+            FileOutputStream fos = new FileOutputStream(tmp_file);
             baos = new BufferedOutputStream(fos);
             if (encoded)
             {
-                baos = new EncodedMailOutputStream( baos );
+                baos = new EncodedMailOutputStream(baos);
             }
 
 
@@ -1685,7 +1032,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         catch (Exception iOException)
         {
             iOException.printStackTrace();
-            UserMain.errm_ok(my_dlg, "Fehler beim Abholen der Mail: " + iOException.getMessage() );
+            UserMain.errm_ok(my_dlg, "Fehler beim Abholen der Mail: " + iOException.getMessage());
         }
         finally
         {
@@ -1702,9 +1049,9 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             }
             catch (IOException iOException)
             {
-                UserMain.errm_ok(my_dlg, "Fehler beim Schließen der Mail: " + iOException.getMessage() );
+                UserMain.errm_ok(my_dlg, "Fehler beim Schließen der Mail: " + iOException.getMessage());
             }
-            
+
             // CLEAR CACHED FILES ON ERROR
             if (error_occured && file_name == null)
             {
@@ -1714,14 +1061,13 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         return null;
     }
 
-
     void run_preview_mail( int row, File file, boolean encoded )
     {
         InputStream bais = null;
 
         try
         {
-            FileInputStream fis = new FileInputStream( file );
+            FileInputStream fis = new FileInputStream(file);
             bais = new BufferedInputStream(fis);
             if (encoded)
             {
@@ -1731,7 +1077,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             // CREATE AND PARSE MAIL
             RFCMimeMail mmsg = new RFCMimeMail();
             mmsg.parse(bais);
-            
+
             // HANDLE BCC VISIBILITY
             if (model.get_bcc(row) != null)
             {
@@ -1739,22 +1085,28 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
                 String bcc = model.get_bcc(row);
                 boolean show_bcc = false;
 
-                if (UserMain.self.user_has_role_option( OptCBEntry.ADMIN))
+                if (UserMain.self.user_has_role_option(OptCBEntry.ADMIN))
+                {
                     show_bcc = true;
+                }
 
 
-                if (mmsg.is_in_email( UserMain.self.get_act_mailaliases(), RFCMailAddress.ADR_TYPE.FROM ))
+                if (mmsg.is_in_email(UserMain.self.get_act_mailaliases(), RFCMailAddress.ADR_TYPE.FROM))
+                {
                     show_bcc = true;
+                }
 
-                if (mmsg.is_in_email( UserMain.self.get_act_mailaliases(), RFCMailAddress.ADR_TYPE.BCC ))
+                if (mmsg.is_in_email(UserMain.self.get_act_mailaliases(), RFCMailAddress.ADR_TYPE.BCC))
+                {
                     show_bcc = true;
+                }
 
                 if (show_bcc)
                 {
-                    mmsg.getEmail_list().add(new RFCMailAddress( bcc, RFCMailAddress.ADR_TYPE.BCC));
+                    mmsg.getEmail_list().add(new RFCMailAddress(bcc, RFCMailAddress.ADR_TYPE.BCC));
                 }
             }
-            
+
             // CREATE AND ADD PANEL
             MailPreviewPanel panel = new MailPreviewPanel(mmsg, model.get_uid(row));
             panel.setDlg(my_dlg);
@@ -1767,7 +1119,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         catch (Exception iOException)
         {
             iOException.printStackTrace();
-            UserMain.errm_ok(my_dlg, "Fehler beim Abholen der Mail: " + iOException.getMessage() );
+            UserMain.errm_ok(my_dlg, "Fehler beim Abholen der Mail: " + iOException.getMessage());
         }
         finally
         {
@@ -1784,25 +1136,24 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         }
     }
 
-    
     void run_open_mail( int row, File file, boolean encoded )
     {
         String _subject = "Unknown";
         String uuid = "???";
-        if ( row >= 0)
+        if (row >= 0)
         {
             _subject = table.getModel().getValueAt(row, MailTableModel.SUBJECT_COL).toString();
-             uuid = model.get_uid(row);
+            uuid = model.get_uid(row);
         }
 
         final String subject = _subject;
 
-        
+
         InputStream bais = null;
 
         try
         {
-            FileInputStream fis = new FileInputStream( file );
+            FileInputStream fis = new FileInputStream(file);
             bais = new BufferedInputStream(fis);
             if (encoded)
             {
@@ -1810,7 +1161,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             }
 
 
-          
+
             final RFCMimeMail mmsg = new RFCMimeMail();
             mmsg.parse(bais);
             bais.close();
@@ -1818,7 +1169,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
             final MailPreviewPanel panel = new MailPreviewPanel(mmsg, uuid);
 
-            SwingUtilities.invokeLater( new Runnable() {
+            SwingUtilities.invokeLater(new Runnable()
+            {
 
                 @Override
                 public void run()
@@ -1829,7 +1181,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
                     dlg.setModal(false);
                     dlg.setTitle(subject);
-                    dlg.setLocation( my_dlg.getLocation().x + 20,my_dlg.getLocation().y + 20);
+                    dlg.setLocation(my_dlg.getLocation().x + 20, my_dlg.getLocation().y + 20);
                     dlg.setVisible(true);
                 }
             });
@@ -1840,7 +1192,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         catch (Exception iOException)
         {
             iOException.printStackTrace();
-            UserMain.errm_ok(my_dlg, "Fehler beim Abholen der Mail: " + iOException.getMessage() );
+            UserMain.errm_ok(my_dlg, "Fehler beim Abholen der Mail: " + iOException.getMessage());
         }
         finally
         {
@@ -1854,7 +1206,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             catch (IOException iOException)
             {
             }
-          
+
         }
     }
 
@@ -2212,33 +1564,34 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         UserMain.close_search();
     }//GEN-LAST:event_BT_CLOSEActionPerformed
 
-
     private void BT_EXPORTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_EXPORTActionPerformed
     {//GEN-HEADEREND:event_BT_EXPORTActionPerformed
         // TODO add your handling code here:
         // CHOOSE CERTFILE
 
-        if (!UserMain.self.check_for_role_option( my_dlg, OptCBEntry.EXPORT))
+        if (!UserMain.self.check_for_role_option(my_dlg, OptCBEntry.EXPORT))
         {
             return;
         }
 
 
-        MailExportPanel pnl = new MailExportPanel(  );
+        MailExportPanel pnl = new MailExportPanel();
         GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
-        dlg.set_next_location( my_dlg );
+        dlg.set_next_location(my_dlg);
 
         dlg.setVisible(true);
 
         if (!pnl.isOkay())
+        {
             return;
+        }
 
-     
+
 
         File dir = pnl.get_dir();
         int[] rowi = table.getSelectedRows();
 
-        export_mail( dir, rowi, pnl.get_format() );
+        export_mail(dir, rowi, pnl.get_format());
 
     }//GEN-LAST:event_BT_EXPORTActionPerformed
 
@@ -2246,7 +1599,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     {//GEN-HEADEREND:event_BT_RESTOREActionPerformed
         // TODO add your handling code here:
 
-        if (!UserMain.self.check_for_role_option( my_dlg, OptCBEntry.RESTORE))
+        if (!UserMain.self.check_for_role_option(my_dlg, OptCBEntry.RESTORE))
         {
             return;
         }
@@ -2262,38 +1615,46 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             int row = sorter.convertRowIndexToModel(rowi[i]);
 
             // CHECK FOR 4 EYES
-            Role role = model.get_4_eyes_model( row );
+            Role role = model.get_4_eyes_model(row);
             if (role != null)
             {
                 if (!check_4eyes_login(role))
+                {
                     break;
+                }
             }
 
             if (i > 0)
-                sb.append( ",");
-            sb.append( row );
+            {
+                sb.append(",");
+            }
+            sb.append(row);
         }
         if (sb.length() == 0)
+        {
             return;
+        }
 
         // GET FROM- AND TO MAILADDRESSES
-        GetMailAddressPanel pnl = new GetMailAddressPanel( UserMain.self.get_act_mailaliases() );
+        GetMailAddressPanel pnl = new GetMailAddressPanel(UserMain.self.get_act_mailaliases());
         GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
-        dlg.set_next_location( my_dlg );
+        dlg.set_next_location(my_dlg);
 
         dlg.setVisible(true);
 
         if (!pnl.isOkay())
+        {
             return;
+        }
 
-        
+
         String to_mail = pnl.get_to_mail();
 
-        
-        UserMain.self.show_busy(my_dlg, UserMain.Txt("Sende_Mail...") );
+
+        UserMain.self.show_busy(my_dlg, UserMain.Txt("Sende_Mail..."));
 
         FunctionCallConnect fcc = UserMain.fcc();
-        String ret = fcc.call_abstract_function("SearchMail CMD:send_mail ID:" + search_id +  " TO:" + to_mail + " ROWLIST:" + sb.toString(), FunctionCallConnect.LONG_TIMEOUT);
+        String ret = fcc.call_abstract_function("SearchMail CMD:send_mail ID:" + search_id + " TO:" + to_mail + " ROWLIST:" + sb.toString(), FunctionCallConnect.LONG_TIMEOUT);
 
         UserMain.self.hide_busy();
 
@@ -2305,43 +1666,42 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         }
     }//GEN-LAST:event_BT_RESTOREActionPerformed
 
-    
     private void TXTA_FILTERMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_TXTA_FILTERMouseClicked
     {//GEN-HEADEREND:event_TXTA_FILTERMouseClicked
         // TODO add your handling code here:
         try
         {
             ArrayList<VarTypeEntry> var_names = new ArrayList<VarTypeEntry>();
-            var_names.add( new VarTypeEntry( CS_Constants.FLD_FROM, ExprEntry.TYPE.STRING) );
-            var_names.add( new VarTypeEntry( CS_Constants.FLD_TO, ExprEntry.TYPE.STRING) );
-            var_names.add( new VarTypeEntry( CS_Constants.FLD_CC, ExprEntry.TYPE.STRING) );
-            var_names.add( new VarTypeEntry( CS_Constants.FLD_BCC, ExprEntry.TYPE.STRING) );
-            var_names.add( new VarTypeEntry( CS_Constants.FLD_SUBJECT, ExprEntry.TYPE.STRING) );
-            var_names.add( new VarTypeEntry( CS_Constants.FLD_BODY, ExprEntry.TYPE.STRING) );
-            var_names.add( new VarTypeEntry( CS_Constants.FLD_DATE, ExprEntry.TYPE.STRING) );
-            var_names.add( new VarTypeEntry( CS_Constants.FLD_ATTACHMENT, ExprEntry.TYPE.STRING) );
-            var_names.add( new VarTypeEntry( CS_Constants.FLD_ATTACHMENT_NAME, ExprEntry.TYPE.STRING) );
-            var_names.add( new VarTypeEntry( CS_Constants.FLD_SIZE, ExprEntry.TYPE.STRING) );
-            var_names.add( new VarTypeEntry( CS_Constants.FLD_HEADERVAR_NAME, ExprEntry.TYPE.STRING) );
-            var_names.add( new VarTypeEntry( CS_Constants.FLD_HEADERVAR_VALUE, ExprEntry.TYPE.STRING) );
-            
+            var_names.add(new VarTypeEntry(CS_Constants.FLD_FROM, ExprEntry.TYPE.STRING));
+            var_names.add(new VarTypeEntry(CS_Constants.FLD_TO, ExprEntry.TYPE.STRING));
+            var_names.add(new VarTypeEntry(CS_Constants.FLD_CC, ExprEntry.TYPE.STRING));
+            var_names.add(new VarTypeEntry(CS_Constants.FLD_BCC, ExprEntry.TYPE.STRING));
+            var_names.add(new VarTypeEntry(CS_Constants.FLD_SUBJECT, ExprEntry.TYPE.STRING));
+            var_names.add(new VarTypeEntry(CS_Constants.FLD_BODY, ExprEntry.TYPE.STRING));
+            var_names.add(new VarTypeEntry(CS_Constants.FLD_DATE, ExprEntry.TYPE.STRING));
+            var_names.add(new VarTypeEntry(CS_Constants.FLD_ATTACHMENT, ExprEntry.TYPE.STRING));
+            var_names.add(new VarTypeEntry(CS_Constants.FLD_ATTACHMENT_NAME, ExprEntry.TYPE.STRING));
+            var_names.add(new VarTypeEntry(CS_Constants.FLD_SIZE, ExprEntry.TYPE.STRING));
+            var_names.add(new VarTypeEntry(CS_Constants.FLD_HEADERVAR_NAME, ExprEntry.TYPE.STRING));
+            var_names.add(new VarTypeEntry(CS_Constants.FLD_HEADERVAR_VALUE, ExprEntry.TYPE.STRING));
+
             //var_names.add(CS_Constants.FLD_META_ADDRESS);
-            
-           
-            LogicFilter rf = new LogicFilter(var_names, last_filter );
+
+
+            LogicFilter rf = new LogicFilter(var_names, last_filter);
 
             GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, rf);
             dlg.setVisible(true);
 
             if (rf.isOkay())
             {
-                 last_filter = rf.get_compressed_xml_list_data();
+                last_filter = rf.get_compressed_xml_list_data();
 
-                 String nice_txt = LogicFilter.get_nice_filter_text( last_filter );
-                 TXTA_FILTER.setText(nice_txt);
-                 TXTA_FILTER.setCaretPosition(0);
-                 
-                 do_filter_search();
+                String nice_txt = LogicFilter.get_nice_filter_text(last_filter);
+                TXTA_FILTER.setText(nice_txt);
+                TXTA_FILTER.setCaretPosition(0);
+
+                do_filter_search();
             }
         }
         catch (Exception exc)
@@ -2356,9 +1716,13 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     {//GEN-HEADEREND:event_BT_TOGGLE_SELECTIONActionPerformed
         // TODO add your handling code here:
         if (table.getSelectedRowCount() == 0)
+        {
             table.selectAll();
+        }
         else
+        {
             table.clearSelection();
+        }
     }//GEN-LAST:event_BT_TOGGLE_SELECTIONActionPerformed
 
     private void CB_ENTRIESActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_ENTRIESActionPerformed
@@ -2386,10 +1750,10 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         // DEFAULT: ALL CONTAINS WORD
        /* if (!SCP_LIST.isVisible())
         {
-            SCP_LIST.setVisible(true);
-            my_dlg.pack();
+        SCP_LIST.setVisible(true);
+        my_dlg.pack();
         }*/
-        simple_search_tablemodel.model.getChildren().add( new ExprEntry(simple_search_tablemodel.model.getChildren(), CS_Constants.FLD_FROM, "", ExprEntry.OPERATION.CONTAINS, ExprEntry.TYPE.STRING, false, false));
+        simple_search_tablemodel.model.getChildren().add(new ExprEntry(simple_search_tablemodel.model.getChildren(), CS_Constants.FLD_FROM, "", ExprEntry.OPERATION.CONTAINS, ExprEntry.TYPE.STRING, false, false));
         simple_search_tablemodel.fireTableDataChanged();
 
     }//GEN-LAST:event_BT_ADDActionPerformed
@@ -2423,10 +1787,9 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         // TODO add your handling code here:
         int row = table.getSelectedRow();
         row = sorter.convertRowIndexToModel(row);
-        raw_view_mail( row );
+        raw_view_mail(row);
 
     }//GEN-LAST:event_BT_VIEW_CONTENTActionPerformed
-
     static File last_dir;
     static File last_file;
 
@@ -2437,7 +1800,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         FileDialog fd = new FileDialog(my_dlg);
         fd.setMode(FileDialog.LOAD);
 
-        fd.setLocation(my_dlg.getLocationOnScreen().x + 20, my_dlg.getLocationOnScreen().y + 20 );
+        fd.setLocation(my_dlg.getLocationOnScreen().x + 20, my_dlg.getLocationOnScreen().y + 20);
 
 
         if (last_dir != null)
@@ -2453,13 +1816,15 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
         String f_name = fd.getFile();
         if (f_name == null)
+        {
             return;
+        }
 
-        last_file = new File(fd.getDirectory(), f_name );
+        last_file = new File(fd.getDirectory(), f_name);
 
         last_dir = last_file.getParentFile();
 
-        run_open_mail( -1, last_file, false );
+        run_open_mail(-1, last_file, false);
     }//GEN-LAST:event_BT_OPEN_EMLActionPerformed
 
     private void CB_VIEW_CONTENTActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_CB_VIEW_CONTENTActionPerformed
@@ -2472,7 +1837,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             if (row >= 0)
             {
                 row = sorter.convertRowIndexToModel(row);
-                preview_mail( row );
+                preview_mail(row);
             }
         }
         else
@@ -2481,7 +1846,9 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         }
 
         if (my_dlg != null)
+        {
             my_dlg.pack();
+        }
     }//GEN-LAST:event_CB_VIEW_CONTENTActionPerformed
 
     private void BT_OPEN_IN_MAILActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_BT_OPEN_IN_MAILActionPerformed
@@ -2489,7 +1856,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         // TODO add your handling code here:
         int[] rowi = table.getSelectedRows();
 
-        export_mail( null, rowi, "client" );
+        export_mail(null, rowi, "client");
 
     }//GEN-LAST:event_BT_OPEN_IN_MAILActionPerformed
 
@@ -2513,8 +1880,6 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         // TODO add your handling code here:
         UserMain.open_help_panel(this.getClass().getSimpleName());
 }//GEN-LAST:event_BT_HELP1ActionPerformed
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ADD;
     private javax.swing.JButton BT_CLOSE;
@@ -2547,9 +1912,6 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
-
-
-
     @Override
     public void mouseClicked( MouseEvent e )
     {
@@ -2558,24 +1920,267 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             if (e.getSource() == table)
             {
                 int row = table.rowAtPoint(e.getPoint());
+                if (row == -1)
+                    return;
                 row = sorter.convertRowIndexToModel(row);
-                
-                open_mail( row );
+
+                open_mail(row);
             }
 
         }
         else if (e.getClickCount() == 1)
         {
-            
+
             if (e.getSource() == table)
             {
                 int row = table.rowAtPoint(e.getPoint());
-                row = sorter.convertRowIndexToModel(row);
+                if (row == -1)
+                    return;
 
-                if (CB_VIEW_CONTENT.isSelected())
-                    preview_mail( row );
+                row = sorter.convertRowIndexToModel(row);
+                int col = table.columnAtPoint(e.getPoint());
+
+                if (col == MailTableModel.OPEN_ATTACH_COL)
+                {
+                    open_attachments(row);
+                }
+                else
+                {
+                    if (CB_VIEW_CONTENT.isSelected())
+                    {
+                        preview_mail(row);
+                    }
+                }
             }
         }
+    }
+
+    RFCMimeMail parseMailFile( File file, boolean encoded )
+    {
+        InputStream bais = null;
+
+        try
+        {
+            FileInputStream fis = new FileInputStream(file);
+            bais = new BufferedInputStream(fis);
+            if (encoded)
+            {
+                bais = new EncodedMailInputStream(bais);
+            }
+
+            // CREATE AND PARSE MAIL
+            RFCMimeMail mmsg = new RFCMimeMail();
+            mmsg.parse(bais);
+            return mmsg;
+        }
+        catch (Exception exc)
+        {
+        }
+        finally
+        {
+            if (bais != null)
+            {
+                try
+                {
+                    bais.close();
+                }
+                catch (IOException iOException)
+                {
+                }
+            }
+
+        }
+        return null;
+    }
+
+    void open_attachment( Part p, final File trg_file, boolean background )
+    {
+
+        BufferedOutputStream bos = null;
+        BufferedInputStream bis = null;
+        try
+        {
+            InputStream is = p.getInputStream();
+            bis = new BufferedInputStream(is);
+            bos = new BufferedOutputStream(new FileOutputStream(trg_file));
+
+            byte[] buffer = new byte[CS_Constants.STREAM_BUFFER_LEN];
+            while (true)
+            {
+                int rlen = bis.read(buffer);
+                if (rlen == -1)
+                {
+                    break;
+                }
+
+                bos.write(buffer, 0, rlen);
+            }
+        }
+        catch (Exception messagingException)
+        {
+            messagingException.printStackTrace();
+            UserMain.errm_ok(my_dlg, UserMain.Txt("Could_not_save_attachment") + ": " + messagingException.getMessage());
+        }
+        finally
+        {
+            if (bis != null)
+            {
+                try
+                {
+                    bis.close();
+                }
+                catch (IOException iOException)
+                {
+                }
+            }
+
+            if (bos != null)
+            {
+                try
+                {
+                    bos.close();
+                }
+                catch (IOException iOException)
+                {
+                }
+            }
+        }
+
+       
+        Runnable r = new Runnable() {
+
+            @Override
+            public void run()
+            {
+                String[] cmd = null;
+                if (NativeLoader.is_win())
+                {
+                    cmd = new String[3];
+                    cmd[0] = "cmd";
+                    cmd[1] = "/c";
+                    cmd[2] = trg_file.getAbsolutePath();
+                }
+                if (NativeLoader.is_osx())
+                {
+                    cmd = new String[4];
+                    cmd[0] = "open";
+                    cmd[1] = "-a";
+                    cmd[2] = "Preview";
+                    cmd[3] = trg_file.getAbsolutePath();
+                }
+                if (cmd != null)
+                {
+                    CmdExecutor exe = new CmdExecutor(cmd);
+                    exe.set_no_debug(false);
+                    exe.exec();
+                }
+            }
+        };
+        Thread thr = new Thread(r);
+        thr.start();
+        if (!background)
+        {
+            try
+            {
+                thr.join();
+            }
+            catch (InterruptedException interruptedException)
+            {
+            }
+        }
+    }
+
+    void open_attachments( final int row )
+    {
+        if (!UserMain.self.check_for_role_option(my_dlg, OptCBEntry.READ))
+        {
+            return;
+        }
+
+        // CHECK FOR 4 EYES
+        Role role = model.get_4_eyes_model(row);
+        if (role != null)
+        {
+            if (!check_4eyes_login(role))
+            {
+                return;
+            }
+        }
+
+        if (sw != null)
+        {
+            return;
+        }
+
+        sw = new SwingWorker()
+        {
+
+            @Override
+            public Object construct()
+            {
+                UserMain.self.show_busy(my_dlg, UserMain.Txt("Loading_mail") + "...");
+
+                File tmp_file = run_download_mail(row, null, true);
+
+                RFCMimeMail mmsg = parseMailFile(tmp_file, true);
+
+                if (mmsg == null)
+                {
+                    if (!Main.get_bool_prop(Preferences.CACHE_MAILFILES, false))
+                    {
+                        tmp_file.delete();
+                    }
+                    return null;
+                }
+
+                sw = null;
+
+                UserMain.self.hide_busy();
+
+
+                String extension = ".tmp";
+                int attCnt = mmsg.get_attachment_cnt();
+
+                for (int a = 0; a < attCnt; a++)
+                {
+                    Part p = mmsg.get_attachment(a);
+
+                    try
+                    {
+                        String fileName = p.getFileName();
+                        // SKIP ATTACHMENTS w/o FILE
+                        if (fileName == null)
+                            continue;
+
+                        int ext_idx = fileName.lastIndexOf(".");
+                        if (ext_idx > 0)
+                        {
+                            extension = p.getFileName().substring(ext_idx);
+                        }
+                    }
+                    catch (Exception messagingException)
+                    {
+                        continue;
+                    }
+
+                    String uuid = model.get_uid(row);
+
+                    File trg_file = MailPreviewPanel.create_temp_file(uuid,  a, extension);
+                    trg_file.deleteOnExit();
+
+                    open_attachment(p, trg_file, true);
+
+                }
+
+                if (!Main.get_bool_prop(Preferences.CACHE_MAILFILES, false))
+                {
+                    tmp_file.delete();
+                }
+                return null;
+            }
+        };
+
+        sw.start();
     }
 
     @Override
@@ -2603,6 +2208,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     {
         return BT_CLOSE;
     }
+
     public static void main( String[] args )
     {
         try
@@ -2626,19 +2232,23 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
     private void do_filter_search()
     {
         if (last_filter == null)
+        {
             return;
+        }
 
         int mandant = UserMain.self.get_act_mandant_id();
         String user = UserMain.self.get_act_username();
         String pwd = UserMain.self.get_act_pwd();
 
-         final int entries = get_entries();
+        final int entries = get_entries();
 
-         final String cmd = "SearchMail CMD:open_filter MA:" + mandant + " US:'" + user + "' PW:'" + pwd + "' UL:" +
-                    UserMain.self.getUserLevel() + " FL:'" + last_filter + "' CNT:'" + entries + "' ";
+        final String cmd = "SearchMail CMD:open_filter MA:" + mandant + " US:'" + user + "' PW:'" + pwd + "' UL:"
+                + UserMain.self.getUserLevel() + " FL:'" + last_filter + "' CNT:'" + entries + "' ";
 
         if (sw != null)
+        {
             return;
+        }
 
         sw = new SwingWorker()
         {
@@ -2646,23 +2256,23 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
             @Override
             public Object construct()
             {
-                 UserMain.self.show_busy(my_dlg, UserMain.Txt("Searching") + "...");
+                UserMain.self.show_busy(my_dlg, UserMain.Txt("Searching") + "...");
 
-                 fill_model_with_search(cmd, entries);
+                fill_model_with_search(cmd, entries);
 
-                 UserMain.self.hide_busy();
+                UserMain.self.hide_busy();
 
-                 sw = null;
+                sw = null;
 
 
 
-                 return null;
+                return null;
             }
         };
 
         sw.start();
 
-        
+
 
 
     }
@@ -2675,27 +2285,32 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
     @Override
     public void editingCanceled( ChangeEvent e )
-    {       
+    {
     }
-
-
     protected Role _4e_role = null;
-    
-    boolean is4eyes_logged_in(Role role)
+
+    boolean is4eyes_logged_in( Role role )
     {
         if (_4e_role == null)
+        {
             return false;
+        }
 
         if (role != null && _4e_role != null && role.getId() != _4e_role.getId())
+        {
             return false;
+        }
 
         return true;
     }
-    boolean check_4eyes_login(Role role)
+
+    boolean check_4eyes_login( Role role )
     {
 
         if (is4eyes_logged_in(role))
+        {
             return true;
+        }
 
 
         if (Login4EyesPanel.check_login(role))
@@ -2712,22 +2327,24 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         FunctionCallConnect fcc = UserMain.fcc();
         int mandant = UserMain.self.get_act_mandant_id();
 
-        ArrayList<String>field_list = model.get_field_list();
+        ArrayList<String> field_list = model.get_field_list();
 
-        String cmd =  "SearchMail CMD:get MA:" + mandant + " ID:" + search_id + " ROW:" + start_id + " ROWS:" + MAX_FETCH_SIZE + " FLL:'";
-        for ( int i = 0; i < field_list.size(); i++ )
+        String cmd = "SearchMail CMD:get MA:" + mandant + " ID:" + search_id + " ROW:" + start_id + " ROWS:" + MAX_FETCH_SIZE + " FLL:'";
+        for (int i = 0; i < field_list.size(); i++)
         {
             if (i > 0)
+            {
                 cmd += ",";
+            }
             cmd += field_list.get(i);
         }
         cmd += "'";
 
-        String search_get_ret = fcc.call_abstract_function( cmd);
+        String search_get_ret = fcc.call_abstract_function(cmd);
 
         if (search_get_ret.charAt(0) != '0')
         {
-            UserMain.errm_ok(my_dlg, "SearchMail get gave " + search_get_ret );
+            UserMain.errm_ok(my_dlg, "SearchMail get gave " + search_get_ret);
             return;
         }
 
@@ -2736,7 +2353,7 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
 
         if (o instanceof ArrayList)
         {
-            ArrayList<ArrayList<String>> ret_arr = (ArrayList<ArrayList<String>>)o;
+            ArrayList<ArrayList<String>> ret_arr = (ArrayList<ArrayList<String>>) o;
             result_array.addAll(ret_arr);
         }
     }
@@ -2749,13 +2366,13 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         TXTA_FILTER.setText(LogicFilter.get_nice_filter_text(last_filter));
         TXTA_FILTER.setCaretPosition(0);
         TXT_QUICKSEARCH.setText("");
-        
+
         do_filter_search();
 
     }
+
     String get_quick_search()
     {
         return TXT_QUICKSEARCH.getText();
     }
-
 }
