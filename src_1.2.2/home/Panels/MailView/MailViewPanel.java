@@ -248,54 +248,8 @@ public class MailViewPanel extends GlossDialogPanel implements MouseListener, Ce
         };
         TXT_VAL.addActionListener(okAction);
         de.getTextField().addActionListener(okAction);
-//        de.addKeyListener( new KeyListener() {
-//
-//            @Override
-//            public void keyTyped( KeyEvent e )
-//            {
-//                if (e.getKeyCode() == KeyEvent.VK_ENTER)
-//                {
-//                    simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_VALUE).getCellEditor().stopCellEditing();
-//                    last_filter = simple_search_tablemodel.get_compressed_xml_list_data();
-//                    TXTA_FILTER.setText(LogicFilter.get_nice_filter_text(last_filter));
-//                    TXTA_FILTER.setCaretPosition(0);
-//
-//                    do_filter_search();
-//                }
-//            }
-//
-//            @Override
-//            public void keyPressed( KeyEvent e )
-//            {}
-//
-//            @Override
-//            public void keyReleased( KeyEvent e )
-//            {}
-//        });
 
         simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_VALUE).setCellEditor(value_editor/*txt_editor */);
-
-//
-//        CB_CONDITION.addActionListener(new ActionListener() {
-//
-//            @Override
-//            public void actionPerformed( ActionEvent e )
-//            {
-//                JComboBox cb = (JComboBox)e.getSource();
-//                ConditionCBEntry cbe = (ConditionCBEntry) cb.getSelectedItem();
-//                simple_search_tablemodel.setValType( cbe.entry.getType() );
-//                if (cbe.entry.getType() == TYPE.TIMESTAMP)
-//                {
-//
-//                    simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_VALUE).setCellEditor( value_editor  );
-//                }
-//                else
-//                {
-//                    simple_search_table.getColumnModel().getColumn(SIMPLE_TAB_COL_VALUE).setCellEditor( txt_editor  );
-//                }
-//            }
-//        });
-//
 
         TBP_SEARCH.setSelectedIndex(SIMPLE_SEARCH);
 

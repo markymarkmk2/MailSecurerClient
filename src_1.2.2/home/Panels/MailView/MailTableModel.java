@@ -297,6 +297,18 @@ class MailTableModel extends AbstractTableModel
         return role;
     }
 
+    boolean forbidden_4_eyes_auth( int rowIndex )
+    {
+        String _4eyes_val = result_array.get(rowIndex).get(_4EYES_COL);
+
+        if (_4eyes_val != null && _4eyes_val.length() > 0 && Character.isDigit(_4eyes_val.charAt(0)) )
+        {
+            if  (UserMain.sqc() == null)
+                return true;
+        }
+        return false;
+    }
+
 
 
     @Override
