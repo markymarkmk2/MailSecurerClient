@@ -322,6 +322,7 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         BT_OK = new GlossButton();
         BT_ABORT = new GlossButton();
         BT_HELP1 = new GlossButton();
+        BT_EXPORT = new GlossButton();
 
         setDoubleBuffered(false);
         setOpaque(false);
@@ -389,37 +390,33 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         PN_ACTIONLayout.setHorizontalGroup(
             PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(BT_DISABLED)
-                .addContainerGap(471, Short.MAX_VALUE))
-            .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                        .addGap(21, 21, 21)
-                        .addComponent(CB_OWN_HTTPD)
-                        .addContainerGap())
-                    .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(BT_DISABLED))
+                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                                .addGap(21, 21, 21)
+                                .addComponent(CB_OWN_HTTPD))
                             .addComponent(CB_HTTPD)
-                            .addContainerGap())
-                        .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                            .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel5)
-                                .addComponent(jLabel12)
-                                .addComponent(jLabel6)
-                                .addComponent(jLabel2))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(TXT_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(TXT_USER, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
-                                .addComponent(TXTP_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(TXTP_PWD1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGap(303, 303, 303)))))
-            .addGroup(PN_ACTIONLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(BT_TEST_ENCRYPTION)
-                .addContainerGap(383, Short.MAX_VALUE))
+                            .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel12)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel2))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(PN_ACTIONLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(TXT_NAME, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(TXT_USER, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                                    .addComponent(TXTP_PWD, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(TXTP_PWD1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(PN_ACTIONLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(BT_TEST_ENCRYPTION)))
+                .addContainerGap(303, Short.MAX_VALUE))
         );
 
         PN_ACTIONLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {TXTP_PWD, TXTP_PWD1, TXT_NAME, TXT_USER});
@@ -545,15 +542,14 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
                         .addGroup(PN_SECURITYLayout.createSequentialGroup()
                             .addGroup(PN_SECURITYLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(RB_TLS_IV_AVAIL)
-                                .addComponent(RB_INSECURE, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
+                                .addComponent(RB_INSECURE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(RB_TLS_FORCE))
                             .addGap(63, 63, 63))
                         .addGroup(PN_SECURITYLayout.createSequentialGroup()
-                            .addComponent(RB_SSL)
-                            .addContainerGap(117, Short.MAX_VALUE))
-                        .addGroup(PN_SECURITYLayout.createSequentialGroup()
-                            .addComponent(CB_CERTIFICATE)
-                            .addContainerGap(61, Short.MAX_VALUE)))))
+                            .addGroup(PN_SECURITYLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(RB_SSL)
+                                .addComponent(CB_CERTIFICATE))
+                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
         );
         PN_SECURITYLayout.setVerticalGroup(
             PN_SECURITYLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -813,12 +809,21 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
             }
         });
 
+        BT_EXPORT.setText("Export alle Mailkonten");
+        BT_EXPORT.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BT_EXPORTActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout PN_BUTTONSLayout = new javax.swing.GroupLayout(PN_BUTTONS);
         PN_BUTTONS.setLayout(PN_BUTTONSLayout);
         PN_BUTTONSLayout.setHorizontalGroup(
             PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PN_BUTTONSLayout.createSequentialGroup()
-                .addContainerGap(348, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(BT_EXPORT)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(BT_HELP1)
                 .addGap(18, 18, 18)
                 .addComponent(BT_ABORT)
@@ -836,7 +841,8 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
                 .addGroup(PN_BUTTONSLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BT_OK)
                     .addComponent(BT_ABORT)
-                    .addComponent(BT_HELP1))
+                    .addComponent(BT_HELP1)
+                    .addComponent(BT_EXPORT))
                 .addContainerGap())
         );
 
@@ -849,13 +855,13 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(PN_BUTTONS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE))
+                    .addComponent(jTabbedPane1))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(PN_BUTTONS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1304,10 +1310,17 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         TXTP_SMTP_PWD.setVisible(sa);
     }//GEN-LAST:event_CB_SMTP_AUTHActionPerformed
 
+    private void BT_EXPORTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BT_EXPORTActionPerformed
+        // TODO add your handling code here:
+        startExport();
+
+    }//GEN-LAST:event_BT_EXPORTActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BT_ABORT;
     private javax.swing.JButton BT_ADD_HEADER;
     private javax.swing.JCheckBox BT_DISABLED;
+    private javax.swing.JButton BT_EXPORT;
     private javax.swing.JButton BT_HELP1;
     private javax.swing.JCheckBox BT_IMAP_ENABLED;
     private javax.swing.JButton BT_IMPORT_CERT;
@@ -1944,6 +1957,15 @@ public class EditMandant extends GenericEditPanel implements PropertyChangeListe
         return ret;
 
     }
+ 
+    private void startExport() {
+        // TODO add your handling code here:
+        ExportPanel pnl = new ExportPanel(object.getId());
+        GenericGlossyDlg edlg = new GenericGlossyDlg(UserMain.self, true, pnl);
+        edlg.set_next_location(my_dlg);
+        edlg.setVisible(true);
+    }
+
 
 
 }

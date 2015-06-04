@@ -44,6 +44,7 @@ public class ExportPanel extends GlossDialogPanel implements ActionListener
     GlossTable table;
     int da_idx;
     int ds_idx;
+    int ma_idx;
     Timer timer;
     
     ImageIcon ok_icn;
@@ -73,7 +74,7 @@ public class ExportPanel extends GlossDialogPanel implements ActionListener
 
 
     /** Creates new form GetMailAddressPanel */
-    public ExportPanel( int da_idx, int ds_idx)
+    public ExportPanel( int ma_idx, int da_idx, int ds_idx)
     {
         initComponents();
 
@@ -95,6 +96,7 @@ public class ExportPanel extends GlossDialogPanel implements ActionListener
         last_status = status;
 
 
+        this.ma_idx = ma_idx;
         this.da_idx = da_idx;
         this.ds_idx = ds_idx;
         
@@ -103,13 +105,17 @@ public class ExportPanel extends GlossDialogPanel implements ActionListener
         timer = new Timer(500, this);
         timer.start();
     }
-    public ExportPanel( int da_idx)
+    public ExportPanel( int ma_idx, int da_idx)
     {
-        this( da_idx, -1 );
+        this( ma_idx, da_idx, -1 );
+    }
+    public ExportPanel(int ma_idx)
+    {
+        this( ma_idx, -1, -1 );
     }
     public ExportPanel()
     {
-        this( -1, -1 );
+        this( UserMain.self.get_act_mandant().getId(), -1, -1 );
     }
 
     void set_icon( JButton btn, ImageIcon icn )
@@ -124,7 +130,7 @@ public class ExportPanel extends GlossDialogPanel implements ActionListener
 
     final void read_status()
     {
-         String cmd = "export CMD:check MA:" + UserMain.self.get_act_mandant().getId();
+         String cmd = "export CMD:check MA:" + ma_idx;
 
          String ret = UserMain.fcc().call_abstract_function(cmd, ServerCall.SHORT_CMD_TO);
          if (ret == null)
@@ -216,13 +222,13 @@ public class ExportPanel extends GlossDialogPanel implements ActionListener
         
         if (status == STATUS.ACTIVE)
         {
-            String cmd = "export CMD:pause MA:" + UserMain.self.get_act_mandant().getId();
+            String cmd = "export CMD:pause MA:" + ma_idx;
             ret = UserMain.fcc().call_abstract_function(cmd, ServerCall.SHORT_CMD_TO);
             BT_STARTSTOP.setText(UserMain.Txt("Resume") );
         }
         if (status == STATUS.PAUSED)
         {
-            String cmd = "export CMD:resume MA:" + UserMain.self.get_act_mandant().getId();
+            String cmd = "export CMD:resume MA:" + ma_idx;
             ret = UserMain.fcc().call_abstract_function(cmd, ServerCall.SHORT_CMD_TO);
             BT_STARTSTOP.setText(UserMain.Txt("Pause") );
         }
@@ -232,7 +238,7 @@ public class ExportPanel extends GlossDialogPanel implements ActionListener
             if (path != null) {
                 status = STATUS.ACTIVE;
                 BT_STARTSTOP.setText(UserMain.Txt("Pause"));
-                String cmd = "export CMD:start MA:" + UserMain.self.get_act_mandant().getId() + " DA:" + da_idx + " PA:'" + path + "'";
+                String cmd = "export CMD:start MA:" + ma_idx + " DA:" + da_idx + " PA:'" + path + "'";
                 if (da_idx == -1)
                     cmd += " TY:all";
                 else if (ds_idx == -1)
@@ -256,7 +262,7 @@ public class ExportPanel extends GlossDialogPanel implements ActionListener
     {
         if (status != STATUS.ABORTED)
         {
-            String cmd = "export CMD:abort MA:" + UserMain.self.get_act_mandant().getId();
+            String cmd = "export CMD:abort MA:" + ma_idx;
             UserMain.fcc().call_abstract_function(cmd, ServerCall.SHORT_CMD_TO);
         }
     }

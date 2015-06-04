@@ -342,7 +342,7 @@ public class StorageDiagnose extends GlossDialogPanel implements MouseListener, 
             }
         });
 
-        BT_EXPORT.setText("Export");
+        BT_EXPORT.setText("Export alle Mailkonten");
         BT_EXPORT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BT_EXPORTActionPerformed(evt);
