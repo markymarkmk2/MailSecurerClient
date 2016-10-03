@@ -4,22 +4,22 @@
  */
 package dimm.home.ServerConnect;
 
-import java.lang.reflect.Method;
-import home.shared.hibernate.DiskArchive;
-import home.shared.hibernate.DiskSpace;
-import home.shared.hibernate.Mandant;
-
 import dimm.home.UserMain;
 import dimm.home.Utilities.CXStream;
 import home.shared.CS_Constants;
 import home.shared.SQL.SQLArrayResult;
+import home.shared.Utilities.DefaultTrustManager;
 import home.shared.hibernate.AccountConnector;
+import home.shared.hibernate.DiskArchive;
+import home.shared.hibernate.DiskSpace;
+import home.shared.hibernate.Mandant;
 import home.shared.hibernate.Role;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -30,6 +30,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
 import org.apache.commons.codec.binary.Base64;
 
 /**
@@ -294,10 +295,7 @@ public class ServerTCPCall extends ServerCall
             if (use_ssl)
             {
                 //                System.setProperty("javax.net.debug","ssl");
-                final String[] enabledCipherSuites =
-                {
-                    "SSL_DH_anon_WITH_RC4_128_MD5"
-                };
+                final String[] enabledCipherSuites = {"TLS_DHE_RSA_WITH_AES_256_CBC_SHA"};
 
 
                 SSLSocketFactory factory; 
@@ -305,18 +303,25 @@ public class ServerTCPCall extends ServerCall
                 {
                     SSLContext ctx;
                     KeyManagerFactory kmf;
+
                     KeyStore ks;
                     char[] passphrase = "123456".toCharArray();
 
                     ctx = SSLContext.getInstance("TLS");
                     kmf = KeyManagerFactory.getInstance("SunX509");
+
                     ks = KeyStore.getInstance("JKS");
 
                     // KEYSTORE IS IN SHARED LIBRARY!
                     ks.load(CS_Constants.class.getResourceAsStream("/Utilities/ms.keystore"), passphrase);
 
+                    TrustManager[] trustmanagers = new TrustManager[]{
+                        new DefaultTrustManager()
+                    };
+
                     kmf.init(ks, passphrase);
-                    ctx.init(kmf.getKeyManagers(), null, null);
+
+                    ctx.init(kmf.getKeyManagers(), trustmanagers, null);
 
                     factory = ctx.getSocketFactory();
                 }
