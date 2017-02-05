@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -387,17 +386,14 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
             if (ret.charAt(0) == '0')
             {
                 ParseToken pt = new ParseToken(ret);
-                ArrayList o = pt.GetObject("CL:", ArrayList.class);
-                if ( o != null)
-                {
-                    ArrayList<X509Certificate[]> cert_list = (ArrayList<X509Certificate[]>)o;
-                    model = new CertTableModel(this, cert_list);
-                    table.setModel(model);
-                    set_table_header();
+                ArrayList<X509Certificate[]> cert_list = pt.GetX509CertArrayList("CL:");
 
-                    propertyChange(null);
-                    return;
-                }
+                model = new CertTableModel(this, cert_list);
+                table.setModel(model);
+                set_table_header();
+
+                propertyChange(null);
+                return;
             }
         }
         ArrayList<X509Certificate[]> cert_list = new ArrayList<X509Certificate[]>();
@@ -623,8 +619,8 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
         if (data != null)
         {
 
-            ByteBuffer bb = ByteBuffer.wrap(data);
-            String cert = ParseToken.BuildCompressedObjectString( bb );
+            
+            String cert = ParseToken.BuildCompressedObjectString(data);
             // DATA IS VALID NOW
             FunctionCallConnect fcc = UserMain.fcc();
             String ret = fcc.call_abstract_function("certificate CMD:import TC:1 AL:mailsecurer KS:mailsecurer CERT:\"" + cert + "\"", FunctionCallConnect.MEDIUM_TIMEOUT );
@@ -650,8 +646,8 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
         if (data != null)
         {
 
-            ByteBuffer bb = ByteBuffer.wrap(data);
-            String cert = ParseToken.BuildCompressedObjectString( bb );
+            
+            String cert = ParseToken.BuildCompressedObjectString(data);
             // BUILD A FAKE ALIAS, MUST BE UNIQUE
             String alias = Long.toString(System.currentTimeMillis() / 1000);
             // DATA IS VALID NOW
@@ -847,14 +843,19 @@ public class CertificatePanel extends GlossDialogPanel implements MouseListener,
     private void open_view_dlg( int row )
     {
         X509Certificate[] cert = model.get_cert_list().get(row);
-        open_view_dlg( cert[0] );
+        open_view_dlg( cert );
     }
-    private void open_view_dlg( X509Certificate ticket )
-    {
-/*        CertificateViewPanel pnl = new CertificateViewPanel( this, ticket );
+    private void open_view_dlg( X509Certificate[] x509Certificates ) {
+        SingleTextAreaPanel pnl = new SingleTextAreaPanel(false);
+        StringBuilder sb = new StringBuilder();
+        for (X509Certificate x509Certificate : x509Certificates) {
+            sb.append(x509Certificate.toString());
+            sb.append("--------------------------------------------------------------------------------------------------");
+        }
+        pnl.setText(sb.toString());
         GenericGlossyDlg dlg = new GenericGlossyDlg(UserMain.self, true, pnl);
         dlg.set_next_location(my_dlg);
-        dlg.setVisible(true);*/
+        dlg.setVisible(true);
     }
 
     private boolean del_certificate( int row )
